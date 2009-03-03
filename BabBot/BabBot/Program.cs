@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using BabBot.Manager;
 
 namespace BabBot
 {
@@ -16,5 +17,6 @@ namespace BabBot
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Forms.MainForm());
         }
+
     }
 }

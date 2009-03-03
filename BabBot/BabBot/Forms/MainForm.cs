@@ -7,69 +7,62 @@ using System.Security;
 using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
+using BabBot.Manager;
 using Magic;
 
 namespace BabBot.Forms
 {
     public partial class MainForm : Form
     {
-        private BlackMagic bm;
-
         public MainForm()
         {
             InitializeComponent();
+
+            Timer inGameTimer = new Timer();
+            inGameTimer.Interval = 1000;
+            inGameTimer.Start();
+            inGameTimer.Tick += new EventHandler(inGameTimer_Tick);
+
+            Timer playerTimer = new Timer();
+            playerTimer.Interval = 1000;
+            playerTimer.Start();
+            playerTimer.Tick += new EventHandler(playerTimer_Tick);
+
         }
+
+        void inGameTimer_Tick(object sender, EventArgs e)
+        {
+            ProcessManager.CheckInGame();
+        }
+
+        void playerTimer_Tick(object sender, EventArgs e)
+        {
+            ProcessManager.UpdatePlayer();
+        }
+
+        // TODO: Create a timed event that checks if WoW is running and that updates the UI accordingly
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            Process p;
-
             try
             {
-                p = Process.Start(@"c:\games\world of warcraft\wow.exe", "", "guest", new SecureString(), "");
-            } 
-            catch(Exception)
-            {
-                MessageBox.Show("Cannot run an instance of WoW", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                ProcessManager.StartWow();
+                btnRun.Enabled = false;
             }
-
-            if (p == null)
+            catch(Exception ex)
             {
-                MessageBox.Show("Cannot obtain process information", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            try
-            {
-                bm = new BlackMagic();
-                bm.OpenProcessAndThread(p.Id);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
         }
 
         private void btnUpdateLocation_Click(object sender, EventArgs e)
         {
-            if (bm != null)
+            if (ProcessManager.ProcessRunning)
             {
-                bm.SuspendThread(bm.ThreadHandle);
+                ProcessManager.UpdatePlayerLocation();
 
-                uint playerBase = bm.ReadUInt(bm.ReadUInt(bm.ReadUInt(0x0127F13C) + 0x30) + 0x28);
-
-                float x = bm.ReadFloat(playerBase + 0x7D0);
-                float y = bm.ReadFloat(playerBase + 0x7D4);
-                float z = bm.ReadFloat(playerBase + 0x7D8);
-
-
-                bm.ResumeThread();
-
-                UInt64 CurTargetGuid = bm.ReadUInt64(0x10A68E0);
-
-                tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", x, y, z, CurTargetGuid);
+                tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", ProcessManager.Player.Location.X, ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z, ProcessManager.Player.CurTargetGuid);
             }
         }
     }

@@ -34,13 +34,13 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.btnRun = new System.Windows.Forms.Button();
-            this.tbLocation = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.lblLocation = new System.Windows.Forms.Label();
-            this.lblOrientation = new System.Windows.Forms.Label();
             this.btnUpdateLocation = new System.Windows.Forms.Button();
+            this.lblOrientation = new System.Windows.Forms.Label();
+            this.lblLocation = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tbLocation = new System.Windows.Forms.TextBox();
+            this.btnRun = new System.Windows.Forms.Button();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -74,7 +74,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             // 
             // tabControlMain
@@ -104,15 +104,47 @@
             this.tabPageMain.Text = "Main";
             this.tabPageMain.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // btnUpdateLocation
             // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(192, 74);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.btnUpdateLocation.Location = new System.Drawing.Point(382, 34);
+            this.btnUpdateLocation.Name = "btnUpdateLocation";
+            this.btnUpdateLocation.Size = new System.Drawing.Size(112, 23);
+            this.btnUpdateLocation.TabIndex = 5;
+            this.btnUpdateLocation.Text = "Update Location";
+            this.btnUpdateLocation.UseVisualStyleBackColor = true;
+            this.btnUpdateLocation.Click += new System.EventHandler(this.btnUpdateLocation_Click);
+            // 
+            // lblOrientation
+            // 
+            this.lblOrientation.AutoSize = true;
+            this.lblOrientation.Location = new System.Drawing.Point(8, 71);
+            this.lblOrientation.Name = "lblOrientation";
+            this.lblOrientation.Size = new System.Drawing.Size(61, 13);
+            this.lblOrientation.TabIndex = 4;
+            this.lblOrientation.Text = "Orientation:";
+            // 
+            // lblLocation
+            // 
+            this.lblLocation.AutoSize = true;
+            this.lblLocation.Location = new System.Drawing.Point(8, 39);
+            this.lblLocation.Name = "lblLocation";
+            this.lblLocation.Size = new System.Drawing.Size(51, 13);
+            this.lblLocation.TabIndex = 3;
+            this.lblLocation.Text = "Location:";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(75, 68);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(301, 20);
+            this.textBox2.TabIndex = 2;
+            // 
+            // tbLocation
+            // 
+            this.tbLocation.Location = new System.Drawing.Point(75, 36);
+            this.tbLocation.Name = "tbLocation";
+            this.tbLocation.Size = new System.Drawing.Size(301, 20);
+            this.tbLocation.TabIndex = 1;
             // 
             // btnRun
             // 
@@ -124,47 +156,15 @@
             this.btnRun.UseVisualStyleBackColor = true;
             this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
-            // tbLocation
+            // tabPage2
             // 
-            this.tbLocation.Location = new System.Drawing.Point(75, 36);
-            this.tbLocation.Name = "tbLocation";
-            this.tbLocation.Size = new System.Drawing.Size(190, 20);
-            this.tbLocation.TabIndex = 1;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(75, 68);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 2;
-            // 
-            // lblLocation
-            // 
-            this.lblLocation.AutoSize = true;
-            this.lblLocation.Location = new System.Drawing.Point(8, 39);
-            this.lblLocation.Name = "lblLocation";
-            this.lblLocation.Size = new System.Drawing.Size(51, 13);
-            this.lblLocation.TabIndex = 3;
-            this.lblLocation.Text = "Location:";
-            // 
-            // lblOrientation
-            // 
-            this.lblOrientation.AutoSize = true;
-            this.lblOrientation.Location = new System.Drawing.Point(8, 71);
-            this.lblOrientation.Name = "lblOrientation";
-            this.lblOrientation.Size = new System.Drawing.Size(61, 13);
-            this.lblOrientation.TabIndex = 4;
-            this.lblOrientation.Text = "Orientation:";
-            // 
-            // btnUpdateLocation
-            // 
-            this.btnUpdateLocation.Location = new System.Drawing.Point(271, 34);
-            this.btnUpdateLocation.Name = "btnUpdateLocation";
-            this.btnUpdateLocation.Size = new System.Drawing.Size(112, 23);
-            this.btnUpdateLocation.TabIndex = 5;
-            this.btnUpdateLocation.Text = "Update Location";
-            this.btnUpdateLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateLocation.Click += new System.EventHandler(this.btnUpdateLocation_Click);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(513, 265);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
