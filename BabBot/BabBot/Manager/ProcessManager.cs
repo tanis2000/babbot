@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Security;
-using System.Text;
 using BabBot.Wow;
 using Magic;
 
@@ -10,14 +9,24 @@ namespace BabBot.Manager
 {
     public class ProcessManager
     {
-        private static BlackMagic wowProcess;
-        private static Config config;
+        private static readonly Config config;
+        private static readonly BlackMagic wowProcess;
+        public static bool InGame;
+        public static ObjectManager ObjectManager;
+        public static Player Player;
         private static Process process;
         public static bool ProcessRunning;
-        public static Player Player;
-        public static bool InGame;
         public static uint TLS;
-        public static ObjectManager ObjectManager;
+
+        static ProcessManager()
+        {
+            config = new Config();
+            wowProcess = new BlackMagic();
+            ProcessRunning = false;
+            Player = new Player();
+            InGame = false;
+            TLS = 0x0;
+        }
 
         public static BlackMagic WowProcess
         {
@@ -33,31 +42,37 @@ namespace BabBot.Manager
 
         public static Config Config
         {
-            get { return config;}
-        }
-
-        static ProcessManager()
-        {
-            config = new Config();
-            wowProcess = new BlackMagic();
-            ProcessRunning = false;
-            Player = new Player();
-            InGame = false;
-            TLS = 0x0;
+            get { return config; }
         }
 
         public static void StartWow()
         {
             try
             {
-                /// TODO: Read the game path from the registry
-                process = Process.Start(Config.WowExePath, "", Config.GuestUsername, new SecureString(), "");
+                /// TODO: Read the game path from the registry:  Common.GetWowInstallationPath()
+                /// TODO: In VISTA cosi non funziona manco per il cazzo (virtualization di merda) 
+                /// Process.Start(Common.GetWowInstallationPath());
+                
+                process = !Common.IsVista()
+                              ? Process.Start(Common.GetWowInstallationPath(), "", Config.GuestUsername,
+                                              new SecureString(), "")
+                              : Process.Start(Common.GetWowInstallationPath());
+
                 if (process != null)
                 {
                     process.WaitForInputIdle(10000);
                 }
             }
-            catch (Exception)
+            catch (Win32Exception ex)
+            {
+                if (ex.NativeErrorCode == 267)
+                {
+                    throw new Exception(string.Format("{0} has no permissions to run an instance of WoW",
+                                                      Config.GuestUsername));
+                }
+                throw;
+            }
+            catch 
             {
                 throw new Exception("Cannot run an instance of WoW");
             }
@@ -75,7 +90,6 @@ namespace BabBot.Manager
             {
                 throw (ex);
             }
-
         }
 
         public static void UpdatePlayerLocation()
@@ -92,7 +106,6 @@ namespace BabBot.Manager
             Player.Location = new Vector3D(x, y, z);
 
             Player.CurTargetGuid = wowProcess.ReadUInt64(Globals.PlayerCurTargetGuidOffset);
-            
         }
 
         public static void UpdatePlayerStats()
@@ -107,7 +120,6 @@ namespace BabBot.Manager
             Player.Mp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerManaOffset);
             Player.MaxMp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerMaxManaOffset);
             Player.Xp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerXpOffset);
-
         }
 
         public static void UpdatePlayer()
@@ -126,7 +138,7 @@ namespace BabBot.Manager
             try
             {
                 WowProcess.ReadUInt(WowProcess.ReadUInt(WowProcess.ReadUInt(Globals.GameOffset) +
-                                       Globals.PlayerBaseOffset1) + Globals.PlayerBaseOffset2);
+                                                        Globals.PlayerBaseOffset1) + Globals.PlayerBaseOffset2);
                 InGame = true;
             }
             catch
