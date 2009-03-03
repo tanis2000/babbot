@@ -17,6 +17,7 @@ namespace BabBot.Manager
         public static Player Player;
         public static bool InGame;
         public static uint TLS;
+        public static ObjectManager ObjectManager;
 
         public static BlackMagic WowProcess
         {
@@ -134,7 +135,7 @@ namespace BabBot.Manager
             }
         }
 
-        // TODO: Too bad this is not working. Might be doable with the correct pattern maybe?
+        // TODO: This should actually be converted to the initialization function once we are into the game
         public static void FindTLS()
         {
             //search for the code pattern that we want (in this case, WoW TLS)
@@ -143,8 +144,11 @@ namespace BabBot.Manager
                                        "xxxxxx????xxx????xxxxx????xx????");
 
             Globals.ClientConnectionPointer = wowProcess.ReadUInt(TLS + 0x16);
+            Globals.ClientConnection = wowProcess.ReadUInt(Globals.ClientConnectionPointer);
             Globals.ClientConnectionOffset = wowProcess.ReadUInt(TLS + 0x1C);
-            Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnectionPointer + Globals.ClientConnectionOffset);
+            Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
+            ObjectManager = new ObjectManager();
+
 
             if (TLS == uint.MaxValue)
             {

@@ -40,21 +40,24 @@
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.btnRun = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tbTLS = new System.Windows.Forms.TextBox();
-            this.btnFindTLS = new System.Windows.Forms.Button();
-            this.tbClientConnectionPointer = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbClientConnectionOffset = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbPlayerBaseOffset = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.tabPageDebug = new System.Windows.Forms.TabPage();
             this.tbCurMgr = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.tbPlayerBaseOffset = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbClientConnectionOffset = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tbClientConnectionPointer = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnFindTLS = new System.Windows.Forms.Button();
+            this.tbTLS = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tbLocalGUID = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
+            this.tabPageDebug.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -91,7 +94,7 @@
             // tabControlMain
             // 
             this.tabControlMain.Controls.Add(this.tabPageMain);
-            this.tabControlMain.Controls.Add(this.tabPage2);
+            this.tabControlMain.Controls.Add(this.tabPageDebug);
             this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlMain.Location = new System.Drawing.Point(0, 24);
             this.tabControlMain.Name = "tabControlMain";
@@ -101,17 +104,6 @@
             // 
             // tabPageMain
             // 
-            this.tabPageMain.Controls.Add(this.tbCurMgr);
-            this.tabPageMain.Controls.Add(this.label5);
-            this.tabPageMain.Controls.Add(this.tbPlayerBaseOffset);
-            this.tabPageMain.Controls.Add(this.label4);
-            this.tabPageMain.Controls.Add(this.tbClientConnectionOffset);
-            this.tabPageMain.Controls.Add(this.label3);
-            this.tabPageMain.Controls.Add(this.tbClientConnectionPointer);
-            this.tabPageMain.Controls.Add(this.label2);
-            this.tabPageMain.Controls.Add(this.btnFindTLS);
-            this.tabPageMain.Controls.Add(this.tbTLS);
-            this.tabPageMain.Controls.Add(this.label1);
             this.tabPageMain.Controls.Add(this.btnUpdateLocation);
             this.tabPageMain.Controls.Add(this.lblOrientation);
             this.tabPageMain.Controls.Add(this.lblLocation);
@@ -178,105 +170,134 @@
             this.btnRun.UseVisualStyleBackColor = true;
             this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
-            // tabPage2
+            // tabPageDebug
             // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(513, 265);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(24, 132);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(30, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "TLS:";
-            // 
-            // tbTLS
-            // 
-            this.tbTLS.Location = new System.Drawing.Point(60, 129);
-            this.tbTLS.Name = "tbTLS";
-            this.tbTLS.Size = new System.Drawing.Size(150, 20);
-            this.tbTLS.TabIndex = 7;
-            // 
-            // btnFindTLS
-            // 
-            this.btnFindTLS.Location = new System.Drawing.Point(216, 127);
-            this.btnFindTLS.Name = "btnFindTLS";
-            this.btnFindTLS.Size = new System.Drawing.Size(75, 23);
-            this.btnFindTLS.TabIndex = 8;
-            this.btnFindTLS.Text = "Find TLS";
-            this.btnFindTLS.UseVisualStyleBackColor = true;
-            this.btnFindTLS.Click += new System.EventHandler(this.btnFindTLS_Click);
-            // 
-            // tbClientConnectionPointer
-            // 
-            this.tbClientConnectionPointer.Location = new System.Drawing.Point(156, 155);
-            this.tbClientConnectionPointer.Name = "tbClientConnectionPointer";
-            this.tbClientConnectionPointer.Size = new System.Drawing.Size(150, 20);
-            this.tbClientConnectionPointer.TabIndex = 10;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 158);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(126, 13);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "ClientConnectionPointer::";
-            // 
-            // tbClientConnectionOffset
-            // 
-            this.tbClientConnectionOffset.Location = new System.Drawing.Point(156, 181);
-            this.tbClientConnectionOffset.Name = "tbClientConnectionOffset";
-            this.tbClientConnectionOffset.Size = new System.Drawing.Size(150, 20);
-            this.tbClientConnectionOffset.TabIndex = 12;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(24, 184);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(118, 13);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "ClientConnectionOffset:";
-            // 
-            // tbPlayerBaseOffset
-            // 
-            this.tbPlayerBaseOffset.Location = new System.Drawing.Point(156, 207);
-            this.tbPlayerBaseOffset.Name = "tbPlayerBaseOffset";
-            this.tbPlayerBaseOffset.Size = new System.Drawing.Size(150, 20);
-            this.tbPlayerBaseOffset.TabIndex = 14;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(24, 210);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(88, 13);
-            this.label4.TabIndex = 13;
-            this.label4.Text = "PlayerBaseOffset";
+            this.tabPageDebug.Controls.Add(this.tbLocalGUID);
+            this.tabPageDebug.Controls.Add(this.label6);
+            this.tabPageDebug.Controls.Add(this.tbCurMgr);
+            this.tabPageDebug.Controls.Add(this.label5);
+            this.tabPageDebug.Controls.Add(this.tbPlayerBaseOffset);
+            this.tabPageDebug.Controls.Add(this.label4);
+            this.tabPageDebug.Controls.Add(this.tbClientConnectionOffset);
+            this.tabPageDebug.Controls.Add(this.label3);
+            this.tabPageDebug.Controls.Add(this.tbClientConnectionPointer);
+            this.tabPageDebug.Controls.Add(this.label2);
+            this.tabPageDebug.Controls.Add(this.btnFindTLS);
+            this.tabPageDebug.Controls.Add(this.tbTLS);
+            this.tabPageDebug.Controls.Add(this.label1);
+            this.tabPageDebug.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDebug.Name = "tabPageDebug";
+            this.tabPageDebug.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDebug.Size = new System.Drawing.Size(513, 265);
+            this.tabPageDebug.TabIndex = 1;
+            this.tabPageDebug.Text = "Debug";
+            this.tabPageDebug.UseVisualStyleBackColor = true;
             // 
             // tbCurMgr
             // 
-            this.tbCurMgr.Location = new System.Drawing.Point(156, 233);
+            this.tbCurMgr.Location = new System.Drawing.Point(139, 110);
             this.tbCurMgr.Name = "tbCurMgr";
             this.tbCurMgr.Size = new System.Drawing.Size(150, 20);
-            this.tbCurMgr.TabIndex = 16;
+            this.tbCurMgr.TabIndex = 27;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(24, 236);
+            this.label5.Location = new System.Drawing.Point(7, 113);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(44, 13);
-            this.label5.TabIndex = 15;
+            this.label5.TabIndex = 26;
             this.label5.Text = "CurMgr:";
+            // 
+            // tbPlayerBaseOffset
+            // 
+            this.tbPlayerBaseOffset.Location = new System.Drawing.Point(139, 84);
+            this.tbPlayerBaseOffset.Name = "tbPlayerBaseOffset";
+            this.tbPlayerBaseOffset.Size = new System.Drawing.Size(150, 20);
+            this.tbPlayerBaseOffset.TabIndex = 25;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(7, 87);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(88, 13);
+            this.label4.TabIndex = 24;
+            this.label4.Text = "PlayerBaseOffset";
+            // 
+            // tbClientConnectionOffset
+            // 
+            this.tbClientConnectionOffset.Location = new System.Drawing.Point(139, 58);
+            this.tbClientConnectionOffset.Name = "tbClientConnectionOffset";
+            this.tbClientConnectionOffset.Size = new System.Drawing.Size(150, 20);
+            this.tbClientConnectionOffset.TabIndex = 23;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 61);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(118, 13);
+            this.label3.TabIndex = 22;
+            this.label3.Text = "ClientConnectionOffset:";
+            // 
+            // tbClientConnectionPointer
+            // 
+            this.tbClientConnectionPointer.Location = new System.Drawing.Point(139, 32);
+            this.tbClientConnectionPointer.Name = "tbClientConnectionPointer";
+            this.tbClientConnectionPointer.Size = new System.Drawing.Size(150, 20);
+            this.tbClientConnectionPointer.TabIndex = 21;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(7, 35);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(126, 13);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "ClientConnectionPointer::";
+            // 
+            // btnFindTLS
+            // 
+            this.btnFindTLS.Location = new System.Drawing.Point(199, 4);
+            this.btnFindTLS.Name = "btnFindTLS";
+            this.btnFindTLS.Size = new System.Drawing.Size(75, 23);
+            this.btnFindTLS.TabIndex = 19;
+            this.btnFindTLS.Text = "Find TLS";
+            this.btnFindTLS.UseVisualStyleBackColor = true;
+            this.btnFindTLS.Click += new System.EventHandler(this.btnFindTLS_Click);
+            // 
+            // tbTLS
+            // 
+            this.tbTLS.Location = new System.Drawing.Point(43, 6);
+            this.tbTLS.Name = "tbTLS";
+            this.tbTLS.Size = new System.Drawing.Size(150, 20);
+            this.tbTLS.TabIndex = 18;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(30, 13);
+            this.label1.TabIndex = 17;
+            this.label1.Text = "TLS:";
+            // 
+            // tbLocalGUID
+            // 
+            this.tbLocalGUID.Location = new System.Drawing.Point(139, 156);
+            this.tbLocalGUID.Name = "tbLocalGUID";
+            this.tbLocalGUID.Size = new System.Drawing.Size(150, 20);
+            this.tbLocalGUID.TabIndex = 29;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(7, 159);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(63, 13);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "LocalGUID:";
             // 
             // MainForm
             // 
@@ -292,6 +313,8 @@
             this.tabControlMain.ResumeLayout(false);
             this.tabPageMain.ResumeLayout(false);
             this.tabPageMain.PerformLayout();
+            this.tabPageDebug.ResumeLayout(false);
+            this.tabPageDebug.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -305,24 +328,26 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.TabControl tabControlMain;
         private System.Windows.Forms.TabPage tabPageMain;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPageDebug;
         private System.Windows.Forms.Label lblOrientation;
         private System.Windows.Forms.Label lblLocation;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox tbLocation;
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Button btnUpdateLocation;
-        private System.Windows.Forms.TextBox tbTLS;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnFindTLS;
+        private System.Windows.Forms.TextBox tbCurMgr;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox tbPlayerBaseOffset;
+        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbClientConnectionOffset;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbClientConnectionPointer;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbPlayerBaseOffset;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox tbCurMgr;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button btnFindTLS;
+        private System.Windows.Forms.TextBox tbTLS;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox tbLocalGUID;
+        private System.Windows.Forms.Label label6;
     }
 }
 

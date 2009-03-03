@@ -74,6 +74,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Wow\Globals.cs" />
+    <Compile Include="Wow\ObjectManager.cs" />
     <Compile Include="Wow\Player.cs" />
     <Compile Include="Wow\Vector3D.cs" />
   </ItemGroup>

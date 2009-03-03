@@ -77,10 +77,11 @@ namespace BabBot.Forms
                 tbClientConnectionOffset.Text = string.Format("{0:X}", Globals.ClientConnectionOffset);
                 tbPlayerBaseOffset.Text = string.Format("{0:X}", Globals.PlayerBaseOffset);
                 tbCurMgr.Text = string.Format("{0:X}", Globals.CurMgr);
+                tbLocalGUID.Text = ProcessManager.ObjectManager.GetLocalGUID().ToString();
             }
             catch(Exception ex)
             {
-                tbTLS.Text = ex.Message;
+                MessageBox.Show(ex.Message);
             }
         }
     }

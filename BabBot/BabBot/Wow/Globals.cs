@@ -20,10 +20,18 @@ namespace BabBot.Wow
         public const uint PlayerYOffset = 0x7D4;
         public const uint PlayerZOffset = 0x7D8;
         public const uint PlayerCurTargetGuidOffset = 0x10A68E0;
+
+        // ObjectManager
         public static uint ClientConnectionPointer = 0x0;
         public static uint ClientConnectionOffset = 0x0;
+        public static uint ClientConnection = 0x0;
         public static uint CurMgr = 0x0;
-        public static uint LocalGuidOffset = 0xc0;
+        public static uint LocalGuidOffset = 0xC0;
+        public static uint FirstObject = 0xAC;
+        public static uint GuidOffset = 0x30;
+        public static uint NextObject = 60;
+        public static uint TypeOffset = 20;
+
 
         public static uint PlayerBaseOffset
         {
