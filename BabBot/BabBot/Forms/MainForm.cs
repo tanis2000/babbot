@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using BabBot.Manager;
+using BabBot.Wow;
 using Magic;
 
 namespace BabBot.Forms
@@ -63,6 +64,23 @@ namespace BabBot.Forms
                 ProcessManager.UpdatePlayerLocation();
 
                 tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", ProcessManager.Player.Location.X, ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z, ProcessManager.Player.CurTargetGuid);
+            }
+        }
+
+        private void btnFindTLS_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ProcessManager.FindTLS();
+                tbTLS.Text = string.Format("{0:X}", ProcessManager.TLS);
+                tbClientConnectionPointer.Text = string.Format("{0:X}", Globals.ClientConnectionPointer);
+                tbClientConnectionOffset.Text = string.Format("{0:X}", Globals.ClientConnectionOffset);
+                tbPlayerBaseOffset.Text = string.Format("{0:X}", Globals.PlayerBaseOffset);
+                tbCurMgr.Text = string.Format("{0:X}", Globals.CurMgr);
+            }
+            catch(Exception ex)
+            {
+                tbTLS.Text = ex.Message;
             }
         }
     }
