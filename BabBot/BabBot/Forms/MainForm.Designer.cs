@@ -41,6 +41,8 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
+            this.tbLocalGUID = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.tbCurMgr = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tbPlayerBaseOffset = new System.Windows.Forms.TextBox();
@@ -52,8 +54,6 @@
             this.btnFindTLS = new System.Windows.Forms.Button();
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.tbLocalGUID = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -88,7 +88,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             // 
             // tabControlMain
@@ -193,6 +193,22 @@
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
             // 
+            // tbLocalGUID
+            // 
+            this.tbLocalGUID.Location = new System.Drawing.Point(139, 156);
+            this.tbLocalGUID.Name = "tbLocalGUID";
+            this.tbLocalGUID.Size = new System.Drawing.Size(150, 20);
+            this.tbLocalGUID.TabIndex = 29;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(7, 159);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(63, 13);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "LocalGUID:";
+            // 
             // tbCurMgr
             // 
             this.tbCurMgr.Location = new System.Drawing.Point(139, 110);
@@ -282,22 +298,6 @@
             this.label1.Size = new System.Drawing.Size(30, 13);
             this.label1.TabIndex = 17;
             this.label1.Text = "TLS:";
-            // 
-            // tbLocalGUID
-            // 
-            this.tbLocalGUID.Location = new System.Drawing.Point(139, 156);
-            this.tbLocalGUID.Name = "tbLocalGUID";
-            this.tbLocalGUID.Size = new System.Drawing.Size(150, 20);
-            this.tbLocalGUID.TabIndex = 29;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 159);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(63, 13);
-            this.label6.TabIndex = 28;
-            this.label6.Text = "LocalGUID:";
             // 
             // MainForm
             // 
