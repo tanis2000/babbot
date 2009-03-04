@@ -4,6 +4,26 @@ using System.Text;
 
 namespace BabBot.Wow
 {
+    public enum PlayerState : int
+    {
+        PreMobSelection, // Before selecting a mob
+        PostMobSelection, // After selecting a mob
+        Start, // We just started 
+        WayPointTimeout, // Cannot reach a waypoint in time
+        PreRest, // Before resting
+        Rest, // During rest
+        PostRest, // After resting
+        Dead, // Died
+        Graveyard, // Spawned at the graveyard
+        PreResurrection, // Before resurrecting
+        PostResurrection, // After resurrecting
+        PreLoot, // Before looting
+        PostLoot, // After looting
+        PreCombat, // Before combat
+        PostCombat, // After Combat
+        Sale // At the vendor/repair guy
+    }
+
     public class Player
     {
         public uint Hp;
