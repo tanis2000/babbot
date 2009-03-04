@@ -35,6 +35,7 @@ namespace BabBot.Wow
         public UInt64 CurTargetGuid;
         public Unit Unit; // The corresponding Unit in Wow's ObjectManager
         public float Orientation;
+        public PlayerState State;
 
         public Player()
         {
@@ -46,6 +47,7 @@ namespace BabBot.Wow
             Xp = 0;
             CurTargetGuid = 0;
             Orientation = 0.0f;
+            State = PlayerState.Start;
         }
 
         public void AttachUnit(uint ObjectPointer)
