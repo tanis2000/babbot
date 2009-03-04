@@ -1,0 +1,78 @@
+Various notes and snippets of code that will be handy later on..
+
+
+you can use "/script RepopMe()" to click the release button, then do "/script RetrieveCorpse()" 
+when you're within 30 yards. these are functions built into the game so you dont have to 
+worry about calculating where the buttons to click are based on the current resolution.
+
+
+Player dead if health value == 0
+After that player is ghost if health value == 1
+
+
+
+When your health == 0, save your current x,y,z to variables, then waypoint to those points 
+until distance to that point <= 30 yards and no enemy is within 20 yards (randomly walk around until #2 is true).
+
+
+
+public static CorpseObject[] GetCorpseObjects(IntPtr hProcess)
+        {
+            Object[] Objects = GetObjects(hProcess);
+
+            List<CorpseObject> Corpses = new List<CorpseObject>();
+            for (int i = 0; i < Objects.Length; i++)
+            {
+
+                if (Objects[i].OBJECT_FIELD_TYPE == (int)eObjectType.CORPSE)
+                {
+                        float x = MemoryLib.Memory.ReadFloat(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_POS_X));
+
+                        float y = MemoryLib.Memory.ReadFloat(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_POS_Y));
+
+                        float z = MemoryLib.Memory.ReadFloat(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_POS_Z));
+
+                        float facing = MemoryLib.Memory.ReadFloat(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_FACING));
+
+                        UInt64 owner = MemoryLib.Memory.ReadUInt64(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_OWNER));
+
+                        CorpseObject tempCorpse = new CorpseObject();
+                        tempCorpse.CORPSE_FIELD_POS_X = x;
+                        tempCorpse.CORPSE_FIELD_POS_Y = y;
+                        tempCorpse.CORPSE_FIELD_POS_Z = z;
+                        tempCorpse.CORPSE_FIELD_FACING = facing;
+                        tempCorpse.CORPSE_FIELD_OWNER = owner;
+
+                        Corpses.Add(tempCorpse);
+                }
+            }
+            CorpseObject[] retVector = new CorpseObject[Corpses.Count];
+            Corpses.CopyTo(retVector);
+
+            return retVector;
+        }
+
+
+
+
+Lista completa dei descrittori mancanti in quello attuale (anche se questi sono vecchi):
+http://www.nomorepasting.com/getpaste.php?pasteid=17404
+
+
+
+[[objectaddress+0x8]+0x17*4]
+Explanation: read object base + 8 for a pointer to UNIT_FIELDS. 
+If you check the post unit fields health is 0x17, you read from unit fields + 0x17 multiplied by 4 because 
+each array slot* is 4 bytes.
+
+
+
+
+http://www.mmowned.com/forums/wow-memory-editing/208754-guide-kind-how-i-handle-objects.html
+Spiegazione dettagliata di come funziona l'ObjectMAnager di WoW
+

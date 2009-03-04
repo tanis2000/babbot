@@ -61,6 +61,11 @@ namespace BabBot.Wow
 
             Location = Unit.GetPosition();
             Hp = Unit.GetHp();
+            MaxHp = Unit.GetMaxHp();
+            Mp = Unit.GetMp();
+            MaxMp = Unit.GetMaxMp();
+            Xp = Unit.GetXp();
+            //CurTargetGuid = Unit.GetCurTargetGuid();
             Orientation = Unit.GetFacing();
         }
     }

@@ -8,11 +8,11 @@ namespace BabBot.Wow
     public class Globals
     {
         public const uint GameOffset = 0x127F13C;
-        public const uint PlayerHealthOffset = 0xFF4;
-        public const uint PlayerMaxHealthOffset = 0x26E4;
-        public const uint PlayerManaOffset = 0xFF8;
-        public const uint PlayerMaxManaOffset = 0x26E8;
-        public const uint PlayerXpOffset = 0x3630;
+        //public const uint PlayerHealthOffset = 0xFF4;
+        //public const uint PlayerMaxHealthOffset = 0x26E4;
+        //public const uint PlayerManaOffset = 0xFF8;
+        //public const uint PlayerMaxManaOffset = 0x26E8;
+        //public const uint PlayerXpOffset = 0x3630;
         private static uint playerBaseOffset = 0x0;
         public const uint PlayerBaseOffset1 = 0x30;
         public const uint PlayerBaseOffset2 = 0x28;
@@ -29,8 +29,8 @@ namespace BabBot.Wow
         public static uint LocalGuidOffset = 0xC0;
         public static uint FirstObject = 0xAC;
         public static uint GuidOffset = 0x30;
-        public static uint NextObject = 60;
-        public static uint TypeOffset = 20;
+        public static uint NextObject = 0x3C;
+        public static uint TypeOffset = 0x14;
         public static uint DescriptorOffset = 0x08;
         public static uint UnitFieldOffset = 0x110;
 

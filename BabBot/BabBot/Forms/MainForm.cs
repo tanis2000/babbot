@@ -94,6 +94,11 @@ namespace BabBot.Forms
                                                 ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z,
                                                 ProcessManager.Player.CurTargetGuid);
                 tbOrientation.Text = String.Format("Or.: {0}", ProcessManager.Player.Orientation);
+                tbPlayerHp.Text = ProcessManager.Player.Hp.ToString();
+                tbPlayerMaxHp.Text = ProcessManager.Player.MaxHp.ToString();
+                tbPlayerMp.Text = ProcessManager.Player.Mp.ToString();
+                tbPlayerMaxMp.Text = ProcessManager.Player.MaxMp.ToString();
+                tbPlayerXp.Text = ProcessManager.Player.Xp.ToString();
             }
         }
 
