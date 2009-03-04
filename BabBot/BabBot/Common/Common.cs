@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
 using Microsoft.Win32;
 
 namespace BabBot.Common
@@ -9,6 +11,14 @@ namespace BabBot.Common
         private const string APPNAME = "Wow.exe";
         private const string KEY = "InstallPath";
         private const string ROOT = @"SOFTWARE\Blizzard Entertainment\World of Warcraft";
+        private const string WND_TITLE = "World of Warcraft";
+
+        [DllImport("user32.dll")]
+        private static extern int FindWindow(string className, string windowText);
+
+        [DllImport("user32.dll")]
+        public static extern bool IsWindowVisible(int hWnd);
+
 
         /// <summary>
         /// Get the installation path from the registry 
@@ -27,7 +37,7 @@ namespace BabBot.Common
                 wowKey = Registry.LocalMachine.CreateSubKey(ROOT);
                 if (wowKey != null)
                 {
-                    res =  wowKey.GetValue(KEY) + APPNAME;
+                    res = wowKey.GetValue(KEY) + APPNAME;
                 }
                 else
                 {
@@ -70,6 +80,24 @@ namespace BabBot.Common
         public static Process RunAs(string Username, string Password, string Domain, string AppName)
         {
             return Common.RunAs.StartProcess(Username, Domain, Password, AppName);
+        }
+
+        /// <summary>
+        /// Dummy version to check and wait for Wow Process 
+        /// </summary>
+        public static void WaitForWowWindow()
+        {
+            int hWnd = 0;
+            bool isVisible = false;
+            while (hWnd == 0 && !isVisible)
+            {
+                hWnd = FindWindow(null, WND_TITLE);
+                if (hWnd != 0)
+                {
+                    isVisible = IsWindowVisible(hWnd);
+                }
+                Thread.Sleep(1000);
+            }
         }
     }
 }
