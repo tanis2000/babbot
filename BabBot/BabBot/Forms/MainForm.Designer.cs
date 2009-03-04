@@ -37,7 +37,7 @@
             this.btnUpdateLocation = new System.Windows.Forms.Button();
             this.lblOrientation = new System.Windows.Forms.Label();
             this.lblLocation = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
@@ -54,6 +54,7 @@
             this.btnFindTLS = new System.Windows.Forms.Button();
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -73,6 +74,8 @@
             // 
             // fileToolStripMenuItem
             // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "&File";
@@ -88,7 +91,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             // 
             // tabControlMain
@@ -107,7 +110,7 @@
             this.tabPageMain.Controls.Add(this.btnUpdateLocation);
             this.tabPageMain.Controls.Add(this.lblOrientation);
             this.tabPageMain.Controls.Add(this.lblLocation);
-            this.tabPageMain.Controls.Add(this.textBox2);
+            this.tabPageMain.Controls.Add(this.tbOrientation);
             this.tabPageMain.Controls.Add(this.tbLocation);
             this.tabPageMain.Controls.Add(this.btnRun);
             this.tabPageMain.Location = new System.Drawing.Point(4, 22);
@@ -146,12 +149,12 @@
             this.lblLocation.TabIndex = 3;
             this.lblLocation.Text = "Location:";
             // 
-            // textBox2
+            // tbOrientation
             // 
-            this.textBox2.Location = new System.Drawing.Point(75, 68);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(301, 20);
-            this.textBox2.TabIndex = 2;
+            this.tbOrientation.Location = new System.Drawing.Point(75, 68);
+            this.tbOrientation.Name = "tbOrientation";
+            this.tbOrientation.Size = new System.Drawing.Size(301, 20);
+            this.tbOrientation.TabIndex = 2;
             // 
             // tbLocation
             // 
@@ -299,6 +302,13 @@
             this.label1.TabIndex = 17;
             this.label1.Text = "TLS:";
             // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Text = "E&xit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -331,7 +341,7 @@
         private System.Windows.Forms.TabPage tabPageDebug;
         private System.Windows.Forms.Label lblOrientation;
         private System.Windows.Forms.Label lblLocation;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox tbOrientation;
         private System.Windows.Forms.TextBox tbLocation;
         private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.Button btnUpdateLocation;
@@ -348,6 +358,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbLocalGUID;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     }
 }
 

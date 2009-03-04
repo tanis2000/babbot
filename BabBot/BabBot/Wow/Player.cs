@@ -14,7 +14,7 @@ namespace BabBot.Wow
         public Vector3D Location;
         public UInt64 CurTargetGuid;
         public Unit Unit; // The corresponding Unit in Wow's ObjectManager
-        public uint Orientation;
+        public float Orientation;
 
         public Player()
         {
@@ -25,7 +25,21 @@ namespace BabBot.Wow
             MaxMp = 0;
             Xp = 0;
             CurTargetGuid = 0;
-            Orientation = 0;
+            Orientation = 0.0f;
+        }
+
+        public void AttachUnit(uint ObjectPointer)
+        {
+            Unit = new Unit(ObjectPointer);
+        }
+
+        public void UpdateFromClient()
+        {
+            if (Unit == null) return;
+
+            Location = Unit.GetPosition();
+            Hp = Unit.GetHp();
+            Orientation = Unit.GetFacing();
         }
     }
 }

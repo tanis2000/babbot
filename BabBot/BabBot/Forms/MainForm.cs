@@ -61,9 +61,10 @@ namespace BabBot.Forms
         {
             if (ProcessManager.ProcessRunning)
             {
-                ProcessManager.UpdatePlayerLocation();
+                ProcessManager.Player.UpdateFromClient();
 
                 tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", ProcessManager.Player.Location.X, ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z, ProcessManager.Player.CurTargetGuid);
+                tbOrientation.Text = String.Format("Or.: {0}", ProcessManager.Player.Orientation);
             }
         }
 
@@ -83,6 +84,11 @@ namespace BabBot.Forms
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
 
     }

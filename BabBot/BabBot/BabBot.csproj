@@ -75,9 +75,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Wow\Descriptor.cs" />
     <Compile Include="Wow\Globals.cs" />
     <Compile Include="Wow\ObjectManager.cs" />
     <Compile Include="Wow\Player.cs" />
+    <Compile Include="Wow\Unit.cs" />
     <Compile Include="Wow\Vector3D.cs" />
   </ItemGroup>
   <ItemGroup>

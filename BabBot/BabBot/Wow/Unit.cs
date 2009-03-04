@@ -14,7 +14,7 @@ namespace BabBot.Wow
 
         public Unit(uint objectPointer)
         {
-            objectPointer = objectPointer;
+            ObjectPointer = objectPointer;
             if (ObjectPointer != 0)
             {
                 UnitDescriptor = ProcessManager.WowProcess.ReadUInt(ObjectPointer + Globals.DescriptorOffset);
@@ -28,9 +28,9 @@ namespace BabBot.Wow
 
         }
 
-        public int GetHp()
+        public uint GetHp()
         {
-            return ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_HEALTH * 4);
+            return (uint) ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_HEALTH * 4);
         }
 
         public float GetFacing()

@@ -16,6 +16,7 @@ namespace BabBot.Manager
         private static Process process;
         public static bool ProcessRunning;
         public static uint TLS;
+        public static bool Initialized;
 
         static ProcessManager()
         {
@@ -25,6 +26,7 @@ namespace BabBot.Manager
             Player = new Player();
             InGame = false;
             TLS = 0x0;
+            Initialized = false;
         }
 
         public static BlackMagic WowProcess
@@ -93,7 +95,7 @@ namespace BabBot.Manager
                 throw (ex);
             }
         }
-
+/*
         public static void UpdatePlayerLocation()
         {
             if (!InGame)
@@ -123,16 +125,15 @@ namespace BabBot.Manager
             Player.MaxMp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerMaxManaOffset);
             Player.Xp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerXpOffset);
         }
-
+*/
         public static void UpdatePlayer()
         {
-            if (!InGame)
+            if (!Initialized)
             {
                 return;
             }
 
-            UpdatePlayerLocation();
-            UpdatePlayerStats();
+            Player.UpdateFromClient();
         }
 
         public static void CheckInGame()
@@ -162,6 +163,8 @@ namespace BabBot.Manager
             Globals.ClientConnectionOffset = wowProcess.ReadUInt(TLS + 0x1C);
             Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
             ObjectManager = new ObjectManager();
+            Player.AttachUnit(ObjectManager.GetLocalPlayerObject());
+            Initialized = true;
 
 
             if (TLS == uint.MaxValue)
