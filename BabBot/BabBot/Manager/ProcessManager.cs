@@ -116,7 +116,8 @@ namespace BabBot.Manager
                 
                 // TODO: è un po sporca ogni tanto scazza, meglio usare una FindWindow, per
                 // sapere esattamente quando aprire il processo con BlackMagic
-                process.WaitForInputIdle(15000);
+                // process.WaitForInputIdle(15000);
+                AppHelper.WaitForWowWindow();
 
                 ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
             }
