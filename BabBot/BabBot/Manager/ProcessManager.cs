@@ -1,7 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Security;
+using BabBot.Common;
 using BabBot.Wow;
 using Magic;
 
@@ -49,21 +48,22 @@ namespace BabBot.Manager
         {
             try
             {
-                /// TODO: Read the game path from the registry:  Common.GetWowInstallationPath()
-                /// TODO: In VISTA cosi non funziona manco per il cazzo (virtualization di merda) 
-                /// Process.Start(Common.GetWowInstallationPath());
-                /// http://www.bokebb.com/dev/english/2045/posts/204519378.shtml
-                
-                process = !Common.IsVista()
-                              ? Process.Start(Common.GetWowInstallationPath(), "", Config.GuestUsername,
+                /* Deprecated
+                process = !AppHelper.IsVista()
+                              ? Process.Start(AppHelper.GetWowInstallationPath(), "", Config.GuestUsername,
                                               new SecureString(), "")
-                              : Process.Start(Common.GetWowInstallationPath());
+                              : Process.Start(AppHelper.GetWowInstallationPath());
+                */
+
+                // TODO: da testare sotto XP se possiamo utilizzare la stessa chiamata per entrambi gli SO
+                process = AppHelper.RunAs(Config.GuestUsername, "", null, AppHelper.GetWowInstallationPath());
 
                 if (process != null)
                 {
                     process.WaitForInputIdle(10000);
                 }
             }
+            /*
             catch (Win32Exception ex)
             {
                 if (ex.NativeErrorCode == 267)
@@ -73,9 +73,10 @@ namespace BabBot.Manager
                 }
                 throw;
             }
-            catch 
+            */
+            catch (Exception ex)
             {
-                throw new Exception("Cannot run an instance of WoW");
+                throw new Exception("Cannot run an instance of WoW: " + ex.Message);
             }
 
             if (process == null)
