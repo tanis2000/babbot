@@ -91,13 +91,21 @@ namespace BabBot.Common
             bool isVisible = false;
             while (hWnd == 0 && !isVisible)
             {
-                hWnd = FindWindow(null, WND_TITLE);
+                hWnd = GetWowWindowHandle();
                 if (hWnd != 0)
                 {
                     isVisible = IsWindowVisible(hWnd);
                 }
                 Thread.Sleep(1000);
             }
+        }
+
+        /// <summary>
+        /// Dummy version to get the Wow window handle
+        /// </summary>
+        public static int GetWowWindowHandle()
+        {
+            return FindWindow(null, WND_TITLE);
         }
     }
 }
