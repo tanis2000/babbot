@@ -92,6 +92,7 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.btnAttachToWow = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -159,6 +160,7 @@
             // 
             // tabPageMain
             // 
+            this.tabPageMain.Controls.Add(this.btnAttachToWow);
             this.tabPageMain.Controls.Add(this.label9);
             this.tabPageMain.Controls.Add(this.label8);
             this.tabPageMain.Controls.Add(this.tbProfileDescription);
@@ -707,6 +709,16 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
             // 
+            // btnAttachToWow
+            // 
+            this.btnAttachToWow.Location = new System.Drawing.Point(87, 7);
+            this.btnAttachToWow.Name = "btnAttachToWow";
+            this.btnAttachToWow.Size = new System.Drawing.Size(95, 23);
+            this.btnAttachToWow.TabIndex = 15;
+            this.btnAttachToWow.Text = "Attach to WoW";
+            this.btnAttachToWow.UseVisualStyleBackColor = true;
+            this.btnAttachToWow.Click += new System.EventHandler(this.btnAttachToWow_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -806,6 +818,7 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button btnAttachToWow;
     }
 }
 

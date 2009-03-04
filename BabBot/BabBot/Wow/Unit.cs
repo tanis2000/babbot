@@ -17,14 +17,7 @@ namespace BabBot.Wow
             ObjectPointer = objectPointer;
             if (ObjectPointer != 0)
             {
-                /*
                 UnitDescriptor = ProcessManager.WowProcess.ReadUInt(ObjectPointer + Globals.DescriptorOffset);
-                //Console.WriteLine(string.Format("OP+DescOff: {0:X}", (ObjectPointer + Globals.DescriptorOffset)));
-                UnitField = ProcessManager.WowProcess.ReadUInt(ObjectPointer + Globals.UnitFieldOffset);
-                ObjectGUID = ProcessManager.WowProcess.ReadUInt64(ObjectPointer + Globals.GuidOffset);
-                */
-
-                UnitDescriptor = ProcessManager.WowProcess.ReadUInt(ObjectPointer + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x04);
                 //Console.WriteLine(string.Format("OP+DescOff: {0:X}", (ObjectPointer + Globals.DescriptorOffset)));
                 UnitField = ProcessManager.WowProcess.ReadUInt(ObjectPointer + Globals.UnitFieldOffset);
                 ObjectGUID = ProcessManager.WowProcess.ReadUInt64(ObjectPointer + Globals.GuidOffset);
@@ -38,27 +31,27 @@ namespace BabBot.Wow
 
         public uint GetHp()
         {
-            return (uint) ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_HEALTH);
+            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_FIELD_HEALTH);
         }
 
         public uint GetMaxHp()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_MAXHEALTH * 4);
+            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_FIELD_MAXHEALTH);
         }
 
         public uint GetMp()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_POWER1 * 4);
+            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_FIELD_POWER1);
         }
 
         public uint GetMaxMp()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_MAXPOWER1 * 4);
+            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_FIELD_MAXPOWER1);
         }
 
         public uint GetXp()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.ePlayerFields.PLAYER_XP * 4);
+            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_FIELD_PADDING + 0x04 + (uint)Descriptor.ePlayerFields.PLAYER_XP);
         }
 
         public float GetFacing()

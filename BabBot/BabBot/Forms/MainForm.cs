@@ -45,6 +45,7 @@ namespace BabBot.Forms
             {
                 // Main Thread
                 btnRun.Enabled = true;
+                btnAttachToWow.Enabled = true;
             }
         }
 
@@ -56,6 +57,7 @@ namespace BabBot.Forms
         private void wow_ProcessStarted(int process)
         {
             btnRun.Enabled = false;
+            btnAttachToWow.Enabled = false;
         }
 
         private static void wow_ProcessAccessFailed(string error)
@@ -135,6 +137,11 @@ namespace BabBot.Forms
                 ProcessManager.Profile.Load();
             }
 
+        }
+
+        private void btnAttachToWow_Click(object sender, EventArgs e)
+        {
+            ProcessManager.AttachToWow();
         }
 
     }

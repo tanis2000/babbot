@@ -104,7 +104,7 @@ namespace BabBot.Manager
 
         private static void afterProcessStart()
         {
-            if (WoWProcessStarted != null)
+            if (WoWProcessStarted != null && process != null)
             {
                 WoWProcessStarted(process.Id);
             }
@@ -147,6 +147,22 @@ namespace BabBot.Manager
             try
             {
                 process = AppHelper.RunAs(Config.GuestUsername, "", null, AppHelper.GetWowInstallationPath());
+                afterProcessStart();
+            }
+            catch (Win32Exception w32e)
+            {
+                if (WoWProcessAccessFailed != null)
+                {
+                    WoWProcessFailed(w32e.Message);
+                }
+            }
+        }
+
+        public static void AttachToWow()
+        {
+            try
+            {
+                process = AppHelper.GetRunningWoWProcess(Config.GuestUsername);
                 afterProcessStart();
             }
             catch (Win32Exception w32e)
