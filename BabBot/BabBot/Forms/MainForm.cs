@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Security;
-using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 using BabBot.Manager;
 using BabBot.Wow;
-using Magic;
 
 namespace BabBot.Forms
 {
@@ -19,42 +11,76 @@ namespace BabBot.Forms
         {
             InitializeComponent();
 
-            Timer inGameTimer = new Timer();
+            var inGameTimer = new Timer();
             inGameTimer.Interval = 1000;
             inGameTimer.Start();
-            inGameTimer.Tick += new EventHandler(inGameTimer_Tick);
+            inGameTimer.Tick += inGameTimer_Tick;
 
-            Timer playerTimer = new Timer();
+            var playerTimer = new Timer();
             playerTimer.Interval = 1000;
             playerTimer.Start();
-            playerTimer.Tick += new EventHandler(playerTimer_Tick);
+            playerTimer.Tick += playerTimer_Tick;
 
+            // ProcessManager events binding
+            ProcessManager.WoWProcessStarted += wow_ProcessStarted;
+            ProcessManager.WoWProcessEnded += wow_ProcessEnded;
+            ProcessManager.WoWProcessFailed += wow_ProcessFailed;
+            ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
         }
 
-        void inGameTimer_Tick(object sender, EventArgs e)
+        #region Events
+
+        private void wow_ProcessEnded(int process)
+        {
+            // Cross-Thread operation
+            if (InvokeRequired)
+            {
+                //Setup the cross-thread call
+                ProcessEndedDelegate del = wow_ProcessEnded;
+                object[] parameters = {process};
+                Invoke(del, parameters);
+            }
+            else
+            {
+                // Main Thread
+                btnRun.Enabled = true;
+            }
+        }
+
+        private static void wow_ProcessFailed(string error)
+        {
+            MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void wow_ProcessStarted(int process)
+        {
+            btnRun.Enabled = false;
+        }
+
+        private static void wow_ProcessAccessFailed(string error)
+        {
+            MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private static void inGameTimer_Tick(object sender, EventArgs e)
         {
             ProcessManager.CheckInGame();
         }
 
-        void playerTimer_Tick(object sender, EventArgs e)
+        private static void playerTimer_Tick(object sender, EventArgs e)
         {
             ProcessManager.UpdatePlayer();
         }
+
+        private delegate void ProcessEndedDelegate(int process);
+
+        #endregion
 
         // TODO: Create a timed event that checks if WoW is running and that updates the UI accordingly
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            try
-            {
-                ProcessManager.StartWow();
-                btnRun.Enabled = false;
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            ProcessManager.StartWow();
         }
 
         private void btnUpdateLocation_Click(object sender, EventArgs e)
@@ -63,7 +89,9 @@ namespace BabBot.Forms
             {
                 ProcessManager.Player.UpdateFromClient();
 
-                tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", ProcessManager.Player.Location.X, ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z, ProcessManager.Player.CurTargetGuid);
+                tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", ProcessManager.Player.Location.X,
+                                                ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z,
+                                                ProcessManager.Player.CurTargetGuid);
                 tbOrientation.Text = String.Format("Or.: {0}", ProcessManager.Player.Orientation);
             }
         }
@@ -80,12 +108,11 @@ namespace BabBot.Forms
                 tbCurMgr.Text = string.Format("{0:X}", Globals.CurMgr);
                 tbLocalGUID.Text = ProcessManager.ObjectManager.GetLocalGUID().ToString();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
