@@ -64,10 +64,31 @@
             this.tbProfileDescription = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
+            this.gbNormalWaypoints = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.tbCountNormal = new System.Windows.Forms.TextBox();
+            this.tbCountGhost = new System.Windows.Forms.TextBox();
+            this.tbCountVendor = new System.Windows.Forms.TextBox();
+            this.tbCountRepair = new System.Windows.Forms.TextBox();
+            this.btnCopyFromVendor = new System.Windows.Forms.Button();
+            this.comboWayPointTypes = new System.Windows.Forms.ComboBox();
+            this.btnAddWayPoint = new System.Windows.Forms.Button();
+            this.cbAutoAddWaypoints = new System.Windows.Forms.CheckBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
             this.tabPageDebug.SuspendLayout();
+            this.tabPageWayPoints.SuspendLayout();
+            this.gbNormalWaypoints.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -329,6 +350,13 @@
             // 
             // tabPageWayPoints
             // 
+            this.tabPageWayPoints.Controls.Add(this.cbAutoAddWaypoints);
+            this.tabPageWayPoints.Controls.Add(this.btnAddWayPoint);
+            this.tabPageWayPoints.Controls.Add(this.comboWayPointTypes);
+            this.tabPageWayPoints.Controls.Add(this.groupBox4);
+            this.tabPageWayPoints.Controls.Add(this.groupBox3);
+            this.tabPageWayPoints.Controls.Add(this.groupBox2);
+            this.tabPageWayPoints.Controls.Add(this.gbNormalWaypoints);
             this.tabPageWayPoints.Location = new System.Drawing.Point(4, 22);
             this.tabPageWayPoints.Name = "tabPageWayPoints";
             this.tabPageWayPoints.Padding = new System.Windows.Forms.Padding(3);
@@ -405,6 +433,161 @@
             this.label9.TabIndex = 14;
             this.label9.Text = "Desc:";
             // 
+            // gbNormalWaypoints
+            // 
+            this.gbNormalWaypoints.Controls.Add(this.tbCountNormal);
+            this.gbNormalWaypoints.Controls.Add(this.label10);
+            this.gbNormalWaypoints.Location = new System.Drawing.Point(3, 6);
+            this.gbNormalWaypoints.Name = "gbNormalWaypoints";
+            this.gbNormalWaypoints.Size = new System.Drawing.Size(200, 100);
+            this.gbNormalWaypoints.TabIndex = 0;
+            this.gbNormalWaypoints.TabStop = false;
+            this.gbNormalWaypoints.Text = "Normal";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.tbCountGhost);
+            this.groupBox2.Controls.Add(this.label11);
+            this.groupBox2.Location = new System.Drawing.Point(209, 6);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(200, 100);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Ghost";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.tbCountVendor);
+            this.groupBox3.Controls.Add(this.label12);
+            this.groupBox3.Location = new System.Drawing.Point(3, 112);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(200, 100);
+            this.groupBox3.TabIndex = 2;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Vendor";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.btnCopyFromVendor);
+            this.groupBox4.Controls.Add(this.tbCountRepair);
+            this.groupBox4.Controls.Add(this.label13);
+            this.groupBox4.Location = new System.Drawing.Point(209, 112);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(200, 100);
+            this.groupBox4.TabIndex = 3;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Repair";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(7, 20);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(38, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Count:";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 20);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(38, 13);
+            this.label11.TabIndex = 1;
+            this.label11.Text = "Count:";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(7, 21);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(38, 13);
+            this.label12.TabIndex = 2;
+            this.label12.Text = "Count:";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 21);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(38, 13);
+            this.label13.TabIndex = 3;
+            this.label13.Text = "Count:";
+            // 
+            // tbCountNormal
+            // 
+            this.tbCountNormal.Enabled = false;
+            this.tbCountNormal.Location = new System.Drawing.Point(51, 17);
+            this.tbCountNormal.Name = "tbCountNormal";
+            this.tbCountNormal.Size = new System.Drawing.Size(100, 20);
+            this.tbCountNormal.TabIndex = 1;
+            // 
+            // tbCountGhost
+            // 
+            this.tbCountGhost.Enabled = false;
+            this.tbCountGhost.Location = new System.Drawing.Point(50, 17);
+            this.tbCountGhost.Name = "tbCountGhost";
+            this.tbCountGhost.Size = new System.Drawing.Size(100, 20);
+            this.tbCountGhost.TabIndex = 2;
+            // 
+            // tbCountVendor
+            // 
+            this.tbCountVendor.Enabled = false;
+            this.tbCountVendor.Location = new System.Drawing.Point(51, 18);
+            this.tbCountVendor.Name = "tbCountVendor";
+            this.tbCountVendor.Size = new System.Drawing.Size(100, 20);
+            this.tbCountVendor.TabIndex = 3;
+            // 
+            // tbCountRepair
+            // 
+            this.tbCountRepair.Enabled = false;
+            this.tbCountRepair.Location = new System.Drawing.Point(50, 18);
+            this.tbCountRepair.Name = "tbCountRepair";
+            this.tbCountRepair.Size = new System.Drawing.Size(100, 20);
+            this.tbCountRepair.TabIndex = 4;
+            // 
+            // btnCopyFromVendor
+            // 
+            this.btnCopyFromVendor.Location = new System.Drawing.Point(9, 44);
+            this.btnCopyFromVendor.Name = "btnCopyFromVendor";
+            this.btnCopyFromVendor.Size = new System.Drawing.Size(110, 23);
+            this.btnCopyFromVendor.TabIndex = 5;
+            this.btnCopyFromVendor.Text = "Copy from Vendor";
+            this.btnCopyFromVendor.UseVisualStyleBackColor = true;
+            // 
+            // comboWayPointTypes
+            // 
+            this.comboWayPointTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWayPointTypes.FormattingEnabled = true;
+            this.comboWayPointTypes.Items.AddRange(new object[] {
+            "Normal",
+            "Ghost",
+            "Vendor",
+            "Repair"});
+            this.comboWayPointTypes.Location = new System.Drawing.Point(8, 218);
+            this.comboWayPointTypes.Name = "comboWayPointTypes";
+            this.comboWayPointTypes.Size = new System.Drawing.Size(195, 21);
+            this.comboWayPointTypes.TabIndex = 4;
+            // 
+            // btnAddWayPoint
+            // 
+            this.btnAddWayPoint.Location = new System.Drawing.Point(209, 216);
+            this.btnAddWayPoint.Name = "btnAddWayPoint";
+            this.btnAddWayPoint.Size = new System.Drawing.Size(94, 23);
+            this.btnAddWayPoint.TabIndex = 5;
+            this.btnAddWayPoint.Text = "Add WayPoint";
+            this.btnAddWayPoint.UseVisualStyleBackColor = true;
+            // 
+            // cbAutoAddWaypoints
+            // 
+            this.cbAutoAddWaypoints.AutoSize = true;
+            this.cbAutoAddWaypoints.Location = new System.Drawing.Point(320, 220);
+            this.cbAutoAddWaypoints.Name = "cbAutoAddWaypoints";
+            this.cbAutoAddWaypoints.Size = new System.Drawing.Size(119, 17);
+            this.cbAutoAddWaypoints.TabIndex = 6;
+            this.cbAutoAddWaypoints.Text = "Auto add waypoints";
+            this.cbAutoAddWaypoints.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -421,6 +604,16 @@
             this.tabPageMain.PerformLayout();
             this.tabPageDebug.ResumeLayout(false);
             this.tabPageDebug.PerformLayout();
+            this.tabPageWayPoints.ResumeLayout(false);
+            this.tabPageWayPoints.PerformLayout();
+            this.gbNormalWaypoints.ResumeLayout(false);
+            this.gbNormalWaypoints.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -464,6 +657,22 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox tbProfileDescription;
         private System.Windows.Forms.TextBox tbProfileName;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.GroupBox gbNormalWaypoints;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.CheckBox cbAutoAddWaypoints;
+        private System.Windows.Forms.Button btnAddWayPoint;
+        private System.Windows.Forms.ComboBox comboWayPointTypes;
+        private System.Windows.Forms.Button btnCopyFromVendor;
+        private System.Windows.Forms.TextBox tbCountRepair;
+        private System.Windows.Forms.TextBox tbCountVendor;
+        private System.Windows.Forms.TextBox tbCountGhost;
+        private System.Windows.Forms.TextBox tbCountNormal;
     }
 }
 
