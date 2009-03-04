@@ -5,6 +5,10 @@ using BabBot.Manager;
 
 namespace BabBot.Wow
 {
+    /// <summary>
+    /// This class contains all of the properties and methods used to access WoW's internal
+    /// linked lists of objects.
+    /// </summary>
     public class ObjectManager
     {
         private uint CurMgr;

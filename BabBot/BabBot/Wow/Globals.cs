@@ -31,6 +31,8 @@ namespace BabBot.Wow
         public static uint GuidOffset = 0x30;
         public static uint NextObject = 60;
         public static uint TypeOffset = 20;
+        public static uint DescriptorOffset = 0x08;
+        public static uint UnitFieldOffset = 0x110;
 
 
         public static uint PlayerBaseOffset

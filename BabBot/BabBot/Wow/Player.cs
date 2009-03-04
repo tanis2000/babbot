@@ -13,6 +13,8 @@ namespace BabBot.Wow
         public uint Xp;
         public Vector3D Location;
         public UInt64 CurTargetGuid;
+        public Unit Unit; // The corresponding Unit in Wow's ObjectManager
+        public uint Orientation;
 
         public Player()
         {
@@ -23,6 +25,7 @@ namespace BabBot.Wow
             MaxMp = 0;
             Xp = 0;
             CurTargetGuid = 0;
+            Orientation = 0;
         }
     }
 }
