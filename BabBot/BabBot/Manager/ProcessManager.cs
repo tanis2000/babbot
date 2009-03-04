@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using BabBot.Common;
 using BabBot.Wow;
@@ -8,6 +9,56 @@ namespace BabBot.Manager
 {
     public class ProcessManager
     {
+        #region Delegates
+
+        /// <summary>
+        /// Error is the Win32Exception.Message thrown.
+        /// </summary>
+        public delegate void WoWProcessAccessFailedEventHandler(string error);
+
+        /// <summary>
+        /// Process is the ID of the process that exited.
+        /// </summary>
+        public delegate void WoWProcessEndedEventHandler(int process);
+
+        /// <summary>
+        /// Error is the Win32Exception.Message thrown.
+        /// </summary>
+        public delegate void WoWProcessFailedEventHandler(string error);
+
+        /// <summary>
+        /// Process is the ID of the process that started.
+        /// </summary>
+        public delegate void WoWProcessStartedEventHandler(int process);
+
+        #endregion
+
+        #region WOWApplication Events
+
+        /// <summary>
+        /// ProcessFailed is fired if an exception is thrown when attempting to start the
+        ///  process.
+        /// </summary>
+        public static event WoWProcessFailedEventHandler WoWProcessFailed;
+
+        /// <summary>
+        /// ProcessEnded is fired where the started process exits.
+        /// </summary>
+        public static event WoWProcessEndedEventHandler WoWProcessEnded;
+
+        /// <summary>
+        /// ProcessStarted is fired if the process successfully starts.
+        /// </summary>
+        public static event WoWProcessStartedEventHandler WoWProcessStarted;
+
+        /// <summary>
+        /// ProcessAccessFailed is fired if the current user does not have permission to
+        ///  access the new process.
+        /// </summary>
+        public static event WoWProcessAccessFailedEventHandler WoWProcessAccessFailed;
+
+        #endregion
+
         private static readonly Config config;
         private static readonly BlackMagic wowProcess;
         public static bool InGame;
@@ -46,53 +97,60 @@ namespace BabBot.Manager
             get { return config; }
         }
 
+        #region Private Methods
+
+        private static void afterProcessStart()
+        {
+            if (WoWProcessStarted != null)
+            {
+                WoWProcessStarted(process.Id);
+            }
+            try
+            {
+                // Set before to use BlackMagic methods
+                process.EnableRaisingEvents = true;
+                process.Exited += exitProcess;
+                
+                // TODO: è un po sporca ogni tanto scazza, meglio usare una FindWindow, per
+                // sapere esattamente quando aprire il processo con BlackMagic
+                process.WaitForInputIdle(15000);
+
+                ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
+            }
+            catch (Exception e)
+            {
+                if (WoWProcessAccessFailed != null)
+                {
+                    WoWProcessAccessFailed(e.Message);
+                }
+            }
+        }
+
+        private static void exitProcess(object sender, EventArgs e)
+        {
+            // TODO: clean everything here...
+            ProcessRunning = false;
+            if (WoWProcessEnded != null)
+            {
+                WoWProcessEnded(((Process)sender).Id);
+            }
+        }
+
+        #endregion
+
         public static void StartWow()
         {
             try
             {
-                /* Deprecated
-                process = !AppHelper.IsVista()
-                              ? Process.Start(AppHelper.GetWowInstallationPath(), "", Config.GuestUsername,
-                                              new SecureString(), "")
-                              : Process.Start(AppHelper.GetWowInstallationPath());
-                */
-
-                // TODO: da testare sotto XP se possiamo utilizzare la stessa chiamata per entrambi gli SO
                 process = AppHelper.RunAs(Config.GuestUsername, "", null, AppHelper.GetWowInstallationPath());
-
-                if (process != null)
+                afterProcessStart();
+            }
+            catch (Win32Exception w32e)
+            {
+                if (WoWProcessAccessFailed != null)
                 {
-                    process.WaitForInputIdle(10000);
+                    WoWProcessFailed(w32e.Message);
                 }
-            }
-            /*
-            catch (Win32Exception ex)
-            {
-                if (ex.NativeErrorCode == 267)
-                {
-                    throw new Exception(string.Format("{0} has no permissions to run an instance of WoW",
-                                                      Config.GuestUsername));
-                }
-                throw;
-            }
-            */
-            catch (Exception ex)
-            {
-                throw new Exception("Cannot run an instance of WoW: " + ex.Message);
-            }
-
-            if (process == null)
-            {
-                throw new Exception("Cannot obtain process information");
-            }
-
-            try
-            {
-                ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
             }
         }
 /*
