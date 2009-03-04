@@ -131,9 +131,8 @@ namespace BabBot.Common
                                                              Marshal.GetLastWin32Error());
                                     throw new Exception(s);
                                 }
-                                WindowsImpersonationContext impersonatedUser = newId.Impersonate();
-
-                                IntPtr accountToken = WindowsIdentity.GetCurrent().Token;
+                                // WindowsImpersonationContext impersonatedUser = newId.Impersonate();
+                                // IntPtr accountToken = WindowsIdentity.GetCurrent().Token;
                                 // string accTk = accountToken.ToString();
 
                                 string currUsr = WindowsIdentity.GetCurrent().Name;
