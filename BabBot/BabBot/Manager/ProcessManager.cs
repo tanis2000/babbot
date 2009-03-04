@@ -52,6 +52,7 @@ namespace BabBot.Manager
                 /// TODO: Read the game path from the registry:  Common.GetWowInstallationPath()
                 /// TODO: In VISTA cosi non funziona manco per il cazzo (virtualization di merda) 
                 /// Process.Start(Common.GetWowInstallationPath());
+                /// http://www.bokebb.com/dev/english/2045/posts/204519378.shtml
                 
                 process = !Common.IsVista()
                               ? Process.Start(Common.GetWowInstallationPath(), "", Config.GuestUsername,
