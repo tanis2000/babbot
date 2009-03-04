@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using BabBot.Wow;
 
-namespace BabBot.Navigation
+namespace BabBot.Bot
 {
     public enum WayPointType : int
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using BabBot.Bot;
 using BabBot.Common;
 using BabBot.Wow;
 using Magic;
@@ -68,6 +69,7 @@ namespace BabBot.Manager
         public static bool ProcessRunning;
         public static uint TLS;
         public static bool Initialized;
+        public static Profile Profile;
 
         static ProcessManager()
         {
@@ -78,6 +80,7 @@ namespace BabBot.Manager
             InGame = false;
             TLS = 0x0;
             Initialized = false;
+            Profile = new Profile();
         }
 
         public static BlackMagic WowProcess

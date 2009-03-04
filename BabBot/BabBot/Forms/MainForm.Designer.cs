@@ -55,6 +55,15 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabPageWayPoints = new System.Windows.Forms.TabPage();
+            this.label7 = new System.Windows.Forms.Label();
+            this.tbProfile = new System.Windows.Forms.TextBox();
+            this.btnLoadProfile = new System.Windows.Forms.Button();
+            this.btnSaveProfile = new System.Windows.Forms.Button();
+            this.tbProfileName = new System.Windows.Forms.TextBox();
+            this.tbProfileDescription = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -98,6 +107,7 @@
             // 
             this.tabControlMain.Controls.Add(this.tabPageMain);
             this.tabControlMain.Controls.Add(this.tabPageDebug);
+            this.tabControlMain.Controls.Add(this.tabPageWayPoints);
             this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlMain.Location = new System.Drawing.Point(0, 24);
             this.tabControlMain.Name = "tabControlMain";
@@ -107,6 +117,14 @@
             // 
             // tabPageMain
             // 
+            this.tabPageMain.Controls.Add(this.label9);
+            this.tabPageMain.Controls.Add(this.label8);
+            this.tabPageMain.Controls.Add(this.tbProfileDescription);
+            this.tabPageMain.Controls.Add(this.tbProfileName);
+            this.tabPageMain.Controls.Add(this.btnSaveProfile);
+            this.tabPageMain.Controls.Add(this.btnLoadProfile);
+            this.tabPageMain.Controls.Add(this.tbProfile);
+            this.tabPageMain.Controls.Add(this.label7);
             this.tabPageMain.Controls.Add(this.btnUpdateLocation);
             this.tabPageMain.Controls.Add(this.lblOrientation);
             this.tabPageMain.Controls.Add(this.lblLocation);
@@ -123,7 +141,7 @@
             // 
             // btnUpdateLocation
             // 
-            this.btnUpdateLocation.Location = new System.Drawing.Point(382, 34);
+            this.btnUpdateLocation.Location = new System.Drawing.Point(381, 197);
             this.btnUpdateLocation.Name = "btnUpdateLocation";
             this.btnUpdateLocation.Size = new System.Drawing.Size(112, 23);
             this.btnUpdateLocation.TabIndex = 5;
@@ -134,7 +152,7 @@
             // lblOrientation
             // 
             this.lblOrientation.AutoSize = true;
-            this.lblOrientation.Location = new System.Drawing.Point(8, 71);
+            this.lblOrientation.Location = new System.Drawing.Point(7, 234);
             this.lblOrientation.Name = "lblOrientation";
             this.lblOrientation.Size = new System.Drawing.Size(61, 13);
             this.lblOrientation.TabIndex = 4;
@@ -143,7 +161,7 @@
             // lblLocation
             // 
             this.lblLocation.AutoSize = true;
-            this.lblLocation.Location = new System.Drawing.Point(8, 39);
+            this.lblLocation.Location = new System.Drawing.Point(7, 202);
             this.lblLocation.Name = "lblLocation";
             this.lblLocation.Size = new System.Drawing.Size(51, 13);
             this.lblLocation.TabIndex = 3;
@@ -151,14 +169,14 @@
             // 
             // tbOrientation
             // 
-            this.tbOrientation.Location = new System.Drawing.Point(75, 68);
+            this.tbOrientation.Location = new System.Drawing.Point(74, 231);
             this.tbOrientation.Name = "tbOrientation";
             this.tbOrientation.Size = new System.Drawing.Size(301, 20);
             this.tbOrientation.TabIndex = 2;
             // 
             // tbLocation
             // 
-            this.tbLocation.Location = new System.Drawing.Point(75, 36);
+            this.tbLocation.Location = new System.Drawing.Point(74, 199);
             this.tbLocation.Name = "tbLocation";
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 1;
@@ -309,6 +327,84 @@
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // tabPageWayPoints
+            // 
+            this.tabPageWayPoints.Location = new System.Drawing.Point(4, 22);
+            this.tabPageWayPoints.Name = "tabPageWayPoints";
+            this.tabPageWayPoints.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageWayPoints.Size = new System.Drawing.Size(513, 265);
+            this.tabPageWayPoints.TabIndex = 2;
+            this.tabPageWayPoints.Text = "WayPoints";
+            this.tabPageWayPoints.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 39);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(39, 13);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Profile:";
+            // 
+            // tbProfile
+            // 
+            this.tbProfile.Location = new System.Drawing.Point(48, 36);
+            this.tbProfile.Name = "tbProfile";
+            this.tbProfile.Size = new System.Drawing.Size(234, 20);
+            this.tbProfile.TabIndex = 7;
+            // 
+            // btnLoadProfile
+            // 
+            this.btnLoadProfile.Location = new System.Drawing.Point(288, 34);
+            this.btnLoadProfile.Name = "btnLoadProfile";
+            this.btnLoadProfile.Size = new System.Drawing.Size(75, 23);
+            this.btnLoadProfile.TabIndex = 9;
+            this.btnLoadProfile.Text = "Load";
+            this.btnLoadProfile.UseVisualStyleBackColor = true;
+            this.btnLoadProfile.Click += new System.EventHandler(this.btnLoadProfile_Click);
+            // 
+            // btnSaveProfile
+            // 
+            this.btnSaveProfile.Location = new System.Drawing.Point(369, 34);
+            this.btnSaveProfile.Name = "btnSaveProfile";
+            this.btnSaveProfile.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveProfile.TabIndex = 10;
+            this.btnSaveProfile.Text = "Save";
+            this.btnSaveProfile.UseVisualStyleBackColor = true;
+            // 
+            // tbProfileName
+            // 
+            this.tbProfileName.Location = new System.Drawing.Point(48, 66);
+            this.tbProfileName.Name = "tbProfileName";
+            this.tbProfileName.Size = new System.Drawing.Size(234, 20);
+            this.tbProfileName.TabIndex = 11;
+            // 
+            // tbProfileDescription
+            // 
+            this.tbProfileDescription.Location = new System.Drawing.Point(48, 93);
+            this.tbProfileDescription.Multiline = true;
+            this.tbProfileDescription.Name = "tbProfileDescription";
+            this.tbProfileDescription.Size = new System.Drawing.Size(234, 83);
+            this.tbProfileDescription.TabIndex = 12;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(8, 68);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(38, 13);
+            this.label8.TabIndex = 13;
+            this.label8.Text = "Name:";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(11, 96);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(35, 13);
+            this.label9.TabIndex = 14;
+            this.label9.Text = "Desc:";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -359,6 +455,15 @@
         private System.Windows.Forms.TextBox tbLocalGUID;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabPageWayPoints;
+        private System.Windows.Forms.Button btnSaveProfile;
+        private System.Windows.Forms.Button btnLoadProfile;
+        private System.Windows.Forms.TextBox tbProfile;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox tbProfileDescription;
+        private System.Windows.Forms.TextBox tbProfileName;
     }
 }
 

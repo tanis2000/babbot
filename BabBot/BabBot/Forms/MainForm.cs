@@ -118,5 +118,18 @@ namespace BabBot.Forms
             Application.Exit();
         }
 
+        private void btnLoadProfile_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Multiselect = false;
+            dlg.Filter = "BabBot Profile (*.xml)|*.xml";
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                ProcessManager.Profile.FileName = dlg.FileName;
+                ProcessManager.Profile.Load();
+            }
+
+        }
+
     }
 }

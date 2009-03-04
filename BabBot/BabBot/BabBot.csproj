@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bot\Profile.cs" />
     <Compile Include="Common\RunAs.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Forms\MainForm.cs">
@@ -51,7 +52,7 @@
     </Compile>
     <Compile Include="Common\Common.cs" />
     <Compile Include="Manager\ProcessManager.cs" />
-    <Compile Include="Navigation\WayPoint.cs" />
+    <Compile Include="Bot\WayPoint.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\MainForm.resx">
