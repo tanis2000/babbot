@@ -1,0 +1,956 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BabBot</name>
+    </assembly>
+    <members>
+        <member name="T:BabBot.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:BabBot.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:BabBot.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="F:BabBot.Forms.MainForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:BabBot.Forms.MainForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:BabBot.Forms.MainForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:BabBot.Common.AppHelper.GetWowInstallationPath">
+            <summary>
+            Get the installation path from the registry 
+            </summary>
+            <returns>
+            If the function succeeds, the return value is 
+            the installation path else is null.
+            </returns>
+        </member>
+        <member name="M:BabBot.Common.AppHelper.IsVista">
+            <summary>
+            Get if is running on Vista 
+            </summary>
+            <returns>
+            true if application is running on Vista 
+            false if application is running on different OS
+            </returns>
+        </member>
+        <member name="M:BabBot.Common.AppHelper.RunAs(System.String,System.String,System.String,System.String)">
+            <summary>
+            Dummy version for CreateProcessWithLogonW 
+            </summary>
+            <returns>
+            return Process if the function succeeds
+            </returns>
+        </member>
+        <member name="M:BabBot.Common.AppHelper.GetRunningWoWProcess(System.String)">
+            <summary>
+            Dummy version to get and check if wow process is running under  guest account
+            </summary>
+            <returns>
+            return Process if the function succeeds else null
+            </returns>
+        </member>
+        <member name="M:BabBot.Common.AppHelper.WaitForWowWindow">
+            <summary>
+            Dummy version to check and wait for Wow window init 
+            </summary>
+        </member>
+        <member name="M:BabBot.Common.AppHelper.GetWowWindowHandle">
+            <summary>
+            Dummy version to get the Wow window handle
+            </summary>
+        </member>
+        <member name="M:BabBot.Common.RunAs.#ctor">
+            <summary>
+            Initializes default values for all parameters.
+            </summary>
+            <remarks>
+            The following default values are assigned:
+            <list type="table">
+             <listheader>
+              <term>
+               Parameter
+              </term>
+              <description>
+               Default Value
+              </description>
+             </listheader>
+             <item>
+              <term>
+               UserName
+              </term>
+              <description>
+               System.Environment.UserName
+              </description>
+             </item>
+             <item>
+              <term>
+               Domain
+              </term>
+              <description>
+               System.Environment.UserDomainName
+              </description>
+             </item>
+             <item>
+              <term>
+               Password
+              </term>
+              <description>
+               Empty string ("")
+              </description>
+             </item>
+             <item>
+              <term>
+               ApplicationName
+              </term>
+              <description>
+               CurrentProcess.StartInfo.FileName
+              </description>
+             </item>
+             <item>
+              <term>
+               LogonFlagsInstance
+              </term>
+              <description>
+               LogonFlags.WithProfile
+              </description>
+             </item>
+             <item>
+              <term>
+               CommandLine
+              </term>
+              <description>
+               System.Environment.CommandLine
+              </description>
+             </item>
+             <item>
+              <term>
+               CreationFlagsInstance
+              </term>
+              <description>
+               CreationFlags.NewConsole
+              </description>
+             </item>
+             <item>
+              <term>
+               CurrentDirectory
+              </term>
+              <description>
+               System.Environment.CurrentDirectory
+              </description>
+             </item>
+             <item>
+              <term>
+               Environment
+              </term>
+              <description>
+               IntPtr.Zero
+              </description>
+             </item>
+             <item>
+              <term>
+               StartupInfo
+              </term>
+              <description>
+               New StartUpInfo instance with the following values set:
+               -- cb is set to the size of the instance
+               -- dwFlags is set to StartUpInfoFlags.UseCountChars
+               --dwYCountChars is set to 50
+               --lpTitle is set to CurrentProcess.MainWindowTitle
+              </description>
+             </item>
+             <item>
+              <term>
+               ProcessInfo
+              </term>
+              <description>
+               New ProcessInformation instance
+              </description>
+             </item>
+            </list>
+            </remarks>
+        </member>
+        <member name="M:BabBot.Common.RunAs.CreateProcessWithLogonW(System.String,System.String,System.String,System.Int32,System.String,System.Text.StringBuilder,System.UInt32,System.IntPtr,System.String,BabBot.Common.RunAs.StartUpInfo@,BabBot.Common.RunAs.ProcessInformation@)">
+            <summary>
+            The CreateProcessWithLogonW function creates a new process and its primary thread. The new process then runs the specified executable file in the security context of the specified credentials (user, domain, and password). It can optionally load the user profile for the specified user.
+            </summary>
+        </member>
+        <member name="M:BabBot.Common.RunAs.CloseHandle(System.IntPtr)">
+            <summary>
+            Closes an open object handle.
+            </summary>
+        </member>
+        <member name="M:BabBot.Common.RunAs.StartProcess(System.String,System.String,System.String,BabBot.Common.RunAs.LogonFlags,System.String,System.String,BabBot.Common.RunAs.CreationFlags,System.IntPtr,System.String,BabBot.Common.RunAs.StartUpInfo@,BabBot.Common.RunAs.ProcessInformation@)">
+            <summary>
+            Creates a new process and its primary thread. The new process then runs the
+             specified executable file in the security context of the specified
+             credentials (user, domain, and password). It can optionally load the user
+             profile for the specified user.
+            </summary>
+            <remarks>
+            This method is untested.
+            </remarks>
+            <param name="userName">
+            This is the name of the user account to log on to. If you use the UPN format,
+             user@domain, the Domain parameter must be NULL. The user account must have
+             the Log On Locally permission on the local computer.
+            </param>
+            <param name="domain">
+            Specifies the name of the domain or server whose account database contains the
+             user account. If this parameter is NULL, the user name must be specified in
+             UPN format.
+            </param>
+            <param name="password">
+            Specifies the clear-text password for the user account.
+            </param>
+            <param name="logonFlags">
+            Logon option. This parameter can be zero or one value from the LogonFlags enum.
+            </param>
+            <param name="applicationName">
+            Specifies the module to execute. The specified module can be a Windows-based
+             application. It can be some other type of module (for example, MS-DOS or OS/2)
+             if the appropriate subsystem is available on the local computer. The string
+             can specify the full path and file name of the module to execute or it can
+             specify a partial name. In the case of a partial name, the function uses the
+             current drive and current directory to complete the specification. The function
+             will not use the search path. If the file name does not contain an extension,
+             .exe is assumed. Therefore, if the file name extension is .com, this parameter
+             must include the .com extension. The appname parameter can be NULL. In that
+             case, the module name must be the first white space-delimited token in the
+             commandline string. If the executable module is a 16-bit application, appname
+             should be NULL, and the string pointed to by commandline should specify the
+             executable module as well as its arguments.
+            </param>
+            <param name="commandLine">
+            Specifies the command line to execute. The maximum length of this string is
+             32,000 characters. The commandline parameter can be NULL. In that case, the
+             function uses the string pointed to by appname as the command line. If the
+             file name does not contain an extension, .exe is appended. Therefore, if the
+             file name extension is .com, this parameter must include the .com extension.
+             If the file name ends in a period with no extension, or if the file name
+             contains a path, .exe is not appended. If the file name does not contain a
+             directory path, the system searches for the executable file.
+            </param>
+            <param name="creationFlags">
+            Use CreationFlags and PriorityFlags enums. Controls how the process is created.
+             Also controls the new process's priority class, which is used to determine the
+             scheduling priorities of the process's threads.
+            </param>
+            <param name="currentDirectory">
+            Specifies the full path to the current directory for the process. The string
+             can also specify a UNC path. If this parameter is NULL, the new process will
+             have the same current drive and directory as the calling process.
+            </param>
+            <param name="environment">
+            Pointer to an environment block for the new process. If this parameter is NULL,
+             the new process uses the environment of the specified user instead of the
+             environment of the calling process.
+            </param>
+            <param name="startupInfo">
+            Specifies the window station, desktop, standard handles, and appearance of the
+             main window for the new process.
+            </param>
+            <param name="processInfo">
+            ProcessInformation structure that receives identification information for the
+             new process, including a handle to the process.
+            </param>
+            <returns>
+            Returns a System.Diagnostic.Process which will be null if the call failed.
+            </returns>
+            <exception cref="T:System.ComponentModel.Win32Exception">
+            Throws a System.ComponentModel.Win32Exception containing the last error if the
+             call failed.
+            </exception>
+        </member>
+        <member name="M:BabBot.Common.RunAs.StartProcess(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Creates a new process and its primary thread. The new process then runs the
+             specified executable file in the security context of the specified
+             credentials (user, domain, and password). It can optionally load the user
+             profile for the specified user.
+            </summary>
+            <remarks>
+            This method is untested.
+            </remarks>
+            <param name="userName">
+            This is the name of the user account to log on to. If you use the UPN format,
+             user@domain, the Domain parameter must be NULL. The user account must have
+             the Log On Locally permission on the local computer.
+            </param>
+            <param name="domain">
+            Specifies the name of the domain or server whose account database contains the
+             user account. If this parameter is NULL, the user name must be specified in
+             UPN format.
+            </param>
+            <param name="password">
+            Specifies the clear-text password for the user account.
+            </param>
+            <param name="applicationName">
+            Specifies the module to execute. The specified module can be a Windows-based
+             application. It can be some other type of module (for example, MS-DOS or OS/2)
+             if the appropriate subsystem is available on the local computer. The string
+             can specify the full path and file name of the module to execute or it can
+             specify a partial name. In the case of a partial name, the function uses the
+             current drive and current directory to complete the specification. The function
+             will not use the search path. If the file name does not contain an extension,
+             .exe is assumed. Therefore, if the file name extension is .com, this parameter
+             must include the .com extension. The appname parameter can be NULL. In that
+             case, the module name must be the first white space-delimited token in the
+             commandline string. If the executable module is a 16-bit application, appname
+             should be NULL, and the string pointed to by commandline should specify the
+             executable module as well as its arguments.
+            </param>
+            <param name="commandLine">
+            Specifies the command line to execute. The maximum length of this string is
+             32,000 characters. The commandline parameter can be NULL. In that case, the
+             function uses the string pointed to by appname as the command line. If the
+             file name does not contain an extension, .exe is appended. Therefore, if the
+             file name extension is .com, this parameter must include the .com extension.
+             If the file name ends in a period with no extension, or if the file name
+             contains a path, .exe is not appended. If the file name does not contain a
+             directory path, the system searches for the executable file.
+            </param>
+            <param name="currentDirectory">
+            Specifies the full path to the current directory for the process. The string
+             can also specify a UNC path. If this parameter is NULL, the new process will
+             have the same current drive and directory as the calling process.
+            </param>
+            <returns>
+            Returns a System.Diagnostic.Process which will be null if the call failed.
+            </returns>
+            <exception cref="T:System.ComponentModel.Win32Exception">
+            Throws a System.ComponentModel.Win32Exception containing the last error if the
+             call failed.
+            </exception>
+        </member>
+        <member name="M:BabBot.Common.RunAs.StartProcess(System.String,System.String,System.String,System.String)">
+            <summary>
+            Creates a new process and its primary thread. The new process then runs the
+             specified executable file in the security context of the specified
+             credentials (user, domain, and password). It can optionally load the user
+             profile for the specified user.
+            </summary>
+            <remarks>
+            This method is untested.
+            </remarks>
+            <param name="userName">
+            This is the name of the user account to log on to. If you use the UPN format,
+             user@domain, the Domain parameter must be NULL. The user account must have
+             the Log On Locally permission on the local computer.
+            </param>
+            <param name="domain">
+            Specifies the name of the domain or server whose account database contains the
+             user account. If this parameter is NULL, the user name must be specified in
+             UPN format.
+            </param>
+            <param name="password">
+            Specifies the clear-text password for the user account.
+            </param>
+            <param name="commandLine">
+            Specifies the command line to execute. The maximum length of this string is
+             32,000 characters. The commandline parameter can be NULL. In that case, the
+             function uses the string pointed to by appname as the command line. If the
+             file name does not contain an extension, .exe is appended. Therefore, if the
+             file name extension is .com, this parameter must include the .com extension.
+             If the file name ends in a period with no extension, or if the file name
+             contains a path, .exe is not appended. If the file name does not contain a
+             directory path, the system searches for the executable file.
+            </param>
+            <returns>
+            Returns a System.Diagnostic.Process which will be null if the call failed.
+            </returns>
+            <exception cref="T:System.ComponentModel.Win32Exception">
+            Throws a System.ComponentModel.Win32Exception containing the last error if the
+             call failed.
+            </exception>
+        </member>
+        <member name="M:BabBot.Common.RunAs.StartProcess(System.String,System.String,System.String,BabBot.Common.RunAs.LogonFlags,System.String,System.String,BabBot.Common.RunAs.CreationFlags,System.String)">
+            <summary>
+            Creates a new process and its primary thread. The new process then runs the
+             specified executable file in the security context of the specified
+             credentials (user, domain, and password). It can optionally load the user
+             profile for the specified user.
+            </summary>
+            <remarks>
+            This method is untested.
+            </remarks>
+            <param name="userName">
+            This is the name of the user account to log on to. If you use the UPN format,
+             user@domain, the Domain parameter must be NULL. The user account must have
+             the Log On Locally permission on the local computer.
+            </param>
+            <param name="domain">
+            Specifies the name of the domain or server whose account database contains the
+             user account. If this parameter is NULL, the user name must be specified in
+             UPN format.
+            </param>
+            <param name="password">
+            Specifies the clear-text password for the user account.
+            </param>
+            <param name="logonFlags">
+            Logon option. This parameter can be zero or one value from the LogonFlags enum.
+            </param>
+            <param name="applicationName">
+            Specifies the module to execute. The specified module can be a Windows-based
+             application. It can be some other type of module (for example, MS-DOS or OS/2)
+             if the appropriate subsystem is available on the local computer. The string
+             can specify the full path and file name of the module to execute or it can
+             specify a partial name. In the case of a partial name, the function uses the
+             current drive and current directory to complete the specification. The function
+             will not use the search path. If the file name does not contain an extension,
+             .exe is assumed. Therefore, if the file name extension is .com, this parameter
+             must include the .com extension. The appname parameter can be NULL. In that
+             case, the module name must be the first white space-delimited token in the
+             commandline string. If the executable module is a 16-bit application, appname
+             should be NULL, and the string pointed to by commandline should specify the
+             executable module as well as its arguments.
+            </param>
+            <param name="commandLine">
+            Specifies the command line to execute. The maximum length of this string is
+             32,000 characters. The commandline parameter can be NULL. In that case, the
+             function uses the string pointed to by appname as the command line. If the
+             file name does not contain an extension, .exe is appended. Therefore, if the
+             file name extension is .com, this parameter must include the .com extension.
+             If the file name ends in a period with no extension, or if the file name
+             contains a path, .exe is not appended. If the file name does not contain a
+             directory path, the system searches for the executable file.
+            </param>
+            <param name="creationFlags">
+            Use CreationFlags and PriorityFlags enums. Controls how the process is created.
+             Also controls the new process's priority class, which is used to determine the
+             scheduling priorities of the process's threads.
+            </param>
+            <param name="currentDirectory">
+            Specifies the full path to the current directory for the process. The string
+             can also specify a UNC path. If this parameter is NULL, the new process will
+             have the same current drive and directory as the calling process.
+            </param>
+            <returns>
+            Returns a System.Diagnostic.Process which will be null if the call failed.
+            </returns>
+            <exception cref="T:System.ComponentModel.Win32Exception">
+            Throws a System.ComponentModel.Win32Exception containing the last error if the
+             call failed.
+            </exception>
+        </member>
+        <member name="M:BabBot.Common.RunAs.StartProcess">
+            <summary>
+            Creates a new process and its primary thread. The new process then runs the
+             specified executable file in the security context of the specified
+             credentials (user, domain, and password). It can optionally load the user
+             profile for the specified user.
+            </summary>
+            <remarks>
+            This method is untested.
+            </remarks>
+            <returns>
+            Returns a System.Diagnostic.Process which will be null if the call failed.
+            </returns>
+            <exception cref="T:System.ComponentModel.Win32Exception">
+            Throws a System.ComponentModel.Win32Exception containing the last error if the
+             call failed.
+            </exception>
+        </member>
+        <member name="P:BabBot.Common.RunAs.UserName">
+            <summary>
+            This is the name of the user account to log on to. If you use the UPN format,
+             user@domain, the Domain parameter must be NULL. The user account must have
+             the Log On Locally permission on the local computer.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.Domain">
+            <summary>
+            Specifies the name of the domain or server whose account database contains the
+             user account. If this parameter is NULL, the user name must be specified in
+             UPN format.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.Password">
+            <summary>
+            Specifies the clear-text password for the user account.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.LogonFlagsInstance">
+            <summary>
+            Logon option. This parameter can be zero or one value from the LogonFlags enum.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.ApplicationName">
+            <summary>
+            Specifies the module to execute. The specified module can be a Windows-based
+             application. It can be some other type of module (for example, MS-DOS or OS/2)
+             if the appropriate subsystem is available on the local computer. The string
+             can specify the full path and file name of the module to execute or it can
+             specify a partial name. In the case of a partial name, the function uses the
+             current drive and current directory to complete the specification. The function
+             will not use the search path. If the file name does not contain an extension,
+             .exe is assumed. Therefore, if the file name extension is .com, this parameter
+             must include the .com extension. The appname parameter can be NULL. In that
+             case, the module name must be the first white space-delimited token in the
+             commandline string. If the executable module is a 16-bit application, appname
+             should be NULL, and the string pointed to by commandline should specify the
+             executable module as well as its arguments.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.CommandLine">
+            <summary>
+            Specifies the command line to execute. The maximum length of this string is
+             32,000 characters. The commandline parameter can be NULL. In that case, the
+             function uses the string pointed to by appname as the command line. If the
+             file name does not contain an extension, .exe is appended. Therefore, if the
+             file name extension is .com, this parameter must include the .com extension.
+             If the file name ends in a period with no extension, or if the file name
+             contains a path, .exe is not appended. If the file name does not contain a
+             directory path, the system searches for the executable file.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.CreationFlagsInstance">
+            <summary>
+            Use CreationFlags and PriorityFlags enums. Controls how the process is created.
+             Also controls the new process's priority class, which is used to determine the
+             scheduling priorities of the process's threads.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.CurrentDirectory">
+            <summary>
+            Specifies the full path to the current directory for the process. The string
+             can also specify a UNC path. If this parameter is NULL, the new process will
+             have the same current drive and directory as the calling process.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.StartupInfo">
+            <summary>
+            Specifies the window station, desktop, standard handles, and appearance of the
+             main window for the new process.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.ProcessInfo">
+            <summary>
+            ProcessInformation structure that receives identification information for the
+             new process, including a handle to the process.
+            </summary>
+        </member>
+        <member name="P:BabBot.Common.RunAs.Environment">
+            <summary>
+            Pointer to an environment block for the new process. If this parameter is NULL,
+             the new process uses the environment of the specified user instead of the
+             environment of the calling process.
+            </summary>
+        </member>
+        <member name="T:BabBot.Common.RunAs.CreationFlags">
+            <summary>
+            Controls how the process is created. The DefaultErrorMode, NewConsole, and NewProcessGroup flags are enabled by default— even if you do not set the flag, the system will function as if it were set.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.CreationFlags.Suspended">
+            <summary>
+            The primary thread of the new process is created in a suspended state, and does not run until the ResumeThread function is called.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.CreationFlags.NewConsole">
+            <summary>
+            The new process has a new console, instead of inheriting the parent's console.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.CreationFlags.NewProcessGroup">
+            <summary>
+            The new process is the root process of a new process group.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.CreationFlags.SeperateWOWVDM">
+            <summary>
+            This flag is only valid starting a 16-bit Windows-based application. If set, the new process runs in a private Virtual DOS Machine (VDM). By default, all 16-bit Windows-based applications run in a single, shared VDM. 
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.CreationFlags.UnicodeEnvironment">
+            <summary>
+            Indicates the format of the lpEnvironment parameter. If this flag is set, the environment block pointed to by lpEnvironment uses Unicode characters.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.CreationFlags.DefaultErrorMode">
+            <summary>
+            The new process does not inherit the error mode of the calling process.
+            </summary>
+        </member>
+        <member name="T:BabBot.Common.RunAs.FillAttributes">
+            <summary>
+            The initial text and background colors if a new console window is created in a console application.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.FillAttributes.BackgroundIntensity">
+            <summary>
+            Background color is intensified.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.FillAttributes.BackgroundRed">
+            <summary>
+            Background color contains red.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.FillAttributes.BackgroundGreen">
+            <summary>
+            Background color contains green.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.FillAttributes.BackgroundBlue">
+            <summary>
+            Background color contains blue.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.FillAttributes.ForegroundIntensity">
+            <summary>
+            Text color is intensified.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.FillAttributes.ForegroundRed">
+            <summary>
+            Text color contains red.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.FillAttributes.ForegroundGreen">
+            <summary>
+            Text color contains green.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.FillAttributes.ForegroundBlue">
+            <summary>
+            Text color contains blue.
+            </summary>
+        </member>
+        <member name="T:BabBot.Common.RunAs.LogonFlags">
+            <summary>
+            Logon option. 
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.LogonFlags.WithProfile">
+            <summary>
+            Log on, then load the user's profile in the HKEY_USERS registry key. The function returns after the profile has been loaded. Loading the profile can be time-consuming, so it is best to use this value only if you must access the information in the HKEY_CURRENT_USER registry key.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.LogonFlags.NetworkCredentialsOnly">
+            <summary>
+            Log on, but use the specified credentials on the network only. The new process uses the same token as the caller, but the system creates a new logon session within LSA, and the process uses the specified credentials as the default credentials.
+            </summary>
+        </member>
+        <member name="T:BabBot.Common.RunAs.PriorityFlags">
+            <summary>
+            Controls the new process's priority class, which is used to determine the scheduling priorities of the process's threads.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.PriorityFlags.NormalPriority">
+            <summary>
+            Process with no special scheduling needs.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.PriorityFlags.IdlePriority">
+            <summary>
+            Process whose threads run only when the system is idle and are preempted by the threads of any process running in a higher priority class. An example is a screen saver. The idle priority class is inherited by child processes.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.PriorityFlags.HighPriority">
+            <summary>
+            Process that performs time-critical tasks that must be executed immediately for it to run correctly. The threads of a high-priority class process preempt the threads of normal or idle priority class processes.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.PriorityFlags.RealTimePriority">
+            <summary>
+            Process that has the highest possible priority. The threads of a real-time priority class process preempt the threads of all other processes, including operating system processes performing important tasks.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.PriorityFlags.BelowNormalPriority">
+            <summary>
+            Process that has priority above idle but below normal processes.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.PriorityFlags.AboveNormalPriority">
+            <summary>
+            Process that has priority above normal but below high processes.
+            </summary>
+        </member>
+        <member name="T:BabBot.Common.RunAs.StartUpInfoFlags">
+            <summary>
+            Determines whether certain StartUpInfo members are used when the process creates a window.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.UseShowWindow">
+            <summary>
+            If this value is not specified, the wShowWindow member is ignored.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.UseSize">
+            <summary>
+            If this value is not specified, the dwXSize and dwYSize members are ignored.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.UsePosition">
+            <summary>
+            If this value is not specified, the dwX and dwY members are ignored.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.UseCountChars">
+            <summary>
+            If this value is not specified, the dwXCountChars and dwYCountChars members are ignored.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.UseFillAttribute">
+            <summary>
+            If this value is not specified, the dwFillAttribute member is ignored.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.RunFullScreen">
+            <summary>
+            Indicates that the process should be run in full-screen mode, rather than in windowed mode.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.ForceOnFeedback">
+            <summary>
+            Indicates that the cursor is in feedback mode after CreateProcess is called. The system turns the feedback cursor off after the first call to GetMessage.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.ForceOffFeedback">
+            <summary>
+            Indicates that the feedback cursor is forced off while the process is starting. The Normal Select cursor is displayed.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.UseStandardHandles">
+            <summary>
+            Sets the standard input, standard output, and standard error handles for the process to the handles specified in the hStdInput, hStdOutput, and hStdError members of the StartUpInfo structure. If this value is not specified, the hStdInput, hStdOutput, and hStdError members of the STARTUPINFO structure are ignored.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.UseHotKey">
+            <summary>
+            When this flag is specified, the hStdInput member is to be used as the hotkey value instead of the standard-input pipe.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.UseMonitor">
+            <summary>
+            When this flag is specified, the StartUpInfo's hStdOutput member is used to specify a handle to a monitor, on which to start the new process. This monitor handle can be obtained by any of the multiple-monitor display functions (i.e. EnumDisplayMonitors, MonitorFromPoint, MonitorFromWindow, etc...).
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.UseIcon">
+            <summary>
+            Use the HICON specified in the hStdOutput member (incompatible with UseMonitor).
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.TitleShortcut">
+            <summary>
+            Program was started through a shortcut. The lpTitle contains the shortcut path.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfoFlags.Screensaver">
+            <summary>
+            The process starts with normal priority. After the first call to GetMessage, the priority is lowered to idle.
+            </summary>
+        </member>
+        <member name="T:BabBot.Common.RunAs.ProcessInformation">
+            <summary>
+            The ProcessInformation structure is filled in by either the CreateProcess, CreateProcessAsUser, CreateProcessWithLogonW, or CreateProcessWithTokenW function with information about the newly created process and its primary thread.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.ProcessInformation.hProcess">
+            <summary>
+            Handle to the newly created process. The handle is used to specify the process in all functions that perform operations on the process object.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.ProcessInformation.hThread">
+            <summary>
+            Handle to the primary thread of the newly created process. The handle is used to specify the thread in all functions that perform operations on the thread object.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.ProcessInformation.dwProcessId">
+            <summary>
+            Value that can be used to identify a process. The value is valid from the time the process is created until the time the process is terminated.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.ProcessInformation.dwThreadId">
+            <summary>
+            Value that can be used to identify a thread. The value is valid from the time the thread is created until the time the thread is terminated.
+            </summary>
+        </member>
+        <member name="T:BabBot.Common.RunAs.StartUpInfo">
+            <summary>
+            The STARTUPINFO structure is used with the CreateProcess, CreateProcessAsUser, and CreateProcessWithLogonW functions to specify the window station, desktop, standard handles, and appearance of the main window for the new process.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.cb">
+            <summary>
+            Size of the structure, in bytes.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.lpReserved">
+            <summary>
+            Reserved. Set this member to NULL before passing the structure to CreateProcess.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.lpDesktop">
+            <summary>
+            Pointer to a null-terminated string that specifies either the name of the desktop, or the name of both the desktop and window station for this process. A backslash in the string indicates that the string includes both the desktop and window station names.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.lpTitle">
+            <summary>
+            For console processes, this is the title displayed in the title bar if a new console window is created. If NULL, the name of the executable file is used as the window title instead. This parameter must be NULL for GUI or console processes that do not create a new console window.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.dwX">
+            <summary>
+            The x offset of the upper left corner of a window if a new window is created, in pixels.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.dwY">
+            <summary>
+            The y offset of the upper left corner of a window if a new window is created, in pixels.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.dwXSize">
+            <summary>
+            The width of the window if a new window is created, in pixels.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.dwYSize">
+            <summary>
+            The height of the window if a new window is created, in pixels.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.dwXCountChars">
+            <summary>
+            If a new console window is created in a console process, this member specifies the screen buffer width, in character columns.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.dwYCountChars">
+            <summary>
+            If a new console window is created in a console process, this member specifies the screen buffer height, in character rows.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.dwFillAttribute">
+            <summary>
+            The initial text and background colors if a new console window is created in a console application.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.dwFlags">
+            <summary>
+            Bit field that determines whether certain StartUpInfo members are used when the process creates a window.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.wShowWindow">
+            <summary>
+            This member can be any of the SW_ constants defined in Winuser.h.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.cbReserved2">
+            <summary>
+            Reserved for use by the C Runtime; must be zero.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.lpReserved2">
+            <summary>
+            Reserved for use by the C Runtime; must be null.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.hStdInput">
+            <summary>
+            A handle to be used as the standard input handle for the process.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.hStdOutput">
+            <summary>
+            A handle to be used as the standard output handle for the process.
+            </summary>
+        </member>
+        <member name="F:BabBot.Common.RunAs.StartUpInfo.hStdError">
+            <summary>
+            A handle to be used as the standard error handle for the process.
+            </summary>
+        </member>
+        <member name="F:BabBot.Forms.AboutForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:BabBot.Forms.AboutForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:BabBot.Forms.AboutForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:BabBot.Program.Main">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+        <member name="T:BabBot.Wow.ObjectManager">
+            <summary>
+            This class contains all of the properties and methods used to access WoW's internal
+            linked lists of objects.
+            </summary>
+        </member>
+        <member name="E:BabBot.Manager.ProcessManager.WoWProcessFailed">
+            <summary>
+            ProcessFailed is fired if an exception is thrown when attempting to start the
+             process.
+            </summary>
+        </member>
+        <member name="E:BabBot.Manager.ProcessManager.WoWProcessEnded">
+            <summary>
+            ProcessEnded is fired where the started process exits.
+            </summary>
+        </member>
+        <member name="E:BabBot.Manager.ProcessManager.WoWProcessStarted">
+            <summary>
+            ProcessStarted is fired if the process successfully starts.
+            </summary>
+        </member>
+        <member name="E:BabBot.Manager.ProcessManager.WoWProcessAccessFailed">
+            <summary>
+            ProcessAccessFailed is fired if the current user does not have permission to
+             access the new process.
+            </summary>
+        </member>
+        <member name="T:BabBot.Manager.ProcessManager.WoWProcessAccessFailedEventHandler">
+            <summary>
+            Error is the Win32Exception.Message thrown.
+            </summary>
+        </member>
+        <member name="T:BabBot.Manager.ProcessManager.WoWProcessEndedEventHandler">
+            <summary>
+            Process is the ID of the process that exited.
+            </summary>
+        </member>
+        <member name="T:BabBot.Manager.ProcessManager.WoWProcessFailedEventHandler">
+            <summary>
+            Error is the Win32Exception.Message thrown.
+            </summary>
+        </member>
+        <member name="T:BabBot.Manager.ProcessManager.WoWProcessStartedEventHandler">
+            <summary>
+            Process is the ID of the process that started.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -146,5 +146,11 @@ namespace BabBot.Forms
             ProcessManager.AttachToWow();
         }
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutForm f = new AboutForm();
+            f.ShowDialog();
+        }
+
     }
 }

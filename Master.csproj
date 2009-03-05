@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <PropertyGroup>
+    <Major>1</Major>
+    <Minor>0</Minor>
+    <Build>0</Build>
+    <Revision>0</Revision>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <ProjectGuid>{2BA509D4-91C2-4237-A02A-9D80D0A3A445}</ProjectGuid>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <DefaultExclude Include="**\.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ZipFiles Include="BabBot\BabBot\bin\Release\BabBot.exe" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\*.dll" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\*.xml" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\Scripts\*.*" Exclude="@(DefaultExclude)" />
+  </ItemGroup>
+  <Target Name="Version">
+    <SvnVersion LocalPath="$(MSBuildProjectDirectory)" ToolPath="C:\programmi\CollabNet Subversion Client">
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </SvnVersion>
+    <Message Text="Version: $(Major).$(Minor).$(Build).$(Revision)" />
+    <AssemblyInfo CodeLanguage="CS" 
+    OutputFile="BabBot\BabBot\Properties\AssemblyInfo.cs" 
+    AssemblyTitle="BabBot" 
+    AssemblyDescription="BabBot your servant" 
+    AssemblyCompany="http://www.babbed.it/" 
+    AssemblyProduct="BabBot" 
+    AssemblyCopyright="Copyright (C) tanis, caos 2009" 
+    ComVisible="false" CLSCompliant="true" Guid="d038566a-1937-478a-b5c5-b79c4afb253d" AssemblyVersion="$(Major).$(Minor).$(Build).$(Revision)" AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)" Condition="$(Revision) != '0' " />
+  </Target>
+  <Target Name="Compile" DependsOnTargets="Version">
+    <MSBuild Projects="BabBot\BabBot.sln" Properties="Configuration=Release" />
+  </Target>
+<!--
+  <Target Name="Documentation" DependsOnTargets="Compile">
+    <NDoc Documenter="MSDN" ProjectFilePath="BabBot\BabBot\Doc\BabBot.ndoc" />
+    <Copy SourceFiles="BabBot\BabBot\Doc\BabBot.chm" DestinationFiles="Release\Doc\BabBot.chm" />
+    <RemoveDir Directories="doc" />
+  </Target>
+-->
+  <Target Name="Zip" DependsOnTargets="Compile">
+    <Zip Files="@(ZipFiles)" ZipFileName="BabBot-v$(Major).$(Minor).$(Build).$(Revision).zip" Flatten="false" WorkingDirectory="BabBot\BabBot\bin\Release"/>
+  </Target>
+  <Target Name="Build" DependsOnTargets="Zip">
+    <Message Text="CodeSmith Build Complete" />
+  </Target>
+  <ItemGroup>
+    <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+</Project>
