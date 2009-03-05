@@ -93,6 +93,8 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.tbWndHandle = new System.Windows.Forms.TextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -315,6 +317,8 @@
             // 
             // tabPageDebug
             // 
+            this.tabPageDebug.Controls.Add(this.tbWndHandle);
+            this.tabPageDebug.Controls.Add(this.label19);
             this.tabPageDebug.Controls.Add(this.tbLocalGUID);
             this.tabPageDebug.Controls.Add(this.label6);
             this.tabPageDebug.Controls.Add(this.tbCurMgr);
@@ -719,6 +723,22 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
             // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(295, 35);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(87, 13);
+            this.label19.TabIndex = 30;
+            this.label19.Text = "HWND Window:";
+            // 
+            // tbWndHandle
+            // 
+            this.tbWndHandle.Location = new System.Drawing.Point(401, 32);
+            this.tbWndHandle.Name = "tbWndHandle";
+            this.tbWndHandle.Size = new System.Drawing.Size(89, 20);
+            this.tbWndHandle.TabIndex = 31;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -819,6 +839,8 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Button btnAttachToWow;
+        private System.Windows.Forms.TextBox tbWndHandle;
+        private System.Windows.Forms.Label label19;
     }
 }
 

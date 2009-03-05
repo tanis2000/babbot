@@ -115,6 +115,7 @@ namespace BabBot.Forms
                 tbPlayerBaseOffset.Text = string.Format("{0:X}", Globals.PlayerBaseOffset);
                 tbCurMgr.Text = string.Format("{0:X}", Globals.CurMgr);
                 tbLocalGUID.Text = ProcessManager.ObjectManager.GetLocalGUID().ToString();
+                tbWndHandle.Text = ProcessManager.WowHWND.ToString();
             }
             catch (Exception ex)
             {

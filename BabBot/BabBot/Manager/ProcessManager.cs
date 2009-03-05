@@ -70,6 +70,7 @@ namespace BabBot.Manager
         public static uint TLS;
         public static bool Initialized;
         public static Profile Profile;
+        public static int WowHWND;
 
         static ProcessManager()
         {
@@ -81,6 +82,7 @@ namespace BabBot.Manager
             TLS = 0x0;
             Initialized = false;
             Profile = new Profile();
+            WowHWND = 0;
         }
 
         public static BlackMagic WowProcess
@@ -116,7 +118,7 @@ namespace BabBot.Manager
                 // process.WaitForInputIdle(15000);
                 if (process != null)
                 {
-                    AppHelper.WaitForWowWindow();
+                    WowHWND = AppHelper.WaitForWowWindow();
                     // Set before to use BlackMagic methods
                     process.EnableRaisingEvents = true;
                     process.Exited += exitProcess;

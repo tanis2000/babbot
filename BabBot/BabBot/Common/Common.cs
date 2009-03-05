@@ -199,7 +199,7 @@ namespace BabBot.Common
         /// <summary>
         /// Dummy version to check and wait for Wow window init 
         /// </summary>
-        public static void WaitForWowWindow()
+        public static int WaitForWowWindow()
         {
             int hWnd = 0;
             bool isVisible = false;
@@ -212,6 +212,7 @@ namespace BabBot.Common
                 }
                 Thread.Sleep(1000);
             }
+            return hWnd;
         }
 
         /// <summary>
