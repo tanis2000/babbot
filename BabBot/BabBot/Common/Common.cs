@@ -1,31 +1,64 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading;
 using Microsoft.Win32;
-using System.Management;
 
 namespace BabBot.Common
 {
     public class AppHelper
     {
+        #region Token Const
+
+        public const int READ_CONTROL = 0x00020000;
+        public const int SPECIFIC_RIGHTS_ALL = 0x0000FFFF;
+        public const int STANDARD_RIGHTS_ALL = 0x001F0000;
+        public const int STANDARD_RIGHTS_EXECUTE = READ_CONTROL;
+        public const int STANDARD_RIGHTS_READ = READ_CONTROL;
+        public const int STANDARD_RIGHTS_REQUIRED = 0x000F0000;
+        public const int STANDARD_RIGHTS_WRITE = READ_CONTROL;
+        public const int TOKEN_ADJUST_DEFAULT = 0x0080;
+        public const int TOKEN_ADJUST_GROUPS = 0x0040;
+        public const int TOKEN_ADJUST_PRIVILEGES = 0x0020;
+        public const int TOKEN_ADJUST_SESSIONID = 0x0100;
+
+        public const int TOKEN_ALL_ACCESS = TOKEN_ALL_ACCESS_P |
+                                            TOKEN_ADJUST_SESSIONID;
+
+        public const int TOKEN_ALL_ACCESS_P = (STANDARD_RIGHTS_REQUIRED |
+                                               TOKEN_ASSIGN_PRIMARY |
+                                               TOKEN_DUPLICATE |
+                                               TOKEN_IMPERSONATE |
+                                               TOKEN_QUERY |
+                                               TOKEN_QUERY_SOURCE |
+                                               TOKEN_ADJUST_PRIVILEGES |
+                                               TOKEN_ADJUST_GROUPS |
+                                               TOKEN_ADJUST_DEFAULT);
+
+        public const int TOKEN_ASSIGN_PRIMARY = 0x0001;
+        public const int TOKEN_DUPLICATE = 0x0002;
+        public const int TOKEN_EXECUTE = STANDARD_RIGHTS_EXECUTE;
+        public const int TOKEN_IMPERSONATE = 0x0004;
+        public const int TOKEN_QUERY = 0x0008;
+        public const int TOKEN_QUERY_SOURCE = 0x0010;
+
+        public const int TOKEN_READ = STANDARD_RIGHTS_READ | TOKEN_QUERY;
+
+        public const int TOKEN_WRITE = STANDARD_RIGHTS_WRITE |
+                                       TOKEN_ADJUST_PRIVILEGES |
+                                       TOKEN_ADJUST_GROUPS |
+                                       TOKEN_ADJUST_DEFAULT;
+
+        #endregion
+
         #region Const
 
         private const string APPNAME = "Wow.exe";
         private const string KEY = "InstallPath";
         private const string ROOT = @"SOFTWARE\Blizzard Entertainment\World of Warcraft";
-        private const int TOKEN_ASSIGN_PRIMARY = (0x0001);
-        private const int TOKEN_DUPLICATE = (0x0002);
-        private const int TOKEN_IMPERSONATE = (0x0004);
-        private const int TOKEN_QUERY = (0x0008);
-        private const int TOKEN_QUERY_SOURCE = (0x0010);
-        private const int TOKEN_ADJUST_PRIVILEGES = (0x0020);
-        private const int TOKEN_ADJUST_GROUPS = (0x0040);
-        private const int TOKEN_ADJUST_DEFAULT = (0x0080);
-        private const int TOKEN_EXECUTE = STANDARD_RIGHTS_EXECUTE & TOKEN_IMPERSONATE;
-        private const int STANDARD_RIGHTS_EXECUTE = 131072;
         private const string WND_TITLE = "World of Warcraft";
 
         #endregion
@@ -127,6 +160,156 @@ namespace BabBot.Common
 
         #endregion
 
+        public static string GetProcessInfoByPID(int PID, out string User, out string Domain)
+        {
+            User = String.Empty;
+            Domain = String.Empty;
+            string OwnerSID = String.Empty;
+            string processname = String.Empty;
+            try
+            {
+                var sq = new ObjectQuery
+                    ("Select * from Win32_Process Where ProcessID = '" + PID + "'");
+                var searcher = new ManagementObjectSearcher(sq);
+                if (searcher.Get().Count == 0)
+                {
+                    return OwnerSID;
+                }
+                foreach (ManagementObject oReturn in searcher.Get())
+                {
+                    var o = new String[2];
+                    //Invoke the method and populate the o var with the user name and domain
+                    oReturn.InvokeMethod("GetOwner", o);
+
+                    //int pid = (int)oReturn["ProcessID"];
+                    processname = (string) oReturn["Name"];
+                    //dr[2] = oReturn["Description"];
+                    User = o[0];
+                    if (User == null)
+                    {
+                        User = String.Empty;
+                    }
+                    Domain = o[1];
+                    if (Domain == null)
+                    {
+                        Domain = String.Empty;
+                    }
+                    var sid = new String[1];
+                    oReturn.InvokeMethod("GetOwnerSid", sid);
+                    OwnerSID = sid[0];
+                    return OwnerSID;
+                }
+            }
+            catch
+            {
+                return OwnerSID;
+            }
+            return OwnerSID;
+        }
+
+        #region RunAS methods
+
+        /// <summary>
+        /// Get if is running on Vista 
+        /// </summary>
+        /// <returns>
+        /// true if application is running on Vista 
+        /// false if application is running on different OS
+        /// </returns>
+        public static bool IsVista()
+        {
+            return (Environment.OSVersion.Version.Major >= 6);
+        }
+
+        /// <summary>
+        /// Dummy version for CreateProcessWithLogonW 
+        /// </summary>
+        /// <returns>
+        /// return Process if the function succeeds
+        /// </returns>
+        public static Process RunAs(string Username, string Password, string Domain, string AppName)
+        {
+            return Common.RunAs.StartProcess(Username, Domain, Password, AppName);
+        }
+
+        /// <summary>
+        /// Dummy version to get and check if wow process is running under  guest account
+        /// </summary>
+        /// <returns>
+        /// return Process if the function succeeds else null
+        /// </returns>
+        public static Process GetRunningWoWProcess(string UserToCheck)
+        {
+            Process[] procs = Process.GetProcessesByName("wow");
+            Process res = null;
+
+            foreach (Process proc in procs)
+            {
+                if (proc.MainWindowTitle.Contains(WND_TITLE))
+                {
+                    if (!string.IsNullOrEmpty(UserToCheck))
+                    {
+                        string user;
+                        string siduser;
+
+                        if (ExGetProcessInfoByPID(proc.Id, out siduser, out user) != "Unknown")
+                        //if (GetProcessInfoByPID(proc.Id, out siduser, out user) != string.Empty)
+                        {
+                            if (user.Contains(UserToCheck))
+                            {
+                                res = proc;
+                            }
+                            else
+                            {
+                                throw new Exception("Wow is running with a different user!");
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("ExGetProcessInfoByPID Failed!");
+                        }
+                    }
+                    else
+                    {
+                        res = proc;
+                    }
+                }
+            }
+            return res;
+        }
+
+        #endregion
+
+        #region Dummy API Windows functions
+
+        /// <summary>
+        /// Dummy version to check and wait for Wow window init 
+        /// </summary>
+        public static void WaitForWowWindow()
+        {
+            int hWnd = 0;
+            bool isVisible = false;
+            while (hWnd == 0 && !isVisible)
+            {
+                hWnd = GetWowWindowHandle();
+                if (hWnd != 0)
+                {
+                    isVisible = IsWindowVisible(hWnd);
+                }
+                Thread.Sleep(1000);
+            }
+        }
+
+        /// <summary>
+        /// Dummy version to get the Wow window handle
+        /// </summary>
+        public static int GetWowWindowHandle()
+        {
+            return FindWindow(null, WND_TITLE);
+        }
+
+        #endregion
+
         #region Nested type: _SID_AND_ATTRIBUTES
 
         [StructLayout(LayoutKind.Sequential)]
@@ -177,7 +360,7 @@ namespace BabBot.Common
         /// <param name="SID">User SID</param>
         private static bool DumpUserInfo(IntPtr pToken, out IntPtr SID)
         {
-            int Access = TOKEN_QUERY;
+            int Access = TOKEN_ALL_ACCESS;
             IntPtr procToken = IntPtr.Zero;
             bool ret = false;
             SID = IntPtr.Zero;
@@ -187,7 +370,8 @@ namespace BabBot.Common
                 {
                     ret = ProcessTokenToSid(procToken, out SID);
                     CloseHandle(procToken);
-                } else
+                }
+                else
                 {
                     ulong error = GetLastError();
                 }
@@ -271,150 +455,6 @@ namespace BabBot.Common
             {
                 return "Unknown";
             }
-        }
-
-        #endregion
-
-        public static string GetProcessInfoByPID(int PID, out string User, out string Domain)
-        {
-            User = String.Empty;
-            Domain = String.Empty;
-            string OwnerSID = String.Empty;
-            string processname = String.Empty;
-            try
-            {
-                ObjectQuery sq = new ObjectQuery
-                    ("Select * from Win32_Process Where ProcessID = '" + PID + "'");
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(sq);
-                if (searcher.Get().Count == 0)
-                    return OwnerSID;
-                foreach (ManagementObject oReturn in searcher.Get())
-                {
-                    string[] o = new String[2];
-                    //Invoke the method and populate the o var with the user name and domain
-                    oReturn.InvokeMethod("GetOwner", (object[])o);
-
-                    //int pid = (int)oReturn["ProcessID"];
-                    processname = (string)oReturn["Name"];
-                    //dr[2] = oReturn["Description"];
-                    User = o[0];
-                    if (User == null)
-                        User = String.Empty;
-                    Domain = o[1];
-                    if (Domain == null)
-                        Domain = String.Empty;
-                    string[] sid = new String[1];
-                    oReturn.InvokeMethod("GetOwnerSid", (object[])sid);
-                    OwnerSID = sid[0];
-                    return OwnerSID;
-                }
-            }
-            catch
-            {
-                return OwnerSID;
-            }
-            return OwnerSID;
-        }
-
-        #region RunAS methods
-
-        /// <summary>
-        /// Get if is running on Vista 
-        /// </summary>
-        /// <returns>
-        /// true if application is running on Vista 
-        /// false if application is running on different OS
-        /// </returns>
-        public static bool IsVista()
-        {
-            return (Environment.OSVersion.Version.Major >= 6);
-        }
-
-        /// <summary>
-        /// Dummy version for CreateProcessWithLogonW 
-        /// </summary>
-        /// <returns>
-        /// return Process if the function succeeds
-        /// </returns>
-        public static Process RunAs(string Username, string Password, string Domain, string AppName)
-        {
-            return Common.RunAs.StartProcess(Username, Domain, Password, AppName);
-        }
-
-        /// <summary>
-        /// Dummy version to get and check if wow process is running under  guest account
-        /// </summary>
-        /// <returns>
-        /// return Process if the function succeeds else null
-        /// </returns>
-        public static Process GetRunningWoWProcess(string UserToCheck)
-        {
-            Process[] procs = Process.GetProcessesByName("wow");
-            Process res = null;
-
-            foreach (Process proc in procs)
-            {
-                if (proc.MainWindowTitle.Contains(WND_TITLE))
-                {
-                    if (!string.IsNullOrEmpty(UserToCheck))
-                    {
-                        string user;
-                        string siduser;
-
-                        //if (ExGetProcessInfoByPID(proc.Id, out siduser, out user) != "Unknown")
-                        if (GetProcessInfoByPID(proc.Id, out siduser, out user) != string.Empty)
-                        {
-                            if (siduser.Contains(UserToCheck))
-                            {
-                                res = proc;
-                            }
-                            else
-                            {
-                                throw new Exception("Wow is running with a different user!");
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception("ExGetProcessInfoByPID Failed!");
-                        }
-                    }
-                    else
-                    {
-                        res = proc;
-                    }
-                }
-            }
-            return res;
-        }
-
-        #endregion
-
-        #region Dummy API Windows functions
-
-        /// <summary>
-        /// Dummy version to check and wait for Wow window init 
-        /// </summary>
-        public static void WaitForWowWindow()
-        {
-            int hWnd = 0;
-            bool isVisible = false;
-            while (hWnd == 0 && !isVisible)
-            {
-                hWnd = GetWowWindowHandle();
-                if (hWnd != 0)
-                {
-                    isVisible = IsWindowVisible(hWnd);
-                }
-                Thread.Sleep(1000);
-            }
-        }
-
-        /// <summary>
-        /// Dummy version to get the Wow window handle
-        /// </summary>
-        public static int GetWowWindowHandle()
-        {
-            return FindWindow(null, WND_TITLE);
         }
 
         #endregion
