@@ -52,7 +52,9 @@ namespace BabBot.Common
                 wowKey = Registry.LocalMachine.CreateSubKey(ROOT);
                 if (wowKey != null)
                 {
-                    res = wowKey.GetValue(KEY) + APPNAME;
+                    res = wowKey.GetValue(KEY).ToString();
+                    if (!string.IsNullOrEmpty(res))
+                        res += APPNAME;
                 }
                 else
                 {
@@ -98,7 +100,7 @@ namespace BabBot.Common
         }
 
         /// <summary>
-        /// Dummy version to get and check if the running wow process under the guest account
+        /// Dummy version to get and check if wow process is running under  guest account
         /// </summary>
         /// <returns>
         /// return Process if the function succeeds else null
@@ -108,6 +110,8 @@ namespace BabBot.Common
             Process[] procs = Process.GetProcessesByName("wow");
             Process res = null;
 
+            bool bThrowEx = false;
+
             foreach (Process proc in procs)
             {
                 if (proc.MainWindowTitle.Contains(WND_TITLE))
@@ -115,36 +119,39 @@ namespace BabBot.Common
                     if (!string.IsNullOrEmpty(UserToCheck))
                     {
                         IntPtr hToken = IntPtr.Zero;
-                        if (
+                        /*
                             OpenProcessToken(proc.Handle,
                                              TOKEN_QUERY | TOKEN_IMPERSONATE | TOKEN_DUPLICATE, ref hToken) != 0)
+                        */
+                        // in VISTA è perfetta, in XP se wow è caricato con lo stesso utente
+                        // del babbot la open non fallisce, se caricato con un utente diverso fallisce
+                        // vedi se scopri qualcosa, appena riesco indago
+                        if (OpenProcessToken(proc.Handle, TOKEN_QUERY, ref hToken) != 0)
                         {
-                            var newId = new WindowsIdentity(hToken);
                             try
                             {
-                                const int SecurityImpersonation = 2;
-                                IntPtr dupeTokenHandle = DupeToken(hToken, SecurityImpersonation);
-
-                                if (IntPtr.Zero == dupeTokenHandle)
+                                var pIdentity = new WindowsIdentity(hToken);
+                                // Dovrebbe essere sistemato, stavo usando la WindowIdentity corrente
+                                // e non quella ottenuta dal processo
+                                if (pIdentity.Name.Contains(UserToCheck))
                                 {
-                                    string s = String.Format("Dup failed {0}, privilege not held",
-                                                             Marshal.GetLastWin32Error());
-                                    throw new Exception(s);
-                                }
-                                // WindowsImpersonationContext impersonatedUser = newId.Impersonate();
-                                // IntPtr accountToken = WindowsIdentity.GetCurrent().Token;
-                                // string accTk = accountToken.ToString();
-
-                                string currUsr = WindowsIdentity.GetCurrent().Name;
-
-                                if (currUsr.Contains(UserToCheck))
-                                {
+                                    // Il processo sta girando sotto l'utenza corretta
                                     res = proc;
+                                }
+                                else
+                                {
+                                    // Il processo sta girando con credenziali differenti
+                                    // chiudere sempre l'handle per il token
+                                    bThrowEx = true;
                                 }
                             }
                             finally
                             {
                                 CloseHandle(hToken);
+                                if (bThrowEx)
+                                {
+                                    throw new Exception("Wow is running with a different user!");
+                                }
                             }
                         }
                         else
@@ -166,13 +173,13 @@ namespace BabBot.Common
         private static IntPtr DupeToken(IntPtr token, int Level)
         {
             IntPtr dupeTokenHandle = IntPtr.Zero;
-            bool retVal = DuplicateToken(token, Level, ref dupeTokenHandle);
+            DuplicateToken(token, Level, ref dupeTokenHandle);
             return dupeTokenHandle;
         }
 
 
         /// <summary>
-        /// Dummy version to check and wait for Wow Process 
+        /// Dummy version to check and wait for Wow window init 
         /// </summary>
         public static void WaitForWowWindow()
         {

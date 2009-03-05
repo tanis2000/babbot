@@ -36,7 +36,7 @@ namespace BabBot.Forms
             // Cross-Thread operation
             if (InvokeRequired)
             {
-                //Setup the cross-thread call
+                // Setup the cross-thread call
                 ProcessEndedDelegate del = wow_ProcessEnded;
                 object[] parameters = {process};
                 Invoke(del, parameters);
@@ -62,7 +62,7 @@ namespace BabBot.Forms
 
         private static void wow_ProcessAccessFailed(string error)
         {
-            MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(error, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private static void inGameTimer_Tick(object sender, EventArgs e)
@@ -121,6 +121,7 @@ namespace BabBot.Forms
                 MessageBox.Show(ex.Message);
             }
         }
+        
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();

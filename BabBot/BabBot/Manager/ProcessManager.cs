@@ -110,16 +110,18 @@ namespace BabBot.Manager
             }
             try
             {
-                // Set before to use BlackMagic methods
-                process.EnableRaisingEvents = true;
-                process.Exited += exitProcess;
-                
+                ProcessRunning = false;
                 // TODO: è un po sporca ogni tanto scazza, meglio usare una FindWindow, per
                 // sapere esattamente quando aprire il processo con BlackMagic
                 // process.WaitForInputIdle(15000);
-                AppHelper.WaitForWowWindow();
-
-                ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
+                if (process != null)
+                {
+                    AppHelper.WaitForWowWindow();
+                    // Set before to use BlackMagic methods
+                    process.EnableRaisingEvents = true;
+                    process.Exited += exitProcess;
+                    ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
+                }
             }
             catch (Exception e)
             {
@@ -146,14 +148,30 @@ namespace BabBot.Manager
         {
             try
             {
-                process = AppHelper.RunAs(Config.GuestUsername, "", null, AppHelper.GetWowInstallationPath());
-                afterProcessStart();
+                // Perry style = paranoid ;-)
+                string wowPath = AppHelper.GetWowInstallationPath();
+                if (!string.IsNullOrEmpty(wowPath))
+                {
+                    process = AppHelper.RunAs(Config.GuestUsername, "", null, wowPath);
+                    afterProcessStart();
+                }
+                else
+                {
+                    throw new Exception("Wow is not installed or the registry key is missed.");
+                }
             }
             catch (Win32Exception w32e)
             {
-                if (WoWProcessAccessFailed != null)
+                if (WoWProcessFailed != null)
                 {
                     WoWProcessFailed(w32e.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (WoWProcessAccessFailed != null)
+                {
+                    WoWProcessAccessFailed(ex.Message);
                 }
             }
         }
@@ -163,13 +181,27 @@ namespace BabBot.Manager
             try
             {
                 process = AppHelper.GetRunningWoWProcess(Config.GuestUsername);
-                afterProcessStart();
+                if (process != null)
+                {
+                    afterProcessStart();    
+                }
+                else
+                {
+                    throw new Exception("Wow is not running in the current context.");
+                }
             }
             catch (Win32Exception w32e)
             {
-                if (WoWProcessAccessFailed != null)
+                if (WoWProcessFailed != null)
                 {
                     WoWProcessFailed(w32e.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (WoWProcessAccessFailed != null)
+                {
+                    WoWProcessAccessFailed(ex.Message);
                 }
             }
         }

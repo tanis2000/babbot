@@ -36,6 +36,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.btnAttachToWow = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.tbProfileDescription = new System.Windows.Forms.TextBox();
@@ -92,7 +93,6 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.btnAttachToWow = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -127,7 +127,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -142,7 +142,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             // 
             // tabControlMain
@@ -182,6 +182,16 @@
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main";
             this.tabPageMain.UseVisualStyleBackColor = true;
+            // 
+            // btnAttachToWow
+            // 
+            this.btnAttachToWow.Location = new System.Drawing.Point(87, 6);
+            this.btnAttachToWow.Name = "btnAttachToWow";
+            this.btnAttachToWow.Size = new System.Drawing.Size(95, 23);
+            this.btnAttachToWow.TabIndex = 15;
+            this.btnAttachToWow.Text = "Attach to WoW";
+            this.btnAttachToWow.UseVisualStyleBackColor = true;
+            this.btnAttachToWow.Click += new System.EventHandler(this.btnAttachToWow_Click);
             // 
             // label9
             // 
@@ -708,16 +718,6 @@
             this.label14.Size = new System.Drawing.Size(25, 13);
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
-            // 
-            // btnAttachToWow
-            // 
-            this.btnAttachToWow.Location = new System.Drawing.Point(87, 7);
-            this.btnAttachToWow.Name = "btnAttachToWow";
-            this.btnAttachToWow.Size = new System.Drawing.Size(95, 23);
-            this.btnAttachToWow.TabIndex = 15;
-            this.btnAttachToWow.Text = "Attach to WoW";
-            this.btnAttachToWow.UseVisualStyleBackColor = true;
-            this.btnAttachToWow.Click += new System.EventHandler(this.btnAttachToWow_Click);
             // 
             // MainForm
             // 
