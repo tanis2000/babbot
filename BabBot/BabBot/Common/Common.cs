@@ -364,7 +364,7 @@ namespace BabBot.Common
                         //if (ExGetProcessInfoByPID(proc.Id, out siduser, out user) != "Unknown")
                         if (GetProcessInfoByPID(proc.Id, out siduser, out user) != string.Empty)
                         {
-                            if (user.Contains(UserToCheck))
+                            if (siduser.Contains(UserToCheck))
                             {
                                 res = proc;
                             }
