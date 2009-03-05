@@ -2,8 +2,6 @@
 using System.Diagnostics;
 using System.Management;
 using System.Runtime.InteropServices;
-using System.Security;
-using System.Text;
 using System.Threading;
 using Microsoft.Win32;
 
@@ -11,49 +9,6 @@ namespace BabBot.Common
 {
     public class AppHelper
     {
-        #region Token Const
-
-        public const int READ_CONTROL = 0x00020000;
-        public const int SPECIFIC_RIGHTS_ALL = 0x0000FFFF;
-        public const int STANDARD_RIGHTS_ALL = 0x001F0000;
-        public const int STANDARD_RIGHTS_EXECUTE = READ_CONTROL;
-        public const int STANDARD_RIGHTS_READ = READ_CONTROL;
-        public const int STANDARD_RIGHTS_REQUIRED = 0x000F0000;
-        public const int STANDARD_RIGHTS_WRITE = READ_CONTROL;
-        public const int TOKEN_ADJUST_DEFAULT = 0x0080;
-        public const int TOKEN_ADJUST_GROUPS = 0x0040;
-        public const int TOKEN_ADJUST_PRIVILEGES = 0x0020;
-        public const int TOKEN_ADJUST_SESSIONID = 0x0100;
-
-        public const int TOKEN_ALL_ACCESS = TOKEN_ALL_ACCESS_P |
-                                            TOKEN_ADJUST_SESSIONID;
-
-        public const int TOKEN_ALL_ACCESS_P = (STANDARD_RIGHTS_REQUIRED |
-                                               TOKEN_ASSIGN_PRIMARY |
-                                               TOKEN_DUPLICATE |
-                                               TOKEN_IMPERSONATE |
-                                               TOKEN_QUERY |
-                                               TOKEN_QUERY_SOURCE |
-                                               TOKEN_ADJUST_PRIVILEGES |
-                                               TOKEN_ADJUST_GROUPS |
-                                               TOKEN_ADJUST_DEFAULT);
-
-        public const int TOKEN_ASSIGN_PRIMARY = 0x0001;
-        public const int TOKEN_DUPLICATE = 0x0002;
-        public const int TOKEN_EXECUTE = STANDARD_RIGHTS_EXECUTE;
-        public const int TOKEN_IMPERSONATE = 0x0004;
-        public const int TOKEN_QUERY = 0x0008;
-        public const int TOKEN_QUERY_SOURCE = 0x0010;
-
-        public const int TOKEN_READ = STANDARD_RIGHTS_READ | TOKEN_QUERY;
-
-        public const int TOKEN_WRITE = STANDARD_RIGHTS_WRITE |
-                                       TOKEN_ADJUST_PRIVILEGES |
-                                       TOKEN_ADJUST_GROUPS |
-                                       TOKEN_ADJUST_DEFAULT;
-
-        #endregion
-
         #region Const
 
         private const string APPNAME = "Wow.exe";
@@ -70,46 +25,6 @@ namespace BabBot.Common
 
         [DllImport("user32.dll")]
         public static extern bool IsWindowVisible(int hWnd);
-
-        [DllImport("kernel32", SetLastError = true), SuppressUnmanagedCodeSecurity]
-        private static extern bool CloseHandle(IntPtr handle);
-
-        [DllImport("kernel32")]
-        private static extern ulong GetLastError();
-
-        [DllImport("advapi32")]
-        private static extern bool OpenProcessToken(
-            IntPtr ProcessHandle, // handle to process
-            int DesiredAccess, // desired access to process
-            ref IntPtr TokenHandle // handle to open access token
-            );
-
-        [DllImport("AdvAPI32.dll", EntryPoint = "ConvertStringSidToSid")]
-        public static extern bool ConvertStringSIdToSId(string Text, ref IntPtr SId);
-
-        [DllImport("advapi32", CharSet = CharSet.Auto)]
-        private static extern bool ConvertSidToStringSid(
-            IntPtr pSID,
-            [In, Out, MarshalAs(UnmanagedType.LPTStr)] ref string pStringSid
-            );
-
-        [DllImport("advapi32", CharSet = CharSet.Auto)]
-        private static extern bool GetTokenInformation(
-            IntPtr hToken,
-            TOKEN_INFORMATION_CLASS tokenInfoClass,
-            IntPtr TokenInformation,
-            int tokeInfoLength,
-            ref int reqLength
-            );
-
-        [DllImport("AdvAPI32.dll", EntryPoint = "LookupAccountSid")]
-        private static extern bool LookupAccountSId(string SystemName, IntPtr SId,
-                                                    StringBuilder Name, ref int NameBytes, StringBuilder DomainName,
-                                                    ref int DomainNameBytes,
-                                                    ref int NameUse);
-
-        [DllImport("Kernel32.dll")]
-        private static extern IntPtr LocalFree(IntPtr hMem);
 
         #endregion
 
@@ -160,53 +75,6 @@ namespace BabBot.Common
 
         #endregion
 
-        public static string GetProcessInfoByPID(int PID, out string User, out string Domain)
-        {
-            User = String.Empty;
-            Domain = String.Empty;
-            string OwnerSID = String.Empty;
-            string processname = String.Empty;
-            try
-            {
-                var sq = new ObjectQuery
-                    ("Select * from Win32_Process Where ProcessID = '" + PID + "'");
-                var searcher = new ManagementObjectSearcher(sq);
-                if (searcher.Get().Count == 0)
-                {
-                    return OwnerSID;
-                }
-                foreach (ManagementObject oReturn in searcher.Get())
-                {
-                    var o = new String[2];
-                    //Invoke the method and populate the o var with the user name and domain
-                    oReturn.InvokeMethod("GetOwner", o);
-
-                    //int pid = (int)oReturn["ProcessID"];
-                    processname = (string) oReturn["Name"];
-                    //dr[2] = oReturn["Description"];
-                    User = o[0];
-                    if (User == null)
-                    {
-                        User = String.Empty;
-                    }
-                    Domain = o[1];
-                    if (Domain == null)
-                    {
-                        Domain = String.Empty;
-                    }
-                    var sid = new String[1];
-                    oReturn.InvokeMethod("GetOwnerSid", sid);
-                    OwnerSID = sid[0];
-                    return OwnerSID;
-                }
-            }
-            catch
-            {
-                return OwnerSID;
-            }
-            return OwnerSID;
-        }
-
         #region RunAS methods
 
         /// <summary>
@@ -252,8 +120,7 @@ namespace BabBot.Common
                         string user;
                         string siduser;
 
-                        if (ExGetProcessInfoByPID(proc.Id, out siduser, out user) != "Unknown")
-                        //if (GetProcessInfoByPID(proc.Id, out siduser, out user) != string.Empty)
+                        if (GetProcessInfoByPID(proc.Id, out user, out siduser) != string.Empty)
                         {
                             if (user.Contains(UserToCheck))
                             {
@@ -282,6 +149,53 @@ namespace BabBot.Common
 
         #region Dummy API Windows functions
 
+        public static string GetProcessInfoByPID(int PID, out string User, out string Domain)
+        {
+            User = String.Empty;
+            Domain = String.Empty;
+            string OwnerSID = String.Empty;
+            // string processname = String.Empty;
+            try
+            {
+                var sq = new ObjectQuery
+                    ("Select * from Win32_Process Where ProcessID = '" + PID + "'");
+                var searcher = new ManagementObjectSearcher(sq);
+                if (searcher.Get().Count == 0)
+                {
+                    return OwnerSID;
+                }
+                foreach (ManagementObject oReturn in searcher.Get())
+                {
+                    var o = new String[2];
+                    //Invoke the method and populate the o var with the user name and domain
+                    oReturn.InvokeMethod("GetOwner", o);
+
+                    // int pid = (int)oReturn["ProcessID"];
+                    // processname = (string) oReturn["Name"];
+                    // dr[2] = oReturn["Description"];
+                    User = o[0];
+                    if (User == null)
+                    {
+                        User = String.Empty;
+                    }
+                    Domain = o[1];
+                    if (Domain == null)
+                    {
+                        Domain = String.Empty;
+                    }
+                    var sid = new String[1];
+                    oReturn.InvokeMethod("GetOwnerSid", sid);
+                    OwnerSID = sid[0];
+                    return OwnerSID;
+                }
+            }
+            catch
+            {
+                return OwnerSID;
+            }
+            return OwnerSID;
+        }
+
         /// <summary>
         /// Dummy version to check and wait for Wow window init 
         /// </summary>
@@ -306,155 +220,6 @@ namespace BabBot.Common
         public static int GetWowWindowHandle()
         {
             return FindWindow(null, WND_TITLE);
-        }
-
-        #endregion
-
-        #region Nested type: _SID_AND_ATTRIBUTES
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct _SID_AND_ATTRIBUTES
-        {
-            public IntPtr Sid;
-            public int Attributes;
-        }
-
-        #endregion
-
-        #region Nested type: TOKEN_INFORMATION_CLASS
-
-        private enum TOKEN_INFORMATION_CLASS
-        {
-            TokenUser = 1,
-            TokenGroups,
-            TokenPrivileges,
-            TokenOwner,
-            TokenPrimaryGroup,
-            TokenDefaultDacl,
-            TokenSource,
-            TokenType,
-            TokenImpersonationLevel,
-            TokenStatistics,
-            TokenRestrictedSids,
-            TokenSessionId
-        }
-
-        #endregion
-
-        #region Nested type: TOKEN_USER
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct TOKEN_USER
-        {
-            public _SID_AND_ATTRIBUTES User;
-        }
-
-        #endregion
-
-        #region Privilege Token methods
-
-        /// <summary>
-        /// Collect User Info
-        /// </summary>
-        /// <param name="pToken">Process Handle</param>
-        /// <param name="SID">User SID</param>
-        private static bool DumpUserInfo(IntPtr pToken, out IntPtr SID)
-        {
-            int Access = TOKEN_ALL_ACCESS;
-            IntPtr procToken = IntPtr.Zero;
-            bool ret = false;
-            SID = IntPtr.Zero;
-            try
-            {
-                if (OpenProcessToken(pToken, Access, ref procToken))
-                {
-                    ret = ProcessTokenToSid(procToken, out SID);
-                    CloseHandle(procToken);
-                }
-                else
-                {
-                    ulong error = GetLastError();
-                }
-                return ret;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static bool ProcessTokenToSid(IntPtr token, out IntPtr SID)
-        {
-            TOKEN_USER tokUser;
-            const int bufLength = 256;
-            IntPtr tu = Marshal.AllocHGlobal(bufLength);
-            SID = IntPtr.Zero;
-            try
-            {
-                int cb = bufLength;
-                bool ret = GetTokenInformation(token, TOKEN_INFORMATION_CLASS.TokenUser, tu, cb, ref cb);
-                if (ret)
-                {
-                    tokUser = (TOKEN_USER) Marshal.PtrToStructure(tu, typeof (TOKEN_USER));
-                    SID = tokUser.User.Sid;
-                }
-                return ret;
-            }
-            catch
-            {
-                return false;
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(tu);
-            }
-        }
-
-        private static string SIdToName(string SIdText)
-        {
-            bool Result = false;
-            IntPtr SId = IntPtr.Zero;
-            var Name = new StringBuilder(10000);
-            int NameBytes = 100;
-            var DomainName = new StringBuilder(10000);
-            int DomainNameBytes = 100;
-            int NameUse = 0;
-            Result = ConvertStringSIdToSId(SIdText, ref SId);
-            if (Result)
-            {
-                Result = LookupAccountSId(null, SId, Name, ref NameBytes, DomainName,
-                                          ref DomainNameBytes, ref NameUse);
-            }
-            LocalFree(SId);
-            if (Result)
-            {
-                return DomainName + "\\" + Name;
-            }
-            return null;
-        }
-
-        private static string ExGetProcessInfoByPID(int PID, out string SID, out string User)
-        {
-            IntPtr _SID = IntPtr.Zero;
-            SID = String.Empty;
-            User = string.Empty;
-            try
-            {
-                Process process = Process.GetProcessById(PID);
-                if (DumpUserInfo(process.Handle, out _SID))
-                {
-                    ConvertSidToStringSid(_SID, ref SID);
-                    if (!string.IsNullOrEmpty(SID))
-                    {
-                        User = SIdToName(SID);
-                    }
-                }
-                return process.ProcessName;
-            }
-            catch
-            {
-                return "Unknown";
-            }
         }
 
         #endregion
