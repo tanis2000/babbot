@@ -15,7 +15,16 @@ namespace BabBot.Common
         private const string APPNAME = "Wow.exe";
         private const string KEY = "InstallPath";
         private const string ROOT = @"SOFTWARE\Blizzard Entertainment\World of Warcraft";
-        private const int TOKEN_QUERY = 0X00000008;
+        private const int TOKEN_ASSIGN_PRIMARY = (0x0001);
+        private const int TOKEN_DUPLICATE = (0x0002);
+        private const int TOKEN_IMPERSONATE = (0x0004);
+        private const int TOKEN_QUERY = (0x0008);
+        private const int TOKEN_QUERY_SOURCE = (0x0010);
+        private const int TOKEN_ADJUST_PRIVILEGES = (0x0020);
+        private const int TOKEN_ADJUST_GROUPS = (0x0040);
+        private const int TOKEN_ADJUST_DEFAULT = (0x0080);
+        private const int TOKEN_EXECUTE = STANDARD_RIGHTS_EXECUTE & TOKEN_IMPERSONATE;
+        private const int STANDARD_RIGHTS_EXECUTE = 131072;
         private const string WND_TITLE = "World of Warcraft";
 
         #endregion
@@ -30,6 +39,9 @@ namespace BabBot.Common
 
         [DllImport("kernel32", SetLastError = true), SuppressUnmanagedCodeSecurity]
         private static extern bool CloseHandle(IntPtr handle);
+
+        [DllImport("kernel32")]
+        private static extern ulong GetLastError();
 
         [DllImport("advapi32")]
         private static extern bool OpenProcessToken(
@@ -174,6 +186,9 @@ namespace BabBot.Common
                 {
                     ret = ProcessTokenToSid(procToken, out SID);
                     CloseHandle(procToken);
+                } else
+                {
+                    ulong error = GetLastError();
                 }
                 return ret;
             }
