@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot\Profile.cs" />
+    <Compile Include="Common\Common.cs" />
     <Compile Include="Common\RunAs.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Forms\MainForm.cs">
@@ -57,9 +58,6 @@
     </Compile>
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="..\..\Common.cs">
-      <Link>Common\Common.cs</Link>
     </Compile>
     <Compile Include="Manager\CommandManager.cs" />
     <Compile Include="Manager\ProcessManager.cs" />
@@ -96,6 +94,10 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Host.cs" />
+    <Compile Include="Scripts\Script.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Wow\Descriptor.cs" />
     <Compile Include="Wow\Globals.cs" />

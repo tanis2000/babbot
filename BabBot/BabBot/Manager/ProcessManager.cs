@@ -274,6 +274,7 @@ namespace BabBot.Manager
             Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
             ObjectManager = new ObjectManager();
             Player.AttachUnit(ObjectManager.GetLocalPlayerObject());
+            Scripting.Host.Go();
             Initialized = true;
 
 
