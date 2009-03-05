@@ -5,6 +5,7 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using Microsoft.Win32;
+using System.Management;
 
 namespace BabBot.Common
 {
@@ -274,6 +275,47 @@ namespace BabBot.Common
 
         #endregion
 
+        public static string GetProcessInfoByPID(int PID, out string User, out string Domain)
+        {
+            User = String.Empty;
+            Domain = String.Empty;
+            string OwnerSID = String.Empty;
+            string processname = String.Empty;
+            try
+            {
+                ObjectQuery sq = new ObjectQuery
+                    ("Select * from Win32_Process Where ProcessID = '" + PID + "'");
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(sq);
+                if (searcher.Get().Count == 0)
+                    return OwnerSID;
+                foreach (ManagementObject oReturn in searcher.Get())
+                {
+                    string[] o = new String[2];
+                    //Invoke the method and populate the o var with the user name and domain
+                    oReturn.InvokeMethod("GetOwner", (object[])o);
+
+                    //int pid = (int)oReturn["ProcessID"];
+                    processname = (string)oReturn["Name"];
+                    //dr[2] = oReturn["Description"];
+                    User = o[0];
+                    if (User == null)
+                        User = String.Empty;
+                    Domain = o[1];
+                    if (Domain == null)
+                        Domain = String.Empty;
+                    string[] sid = new String[1];
+                    oReturn.InvokeMethod("GetOwnerSid", (object[])sid);
+                    OwnerSID = sid[0];
+                    return OwnerSID;
+                }
+            }
+            catch
+            {
+                return OwnerSID;
+            }
+            return OwnerSID;
+        }
+
         #region RunAS methods
 
         /// <summary>
@@ -319,7 +361,8 @@ namespace BabBot.Common
                         string user;
                         string siduser;
 
-                        if (ExGetProcessInfoByPID(proc.Id, out siduser, out user) != "Unknown")
+                        //if (ExGetProcessInfoByPID(proc.Id, out siduser, out user) != "Unknown")
+                        if (GetProcessInfoByPID(proc.Id, out siduser, out user) != string.Empty)
                         {
                             if (user.Contains(UserToCheck))
                             {
