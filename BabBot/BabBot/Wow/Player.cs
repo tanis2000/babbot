@@ -172,6 +172,12 @@ namespace BabBot.Wow
 
         // Movements
         // E' solo un'idea, se ti sembra na cazzata spostiamoli
+        // Lo scopo sarebbe di riuscire ad astrarre il più possibile
+        // al fine di poter controllare il toon comodamente, ma il sistema
+        // di navigazione dovrebbe essere esterno alla classe Player
+        // Nella fase di movimento è determinante controllare:
+        // 1) se non si è attaccati da qualche mobs
+        // 2) se non si è bloccati contro qualche ostacolo
         public bool GoForward(Vector3D dest)
         {
             throw new NotImplementedException();
