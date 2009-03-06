@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BabBot.Manager;
 
 namespace BabBot.Wow
 {
@@ -91,10 +92,12 @@ namespace BabBot.Wow
         public float Orientation;
         public PlayerState State;
 
+        private CommandManager _cm;
+
         /// <summary>
         /// Constructor
         /// </summary>
-        public Player()
+        public Player(CommandManager cm)
         {
             Location = new Vector3D();
             Hp = 0;
@@ -105,6 +108,7 @@ namespace BabBot.Wow
             CurTargetGuid = 0;
             Orientation = 0.0f;
             State = PlayerState.Start;
+            _cm = cm;
         }
 
         /// <summary>
@@ -165,5 +169,40 @@ namespace BabBot.Wow
         {
             get { return Unit.GetCurTargetName(); }
         }
+
+        // Movements
+        // E' solo un'idea, se ti sembra na cazzata spostiamoli
+        public bool GoForward(Vector3D dest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GoBack(Vector3D dest)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GoLeft(float radius)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GoRight(float radius)
+        {
+            throw new NotImplementedException();
+        }
+
+        // Actions
+        public bool Cast(string SlotBar, string Key)
+        {
+            throw new NotImplementedException();
+        }
+
+        // Messages
+        public bool Say(string To, string Message)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

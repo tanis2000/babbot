@@ -75,13 +75,14 @@ namespace BabBot.Manager
         public static Profile Profile;
         public static int WowHWND;
         public static BotManager BotManager;
+        public static CommandManager CommandManager;
 
         static ProcessManager()
         {
             config = new Config();
             wowProcess = new BlackMagic();
             ProcessRunning = false;
-            Player = new Player();
+            Player = new Player(CommandManager);
             InGame = false;
             TLS = 0x0;
             Initialized = false;
