@@ -4,26 +4,80 @@ using System.Text;
 
 namespace BabBot.Wow
 {
+    /// <summary>
+    /// Possible states of the player in game
+    /// </summary>
     public enum PlayerState : int
     {
-        PreMobSelection, // Before selecting a mob
-        PostMobSelection, // After selecting a mob
-        Start, // We just started 
-        WayPointTimeout, // Cannot reach a waypoint in time
-        PreRest, // Before resting
-        Rest, // During rest
-        PostRest, // After resting
-        Dead, // Died
-        Graveyard, // Spawned at the graveyard
-        PreResurrection, // Before resurrecting
-        PostResurrection, // After resurrecting
-        PreLoot, // Before looting
-        PostLoot, // After looting
-        PreCombat, // Before combat
-        PostCombat, // After Combat
-        Sale // At the vendor/repair guy
+        ///<summary>
+        /// Before selecting a mob
+        ///</summary>
+        PreMobSelection,
+        /// <summary>
+        /// After selecting a mob
+        /// </summary>
+        PostMobSelection,
+        /// <summary>
+        /// We just started
+        /// </summary>
+        Start,
+        /// <summary>
+        /// Cannot reach a waypoint in time
+        /// </summary>
+        WayPointTimeout,
+        /// <summary>
+        /// Before resting
+        /// </summary>
+        PreRest,
+        /// <summary>
+        /// During rest
+        /// </summary>
+        Rest,
+        /// <summary>
+        /// After resting
+        /// </summary>
+        PostRest,
+        /// <summary>
+        /// Died
+        /// </summary>
+        Dead,
+        /// <summary>
+        /// Spawned at the graveyard
+        /// </summary>
+        Graveyard,
+        /// <summary>
+        /// Before resurrecting
+        /// </summary>
+        PreResurrection,
+        /// <summary>
+        /// After resurrecting
+        /// </summary>
+        PostResurrection,
+        /// <summary>
+        /// Before looting
+        /// </summary>
+        PreLoot,
+        /// <summary>
+        /// After looting
+        /// </summary>
+        PostLoot,
+        /// <summary>
+        /// Before combat
+        /// </summary>
+        PreCombat,
+        /// <summary>
+        /// After Combat
+        /// </summary>
+        PostCombat,
+        /// <summary>
+        /// At the vendor/repair guy
+        /// </summary>
+        Sale
     }
 
+    /// <summary>
+    /// Stores all the information about the player
+    /// </summary>
     public class Player
     {
         public uint Hp;
@@ -37,6 +91,9 @@ namespace BabBot.Wow
         public float Orientation;
         public PlayerState State;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Player()
         {
             Location = new Vector3D();
@@ -50,11 +107,20 @@ namespace BabBot.Wow
             State = PlayerState.Start;
         }
 
+        /// <summary>
+        /// Creates a new Unit object and attach it to the client's memory so 
+        /// that we can therefore call UpdateFromClient() to read the
+        /// player's information
+        /// </summary>
+        /// <param name="ObjectPointer">Pointer to Wow's ObjectManager</param>
         public void AttachUnit(uint ObjectPointer)
         {
             Unit = new Unit(ObjectPointer);
         }
 
+        /// <summary>
+        /// Reads the player information from Wow's ObjectManager
+        /// </summary>
         public void UpdateFromClient()
         {
             if (Unit == null) return;
@@ -68,5 +134,27 @@ namespace BabBot.Wow
             //CurTargetGuid = Unit.GetCurTargetGuid();
             Orientation = Unit.GetFacing();
         }
+
+        public bool IsAtGraveyard()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsDead()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsGhost()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsInCombat()
+        {
+            throw new NotImplementedException();
+        }
+
+    
     }
 }

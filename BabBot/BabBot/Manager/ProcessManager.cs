@@ -71,6 +71,7 @@ namespace BabBot.Manager
         public static bool Initialized;
         public static Profile Profile;
         public static int WowHWND;
+        public static BotManager BotManager;
 
         static ProcessManager()
         {
@@ -83,6 +84,7 @@ namespace BabBot.Manager
             Initialized = false;
             Profile = new Profile();
             WowHWND = 0;
+            BotManager = new BotManager();
         }
 
         public static BlackMagic WowProcess
@@ -207,37 +209,7 @@ namespace BabBot.Manager
                 }
             }
         }
-/*
-        public static void UpdatePlayerLocation()
-        {
-            if (!InGame)
-            {
-                return;
-            }
 
-            float x = wowProcess.ReadFloat(Globals.PlayerBaseOffset + Globals.PlayerXOffset);
-            float y = wowProcess.ReadFloat(Globals.PlayerBaseOffset + Globals.PlayerYOffset);
-            float z = wowProcess.ReadFloat(Globals.PlayerBaseOffset + Globals.PlayerZOffset);
-
-            Player.Location = new Vector3D(x, y, z);
-
-            Player.CurTargetGuid = wowProcess.ReadUInt64(Globals.PlayerCurTargetGuidOffset);
-        }
-
-        public static void UpdatePlayerStats()
-        {
-            if (!InGame)
-            {
-                return;
-            }
-
-            Player.Hp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerHealthOffset);
-            Player.MaxHp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerMaxHealthOffset);
-            Player.Mp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerManaOffset);
-            Player.MaxMp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerMaxManaOffset);
-            Player.Xp = wowProcess.ReadUInt(Globals.PlayerBaseOffset + Globals.PlayerXpOffset);
-        }
-*/
         public static void UpdatePlayer()
         {
             if (!Initialized)
@@ -255,14 +227,18 @@ namespace BabBot.Manager
                 WowProcess.ReadUInt(WowProcess.ReadUInt(WowProcess.ReadUInt(Globals.GameOffset) +
                                                         Globals.PlayerBaseOffset1) + Globals.PlayerBaseOffset2);
                 InGame = true;
+                if (!Initialized)
+                {
+                    Initialize();
+                }
             }
             catch
             {
                 InGame = false;
+                Initialized = false;
             }
         }
 
-        // TODO: This should actually be converted to the initialization function once we are into the game
         public static void FindTLS()
         {
             //search for the code pattern that we want (in this case, WoW TLS)
@@ -270,19 +246,38 @@ namespace BabBot.Manager
                                        "EB 02 33 C0 8B D 00 00 00 00 64 8B 15 00 00 00 00 8B 34 8A 8B D 00 00 00 00 89 81 00 00 00 00",
                                        "xxxxxx????xxx????xxxxx????xx????");
 
+
+            if (TLS == uint.MaxValue)
+            {
+                throw new Exception("Could not find WoW's Object Manager.");
+            }
+        }
+
+        private static void InitializeObjectManager()
+        {
             Globals.ClientConnectionPointer = wowProcess.ReadUInt(TLS + 0x16);
             Globals.ClientConnection = wowProcess.ReadUInt(Globals.ClientConnectionPointer);
             Globals.ClientConnectionOffset = wowProcess.ReadUInt(TLS + 0x1C);
             Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
             ObjectManager = new ObjectManager();
             Player.AttachUnit(ObjectManager.GetLocalPlayerObject());
-            Scripting.Host.Go();
-            Initialized = true;
+        }
 
-
-            if (TLS == uint.MaxValue)
+        /// <summary>
+        /// Search for the TLS and Initialize the bot once the user is logged in
+        /// </summary>
+        public static void Initialize()
+        {
+            try
             {
-                throw new Exception("Could not find WoW's Object Manager.\nPlease press [ENTER] to continue...");
+                FindTLS();
+                InitializeObjectManager();
+                Scripting.Host.Go();
+                Initialized = true;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }

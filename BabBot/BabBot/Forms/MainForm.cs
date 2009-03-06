@@ -27,6 +27,9 @@ namespace BabBot.Forms
             ProcessManager.WoWProcessEnded += wow_ProcessEnded;
             ProcessManager.WoWProcessFailed += wow_ProcessFailed;
             ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
+
+            // Starts the bot thread
+            StartBotThread();
         }
 
         #region Events
@@ -150,6 +153,16 @@ namespace BabBot.Forms
         {
             AboutForm f = new AboutForm();
             f.ShowDialog();
+        }
+
+        private void StartBotThread()
+        {
+            ProcessManager.BotManager.Start();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ProcessManager.BotManager.Stop();
         }
 
     }

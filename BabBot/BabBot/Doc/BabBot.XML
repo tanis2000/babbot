@@ -4,20 +4,20 @@
         <name>BabBot</name>
     </assembly>
     <members>
-        <member name="T:BabBot.Properties.Resources">
+        <member name="F:BabBot.Forms.AboutForm.components">
             <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
+            Required designer variable.
             </summary>
         </member>
-        <member name="P:BabBot.Properties.Resources.ResourceManager">
+        <member name="M:BabBot.Forms.AboutForm.Dispose(System.Boolean)">
             <summary>
-              Returns the cached ResourceManager instance used by this class.
+            Clean up any resources being used.
             </summary>
         </member>
-        <member name="P:BabBot.Properties.Resources.Culture">
+        <member name="M:BabBot.Forms.AboutForm.InitializeComponent">
             <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
             </summary>
         </member>
         <member name="F:BabBot.Forms.MainForm.components">
@@ -35,6 +35,53 @@
             <summary>
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:BabBot.Manager.ProcessManager.Initialize">
+            <summary>
+            Search for the TLS and Initialize the bot once the user is logged in
+            </summary>
+        </member>
+        <member name="E:BabBot.Manager.ProcessManager.WoWProcessFailed">
+            <summary>
+            ProcessFailed is fired if an exception is thrown when attempting to start the
+             process.
+            </summary>
+        </member>
+        <member name="E:BabBot.Manager.ProcessManager.WoWProcessEnded">
+            <summary>
+            ProcessEnded is fired where the started process exits.
+            </summary>
+        </member>
+        <member name="E:BabBot.Manager.ProcessManager.WoWProcessStarted">
+            <summary>
+            ProcessStarted is fired if the process successfully starts.
+            </summary>
+        </member>
+        <member name="E:BabBot.Manager.ProcessManager.WoWProcessAccessFailed">
+            <summary>
+            ProcessAccessFailed is fired if the current user does not have permission to
+             access the new process.
+            </summary>
+        </member>
+        <member name="T:BabBot.Manager.ProcessManager.WoWProcessAccessFailedEventHandler">
+            <summary>
+            Error is the Win32Exception.Message thrown.
+            </summary>
+        </member>
+        <member name="T:BabBot.Manager.ProcessManager.WoWProcessEndedEventHandler">
+            <summary>
+            Process is the ID of the process that exited.
+            </summary>
+        </member>
+        <member name="T:BabBot.Manager.ProcessManager.WoWProcessFailedEventHandler">
+            <summary>
+            Error is the Win32Exception.Message thrown.
+            </summary>
+        </member>
+        <member name="T:BabBot.Manager.ProcessManager.WoWProcessStartedEventHandler">
+            <summary>
+            Process is the ID of the process that started.
             </summary>
         </member>
         <member name="M:BabBot.Common.AppHelper.GetWowInstallationPath">
@@ -79,6 +126,48 @@
         <member name="M:BabBot.Common.AppHelper.GetWowWindowHandle">
             <summary>
             Dummy version to get the Wow window handle
+            </summary>
+        </member>
+        <member name="F:BabBot.Wow.PlayerState.PreMobSelection">
+            <summary>
+             Before selecting a mob
+            </summary>
+        </member>
+        <member name="F:BabBot.Wow.PlayerState.PostMobSelection">
+            <summary>
+            After selecting a mob
+            </summary>
+        </member>
+        <member name="F:BabBot.Wow.PlayerState.Start">
+            <summary>
+            We just started
+            </summary>
+        </member>
+        <member name="T:BabBot.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:BabBot.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:BabBot.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="M:BabBot.Program.Main">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+        <member name="T:BabBot.Wow.ObjectManager">
+            <summary>
+            This class contains all of the properties and methods used to access WoW's internal
+            linked lists of objects.
             </summary>
         </member>
         <member name="M:BabBot.Common.RunAs.#ctor">
@@ -883,73 +972,14 @@
             A handle to be used as the standard error handle for the process.
             </summary>
         </member>
-        <member name="F:BabBot.Forms.AboutForm.components">
+        <member name="T:BabBot.Manager.BotManager">
             <summary>
-            Required designer variable.
+             Bot management thread
             </summary>
         </member>
-        <member name="M:BabBot.Forms.AboutForm.Dispose(System.Boolean)">
+        <member name="M:BabBot.Manager.BotManager.#ctor">
             <summary>
-            Clean up any resources being used.
-            </summary>
-        </member>
-        <member name="M:BabBot.Forms.AboutForm.InitializeComponent">
-            <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
-            </summary>
-        </member>
-        <member name="M:BabBot.Program.Main">
-            <summary>
-            The main entry point for the application.
-            </summary>
-        </member>
-        <member name="T:BabBot.Wow.ObjectManager">
-            <summary>
-            This class contains all of the properties and methods used to access WoW's internal
-            linked lists of objects.
-            </summary>
-        </member>
-        <member name="E:BabBot.Manager.ProcessManager.WoWProcessFailed">
-            <summary>
-            ProcessFailed is fired if an exception is thrown when attempting to start the
-             process.
-            </summary>
-        </member>
-        <member name="E:BabBot.Manager.ProcessManager.WoWProcessEnded">
-            <summary>
-            ProcessEnded is fired where the started process exits.
-            </summary>
-        </member>
-        <member name="E:BabBot.Manager.ProcessManager.WoWProcessStarted">
-            <summary>
-            ProcessStarted is fired if the process successfully starts.
-            </summary>
-        </member>
-        <member name="E:BabBot.Manager.ProcessManager.WoWProcessAccessFailed">
-            <summary>
-            ProcessAccessFailed is fired if the current user does not have permission to
-             access the new process.
-            </summary>
-        </member>
-        <member name="T:BabBot.Manager.ProcessManager.WoWProcessAccessFailedEventHandler">
-            <summary>
-            Error is the Win32Exception.Message thrown.
-            </summary>
-        </member>
-        <member name="T:BabBot.Manager.ProcessManager.WoWProcessEndedEventHandler">
-            <summary>
-            Process is the ID of the process that exited.
-            </summary>
-        </member>
-        <member name="T:BabBot.Manager.ProcessManager.WoWProcessFailedEventHandler">
-            <summary>
-            Error is the Win32Exception.Message thrown.
-            </summary>
-        </member>
-        <member name="T:BabBot.Manager.ProcessManager.WoWProcessStartedEventHandler">
-            <summary>
-            Process is the ID of the process that started.
+            Constructor
             </summary>
         </member>
     </members>
