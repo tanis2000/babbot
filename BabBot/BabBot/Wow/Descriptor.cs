@@ -14,89 +14,112 @@
         -----------------------------------*/
 
         // Descriptors: 0x00FC3C98
-
-        // Descriptors: 0x00FC3CFC
-
-        #region eContainerFields enum
-
-        public enum eContainerFields : uint
+        public enum eObjectFields : uint
         {
-            CONTAINER_FIELD_NUM_SLOTS = 0x0,
-            CONTAINER_ALIGN_PAD = 0x4,
-            CONTAINER_FIELD_SLOT_1 = 0x8,
-            TOTAL_CONTAINER_FIELDS = 0x3
+            OBJECT_FIELD_GUID = 0x0,
+            OBJECT_FIELD_TYPE = 0x8,
+            OBJECT_FIELD_ENTRY = 0xC,
+            OBJECT_FIELD_SCALE_X = 0x10,
+            OBJECT_FIELD_PADDING = 0x14,
+            TOTAL_OBJECT_FIELDS = 0x5
         }
 
-        #endregion
-
-        // Descriptors: 0x00FC5C30
-
-        // Descriptors: 0x00FC5DF0
-
-        #region eCorpseFields enum
-
-        public enum eCorpseFields : uint
+        // Descriptors: 0x00FC4030
+        public enum eUnitFields : uint
         {
-            CORPSE_FIELD_OWNER = 0x0,
-            CORPSE_FIELD_PARTY = 0x8,
-            CORPSE_FIELD_FACING = 0x10,
-            CORPSE_FIELD_POS_X = 0x14,
-            CORPSE_FIELD_POS_Y = 0x18,
-            CORPSE_FIELD_POS_Z = 0x1C,
-            CORPSE_FIELD_DISPLAY_ID = 0x20,
-            CORPSE_FIELD_ITEM = 0x24,
-            CORPSE_FIELD_BYTES_1 = 0x70,
-            CORPSE_FIELD_BYTES_2 = 0x74,
-            CORPSE_FIELD_GUILD = 0x78,
-            CORPSE_FIELD_FLAGS = 0x7C,
-            CORPSE_FIELD_DYNAMIC_FLAGS = 0x80,
-            CORPSE_FIELD_PAD = 0x84,
-            TOTAL_CORPSE_FIELDS = 0xE
+            UNIT_FIELD_CHARM = 0x0,
+            UNIT_FIELD_SUMMON = 0x8,
+            UNIT_FIELD_CRITTER = 0x10,
+            UNIT_FIELD_CHARMEDBY = 0x18,
+            UNIT_FIELD_SUMMONEDBY = 0x20,
+            UNIT_FIELD_CREATEDBY = 0x28,
+            UNIT_FIELD_TARGET = 0x30,
+            UNIT_FIELD_CHANNEL_OBJECT = 0x38,
+            UNIT_FIELD_BYTES_0 = 0x40,
+            UNIT_FIELD_HEALTH = 0x44,
+            UNIT_FIELD_POWER1 = 0x48,
+            UNIT_FIELD_POWER2 = 0x4C,
+            UNIT_FIELD_POWER3 = 0x50,
+            UNIT_FIELD_POWER4 = 0x54,
+            UNIT_FIELD_POWER5 = 0x58,
+            UNIT_FIELD_POWER6 = 0x5C,
+            UNIT_FIELD_POWER7 = 0x60,
+            UNIT_FIELD_MAXHEALTH = 0x64,
+            UNIT_FIELD_MAXPOWER1 = 0x68,
+            UNIT_FIELD_MAXPOWER2 = 0x6C,
+            UNIT_FIELD_MAXPOWER3 = 0x70,
+            UNIT_FIELD_MAXPOWER4 = 0x74,
+            UNIT_FIELD_MAXPOWER5 = 0x78,
+            UNIT_FIELD_MAXPOWER6 = 0x7C,
+            UNIT_FIELD_MAXPOWER7 = 0x80,
+            UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER = 0x84,
+            UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER = 0xA0,
+            UNIT_FIELD_LEVEL = 0xBC,
+            UNIT_FIELD_FACTIONTEMPLATE = 0xC0,
+            UNIT_VIRTUAL_ITEM_SLOT_ID = 0xC4,
+            UNIT_FIELD_FLAGS = 0xD0,
+            UNIT_FIELD_FLAGS_2 = 0xD4,
+            UNIT_FIELD_AURASTATE = 0xD8,
+            UNIT_FIELD_BASEATTACKTIME = 0xDC,
+            UNIT_FIELD_RANGEDATTACKTIME = 0xE4,
+            UNIT_FIELD_BOUNDINGRADIUS = 0xE8,
+            UNIT_FIELD_COMBATREACH = 0xEC,
+            UNIT_FIELD_DISPLAYID = 0xF0,
+            UNIT_FIELD_NATIVEDISPLAYID = 0xF4,
+            UNIT_FIELD_MOUNTDISPLAYID = 0xF8,
+            UNIT_FIELD_MINDAMAGE = 0xFC,
+            UNIT_FIELD_MAXDAMAGE = 0x100,
+            UNIT_FIELD_MINOFFHANDDAMAGE = 0x104,
+            UNIT_FIELD_MAXOFFHANDDAMAGE = 0x108,
+            UNIT_FIELD_BYTES_1 = 0x10C,
+            UNIT_FIELD_PETNUMBER = 0x110,
+            UNIT_FIELD_PET_NAME_TIMESTAMP = 0x114,
+            UNIT_FIELD_PETEXPERIENCE = 0x118,
+            UNIT_FIELD_PETNEXTLEVELEXP = 0x11C,
+            UNIT_DYNAMIC_FLAGS = 0x120,
+            UNIT_CHANNEL_SPELL = 0x124,
+            UNIT_MOD_CAST_SPEED = 0x128,
+            UNIT_CREATED_BY_SPELL = 0x12C,
+            UNIT_NPC_FLAGS = 0x130,
+            UNIT_NPC_EMOTESTATE = 0x134,
+            UNIT_FIELD_STAT0 = 0x138,
+            UNIT_FIELD_STAT1 = 0x13C,
+            UNIT_FIELD_STAT2 = 0x140,
+            UNIT_FIELD_STAT3 = 0x144,
+            UNIT_FIELD_STAT4 = 0x148,
+            UNIT_FIELD_POSSTAT0 = 0x14C,
+            UNIT_FIELD_POSSTAT1 = 0x150,
+            UNIT_FIELD_POSSTAT2 = 0x154,
+            UNIT_FIELD_POSSTAT3 = 0x158,
+            UNIT_FIELD_POSSTAT4 = 0x15C,
+            UNIT_FIELD_NEGSTAT0 = 0x160,
+            UNIT_FIELD_NEGSTAT1 = 0x164,
+            UNIT_FIELD_NEGSTAT2 = 0x168,
+            UNIT_FIELD_NEGSTAT3 = 0x16C,
+            UNIT_FIELD_NEGSTAT4 = 0x170,
+            UNIT_FIELD_RESISTANCES = 0x174,
+            UNIT_FIELD_RESISTANCEBUFFMODSPOSITIVE = 0x190,
+            UNIT_FIELD_RESISTANCEBUFFMODSNEGATIVE = 0x1AC,
+            UNIT_FIELD_BASE_MANA = 0x1C8,
+            UNIT_FIELD_BASE_HEALTH = 0x1CC,
+            UNIT_FIELD_BYTES_2 = 0x1D0,
+            UNIT_FIELD_ATTACK_POWER = 0x1D4,
+            UNIT_FIELD_ATTACK_POWER_MODS = 0x1D8,
+            UNIT_FIELD_ATTACK_POWER_MULTIPLIER = 0x1DC,
+            UNIT_FIELD_RANGED_ATTACK_POWER = 0x1E0,
+            UNIT_FIELD_RANGED_ATTACK_POWER_MODS = 0x1E4,
+            UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER = 0x1E8,
+            UNIT_FIELD_MINRANGEDDAMAGE = 0x1EC,
+            UNIT_FIELD_MAXRANGEDDAMAGE = 0x1F0,
+            UNIT_FIELD_POWER_COST_MODIFIER = 0x1F4,
+            UNIT_FIELD_POWER_COST_MULTIPLIER = 0x210,
+            UNIT_FIELD_MAXHEALTHMODIFIER = 0x22C,
+            UNIT_FIELD_HOVERHEIGHT = 0x230,
+            UNIT_FIELD_PADDING = 0x234,
+            TOTAL_UNIT_FIELDS = 0x59
         }
 
-        #endregion
-
-        #region eDynamicObjectFields enum
-
-        public enum eDynamicObjectFields : uint
-        {
-            DYNAMICOBJECT_CASTER = 0x0,
-            DYNAMICOBJECT_BYTES = 0x8,
-            DYNAMICOBJECT_SPELLID = 0xC,
-            DYNAMICOBJECT_RADIUS = 0x10,
-            DYNAMICOBJECT_POS_X = 0x14,
-            DYNAMICOBJECT_POS_Y = 0x18,
-            DYNAMICOBJECT_POS_Z = 0x1C,
-            DYNAMICOBJECT_FACING = 0x20,
-            DYNAMICOBJECT_CASTTIME = 0x24,
-            TOTAL_DYNAMICOBJECT_FIELDS = 0x9
-        }
-
-        #endregion
-
-        #region eGameObjectFields enum
-
-        public enum eGameObjectFields : uint
-        {
-            GAMEOBJECT_DISPLAYID = 0x8,
-            GAMEOBJECT_FLAGS = 0xC,
-            GAMEOBJECT_ROTATION = 0x10,
-            GAMEOBJECT_PARENTROTATION = 0x18,
-            GAMEOBJECT_POS_X = 0x28,
-            GAMEOBJECT_POS_Y = 0x2C,
-            GAMEOBJECT_POS_Z = 0x30,
-            GAMEOBJECT_FACING = 0x34,
-            GAMEOBJECT_DYNAMIC = 0x38,
-            GAMEOBJECT_FACTION = 0x3C,
-            GAMEOBJECT_LEVEL = 0x40,
-            GAMEOBJECT_BYTES_1 = 0x44,
-            TOTAL_GAMEOBJECT_FIELDS = 0xC
-        }
-
-        #endregion
-
-        #region eItemFields enum
-
+        // Descriptors: 0x00FC3D38
         public enum eItemFields : uint
         {
             ITEM_FIELD_OWNER = 0x0,
@@ -133,31 +156,14 @@
             ITEM_FIELD_ENCHANTMENT_12_3 = 0xCC,
             ITEM_FIELD_PROPERTY_SEED = 0xD0,
             ITEM_FIELD_RANDOM_PROPERTIES_ID = 0xD4,
-            ITEM_FIELD_ITEM_TEXT_ID = 0xC, //0xD8,
+            ITEM_FIELD_ITEM_TEXT_ID = 0xC,//0xD8,
             ITEM_FIELD_DURABILITY = 0xDC,
             ITEM_FIELD_MAXDURABILITY = 0xE0,
             ITEM_FIELD_PAD = 0xE4,
             TOTAL_ITEM_FIELDS = 0x26
         }
 
-        #endregion
-
-        #region eObjectFields enum
-
-        public enum eObjectFields : uint
-        {
-            OBJECT_FIELD_GUID = 0x0,
-            OBJECT_FIELD_TYPE = 0x8,
-            OBJECT_FIELD_ENTRY = 0xC,
-            OBJECT_FIELD_SCALE_X = 0x10,
-            OBJECT_FIELD_PADDING = 0x14,
-            TOTAL_OBJECT_FIELDS = 0x5
-        }
-
-        #endregion
-
-        #region ePlayerFields enum
-
+        // Descriptors: 0x00FC4728
         public enum ePlayerFields : uint
         {
             PLAYER_DUEL_ARBITER = 0x0,
@@ -432,105 +438,67 @@
             TOTAL_PLAYER_FIELDS = 0x10D
         }
 
-        #endregion
-
-        #region eUnitFields enum
-
-        public enum eUnitFields : uint
+        // Descriptors: 0x00FC3CFC
+        public enum eContainerFields : uint
         {
-            UNIT_FIELD_CHARM = 0x0,
-            UNIT_FIELD_SUMMON = 0x8,
-            UNIT_FIELD_CRITTER = 0x10,
-            UNIT_FIELD_CHARMEDBY = 0x18,
-            UNIT_FIELD_SUMMONEDBY = 0x20,
-            UNIT_FIELD_CREATEDBY = 0x28,
-            UNIT_FIELD_TARGET = 0x30,
-            UNIT_FIELD_CHANNEL_OBJECT = 0x38,
-            UNIT_FIELD_BYTES_0 = 0x40,
-            UNIT_FIELD_HEALTH = 0x44,
-            UNIT_FIELD_POWER1 = 0x48,
-            UNIT_FIELD_POWER2 = 0x4C,
-            UNIT_FIELD_POWER3 = 0x50,
-            UNIT_FIELD_POWER4 = 0x54,
-            UNIT_FIELD_POWER5 = 0x58,
-            UNIT_FIELD_POWER6 = 0x5C,
-            UNIT_FIELD_POWER7 = 0x60,
-            UNIT_FIELD_MAXHEALTH = 0x64,
-            UNIT_FIELD_MAXPOWER1 = 0x68,
-            UNIT_FIELD_MAXPOWER2 = 0x6C,
-            UNIT_FIELD_MAXPOWER3 = 0x70,
-            UNIT_FIELD_MAXPOWER4 = 0x74,
-            UNIT_FIELD_MAXPOWER5 = 0x78,
-            UNIT_FIELD_MAXPOWER6 = 0x7C,
-            UNIT_FIELD_MAXPOWER7 = 0x80,
-            UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER = 0x84,
-            UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER = 0xA0,
-            UNIT_FIELD_LEVEL = 0xBC,
-            UNIT_FIELD_FACTIONTEMPLATE = 0xC0,
-            UNIT_VIRTUAL_ITEM_SLOT_ID = 0xC4,
-            UNIT_FIELD_FLAGS = 0xD0,
-            UNIT_FIELD_FLAGS_2 = 0xD4,
-            UNIT_FIELD_AURASTATE = 0xD8,
-            UNIT_FIELD_BASEATTACKTIME = 0xDC,
-            UNIT_FIELD_RANGEDATTACKTIME = 0xE4,
-            UNIT_FIELD_BOUNDINGRADIUS = 0xE8,
-            UNIT_FIELD_COMBATREACH = 0xEC,
-            UNIT_FIELD_DISPLAYID = 0xF0,
-            UNIT_FIELD_NATIVEDISPLAYID = 0xF4,
-            UNIT_FIELD_MOUNTDISPLAYID = 0xF8,
-            UNIT_FIELD_MINDAMAGE = 0xFC,
-            UNIT_FIELD_MAXDAMAGE = 0x100,
-            UNIT_FIELD_MINOFFHANDDAMAGE = 0x104,
-            UNIT_FIELD_MAXOFFHANDDAMAGE = 0x108,
-            UNIT_FIELD_BYTES_1 = 0x10C,
-            UNIT_FIELD_PETNUMBER = 0x110,
-            UNIT_FIELD_PET_NAME_TIMESTAMP = 0x114,
-            UNIT_FIELD_PETEXPERIENCE = 0x118,
-            UNIT_FIELD_PETNEXTLEVELEXP = 0x11C,
-            UNIT_DYNAMIC_FLAGS = 0x120,
-            UNIT_CHANNEL_SPELL = 0x124,
-            UNIT_MOD_CAST_SPEED = 0x128,
-            UNIT_CREATED_BY_SPELL = 0x12C,
-            UNIT_NPC_FLAGS = 0x130,
-            UNIT_NPC_EMOTESTATE = 0x134,
-            UNIT_FIELD_STAT0 = 0x138,
-            UNIT_FIELD_STAT1 = 0x13C,
-            UNIT_FIELD_STAT2 = 0x140,
-            UNIT_FIELD_STAT3 = 0x144,
-            UNIT_FIELD_STAT4 = 0x148,
-            UNIT_FIELD_POSSTAT0 = 0x14C,
-            UNIT_FIELD_POSSTAT1 = 0x150,
-            UNIT_FIELD_POSSTAT2 = 0x154,
-            UNIT_FIELD_POSSTAT3 = 0x158,
-            UNIT_FIELD_POSSTAT4 = 0x15C,
-            UNIT_FIELD_NEGSTAT0 = 0x160,
-            UNIT_FIELD_NEGSTAT1 = 0x164,
-            UNIT_FIELD_NEGSTAT2 = 0x168,
-            UNIT_FIELD_NEGSTAT3 = 0x16C,
-            UNIT_FIELD_NEGSTAT4 = 0x170,
-            UNIT_FIELD_RESISTANCES = 0x174,
-            UNIT_FIELD_RESISTANCEBUFFMODSPOSITIVE = 0x190,
-            UNIT_FIELD_RESISTANCEBUFFMODSNEGATIVE = 0x1AC,
-            UNIT_FIELD_BASE_MANA = 0x1C8,
-            UNIT_FIELD_BASE_HEALTH = 0x1CC,
-            UNIT_FIELD_BYTES_2 = 0x1D0,
-            UNIT_FIELD_ATTACK_POWER = 0x1D4,
-            UNIT_FIELD_ATTACK_POWER_MODS = 0x1D8,
-            UNIT_FIELD_ATTACK_POWER_MULTIPLIER = 0x1DC,
-            UNIT_FIELD_RANGED_ATTACK_POWER = 0x1E0,
-            UNIT_FIELD_RANGED_ATTACK_POWER_MODS = 0x1E4,
-            UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER = 0x1E8,
-            UNIT_FIELD_MINRANGEDDAMAGE = 0x1EC,
-            UNIT_FIELD_MAXRANGEDDAMAGE = 0x1F0,
-            UNIT_FIELD_POWER_COST_MODIFIER = 0x1F4,
-            UNIT_FIELD_POWER_COST_MULTIPLIER = 0x210,
-            UNIT_FIELD_MAXHEALTHMODIFIER = 0x22C,
-            UNIT_FIELD_HOVERHEIGHT = 0x230,
-            UNIT_FIELD_PADDING = 0x234,
-            TOTAL_UNIT_FIELDS = 0x59
+            CONTAINER_FIELD_NUM_SLOTS = 0x0,
+            CONTAINER_ALIGN_PAD = 0x4,
+            CONTAINER_FIELD_SLOT_1 = 0x8,
+            TOTAL_CONTAINER_FIELDS = 0x3
         }
 
-        #endregion
+        // Descriptors: 0x00FC5C30
+        public enum eGameObjectFields : uint
+        {
+            GAMEOBJECT_DISPLAYID = 0x8,
+            GAMEOBJECT_FLAGS = 0xC,
+            GAMEOBJECT_ROTATION = 0x10,
+            GAMEOBJECT_PARENTROTATION = 0x18,
+            GAMEOBJECT_POS_X = 0x28,
+            GAMEOBJECT_POS_Y = 0x2C,
+            GAMEOBJECT_POS_Z = 0x30,
+            GAMEOBJECT_FACING = 0x34,
+            GAMEOBJECT_DYNAMIC = 0x38,
+            GAMEOBJECT_FACTION = 0x3C,
+            GAMEOBJECT_LEVEL = 0x40,
+            GAMEOBJECT_BYTES_1 = 0x44,
+            TOTAL_GAMEOBJECT_FIELDS = 0xC
+        }
+
+        // Descriptors: 0x00FC5D38
+        public enum eDynamicObjectFields : uint
+        {
+            DYNAMICOBJECT_CASTER = 0x0,
+            DYNAMICOBJECT_BYTES = 0x8,
+            DYNAMICOBJECT_SPELLID = 0xC,
+            DYNAMICOBJECT_RADIUS = 0x10,
+            DYNAMICOBJECT_POS_X = 0x14,
+            DYNAMICOBJECT_POS_Y = 0x18,
+            DYNAMICOBJECT_POS_Z = 0x1C,
+            DYNAMICOBJECT_FACING = 0x20,
+            DYNAMICOBJECT_CASTTIME = 0x24,
+            TOTAL_DYNAMICOBJECT_FIELDS = 0x9
+        }
+
+        // Descriptors: 0x00FC5DF0
+        public enum eCorpseFields : uint
+        {
+            CORPSE_FIELD_OWNER = 0x0,
+            CORPSE_FIELD_PARTY = 0x8,
+            CORPSE_FIELD_FACING = 0x10,
+            CORPSE_FIELD_POS_X = 0x14,
+            CORPSE_FIELD_POS_Y = 0x18,
+            CORPSE_FIELD_POS_Z = 0x1C,
+            CORPSE_FIELD_DISPLAY_ID = 0x20,
+            CORPSE_FIELD_ITEM = 0x24,
+            CORPSE_FIELD_BYTES_1 = 0x70,
+            CORPSE_FIELD_BYTES_2 = 0x74,
+            CORPSE_FIELD_GUILD = 0x78,
+            CORPSE_FIELD_FLAGS = 0x7C,
+            CORPSE_FIELD_DYNAMIC_FLAGS = 0x80,
+            CORPSE_FIELD_PAD = 0x84,
+            TOTAL_CORPSE_FIELDS = 0xE
+        }
     }
 #pragma warning restore 1591
 }
