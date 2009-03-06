@@ -95,6 +95,7 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.btnMovementTest = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -129,7 +130,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -144,7 +145,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -318,6 +319,7 @@
             // 
             // tabPageDebug
             // 
+            this.tabPageDebug.Controls.Add(this.btnMovementTest);
             this.tabPageDebug.Controls.Add(this.tbWndHandle);
             this.tabPageDebug.Controls.Add(this.label19);
             this.tabPageDebug.Controls.Add(this.tbLocalGUID);
@@ -740,6 +742,17 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
             // 
+            // btnMovementTest
+            // 
+            this.btnMovementTest.Enabled = false;
+            this.btnMovementTest.Location = new System.Drawing.Point(298, 61);
+            this.btnMovementTest.Name = "btnMovementTest";
+            this.btnMovementTest.Size = new System.Drawing.Size(105, 23);
+            this.btnMovementTest.TabIndex = 32;
+            this.btnMovementTest.Text = "Movement Test";
+            this.btnMovementTest.UseVisualStyleBackColor = true;
+            this.btnMovementTest.Click += new System.EventHandler(this.btnMovementTest_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -843,6 +856,7 @@
         private System.Windows.Forms.Button btnAttachToWow;
         private System.Windows.Forms.TextBox tbWndHandle;
         private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Button btnMovementTest;
     }
 }
 

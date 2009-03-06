@@ -25,6 +25,18 @@ namespace BabBot.Manager
 
         #endregion
 
+        #region Special Constant Keys
+
+        public const string SK_TAB = "{TAB}";
+        public const string SK_ENTER = "{ENTER}";
+        public const string SK_ESC = "{ESC}";
+        public const string SK_F5 = "{F5}";
+        public const string SK_F12 = "{F12}";
+        public const string SK_SHIFT_DOWN = "{SHIFTD}";
+        public const string SK_SHIFT_UP = "{SHIFTU}";
+
+        #endregion
+        
         #region External declarations
 
         [DllImport("user32.dll", EntryPoint = "PostMessage")]
@@ -73,13 +85,13 @@ namespace BabBot.Manager
             str.Replace(Convert.ToChar("~"), Convert.ToChar(0xC0));
             str.Replace(Convert.ToChar("-"), Convert.ToChar(0xBD));
             str.Replace(Convert.ToChar("="), Convert.ToChar(0xBB));
-            str.Replace("{TAB}", Convert.ToChar(0x9).ToString());
-            str.Replace("{ENTER}", Convert.ToChar(0xD).ToString());
-            str.Replace("{ESC}", Convert.ToChar(0x1B).ToString());
-            str.Replace("{F5}", Convert.ToChar(0x74).ToString());
-            str.Replace("{F12}", Convert.ToChar(0x7B).ToString());
-            str.Replace("{SHIFTD}", Convert.ToChar(0xC1).ToString());
-            str.Replace("{SHIFTU}", Convert.ToChar(0xC2).ToString());
+            str.Replace(SK_TAB, Convert.ToChar(0x9).ToString());
+            str.Replace(SK_ENTER, Convert.ToChar(0xD).ToString());
+            str.Replace(SK_ESC, Convert.ToChar(0x1B).ToString());
+            str.Replace(SK_F5, Convert.ToChar(0x74).ToString());
+            str.Replace(SK_F12, Convert.ToChar(0x7B).ToString());
+            str.Replace(SK_SHIFT_DOWN, Convert.ToChar(0xC1).ToString());
+            str.Replace(SK_SHIFT_UP, Convert.ToChar(0xC2).ToString());
 
             for (int ix = 1; ix <= str.Length; ++ix)
             {
@@ -119,7 +131,7 @@ namespace BabBot.Manager
         /// <summary>
         /// Taps the specified arrow key
         /// </summary>
-        /// <param name="key">The arrow key to be tapped ("left", "up", "right", or "down")</param>
+        /// <param name="key">The arrow key to be send</param>
         /// <returns>Returns true if successful, false if not</returns>
         public static bool SendArrowKey(ArrowKey key)
         {
@@ -177,7 +189,7 @@ namespace BabBot.Manager
         /// <summary>
         /// Holds down an arrow key for the specified time
         /// </summary>
-        /// <param name="key">The arrow key to be tapped ("left", "up", "right", or "down")</param>
+        /// <param name="key">The arrow key to be send</param>
         /// <param name="holdDelay">Number of milliseconds to hold down key</param>
         /// <returns>Returns true if successful, false if not</returns>
         public static bool SendArrowKey(ArrowKey key, int holdDelay)
