@@ -8,7 +8,7 @@ namespace BabBot.Manager
     /// <summary>
     /// Main class for toon movements and actions 
     /// </summary>
-    public static class CommandManager
+    public class CommandManager
     {
         #region ArrowKey enum
 
@@ -17,9 +17,21 @@ namespace BabBot.Manager
         /// </summary>
         public enum ArrowKey
         {
+            /// <summary>
+            /// ArrowKey UP 
+            /// </summary>
             Up = 0x26,
+            /// <summary>
+            /// ArrowKey DOWN 
+            /// </summary>
             Down = 0x28,
+            /// <summary>
+            /// ArrowKey LEFT 
+            /// </summary>
             Left = 0x25,
+            /// <summary>
+            /// ArrowKey RIGHT 
+            /// </summary>
             Right = 0x27
         }
 
@@ -27,16 +39,16 @@ namespace BabBot.Manager
 
         #region Special Constant Keys
 
-        public const string SK_TAB = "{TAB}";
         public const string SK_ENTER = "{ENTER}";
         public const string SK_ESC = "{ESC}";
-        public const string SK_F5 = "{F5}";
         public const string SK_F12 = "{F12}";
+        public const string SK_F5 = "{F5}";
         public const string SK_SHIFT_DOWN = "{SHIFTD}";
         public const string SK_SHIFT_UP = "{SHIFTU}";
+        public const string SK_TAB = "{TAB}";
 
         #endregion
-        
+
         #region External declarations
 
         [DllImport("user32.dll", EntryPoint = "PostMessage")]
@@ -259,6 +271,5 @@ namespace BabBot.Manager
         }
 
         #endregion
-
     }
 }

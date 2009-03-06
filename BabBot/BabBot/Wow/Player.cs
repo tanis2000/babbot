@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BabBot.Wow
 {
     /// <summary>
     /// Possible states of the player in game
     /// </summary>
-    public enum PlayerState : int
+    public enum PlayerState
     {
         ///<summary>
         /// Before selecting a mob
@@ -80,16 +78,16 @@ namespace BabBot.Wow
     /// </summary>
     public class Player
     {
-        public uint Hp;
-        public uint MaxHp;
-        public uint Mp;
-        public uint MaxMp;
-        public uint Xp;
-        public Vector3D Location;
         public UInt64 CurTargetGuid;
-        public Unit Unit; // The corresponding Unit in Wow's ObjectManager
+        public uint Hp;
+        public Vector3D Location;
+        public uint MaxHp;
+        public uint MaxMp;
+        public uint Mp;
         public float Orientation;
         public PlayerState State;
+        public Unit Unit; // The corresponding Unit in Wow's ObjectManager
+        public uint Xp;
 
         /// <summary>
         /// Constructor
@@ -123,7 +121,10 @@ namespace BabBot.Wow
         /// </summary>
         public void UpdateFromClient()
         {
-            if (Unit == null) return;
+            if (Unit == null)
+            {
+                return;
+            }
 
             Location = Unit.GetPosition();
             Hp = Unit.GetHp();
@@ -154,7 +155,5 @@ namespace BabBot.Wow
         {
             throw new NotImplementedException();
         }
-
-    
     }
 }

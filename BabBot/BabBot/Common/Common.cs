@@ -7,6 +7,10 @@ using Microsoft.Win32;
 
 namespace BabBot.Common
 {
+    /// <summary>
+    /// Application Helper Class 
+    /// </summary>
+    /// <returns>
     public class AppHelper
     {
         #region Const
@@ -23,6 +27,10 @@ namespace BabBot.Common
         [DllImport("user32.dll")]
         private static extern int FindWindow(string className, string windowText);
 
+        /// <summary>
+        /// API: Get if a window is visible from its handle 
+        /// </summary>
+        /// <returns>
         [DllImport("user32.dll")]
         public static extern bool IsWindowVisible(int hWnd);
 
@@ -149,6 +157,10 @@ namespace BabBot.Common
 
         #region Dummy API Windows functions
 
+        /// <summary>
+        /// Get informations about the process
+        /// </summary>
+        /// <returns>
         public static string GetProcessInfoByPID(int PID, out string User, out string Domain)
         {
             User = String.Empty;

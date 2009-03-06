@@ -8,6 +8,9 @@ using Magic;
 
 namespace BabBot.Manager
 {
+    /// <summary>
+    /// Main class for reading, writing and gathering process information 
+    /// </summary>
     public class ProcessManager
     {
         #region Delegates
@@ -87,6 +90,10 @@ namespace BabBot.Manager
             BotManager = new BotManager();
         }
 
+        /// <summary>
+        /// Get the object for the manipulation of memory and general "hacking"
+        /// of another process
+        /// </summary>
         public static BlackMagic WowProcess
         {
             get
@@ -99,6 +106,9 @@ namespace BabBot.Manager
             }
         }
 
+        /// <summary>
+        /// Get the basic configuration for babBot: deprecated
+        /// </summary>
         public static Config Config
         {
             get { return config; }
@@ -140,6 +150,8 @@ namespace BabBot.Manager
         {
             // TODO: clean everything here...
             ProcessRunning = false;
+            WowHWND = 0;
+
             if (WoWProcessEnded != null)
             {
                 WoWProcessEnded(((Process)sender).Id);
@@ -148,6 +160,9 @@ namespace BabBot.Manager
 
         #endregion
 
+        /// <summary>
+        /// Try to run the WoW process 
+        /// </summary>
         public static void StartWow()
         {
             try
@@ -180,6 +195,9 @@ namespace BabBot.Manager
             }
         }
 
+        /// <summary>
+        /// Try to attach on the WoW process 
+        /// </summary>
         public static void AttachToWow()
         {
             try
@@ -210,6 +228,9 @@ namespace BabBot.Manager
             }
         }
 
+        /// <summary>
+        /// Update all player informations: hp,mana,xp,position,etc...
+        /// </summary>
         public static void UpdatePlayer()
         {
             if (!Initialized)
@@ -220,6 +241,9 @@ namespace BabBot.Manager
             Player.UpdateFromClient();
         }
 
+        /// <summary>
+        /// Check if you are logged into the WoW game
+        /// </summary>
         public static void CheckInGame()
         {
             try
@@ -239,9 +263,12 @@ namespace BabBot.Manager
             }
         }
 
+        /// <summary>
+        /// Try to find the Thread Local Storage: must be logged in WoW
+        /// </summary>
         public static void FindTLS()
         {
-            //search for the code pattern that we want (in this case, WoW TLS)
+            // search for the code pattern that we want (in this case, WoW TLS)
             TLS = SPattern.FindPattern(process.Handle, process.MainModule,
                                        "EB 02 33 C0 8B D 00 00 00 00 64 8B 15 00 00 00 00 8B 34 8A 8B D 00 00 00 00 89 81 00 00 00 00",
                                        "xxxxxx????xxx????xxxxx????xx????");
@@ -275,9 +302,9 @@ namespace BabBot.Manager
                 Scripting.Host.Go();
                 Initialized = true;
             }
-            catch (Exception)
+            catch
             {
-                throw;
+                throw new Exception("Initialize failed!");
             }
         }
     }
