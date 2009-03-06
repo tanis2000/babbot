@@ -10,7 +10,6 @@ namespace BabBot.Common
     /// <summary>
     /// Application Helper Class 
     /// </summary>
-    /// <returns>
     public class AppHelper
     {
         #region Const
