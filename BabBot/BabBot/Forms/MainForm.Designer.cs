@@ -52,6 +52,7 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
+            this.btnMovementTest = new System.Windows.Forms.Button();
             this.tbWndHandle = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.tbLocalGUID = new System.Windows.Forms.TextBox();
@@ -85,6 +86,12 @@
             this.tbCountNormal = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPagePlayer = new System.Windows.Forms.TabPage();
+            this.label22 = new System.Windows.Forms.Label();
+            this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
+            this.tbPlayerTargetName = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.tbPlayerTarget = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
             this.tbPlayerMaxMp = new System.Windows.Forms.TextBox();
             this.tbPlayerMaxHp = new System.Windows.Forms.TextBox();
             this.tbPlayerXp = new System.Windows.Forms.TextBox();
@@ -95,11 +102,6 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.btnMovementTest = new System.Windows.Forms.Button();
-            this.tbPlayerTarget = new System.Windows.Forms.TextBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.tbPlayerTargetName = new System.Windows.Forms.TextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -346,6 +348,17 @@
             this.tabPageDebug.TabIndex = 1;
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
+            // 
+            // btnMovementTest
+            // 
+            this.btnMovementTest.Enabled = false;
+            this.btnMovementTest.Location = new System.Drawing.Point(298, 61);
+            this.btnMovementTest.Name = "btnMovementTest";
+            this.btnMovementTest.Size = new System.Drawing.Size(105, 23);
+            this.btnMovementTest.TabIndex = 32;
+            this.btnMovementTest.Text = "Movement Test";
+            this.btnMovementTest.UseVisualStyleBackColor = true;
+            this.btnMovementTest.Click += new System.EventHandler(this.btnMovementTest_Click);
             // 
             // tbWndHandle
             // 
@@ -643,6 +656,8 @@
             // 
             // tabPagePlayer
             // 
+            this.tabPagePlayer.Controls.Add(this.label22);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerNearObjects);
             this.tabPagePlayer.Controls.Add(this.tbPlayerTargetName);
             this.tabPagePlayer.Controls.Add(this.label21);
             this.tabPagePlayer.Controls.Add(this.tbPlayerTarget);
@@ -664,6 +679,57 @@
             this.tabPagePlayer.TabIndex = 3;
             this.tabPagePlayer.Text = "Player";
             this.tabPagePlayer.UseVisualStyleBackColor = true;
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(3, 162);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(33, 13);
+            this.label22.TabIndex = 15;
+            this.label22.Text = "Near:";
+            // 
+            // tbPlayerNearObjects
+            // 
+            this.tbPlayerNearObjects.Location = new System.Drawing.Point(37, 159);
+            this.tbPlayerNearObjects.Multiline = true;
+            this.tbPlayerNearObjects.Name = "tbPlayerNearObjects";
+            this.tbPlayerNearObjects.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbPlayerNearObjects.Size = new System.Drawing.Size(430, 98);
+            this.tbPlayerNearObjects.TabIndex = 14;
+            this.tbPlayerNearObjects.WordWrap = false;
+            // 
+            // tbPlayerTargetName
+            // 
+            this.tbPlayerTargetName.Location = new System.Drawing.Point(79, 126);
+            this.tbPlayerTargetName.Name = "tbPlayerTargetName";
+            this.tbPlayerTargetName.Size = new System.Drawing.Size(388, 20);
+            this.tbPlayerTargetName.TabIndex = 13;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(3, 129);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(70, 13);
+            this.label21.TabIndex = 12;
+            this.label21.Text = "Target name:";
+            // 
+            // tbPlayerTarget
+            // 
+            this.tbPlayerTarget.Location = new System.Drawing.Point(50, 91);
+            this.tbPlayerTarget.Name = "tbPlayerTarget";
+            this.tbPlayerTarget.Size = new System.Drawing.Size(417, 20);
+            this.tbPlayerTarget.TabIndex = 11;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(3, 94);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(41, 13);
+            this.label20.TabIndex = 10;
+            this.label20.Text = "Target:";
             // 
             // tbPlayerMaxMp
             // 
@@ -749,48 +815,6 @@
             this.label14.Size = new System.Drawing.Size(25, 13);
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(3, 94);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(41, 13);
-            this.label20.TabIndex = 10;
-            this.label20.Text = "Target:";
-            // btnMovementTest
-            // 
-            this.btnMovementTest.Enabled = false;
-            this.btnMovementTest.Location = new System.Drawing.Point(298, 61);
-            this.btnMovementTest.Name = "btnMovementTest";
-            this.btnMovementTest.Size = new System.Drawing.Size(105, 23);
-            this.btnMovementTest.TabIndex = 32;
-            this.btnMovementTest.Text = "Movement Test";
-            this.btnMovementTest.UseVisualStyleBackColor = true;
-            this.btnMovementTest.Click += new System.EventHandler(this.btnMovementTest_Click);
-            //
-            // tbPlayerTarget
-            // 
-            this.tbPlayerTarget.Location = new System.Drawing.Point(50, 91);
-            this.tbPlayerTarget.Name = "tbPlayerTarget";
-            this.tbPlayerTarget.Size = new System.Drawing.Size(417, 20);
-            this.tbPlayerTarget.TabIndex = 11;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(3, 129);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(70, 13);
-            this.label21.TabIndex = 12;
-            this.label21.Text = "Target name:";
-            // 
-            // tbPlayerTargetName
-            // 
-            this.tbPlayerTargetName.Location = new System.Drawing.Point(79, 126);
-            this.tbPlayerTargetName.Name = "tbPlayerTargetName";
-            this.tbPlayerTargetName.Size = new System.Drawing.Size(388, 20);
-            this.tbPlayerTargetName.TabIndex = 13;
             // 
             // MainForm
             // 
@@ -900,6 +924,8 @@
         private System.Windows.Forms.TextBox tbPlayerTargetName;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Button btnMovementTest;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.TextBox tbPlayerNearObjects;
     }
 }
 

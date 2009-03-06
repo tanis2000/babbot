@@ -112,6 +112,13 @@
     <Compile Include="Wow\Player.cs" />
     <Compile Include="Wow\Unit.cs" />
     <Compile Include="Wow\Vector3D.cs" />
+    <Compile Include="Wow\WowContainer.cs" />
+    <Compile Include="Wow\WowCorpse.cs" />
+    <Compile Include="Wow\WowDynamicObject.cs" />
+    <Compile Include="Wow\WowItem.cs" />
+    <Compile Include="Wow\WowObject.cs" />
+    <Compile Include="Wow\WowPlayer.cs" />
+    <Compile Include="Wow\WowUnit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Img\icon_32x32.ico" />

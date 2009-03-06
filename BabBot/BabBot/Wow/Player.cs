@@ -141,16 +141,23 @@ namespace BabBot.Wow
 
         public bool IsAtGraveyard()
         {
-            throw new NotImplementedException();
+            List<WowUnit> l = Unit.GetNearMobs();
+            foreach (WowUnit unit in l)
+            {
+                if (unit.Name == "Spirit Healer") return true;
+            }
+            return false;
         }
 
         public bool IsDead()
         {
-            throw new NotImplementedException();
+            if (Hp == 0) return true;
+            return false;
         }
 
         public bool IsGhost()
         {
+            // Bisogna controllare se 
             throw new NotImplementedException();
         }
 
@@ -169,6 +176,37 @@ namespace BabBot.Wow
         {
             get { return Unit.GetCurTargetName(); }
         }
+
+        public string NearObjectsAsTextList
+        {
+            get
+            {
+                string s = string.Empty;
+
+                List<WowObject> l = Unit.GetNearObjects();
+                foreach (WowObject obj in l)
+                {
+                    s += string.Format("GUID:{0:X}|Type:{1:X}\r" + Environment.NewLine, obj.Guid, obj.Type);
+                }
+                return s;
+            }
+        }
+
+        public string NearMobsAsTextList
+        {
+            get
+            {
+                string s = string.Empty;
+
+                List<WowUnit> l = Unit.GetNearMobs();
+                foreach (WowUnit obj in l)
+                {
+                    s += string.Format("{0:X}|{1}" + Environment.NewLine, obj.Guid, obj.Name);
+                }
+                return s;
+            }
+        }
+
 
         // Movements
         // E' solo un'idea, se ti sembra na cazzata spostiamoli

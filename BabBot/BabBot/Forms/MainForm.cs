@@ -108,6 +108,9 @@ namespace BabBot.Forms
                 tbPlayerXp.Text = ProcessManager.Player.Xp.ToString();
                 tbPlayerTarget.Text = string.Format("{0:X}",ProcessManager.Player.CurTargetGuid);
                 tbPlayerTargetName.Text = ProcessManager.Player.CurTargetName;
+                tbPlayerNearObjects.Text = "Objects" + Environment.NewLine + "===========" + Environment.NewLine +
+                    ProcessManager.Player.NearObjectsAsTextList + Environment.NewLine + "Mobs" + Environment.NewLine +
+                    "===========" + Environment.NewLine + ProcessManager.Player.NearMobsAsTextList;
             }
         }
 

@@ -79,16 +79,22 @@ namespace BabBot.Wow
             return ProcessManager.WowProcess.ReadUInt64(Object + Globals.GuidOffset);
         }
 
-        public List<string> GetAllObjectsAroundLocalPlayer()
+        public List<WowObject> GetAllObjectsAroundLocalPlayer()
         {
-            List<string> list = new List<string>();
+            List<WowObject> list = new List<WowObject>();
+            WowObject wo = new WowObject();
             curObject = GetFirstObject();
             tempHolder = curObject;
             try
             {
                 while ((curObject != 0) && ((curObject & 1) == 0))
                 {
-                    list.Add(curObject.ToString());
+                    wo = new WowObject();
+                    wo.ObjectPointer = curObject;
+                    wo.Guid = GetGUIDByObject(curObject);
+                    wo.Type = GetTypeByObject(curObject);
+                    list.Add(wo);
+
                     tempHolder = GetNextObject(curObject);
                     if ((tempHolder == 0) || (tempHolder == curObject))
                     {
@@ -104,6 +110,13 @@ namespace BabBot.Wow
             }
         }
 
+        public ObjectType GetTypeByObject(uint obj)
+        {
+            //get the object's type from obj+0x14 (like normal)
+            ObjectType type = (ObjectType)ProcessManager.WowProcess.ReadByte(obj + 0x14);
+            return type;
+        }
+
         public string GetName(uint obj, ulong guid)
         {
             //obj == base address of object
@@ -111,7 +124,7 @@ namespace BabBot.Wow
                 return String.Empty;
 
             //get the object's type from obj+0x14 (like normal)
-            ObjectType type = (ObjectType)ProcessManager.WowProcess.ReadByte(obj + 0x14);
+            ObjectType type = GetTypeByObject(obj);
 
             //determine what type of object it is and call associated routine
             switch (type)
@@ -124,7 +137,7 @@ namespace BabBot.Wow
                     return GetUnitName(obj);
 
                 default:
-                    return "Unknown Object";
+                    return "Unknown Object with type " + type;
             }
         }
 
