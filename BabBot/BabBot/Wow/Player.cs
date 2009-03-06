@@ -157,7 +157,8 @@ namespace BabBot.Wow
 
         public bool IsGhost()
         {
-            // Bisogna controllare se 
+            // return ( GetKnownField( PLAYER_FLAGS )&0x10 ) != 0;
+            // 
             throw new NotImplementedException();
         }
 
