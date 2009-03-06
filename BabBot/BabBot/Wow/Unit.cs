@@ -66,5 +66,15 @@ namespace BabBot.Wow
                 ProcessManager.WowProcess.ReadFloat(ObjectPointer + Globals.PlayerZOffset));
         }
 
+        public ulong GetCurTargetGuid()
+        {
+            return ProcessManager.WowProcess.ReadUInt64(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_FIELD_TARGET);
+        }
+
+        public string GetCurTargetName()
+        {
+            //return ProcessManager.ObjectManager.GetName(ProcessManager.ObjectManager.GetObjectByGUID(GetCurTargetGuid()));
+            return ProcessManager.ObjectManager.GetName(ProcessManager.ObjectManager.GetObjectByGUID(GetCurTargetGuid()), GetCurTargetGuid());
+        }
     }
 }

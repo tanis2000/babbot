@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace BabBot.Wow
 {
     /// <summary>
     /// Possible states of the player in game
     /// </summary>
-    public enum PlayerState
+    public enum PlayerState : int
     {
         ///<summary>
         /// Before selecting a mob
@@ -78,16 +80,16 @@ namespace BabBot.Wow
     /// </summary>
     public class Player
     {
-        public UInt64 CurTargetGuid;
         public uint Hp;
-        public Vector3D Location;
         public uint MaxHp;
-        public uint MaxMp;
         public uint Mp;
+        public uint MaxMp;
+        public uint Xp;
+        public Vector3D Location;
+        public UInt64 CurTargetGuid;
+        public Unit Unit; // The corresponding Unit in Wow's ObjectManager
         public float Orientation;
         public PlayerState State;
-        public Unit Unit; // The corresponding Unit in Wow's ObjectManager
-        public uint Xp;
 
         /// <summary>
         /// Constructor
@@ -110,7 +112,7 @@ namespace BabBot.Wow
         /// that we can therefore call UpdateFromClient() to read the
         /// player's information
         /// </summary>
-        /// <param name="ObjectPointer">Pointer to Wow's ObjectManager</param>
+        /// <param name="ObjectPointer">Pointer to Wow's Player Object</param>
         public void AttachUnit(uint ObjectPointer)
         {
             Unit = new Unit(ObjectPointer);
@@ -121,10 +123,7 @@ namespace BabBot.Wow
         /// </summary>
         public void UpdateFromClient()
         {
-            if (Unit == null)
-            {
-                return;
-            }
+            if (Unit == null) return;
 
             Location = Unit.GetPosition();
             Hp = Unit.GetHp();
@@ -132,7 +131,7 @@ namespace BabBot.Wow
             Mp = Unit.GetMp();
             MaxMp = Unit.GetMaxMp();
             Xp = Unit.GetXp();
-            //CurTargetGuid = Unit.GetCurTargetGuid();
+            CurTargetGuid = Unit.GetCurTargetGuid();
             Orientation = Unit.GetFacing();
         }
 
@@ -154,6 +153,17 @@ namespace BabBot.Wow
         public bool IsInCombat()
         {
             throw new NotImplementedException();
+        }
+
+        public bool HasTarget()
+        {
+            if (CurTargetGuid != 0) return true;
+            return false;
+        }
+
+        public string CurTargetName
+        {
+            get { return Unit.GetCurTargetName(); }
         }
     }
 }

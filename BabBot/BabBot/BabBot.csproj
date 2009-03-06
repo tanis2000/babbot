@@ -22,7 +22,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>Doc\BabBot.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -116,7 +117,6 @@
     <None Include="Img\icon_32x32.ico" />
     <None Include="Img\icon_64x64.ico" />
     <None Include="Img\splash.jpg" />
-    <Content Include="Doc\BabBot.XML" />
     <Content Include="Lib\BlackMagic.dll" />
     <Content Include="Lib\BlackMagic.XML" />
     <Content Include="Lib\FASM.DLL" />

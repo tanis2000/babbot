@@ -76,3 +76,7 @@ each array slot* is 4 bytes.
 http://www.mmowned.com/forums/wow-memory-editing/208754-guide-kind-how-i-handle-objects.html
 Spiegazione dettagliata di come funziona l'ObjectMAnager di WoW
 
+
+http://www.wowwiki.com/API_TargetUnit
+http://www.wowwiki.com/API_ClearTarget
+

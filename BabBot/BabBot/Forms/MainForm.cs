@@ -106,6 +106,8 @@ namespace BabBot.Forms
                 tbPlayerMp.Text = ProcessManager.Player.Mp.ToString();
                 tbPlayerMaxMp.Text = ProcessManager.Player.MaxMp.ToString();
                 tbPlayerXp.Text = ProcessManager.Player.Xp.ToString();
+                tbPlayerTarget.Text = string.Format("{0:X}",ProcessManager.Player.CurTargetGuid);
+                tbPlayerTargetName.Text = ProcessManager.Player.CurTargetName;
             }
         }
 
@@ -172,7 +174,7 @@ namespace BabBot.Forms
         private void btnMovementTest_Click(object sender, EventArgs e)
         {
             CommandManager.WowHWND = ProcessManager.WowHWND;
-            
+
             // vai avanti
             CommandManager.SendArrowKey(CommandManager.ArrowKey.Up, 500);
             // gira a sx
@@ -186,9 +188,8 @@ namespace BabBot.Forms
             CommandManager.SendKeys(CommandManager.SK_SHIFT_DOWN + "CIAO");
             Thread.Sleep(100);
             CommandManager.SendKeys(CommandManager.SK_ENTER);
-            
+
 
         }
-
     }
 }

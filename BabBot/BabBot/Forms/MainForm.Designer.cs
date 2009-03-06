@@ -95,7 +95,11 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
             this.btnMovementTest = new System.Windows.Forms.Button();
+            this.tbPlayerTarget = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.tbPlayerTargetName = new System.Windows.Forms.TextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -130,7 +134,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -145,7 +149,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -639,6 +643,10 @@
             // 
             // tabPagePlayer
             // 
+            this.tabPagePlayer.Controls.Add(this.tbPlayerTargetName);
+            this.tabPagePlayer.Controls.Add(this.label21);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerTarget);
+            this.tabPagePlayer.Controls.Add(this.label20);
             this.tabPagePlayer.Controls.Add(this.tbPlayerMaxMp);
             this.tabPagePlayer.Controls.Add(this.tbPlayerMaxHp);
             this.tabPagePlayer.Controls.Add(this.tbPlayerXp);
@@ -742,6 +750,14 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
             // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(3, 94);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(41, 13);
+            this.label20.TabIndex = 10;
+            this.label20.Text = "Target:";
             // btnMovementTest
             // 
             this.btnMovementTest.Enabled = false;
@@ -752,6 +768,29 @@
             this.btnMovementTest.Text = "Movement Test";
             this.btnMovementTest.UseVisualStyleBackColor = true;
             this.btnMovementTest.Click += new System.EventHandler(this.btnMovementTest_Click);
+            //
+            // tbPlayerTarget
+            // 
+            this.tbPlayerTarget.Location = new System.Drawing.Point(50, 91);
+            this.tbPlayerTarget.Name = "tbPlayerTarget";
+            this.tbPlayerTarget.Size = new System.Drawing.Size(417, 20);
+            this.tbPlayerTarget.TabIndex = 11;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(3, 129);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(70, 13);
+            this.label21.TabIndex = 12;
+            this.label21.Text = "Target name:";
+            // 
+            // tbPlayerTargetName
+            // 
+            this.tbPlayerTargetName.Location = new System.Drawing.Point(79, 126);
+            this.tbPlayerTargetName.Name = "tbPlayerTargetName";
+            this.tbPlayerTargetName.Size = new System.Drawing.Size(388, 20);
+            this.tbPlayerTargetName.TabIndex = 13;
             // 
             // MainForm
             // 
@@ -856,6 +895,10 @@
         private System.Windows.Forms.Button btnAttachToWow;
         private System.Windows.Forms.TextBox tbWndHandle;
         private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TextBox tbPlayerTarget;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.TextBox tbPlayerTargetName;
+        private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Button btnMovementTest;
     }
 }
