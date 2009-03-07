@@ -12,12 +12,14 @@ namespace BabBot.Manager
     public class BotManager
     {
         private Thread mainThread;
+        private StateManager StateManager;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public BotManager()
         {
+            StateManager = new StateManager();
         }
 
         public void Start()
@@ -33,7 +35,10 @@ namespace BabBot.Manager
             {
                 while (true)
                 {
+                    // TODO: This is where we should periodically update the player data and
+                    // status
                     Console.WriteLine("Ciao sono un thread");
+                    StateManager.UpdateState();
                     Thread.Sleep(0);
                 }
             }
