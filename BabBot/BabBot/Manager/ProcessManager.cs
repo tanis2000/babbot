@@ -132,6 +132,8 @@ namespace BabBot.Manager
                 if (process != null)
                 {
                     WowHWND = AppHelper.WaitForWowWindow();
+                    CommandManager.WowHWND = WowHWND;
+
                     // Set before to use BlackMagic methods
                     process.EnableRaisingEvents = true;
                     process.Exited += exitProcess;

@@ -265,7 +265,7 @@ namespace BabBot.Wow
             return res;
         }
 
-        private float GetDistance(Vector3D dest)
+        private float GetDistance(Vector3D dest, bool UseZ)
         {
             Vector3D currentPos = Location;
 
@@ -273,20 +273,21 @@ namespace BabBot.Wow
             float dY = currentPos.Y - dest.Y;
             float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
 
-            return (float)Math.Sqrt(dX * dX + dY * dY + dZ * dZ);
+            return UseZ ? (float) Math.Sqrt(dX*dX + dY*dY + dZ*dZ) : (float) Math.Sqrt(dX*dX + dY*dY);
         }
 
         public void MoveTo(Vector3D dest)
         {
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
-            
+
             // Da che parte devo girarmi
             float radian = GetFaceRadian(dest);
             Face(radian);
 
-            // distanza iniziale tra origine e destinazione
-            float distance = GetDistance(dest);
-            
+            // distanza iniziale tra origine e destinazione, non considero Z per il momento
+            // distanza lineare sul piano
+            float distance = GetDistance(dest, false);
+
             // posizione corrente prima di iniziare qualsiasi movimento
             Vector3D currentPos = Location;
 
@@ -311,7 +312,7 @@ namespace BabBot.Wow
 
                 // TODO: controllare se si è ancora in gioco
 
-                distance = GetDistance(dest);
+                distance = GetDistance(dest, false);
                 Thread.Sleep(100);
             }
             PlayerCM.ArrowKeyUp(key);
@@ -322,9 +323,9 @@ namespace BabBot.Wow
             throw new NotImplementedException();
         }
 
-        private void FaceWithTimer(float facing, CommandManager.ArrowKey key)
+        private void FaceWithTimer(float radius, CommandManager.ArrowKey key)
         {
-            var tm = new GTimer(facing*1000*Math.PI);
+            var tm = new GTimer(radius*1000*Math.PI);
             PlayerCM.ArrowKeyDown(key);
             tm.Reset();
             while (!tm.isReady())
@@ -334,15 +335,15 @@ namespace BabBot.Wow
             PlayerCM.ArrowKeyUp(key);
         }
 
-        public void Face(float facing)
+        public void Face(float radius)
         {
-            if (facing - Orientation < Math.PI)
+            if (radius - Orientation < Math.PI)
             {
-                FaceWithTimer(facing, CommandManager.ArrowKey.Left);
+                FaceWithTimer(radius, CommandManager.ArrowKey.Left);
             }
             else
             {
-                FaceWithTimer(facing, CommandManager.ArrowKey.Right);
+                FaceWithTimer(radius, CommandManager.ArrowKey.Right);
             }
         }
 

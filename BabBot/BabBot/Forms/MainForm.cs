@@ -174,6 +174,7 @@ namespace BabBot.Forms
 
         private void btnMovementTest_Click(object sender, EventArgs e)
         {
+            ProcessManager.Player.MoveTo();
             /*
             CommandManager.WowHWND = ProcessManager.WowHWND;
 

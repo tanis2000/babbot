@@ -74,11 +74,16 @@ namespace BabBot.Manager
 
         #endregion
 
-        private readonly int WowHWND;
+        public int WowHWND;
 
         public CommandManager(int hwnd)
         {
             WowHWND = hwnd;
+        }
+
+        public CommandManager()
+        {
+            WowHWND = 0;
         }
 
         #region Send keys methods
