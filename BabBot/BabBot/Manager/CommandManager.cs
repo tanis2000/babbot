@@ -74,7 +74,12 @@ namespace BabBot.Manager
 
         #endregion
 
-        public static int WowHWND;
+        private readonly int WowHWND;
+
+        public CommandManager(int hwnd)
+        {
+            WowHWND = hwnd;
+        }
 
         #region Send keys methods
 
@@ -83,7 +88,7 @@ namespace BabBot.Manager
         /// </summary>
         /// <param name="keys">String of keys to send</param>
         /// <returns>Returns number of keystrokes sent, -1 if an error occurs</returns>
-        public static int SendKeys(string keys)
+        public int SendKeys(string keys)
         {
             if (WowHWND <= 0 || keys.Length == 0)
             {
@@ -145,7 +150,7 @@ namespace BabBot.Manager
         /// </summary>
         /// <param name="key">The arrow key to be send</param>
         /// <returns>Returns true if successful, false if not</returns>
-        public static bool SendArrowKey(ArrowKey key)
+        public bool SendArrowKey(ArrowKey key)
         {
             //If hWnd is 0 return false
             if (WowHWND <= 0)
@@ -204,7 +209,7 @@ namespace BabBot.Manager
         /// <param name="key">The arrow key to be send</param>
         /// <param name="holdDelay">Number of milliseconds to hold down key</param>
         /// <returns>Returns true if successful, false if not</returns>
-        public static bool SendArrowKey(ArrowKey key, int holdDelay)
+        public bool SendArrowKey(ArrowKey key, int holdDelay)
         {
             //If hWnd is 0 return false
             if (WowHWND <= 0)
@@ -268,6 +273,78 @@ namespace BabBot.Manager
             }
 
             return true;
+        }
+
+        public bool ArrowKeyDown(ArrowKey key)
+        {
+            //If hWnd is 0 return false
+            if (WowHWND <= 0)
+            {
+                return false;
+            }
+
+            var wParam = (int) key;
+            uint lParam;
+
+            switch (key)
+            {
+                case ArrowKey.Left:
+                    lParam = 0x14B0001;
+                    break;
+
+                case ArrowKey.Up:
+                    lParam = 0x1480001;
+                    break;
+
+                case ArrowKey.Right:
+                    lParam = 0x14D0001;
+                    break;
+
+                case ArrowKey.Down:
+                    lParam = 0x1500001;
+                    break;
+
+                default:
+                    return false;
+            }
+
+            return _PostMessage(WowHWND, 0x100, wParam, lParam) == 0 ? false : true;
+        }
+
+        public bool ArrowKeyUp(ArrowKey key)
+        {
+            //If hWnd is 0 return false
+            if (WowHWND <= 0)
+            {
+                return false;
+            }
+
+            var wParam = (int) key;
+            uint lParam;
+
+            switch (key)
+            {
+                case ArrowKey.Left:
+                    lParam = 0x14B0001;
+                    break;
+
+                case ArrowKey.Up:
+                    lParam = 0x1480001;
+                    break;
+
+                case ArrowKey.Right:
+                    lParam = 0x14D0001;
+                    break;
+
+                case ArrowKey.Down:
+                    lParam = 0x1500001;
+                    break;
+
+                default:
+                    return false;
+            }
+
+            return _PostMessage(WowHWND, 0x101, wParam, (lParam + 0xC0000000)) == 0 ? false : true;
         }
 
         #endregion

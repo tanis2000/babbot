@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading;
+using BabBot.Common;
 using BabBot.Manager;
 
 namespace BabBot.Wow
@@ -8,7 +9,7 @@ namespace BabBot.Wow
     /// <summary>
     /// Possible states of the player in game
     /// </summary>
-    public enum PlayerState : int
+    public enum PlayerState
     {
         ///<summary>
         /// Before selecting a mob
@@ -81,18 +82,17 @@ namespace BabBot.Wow
     /// </summary>
     public class Player
     {
-        public uint Hp;
-        public uint MaxHp;
-        public uint Mp;
-        public uint MaxMp;
-        public uint Xp;
-        public Vector3D Location;
+        private readonly CommandManager PlayerCM;
         public UInt64 CurTargetGuid;
-        public Unit Unit; // The corresponding Unit in Wow's ObjectManager
+        public uint Hp;
+        public Vector3D Location;
+        public uint MaxHp;
+        public uint MaxMp;
+        public uint Mp;
         public float Orientation;
         public PlayerState State;
-
-        private CommandManager _cm;
+        public Unit Unit; // The corresponding Unit in Wow's ObjectManager
+        public uint Xp;
 
         /// <summary>
         /// Constructor
@@ -108,69 +108,7 @@ namespace BabBot.Wow
             CurTargetGuid = 0;
             Orientation = 0.0f;
             State = PlayerState.Start;
-            _cm = cm;
-        }
-
-        /// <summary>
-        /// Creates a new Unit object and attach it to the client's memory so 
-        /// that we can therefore call UpdateFromClient() to read the
-        /// player's information
-        /// </summary>
-        /// <param name="ObjectPointer">Pointer to Wow's Player Object</param>
-        public void AttachUnit(uint ObjectPointer)
-        {
-            Unit = new Unit(ObjectPointer);
-        }
-
-        /// <summary>
-        /// Reads the player information from Wow's ObjectManager
-        /// </summary>
-        public void UpdateFromClient()
-        {
-            if (Unit == null) return;
-
-            Location = Unit.GetPosition();
-            Hp = Unit.GetHp();
-            MaxHp = Unit.GetMaxHp();
-            Mp = Unit.GetMp();
-            MaxMp = Unit.GetMaxMp();
-            Xp = Unit.GetXp();
-            CurTargetGuid = Unit.GetCurTargetGuid();
-            Orientation = Unit.GetFacing();
-        }
-
-        public bool IsAtGraveyard()
-        {
-            List<WowUnit> l = Unit.GetNearMobs();
-            foreach (WowUnit unit in l)
-            {
-                if (unit.Name == "Spirit Healer") return true;
-            }
-            return false;
-        }
-
-        public bool IsDead()
-        {
-            if (Hp == 0) return true;
-            return false;
-        }
-
-        public bool IsGhost()
-        {
-            // return ( GetKnownField( PLAYER_FLAGS )&0x10 ) != 0;
-            // 
-            throw new NotImplementedException();
-        }
-
-        public bool IsInCombat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool HasTarget()
-        {
-            if (CurTargetGuid != 0) return true;
-            return false;
+            PlayerCM = cm;
         }
 
         public string CurTargetName
@@ -208,6 +146,80 @@ namespace BabBot.Wow
             }
         }
 
+        /// <summary>
+        /// Creates a new Unit object and attach it to the client's memory so 
+        /// that we can therefore call UpdateFromClient() to read the
+        /// player's information
+        /// </summary>
+        /// <param name="ObjectPointer">Pointer to Wow's Player Object</param>
+        public void AttachUnit(uint ObjectPointer)
+        {
+            Unit = new Unit(ObjectPointer);
+        }
+
+        /// <summary>
+        /// Reads the player information from Wow's ObjectManager
+        /// </summary>
+        public void UpdateFromClient()
+        {
+            if (Unit == null)
+            {
+                return;
+            }
+
+            Location = Unit.GetPosition();
+            Hp = Unit.GetHp();
+            MaxHp = Unit.GetMaxHp();
+            Mp = Unit.GetMp();
+            MaxMp = Unit.GetMaxMp();
+            Xp = Unit.GetXp();
+            CurTargetGuid = Unit.GetCurTargetGuid();
+            Orientation = Unit.GetFacing();
+        }
+
+        public bool IsAtGraveyard()
+        {
+            List<WowUnit> l = Unit.GetNearMobs();
+            foreach (WowUnit unit in l)
+            {
+                if (unit.Name == "Spirit Healer")
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsDead()
+        {
+            if (Hp == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsGhost()
+        {
+            // return ( GetKnownField( PLAYER_FLAGS )&0x10 ) != 0;
+            // 
+            throw new NotImplementedException();
+        }
+
+        public bool IsInCombat()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool HasTarget()
+        {
+            if (CurTargetGuid != 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
 
         // Movements
         // E' solo un'idea, se ti sembra na cazzata spostiamoli
@@ -227,14 +239,28 @@ namespace BabBot.Wow
             throw new NotImplementedException();
         }
 
-        public bool GoLeft(float radius)
+        private void FaceWithTimer(float facing, CommandManager.ArrowKey key)
         {
-            throw new NotImplementedException();
+            var tm = new GTimer(facing*1000*Math.PI);
+            PlayerCM.ArrowKeyDown(key);
+            tm.Reset();
+            while (!tm.isReady())
+            {
+                Thread.Sleep(1);
+            }
+            PlayerCM.ArrowKeyUp(key);
         }
 
-        public bool GoRight(float radius)
+        public void Face(float facing)
         {
-            throw new NotImplementedException();
+            if (facing - Orientation < Math.PI)
+            {
+                FaceWithTimer(facing, CommandManager.ArrowKey.Left);
+            }
+            else
+            {
+                FaceWithTimer(facing, CommandManager.ArrowKey.Right);
+            }
         }
 
         // Actions
@@ -248,6 +274,5 @@ namespace BabBot.Wow
         {
             throw new NotImplementedException();
         }
-
     }
 }

@@ -176,6 +176,7 @@ namespace BabBot.Forms
 
         private void btnMovementTest_Click(object sender, EventArgs e)
         {
+            /*
             CommandManager.WowHWND = ProcessManager.WowHWND;
 
             // vai avanti
@@ -191,7 +192,7 @@ namespace BabBot.Forms
             CommandManager.SendKeys(CommandManager.SK_SHIFT_DOWN + "CIAO");
             Thread.Sleep(100);
             CommandManager.SendKeys(CommandManager.SK_ENTER);
-
+            */
 
         }
     }
