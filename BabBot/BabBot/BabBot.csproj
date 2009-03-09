@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Bot\Profile.cs" />
     <Compile Include="Common\Common.cs" />
+    <Compile Include="Common\GThread.cs" />
     <Compile Include="Common\GTimer.cs" />
     <Compile Include="Common\RunAs.cs" />
     <Compile Include="Config.cs" />

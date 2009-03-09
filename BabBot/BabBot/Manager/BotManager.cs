@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using BabBot.Common;
 
 namespace BabBot.Manager
 {
@@ -9,7 +10,8 @@ namespace BabBot.Manager
     public class BotManager
     {
         private readonly StateManager StateManager;
-        private Thread mainThread;
+        // private Thread mainThread;
+        private GThread workerThread;
 
         /// <summary>
         /// Constructor
@@ -17,44 +19,70 @@ namespace BabBot.Manager
         public BotManager()
         {
             StateManager = new StateManager();
+            workerThread = null;
+        }
+
+        protected void InitThreadObj()
+        {
+            workerThread = new GThread {Name = "BotManagerThread"};
+            workerThread.OnRun += OnRun;
+            workerThread.OnException += OnException;
+            workerThread.OnInitialize += OnInitialize;
+            workerThread.OnBeforeStart += OnBeforeStart;
+            workerThread.OnBeforeStop += OnBeforeStop;
+            workerThread.OnFinalize += OnFinalize;
         }
 
         public void Start()
         {
-            mainThread = new Thread(Update);
-            mainThread.Start();
-            Thread.Sleep(0);
-        }
-
-        private void Update()
-        {
-            try
+            if (workerThread != null)
             {
-                while (true)
-                {
-                    // TODO: This is where we should periodically update the player data and
-                    // status
-                    Console.WriteLine("Ciao sono un thread");
-                    StateManager.UpdateState();
-
-                    // Dagli un po di respiro, almeno 10 ms
-                    Thread.Sleep(10);
-                }
-            }
-            catch (ThreadAbortException ex)
-            {
-                // TODO: put cleanup code here
-            }
-            finally
-            {
-                // By placing a finally statement w avoid the thread to throw back the exception as
-                // per default behavior
+                workerThread.Start();
             }
         }
 
         public void Stop()
         {
-            mainThread.Abort();
+            if (workerThread != null)
+            {
+                workerThread.Stop();
+                workerThread = null;
+            }
         }
+
+        #region Thread Events
+
+        private void OnFinalize()
+        {
+            Console.WriteLine("OnFinalize");
+        }
+
+        private void OnBeforeStop()
+        {
+            Console.WriteLine("OnBeforeStop");
+        }
+
+        private void OnBeforeStart()
+        {
+            Console.WriteLine("OnBeforeStart");
+        }
+
+        private void OnInitialize()
+        {
+            Console.WriteLine("OnInitialize");
+        }
+
+        private void OnException(Exception e, GThread.ThreadPhase phase)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        private void OnRun()
+        {
+            StateManager.UpdateState();
+            Thread.Sleep(50);
+        }
+
+        #endregion
     }
 }

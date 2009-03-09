@@ -1,0 +1,225 @@
+﻿using System;
+using System.Threading;
+
+namespace BabBot.Common
+{
+    public class GThread
+    {
+
+        #region Delegates
+
+        public delegate void DlgThreadBeforeStart(); 
+        public delegate void DlgThreadBeforeStop(); 
+        public delegate void DlgThreadException(Exception e, ThreadPhase phase);
+
+        public delegate void DlgThreadFinalize();
+
+        public delegate void DlgThreadInitialize();
+
+        public delegate void DlgThreadRun();
+
+        #endregion
+
+        #region ThreadPhase enum
+
+        public enum ThreadPhase
+        {
+            Initialize,
+            Run,
+            Finalize,
+            Unknow
+        } ;
+
+        #endregion
+
+        private readonly EventWaitHandle m_evStart; // Handle per la sincronizzazione allo start del thread  
+        private readonly EventWaitHandle m_evStop; // Handle per la sincronizzazione allo stop del thread  
+        private bool m_forceStop; // Se a true, interrompe un eventuale stato di sleep,wait,join del thread  
+        private string m_name; // Nome associato al thread          
+        protected bool m_running; // A true quando il thread è in fase di esecuzione  
+        private Thread m_thread; // Oggetto Thread del .NET Framework  
+
+        public GThread()
+        {
+            m_running = false;
+            m_evStart = new EventWaitHandle(false, EventResetMode.AutoReset);
+            m_evStop = new EventWaitHandle(false, EventResetMode.AutoReset);
+        }
+
+        public bool Running
+        {
+            get { return m_running; }
+        }
+
+        public bool ForceStop
+        {
+            get { return m_forceStop; }
+            set { m_forceStop = value; }
+        }
+
+        public string Name
+        {
+            get { return m_name; }
+            set { m_name = value; }
+        }
+
+// Delegato    
+
+        public event DlgThreadRun OnRun; // Evento che viene generato ciclicamente quando il thread è attivo  
+
+        public event DlgThreadBeforeStart OnBeforeStart;
+            // Evento che viene generato prima della partenza del thread - in capo al chiamante  
+
+        public event DlgThreadInitialize OnInitialize;
+            // Evento che viene generato subito dopo la partenza del thread - in capo al thread  
+
+        public event DlgThreadBeforeStop OnBeforeStop;
+            // Evento che viene generato prima di fermare il thread - in capo al chiamante  
+
+        public event DlgThreadFinalize OnFinalize;
+            // Evento che viene generato appena prima l'arresto del thread - in capo al thread  
+
+        public event DlgThreadException OnException;
+            // Evento che viene generato se avviene un'eccezione durante la vita del thread  
+
+        // Proprietà  
+
+        public void Start()
+        {
+            // Creo il thread solo se già non esiste  
+            if (m_thread != null)
+            {
+                return;
+            }
+
+            // Genere l'evento OnBeforeStart prima di far partire il thread  
+            if (OnBeforeStart != null)
+            {
+                OnBeforeStart();
+            }
+
+            // Creo fisicamente il Thread a livello di sistema operativo  
+            m_thread = new Thread(Run) {Name = m_name};
+
+            // Faccio partire il thread  
+            m_running = true;
+            m_thread.Start();
+
+            // Metto in attesa il thread chiamante dell'effettivo start del thread dell'oggetto corrente  
+            m_evStart.WaitOne();
+        }
+
+        public void Stop()
+        {
+            // Eseguo lo stop solo se il thread esiste ed è vivo  
+            if ((m_thread == null) || (!m_thread.IsAlive) || (!m_running))
+            {
+                return;
+            }
+
+            // Genero l'evento OnBeforerSop prima di arrestare il thread  
+            if (OnBeforeStop != null)
+            {
+                OnBeforeStop();
+            }
+
+            // Faccio in modo che il thread termini l'esecuzione del suo metodo  
+            m_running = false;
+
+            // Se lo stato del thread è Wait, Sleep o Join lo interrompo  
+            // se la configurazione di questo oggetto lo permette  
+            try
+            {
+                if ((m_forceStop) && (m_thread.ThreadState == ThreadState.WaitSleepJoin))
+                {
+                    m_thread.Interrupt();
+                }
+            }
+            catch (ThreadInterruptedException)
+            {
+            }
+
+            // Metto in attesa il thread chiamante dell'effettivo stop del thread dell'oggetto corrente  
+            m_evStop.WaitOne();
+
+            m_thread = null;
+        }
+
+        public void Run()
+        {
+            try
+            {
+                // Chiamo l'inizializzazione del thread  
+                try
+                {
+                    if (OnInitialize != null)
+                    {
+                        OnInitialize();
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Notifico eventuali eccezioni avvenute durante l'inizialize del thread  
+                    if (OnException != null)
+                    {
+                        OnException(e, ThreadPhase.Initialize);
+                    }
+                }
+
+                // Setto l'handle che indica che il thread è partito  
+                m_evStart.Set();
+
+                // Finchè il thread è attivo viene eseguito il seguente codice che genera l'evento OnRun  
+                while (m_running)
+                {
+                    try
+                    {
+                        if (OnRun != null)
+                        {
+                            OnRun();
+                        }
+                    }
+                    catch (ThreadInterruptedException)
+                    {
+                    }
+                    catch (Exception e)
+                    {
+                        // Notifico eventuali eccezioni avvenute durante la vita del thread  
+                        if (OnException != null)
+                        {
+                            OnException(e, ThreadPhase.Run);
+                        }
+                    }
+                }
+
+                // Chiamo il finalize del thread  
+                try
+                {
+                    if (OnFinalize != null)
+                    {
+                        OnFinalize();
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Notifico eventuali eccezioni avvenute durante la finalize del thread  
+                    if (OnException != null)
+                    {
+                        OnException(e, ThreadPhase.Finalize);
+                    }
+                }
+
+                // Setto l'handle che indica che il thread si è fermato  
+                m_evStop.Set();
+            }
+            catch (Exception e)
+            {
+                // Notifico eventuali eccezioni non caturate precedentemente  
+                if (OnException != null)
+                {
+                    OnException(e, ThreadPhase.Unknow);
+                }
+            }
+        }
+    }
+}
