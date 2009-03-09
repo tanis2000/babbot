@@ -259,7 +259,7 @@ namespace BabBot.Wow
                 res = (float) Math.Atan(dy/dx) + (float) (2*Math.PI);
             }
 
-            // da testare, sembra che nel gioco l'angolo 0 sia puntato ad east 
+            // da testare, sembra che nel gioco l'angolo 0 sia puntato ad est 
             res -= (float) 1.57079633;
 
             return res;
