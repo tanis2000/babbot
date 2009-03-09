@@ -229,9 +229,61 @@ namespace BabBot.Wow
         // Nella fase di movimento è determinante controllare:
         // 1) se non si è attaccati da qualche mobs
         // 2) se non si è bloccati contro qualche ostacolo
+
+        /// <summary>
+        /// Returns the radian that would face the x,y specified
+        /// </summary>
+        /// <param name="dest">Vector3D current destination points</param>
+        /// <returns>radian to face on</returns>
+        private float GetFaceRadian(Vector3D dest)
+        {
+            Vector3D currentPos = Location;
+            float dx = (currentPos.X - dest.X);
+            float dy = (dest.Y - currentPos.Y);
+
+            float res = 0;
+            if (dx > 0.0 && dy >= 0.0)
+            {
+                res = (float) Math.Atan(dy/dx);
+            }
+            if (dx < 0.0 && dy >= 0.0)
+            {
+                res = (float) Math.Atan(dy/dx) + (float) Math.PI;
+            }
+            if (dx < 0.0 && dy < 0.0)
+            {
+                res = (float) Math.Atan(dy/dx) + (float) Math.PI;
+            }
+            if (dx > 0.0 && dy < 0.0)
+            {
+                res = (float) Math.Atan(dy/dx) + (float) (2*Math.PI);
+            }
+
+            // da testare, sembra che nel gioco l'angolo 0 sia puntato ad east 
+            res -= (float) 1.57079633;
+
+            return res;
+        }
+
+        private float GetDistance(Vector3D dest)
+        {
+            Vector3D currentPos = Location;
+
+            float dX = currentPos.X - dest.X;
+            float dY = currentPos.Y - dest.Y;
+            float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
+
+            return (float)Math.Sqrt(dX * dX + dY * dY + dZ * dZ);
+        }
+
         public bool GoForward(Vector3D dest)
         {
-            throw new NotImplementedException();
+            float radian = GetFaceRadian(dest);
+            float distance = GetDistance(dest);
+
+            Face(radian);
+
+
         }
 
         public bool GoBack(Vector3D dest)
