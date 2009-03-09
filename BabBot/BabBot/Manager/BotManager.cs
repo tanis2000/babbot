@@ -10,7 +10,6 @@ namespace BabBot.Manager
     public class BotManager
     {
         private readonly StateManager StateManager;
-        // private Thread mainThread;
         private GThread workerThread;
 
         /// <summary>
