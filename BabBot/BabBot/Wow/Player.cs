@@ -313,7 +313,7 @@ namespace BabBot.Wow
                 // TODO: controllare se si è ancora in gioco
 
                 distance = GetDistance(dest, false);
-                Thread.Sleep(100);
+                Thread.Sleep(50);
             }
             PlayerCM.ArrowKeyUp(key);
         }

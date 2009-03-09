@@ -174,24 +174,9 @@ namespace BabBot.Forms
 
         private void btnMovementTest_Click(object sender, EventArgs e)
         {
-            ProcessManager.Player.MoveTo();
-            /*
-            CommandManager.WowHWND = ProcessManager.WowHWND;
-
-            // vai avanti
-            CommandManager.SendArrowKey(CommandManager.ArrowKey.Up, 500);
-            // gira a sx
-            CommandManager.SendArrowKey(CommandManager.ArrowKey.Left, 100);
-            // vai avanti
-            CommandManager.SendArrowKey(CommandManager.ArrowKey.Up, 500);
-
-            // dico qualcosa
-            CommandManager.SendKeys(CommandManager.SK_ENTER);
-            Thread.Sleep(100);
-            CommandManager.SendKeys(CommandManager.SK_SHIFT_DOWN + "CIAO");
-            Thread.Sleep(100);
-            CommandManager.SendKeys(CommandManager.SK_ENTER);
-            */
+            Vector3D destPos = ProcessManager.Player.Location;
+            destPos.Y += 5;
+            ProcessManager.Player.MoveTo(destPos);
         }
 
         private void button1_Click(object sender, EventArgs e)
