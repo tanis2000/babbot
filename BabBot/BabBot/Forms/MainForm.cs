@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Threading;
 using System.Windows.Forms;
-using BabBot.Bot;
 using BabBot.Manager;
 using BabBot.Wow;
-using Timer=System.Windows.Forms.Timer;
 
 namespace BabBot.Forms
 {
@@ -106,11 +103,13 @@ namespace BabBot.Forms
                 tbPlayerMp.Text = ProcessManager.Player.Mp.ToString();
                 tbPlayerMaxMp.Text = ProcessManager.Player.MaxMp.ToString();
                 tbPlayerXp.Text = ProcessManager.Player.Xp.ToString();
-                tbPlayerTarget.Text = string.Format("{0:X}",ProcessManager.Player.CurTargetGuid);
+                tbPlayerTarget.Text = string.Format("{0:X}", ProcessManager.Player.CurTargetGuid);
                 tbPlayerTargetName.Text = ProcessManager.Player.CurTargetName;
                 tbPlayerNearObjects.Text = "Objects" + Environment.NewLine + "===========" + Environment.NewLine +
-                    ProcessManager.Player.NearObjectsAsTextList + Environment.NewLine + "Mobs" + Environment.NewLine +
-                    "===========" + Environment.NewLine + ProcessManager.Player.NearMobsAsTextList;
+                                           ProcessManager.Player.NearObjectsAsTextList + Environment.NewLine + "Mobs" +
+                                           Environment.NewLine +
+                                           "===========" + Environment.NewLine +
+                                           ProcessManager.Player.NearMobsAsTextList;
             }
         }
 
@@ -134,7 +133,7 @@ namespace BabBot.Forms
                 MessageBox.Show(ex.Message);
             }
         }
-        
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -142,7 +141,7 @@ namespace BabBot.Forms
 
         private void btnLoadProfile_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dlg = new OpenFileDialog();
+            var dlg = new OpenFileDialog();
             dlg.Multiselect = false;
             dlg.Filter = "BabBot Profile (*.xml)|*.xml";
             if (dlg.ShowDialog() == DialogResult.OK)
@@ -150,7 +149,6 @@ namespace BabBot.Forms
                 ProcessManager.Profile.FileName = dlg.FileName;
                 ProcessManager.Profile.Load();
             }
-
         }
 
         private void btnAttachToWow_Click(object sender, EventArgs e)
@@ -160,7 +158,7 @@ namespace BabBot.Forms
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AboutForm f = new AboutForm();
+            var f = new AboutForm();
             f.ShowDialog();
         }
 
@@ -193,7 +191,30 @@ namespace BabBot.Forms
             Thread.Sleep(100);
             CommandManager.SendKeys(CommandManager.SK_ENTER);
             */
+        }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var v1 = new Vector3D(10, 10, 10);
+            var v2 = new Vector3D(10, 10, 10);
+
+            if (v1.Equals(v2))
+            {
+                MessageBox.Show("(.Equals) Vettore identico");
+            }
+            else
+            {
+                MessageBox.Show("(.Equals) Vettore differente");
+            }
+
+            if (v1 == v2)
+            {
+                MessageBox.Show("(==) Vettore identico");
+            }
+            else
+            {
+                MessageBox.Show("(==) Vettore differente");
+            }
         }
     }
 }

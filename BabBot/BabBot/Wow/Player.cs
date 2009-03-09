@@ -276,14 +276,45 @@ namespace BabBot.Wow
             return (float)Math.Sqrt(dX * dX + dY * dY + dZ * dZ);
         }
 
-        public bool GoForward(Vector3D dest)
+        public void MoveTo(Vector3D dest)
         {
+            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+            
+            // Da che parte devo girarmi
             float radian = GetFaceRadian(dest);
-            float distance = GetDistance(dest);
-
             Face(radian);
 
+            // distanza iniziale tra origine e destinazione
+            float distance = GetDistance(dest);
+            
+            // posizione corrente prima di iniziare qualsiasi movimento
+            Vector3D currentPos = Location;
 
+            PlayerCM.ArrowKeyDown(key);
+
+            while (distance > 0.0)
+            {
+                // TODO: controllare se si incastra da qualche parte.
+                // TODO: introdurre concetto di tolleranza
+                if (currentPos.Equals(Location))
+                {
+                    // Sono babbed, incastrato
+                }
+                else
+                {
+                    currentPos = Location;
+                }
+
+                // TODO: controllare se non si è attaccati
+
+                // TODO: controllare se si è ancora vivi
+
+                // TODO: controllare se si è ancora in gioco
+
+                distance = GetDistance(dest);
+                Thread.Sleep(100);
+            }
+            PlayerCM.ArrowKeyUp(key);
         }
 
         public bool GoBack(Vector3D dest)

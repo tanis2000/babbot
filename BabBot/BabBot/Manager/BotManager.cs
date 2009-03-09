@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace BabBot.Manager
@@ -11,8 +8,8 @@ namespace BabBot.Manager
     ///</summary>
     public class BotManager
     {
+        private readonly StateManager StateManager;
         private Thread mainThread;
-        private StateManager StateManager;
 
         /// <summary>
         /// Constructor
@@ -24,7 +21,7 @@ namespace BabBot.Manager
 
         public void Start()
         {
-            mainThread = new Thread(new ThreadStart(Update));
+            mainThread = new Thread(Update);
             mainThread.Start();
             Thread.Sleep(0);
         }
@@ -39,7 +36,9 @@ namespace BabBot.Manager
                     // status
                     Console.WriteLine("Ciao sono un thread");
                     StateManager.UpdateState();
-                    Thread.Sleep(0);
+
+                    // Dagli un po di respiro, almeno 10 ms
+                    Thread.Sleep(10);
                 }
             }
             catch (ThreadAbortException ex)

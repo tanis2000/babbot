@@ -52,6 +52,7 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnMovementTest = new System.Windows.Forms.Button();
             this.tbWndHandle = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -136,7 +137,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -151,7 +152,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -325,6 +326,7 @@
             // 
             // tabPageDebug
             // 
+            this.tabPageDebug.Controls.Add(this.button1);
             this.tabPageDebug.Controls.Add(this.btnMovementTest);
             this.tabPageDebug.Controls.Add(this.tbWndHandle);
             this.tabPageDebug.Controls.Add(this.label19);
@@ -348,6 +350,16 @@
             this.tabPageDebug.TabIndex = 1;
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(298, 90);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(105, 23);
+            this.button1.TabIndex = 33;
+            this.button1.Text = "Vector Test";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // btnMovementTest
             // 
@@ -926,6 +938,7 @@
         private System.Windows.Forms.Button btnMovementTest;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TextBox tbPlayerNearObjects;
+        private System.Windows.Forms.Button button1;
     }
 }
 
