@@ -35,6 +35,11 @@ namespace BabBot.Manager
         /// </summary>
         public delegate void WoWProcessStartedEventHandler(int process);
 
+        /// <summary>
+        /// Update notification on player fields
+        /// </summary>
+        public delegate void PlayerUpdateEventHandler();
+
         #endregion
 
         #region WOWApplication Events
@@ -60,6 +65,12 @@ namespace BabBot.Manager
         ///  access the new process.
         /// </summary>
         public static event WoWProcessAccessFailedEventHandler WoWProcessAccessFailed;
+
+        public static event PlayerUpdateEventHandler PlayerUpdate;
+
+        #endregion
+
+        #region Player Events
 
         #endregion
 
@@ -243,6 +254,11 @@ namespace BabBot.Manager
             }
 
             Player.UpdateFromClient();
+
+            if (PlayerUpdate != null)
+            {
+                PlayerUpdate();
+            }
         }
 
         /// <summary>

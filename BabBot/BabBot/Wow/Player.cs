@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Windows.Forms;
 using BabBot.Common;
 using BabBot.Manager;
 
@@ -85,6 +86,8 @@ namespace BabBot.Wow
         private readonly CommandManager PlayerCM;
         public UInt64 CurTargetGuid;
         public uint Hp;
+        public float LastDistance;
+        public float LastFaceRadian;
         public Vector3D Location;
         public uint MaxHp;
         public uint MaxMp;
@@ -109,6 +112,8 @@ namespace BabBot.Wow
             Orientation = 0.0f;
             State = PlayerState.Start;
             PlayerCM = cm;
+            LastDistance = 0.0f;
+            LastFaceRadian = 0.0f;
         }
 
         public string CurTargetName
@@ -238,31 +243,18 @@ namespace BabBot.Wow
         private float GetFaceRadian(Vector3D dest)
         {
             Vector3D currentPos = Location;
-            float dx = (currentPos.X - dest.X);
-            float dy = (dest.Y - currentPos.Y);
+            float wowFacing = negativeAngle((float) Math.Atan2((dest.Y - currentPos.Y), (dest.X - currentPos.X)));
+            LastFaceRadian = wowFacing;
+            return wowFacing;
+        }
 
-            float res = 0;
-            if (dx > 0.0 && dy >= 0.0)
+        private static float negativeAngle(float angle)
+        {
+            if (angle < 0)
             {
-                res = (float) Math.Atan(dy/dx);
+                angle += (float) (Math.PI*2);
             }
-            if (dx < 0.0 && dy >= 0.0)
-            {
-                res = (float) Math.Atan(dy/dx) + (float) Math.PI;
-            }
-            if (dx < 0.0 && dy < 0.0)
-            {
-                res = (float) Math.Atan(dy/dx) + (float) Math.PI;
-            }
-            if (dx > 0.0 && dy < 0.0)
-            {
-                res = (float) Math.Atan(dy/dx) + (float) (2*Math.PI);
-            }
-
-            // da testare, sembra che nel gioco l'angolo 0 sia puntato ad est 
-            res -= (float) 1.57079633;
-
-            return res;
+            return angle;
         }
 
         private float GetDistance(Vector3D dest, bool UseZ)
@@ -287,13 +279,14 @@ namespace BabBot.Wow
             // distanza iniziale tra origine e destinazione, non considero Z per il momento
             // distanza lineare sul piano
             float distance = GetDistance(dest, false);
+            LastDistance = distance;
 
             // posizione corrente prima di iniziare qualsiasi movimento
             Vector3D currentPos = Location;
 
             PlayerCM.ArrowKeyDown(key);
 
-            while (distance > 0.0)
+            while ((int) distance > 3)
             {
                 // TODO: controllare se si incastra da qualche parte.
                 // TODO: introdurre concetto di tolleranza
@@ -313,9 +306,17 @@ namespace BabBot.Wow
                 // TODO: controllare se si è ancora in gioco
 
                 distance = GetDistance(dest, false);
-                Thread.Sleep(50);
+                LastDistance = distance;
+
+                Thread.Sleep(100);
+                Application.DoEvents();
             }
             PlayerCM.ArrowKeyUp(key);
+        }
+
+        public void Stop()
+        {
+            PlayerCM.ArrowKeyUp(CommandManager.ArrowKey.Up);
         }
 
         public bool GoBack(Vector3D dest)
@@ -337,13 +338,16 @@ namespace BabBot.Wow
 
         public void Face(float radius)
         {
-            if (radius - Orientation < Math.PI)
+            float face;
+            if (negativeAngle(radius - Orientation) < Math.PI)
             {
-                FaceWithTimer(radius, CommandManager.ArrowKey.Left);
+                face = negativeAngle(radius - Orientation);
+                FaceWithTimer(face, CommandManager.ArrowKey.Left);
             }
             else
             {
-                FaceWithTimer(radius, CommandManager.ArrowKey.Right);
+                face = negativeAngle(Orientation - radius);
+                FaceWithTimer(face, CommandManager.ArrowKey.Right);
             }
         }
 

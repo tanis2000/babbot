@@ -30,10 +30,34 @@ namespace BabBot.Forms
             ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
 
             // Starts the bot thread
+            ProcessManager.PlayerUpdate += PlayerUpdate;
             StartBotThread();
         }
 
         #region Events
+
+        private void PlayerUpdate()
+        {
+            if (InvokeRequired)
+            {
+                PlayerUpdateDelegate del = PlayerUpdate;
+                Invoke(del);
+            }
+            else
+            {
+                txtCurrentX.Text = ProcessManager.Player.Location.X.ToString();
+                txtCurrentY.Text = ProcessManager.Player.Location.Y.ToString();
+                txtCurrentZ.Text = ProcessManager.Player.Location.Z.ToString();
+                txtLastDistance.Text = ProcessManager.Player.LastDistance.ToString();
+                txtFaceRadian.Text = ProcessManager.Player.LastFaceRadian.ToString();
+
+                float orientation = (float)((ProcessManager.Player.Orientation*180)/Math.PI);
+                txtCurrentFace.Text = string.Format("{0}°", orientation);
+
+                float facing = (float)((ProcessManager.Player.LastFaceRadian * 180) / Math.PI);
+                txtComputedFacing.Text = string.Format("{0}°", facing);
+            }
+        }
 
         private void wow_ProcessEnded(int process)
         {
@@ -69,6 +93,12 @@ namespace BabBot.Forms
             MessageBox.Show(error, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        #region Nested type: PlayerUpdateDelegate
+
+        private delegate void PlayerUpdateDelegate();
+
+        #endregion
+
         /*
         private static void inGameTimer_Tick(object sender, EventArgs e)
         {
@@ -81,7 +111,11 @@ namespace BabBot.Forms
         }
         */
 
+        #region Nested type: ProcessEndedDelegate
+
         private delegate void ProcessEndedDelegate(int process);
+
+        #endregion
 
         #endregion
 
@@ -129,11 +163,9 @@ namespace BabBot.Forms
                 tbCurMgr.Text = string.Format("{0:X}", Globals.CurMgr);
                 tbLocalGUID.Text = ProcessManager.ObjectManager.GetLocalGUID().ToString();
                 tbWndHandle.Text = ProcessManager.WowHWND.ToString();
-                btnMovementTest.Enabled = true;
             }
             catch (Exception ex)
             {
-                btnMovementTest.Enabled = false;
                 MessageBox.Show(ex.Message);
             }
         }
@@ -178,33 +210,16 @@ namespace BabBot.Forms
 
         private void btnMovementTest_Click(object sender, EventArgs e)
         {
-            Vector3D destPos = ProcessManager.Player.Location;
-            destPos.Y += 5;
+            var destPos = new Vector3D();
+            destPos.X = float.Parse(txtX.Text);
+            destPos.Y = float.Parse(txtY.Text);
+            destPos.Z = float.Parse(txtZ.Text);
             ProcessManager.Player.MoveTo(destPos);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnStopMovement_Click(object sender, EventArgs e)
         {
-            var v1 = new Vector3D(10, 10, 10);
-            var v2 = new Vector3D(10, 10, 10);
-
-            if (v1.Equals(v2))
-            {
-                MessageBox.Show("(.Equals) Vettore identico");
-            }
-            else
-            {
-                MessageBox.Show("(.Equals) Vettore differente");
-            }
-
-            if (v1 == v2)
-            {
-                MessageBox.Show("(==) Vettore identico");
-            }
-            else
-            {
-                MessageBox.Show("(==) Vettore differente");
-            }
+            ProcessManager.Player.Stop();
         }
     }
 }

@@ -52,7 +52,16 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
+            this.txtCurrentZ = new System.Windows.Forms.TextBox();
+            this.txtCurrentY = new System.Windows.Forms.TextBox();
+            this.txtCurrentX = new System.Windows.Forms.TextBox();
+            this.btnStopMovement = new System.Windows.Forms.Button();
+            this.label25 = new System.Windows.Forms.Label();
+            this.txtZ = new System.Windows.Forms.TextBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.txtY = new System.Windows.Forms.TextBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.txtX = new System.Windows.Forms.TextBox();
             this.btnMovementTest = new System.Windows.Forms.Button();
             this.tbWndHandle = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -103,6 +112,12 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.txtLastDistance = new System.Windows.Forms.TextBox();
+            this.txtFaceRadian = new System.Windows.Forms.TextBox();
+            this.txtCurrentFace = new System.Windows.Forms.TextBox();
+            this.txtComputedFacing = new System.Windows.Forms.TextBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.label27 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -326,7 +341,22 @@
             // 
             // tabPageDebug
             // 
-            this.tabPageDebug.Controls.Add(this.button1);
+            this.tabPageDebug.Controls.Add(this.label27);
+            this.tabPageDebug.Controls.Add(this.label26);
+            this.tabPageDebug.Controls.Add(this.txtComputedFacing);
+            this.tabPageDebug.Controls.Add(this.txtCurrentFace);
+            this.tabPageDebug.Controls.Add(this.txtFaceRadian);
+            this.tabPageDebug.Controls.Add(this.txtLastDistance);
+            this.tabPageDebug.Controls.Add(this.txtCurrentZ);
+            this.tabPageDebug.Controls.Add(this.txtCurrentY);
+            this.tabPageDebug.Controls.Add(this.txtCurrentX);
+            this.tabPageDebug.Controls.Add(this.btnStopMovement);
+            this.tabPageDebug.Controls.Add(this.label25);
+            this.tabPageDebug.Controls.Add(this.txtZ);
+            this.tabPageDebug.Controls.Add(this.label24);
+            this.tabPageDebug.Controls.Add(this.txtY);
+            this.tabPageDebug.Controls.Add(this.label23);
+            this.tabPageDebug.Controls.Add(this.txtX);
             this.tabPageDebug.Controls.Add(this.btnMovementTest);
             this.tabPageDebug.Controls.Add(this.tbWndHandle);
             this.tabPageDebug.Controls.Add(this.label19);
@@ -351,22 +381,90 @@
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // txtCurrentZ
             // 
-            this.button1.Location = new System.Drawing.Point(298, 90);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(105, 23);
-            this.button1.TabIndex = 33;
-            this.button1.Text = "Vector Test";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.txtCurrentZ.Location = new System.Drawing.Point(222, 198);
+            this.txtCurrentZ.Name = "txtCurrentZ";
+            this.txtCurrentZ.Size = new System.Drawing.Size(100, 20);
+            this.txtCurrentZ.TabIndex = 43;
+            // 
+            // txtCurrentY
+            // 
+            this.txtCurrentY.Location = new System.Drawing.Point(118, 198);
+            this.txtCurrentY.Name = "txtCurrentY";
+            this.txtCurrentY.Size = new System.Drawing.Size(100, 20);
+            this.txtCurrentY.TabIndex = 42;
+            // 
+            // txtCurrentX
+            // 
+            this.txtCurrentX.Location = new System.Drawing.Point(12, 198);
+            this.txtCurrentX.Name = "txtCurrentX";
+            this.txtCurrentX.Size = new System.Drawing.Size(100, 20);
+            this.txtCurrentX.TabIndex = 41;
+            // 
+            // btnStopMovement
+            // 
+            this.btnStopMovement.Location = new System.Drawing.Point(400, 198);
+            this.btnStopMovement.Name = "btnStopMovement";
+            this.btnStopMovement.Size = new System.Drawing.Size(96, 24);
+            this.btnStopMovement.TabIndex = 40;
+            this.btnStopMovement.Text = "Stop Movement";
+            this.btnStopMovement.UseVisualStyleBackColor = true;
+            this.btnStopMovement.Click += new System.EventHandler(this.btnStopMovement_Click);
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(221, 221);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(17, 13);
+            this.label25.TabIndex = 38;
+            this.label25.Text = "Z:";
+            // 
+            // txtZ
+            // 
+            this.txtZ.Location = new System.Drawing.Point(222, 237);
+            this.txtZ.Name = "txtZ";
+            this.txtZ.Size = new System.Drawing.Size(100, 20);
+            this.txtZ.TabIndex = 37;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(115, 221);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(17, 13);
+            this.label24.TabIndex = 36;
+            this.label24.Text = "Y:";
+            // 
+            // txtY
+            // 
+            this.txtY.Location = new System.Drawing.Point(116, 237);
+            this.txtY.Name = "txtY";
+            this.txtY.Size = new System.Drawing.Size(100, 20);
+            this.txtY.TabIndex = 35;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(9, 221);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(17, 13);
+            this.label23.TabIndex = 34;
+            this.label23.Text = "X:";
+            // 
+            // txtX
+            // 
+            this.txtX.Location = new System.Drawing.Point(10, 237);
+            this.txtX.Name = "txtX";
+            this.txtX.Size = new System.Drawing.Size(100, 20);
+            this.txtX.TabIndex = 33;
             // 
             // btnMovementTest
             // 
-            this.btnMovementTest.Enabled = false;
-            this.btnMovementTest.Location = new System.Drawing.Point(298, 61);
+            this.btnMovementTest.Location = new System.Drawing.Point(400, 228);
             this.btnMovementTest.Name = "btnMovementTest";
-            this.btnMovementTest.Size = new System.Drawing.Size(105, 23);
+            this.btnMovementTest.Size = new System.Drawing.Size(96, 24);
             this.btnMovementTest.TabIndex = 32;
             this.btnMovementTest.Text = "Movement Test";
             this.btnMovementTest.UseVisualStyleBackColor = true;
@@ -828,6 +926,52 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
             // 
+            // txtLastDistance
+            // 
+            this.txtLastDistance.Location = new System.Drawing.Point(329, 198);
+            this.txtLastDistance.Name = "txtLastDistance";
+            this.txtLastDistance.Size = new System.Drawing.Size(53, 20);
+            this.txtLastDistance.TabIndex = 44;
+            // 
+            // txtFaceRadian
+            // 
+            this.txtFaceRadian.Location = new System.Drawing.Point(329, 237);
+            this.txtFaceRadian.Name = "txtFaceRadian";
+            this.txtFaceRadian.Size = new System.Drawing.Size(53, 20);
+            this.txtFaceRadian.TabIndex = 45;
+            // 
+            // txtCurrentFace
+            // 
+            this.txtCurrentFace.Location = new System.Drawing.Point(298, 61);
+            this.txtCurrentFace.Name = "txtCurrentFace";
+            this.txtCurrentFace.Size = new System.Drawing.Size(76, 20);
+            this.txtCurrentFace.TabIndex = 46;
+            // 
+            // txtComputedFacing
+            // 
+            this.txtComputedFacing.Location = new System.Drawing.Point(298, 87);
+            this.txtComputedFacing.Name = "txtComputedFacing";
+            this.txtComputedFacing.Size = new System.Drawing.Size(76, 20);
+            this.txtComputedFacing.TabIndex = 47;
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(380, 65);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(76, 13);
+            this.label26.TabIndex = 48;
+            this.label26.Text = "Current Facing";
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(380, 90);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(90, 13);
+            this.label27.TabIndex = 49;
+            this.label27.Text = "Computed Facing";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -938,7 +1082,22 @@
         private System.Windows.Forms.Button btnMovementTest;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TextBox tbPlayerNearObjects;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.TextBox txtZ;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.TextBox txtY;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.TextBox txtX;
+        private System.Windows.Forms.Button btnStopMovement;
+        private System.Windows.Forms.TextBox txtCurrentX;
+        private System.Windows.Forms.TextBox txtCurrentZ;
+        private System.Windows.Forms.TextBox txtCurrentY;
+        private System.Windows.Forms.TextBox txtLastDistance;
+        private System.Windows.Forms.TextBox txtFaceRadian;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.TextBox txtComputedFacing;
+        private System.Windows.Forms.TextBox txtCurrentFace;
     }
 }
 
