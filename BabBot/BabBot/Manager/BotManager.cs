@@ -34,6 +34,7 @@ namespace BabBot.Manager
 
         public void Start()
         {
+            InitThreadObj();
             if (workerThread != null)
             {
                 workerThread.Start();
@@ -78,7 +79,12 @@ namespace BabBot.Manager
 
         private void OnRun()
         {
-            StateManager.UpdateState();
+            if (ProcessManager.ProcessRunning)
+            {
+                ProcessManager.CheckInGame();
+                ProcessManager.UpdatePlayer();
+                StateManager.UpdateState();    
+            }
             Thread.Sleep(50);
         }
 

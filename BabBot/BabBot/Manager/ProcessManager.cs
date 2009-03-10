@@ -82,6 +82,7 @@ namespace BabBot.Manager
             config = new Config();
             wowProcess = new BlackMagic();
             ProcessRunning = false;
+            CommandManager = new CommandManager();
             Player = new Player(CommandManager);
             InGame = false;
             TLS = 0x0;

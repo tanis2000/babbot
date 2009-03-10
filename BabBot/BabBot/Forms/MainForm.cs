@@ -11,6 +11,7 @@ namespace BabBot.Forms
         {
             InitializeComponent();
 
+            /*
             var inGameTimer = new Timer();
             inGameTimer.Interval = 1000;
             inGameTimer.Start();
@@ -20,6 +21,7 @@ namespace BabBot.Forms
             playerTimer.Interval = 1000;
             playerTimer.Start();
             playerTimer.Tick += playerTimer_Tick;
+            */
 
             // ProcessManager events binding
             ProcessManager.WoWProcessStarted += wow_ProcessStarted;
@@ -67,6 +69,7 @@ namespace BabBot.Forms
             MessageBox.Show(error, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        /*
         private static void inGameTimer_Tick(object sender, EventArgs e)
         {
             ProcessManager.CheckInGame();
@@ -76,6 +79,7 @@ namespace BabBot.Forms
         {
             ProcessManager.UpdatePlayer();
         }
+        */
 
         private delegate void ProcessEndedDelegate(int process);
 
