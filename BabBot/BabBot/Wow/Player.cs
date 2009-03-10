@@ -88,12 +88,14 @@ namespace BabBot.Wow
         public uint Hp;
         public float LastDistance;
         public float LastFaceRadian;
+        public Vector3D LastLocation;
         public Vector3D Location;
         public uint MaxHp;
         public uint MaxMp;
         public uint Mp;
         public float Orientation;
         public PlayerState State;
+        private bool StopMovement;
         public Unit Unit; // The corresponding Unit in Wow's ObjectManager
         public uint Xp;
 
@@ -103,6 +105,7 @@ namespace BabBot.Wow
         public Player(CommandManager cm)
         {
             Location = new Vector3D();
+            LastLocation = new Vector3D();
             Hp = 0;
             MaxHp = 0;
             Mp = 0;
@@ -114,6 +117,7 @@ namespace BabBot.Wow
             PlayerCM = cm;
             LastDistance = 0.0f;
             LastFaceRadian = 0.0f;
+            StopMovement = false;
         }
 
         public string CurTargetName
@@ -225,18 +229,8 @@ namespace BabBot.Wow
             return false;
         }
 
-
-        // Movements
-        // E' solo un'idea, se ti sembra na cazzata spostiamoli
-        // Lo scopo sarebbe di riuscire ad astrarre il più possibile
-        // al fine di poter controllare il toon comodamente, ma il sistema
-        // di navigazione dovrebbe essere esterno alla classe Player
-        // Nella fase di movimento è determinante controllare:
-        // 1) se non si è attaccati da qualche mobs
-        // 2) se non si è bloccati contro qualche ostacolo
-
         /// <summary>
-        /// Returns the radian that would face the x,y specified
+        /// Returns the angle that would face the x,y specified
         /// </summary>
         /// <param name="dest">Vector3D current destination points</param>
         /// <returns>radian to face on</returns>
@@ -257,7 +251,7 @@ namespace BabBot.Wow
             return angle;
         }
 
-        private float GetDistance(Vector3D dest, bool UseZ)
+        public float HGetDistance(Vector3D dest, bool UseZ)
         {
             Vector3D currentPos = Location;
 
@@ -265,58 +259,85 @@ namespace BabBot.Wow
             float dY = currentPos.Y - dest.Y;
             float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
 
-            return UseZ ? (float) Math.Sqrt(dX*dX + dY*dY + dZ*dZ) : (float) Math.Sqrt(dX*dX + dY*dY);
+            float res = 0;
+            if (UseZ)
+            {
+                res = (float) Math.Sqrt(dX*dX + dY*dY + dZ*dZ);
+            }
+            else
+            {
+                res = (float) Math.Sqrt(dX*dX + dY*dY);
+            }
+
+            LastDistance = res;
+
+            return res;
+        }
+
+        private int LGetDistance(Vector3D dest, bool UseZ)
+        {
+            Vector3D currentPos = Location;
+            var dX = (int) (currentPos.X - dest.X);
+            var dY = (int) (currentPos.Y - dest.Y);
+            int res = 0;
+
+            res = (int) Math.Sqrt(dX*dX + dY*dY);
+
+            LastDistance = res;
+            return res;
+        }
+
+        private int RandomNumber(int min, int max)
+        {
+            var random = new Random();
+            return random.Next(min, max);
         }
 
         public void MoveTo(Vector3D dest)
         {
-            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
-
-            // Da che parte devo girarmi
-            float radian = GetFaceRadian(dest);
-            Face(radian);
-
-            // distanza iniziale tra origine e destinazione, non considero Z per il momento
-            // distanza lineare sul piano
-            float distance = GetDistance(dest, false);
-            LastDistance = distance;
-
-            // posizione corrente prima di iniziare qualsiasi movimento
-            Vector3D currentPos = Location;
-
-            PlayerCM.ArrowKeyDown(key);
-
-            while ((int) distance > 3)
+            if (!StopMovement)
             {
-                // TODO: controllare se si incastra da qualche parte.
-                // TODO: introdurre concetto di tolleranza
-                if (currentPos.Equals(Location))
+                const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+
+                float angle = GetFaceRadian(dest);
+                Face(angle);
+
+                // Random jump
+                int rndJmp = RandomNumber(1, 8);
+                if (rndJmp == 1 || rndJmp == 3)
                 {
-                    // Sono babbed, incastrato
+                    PlayerCM.SendKeys(" ");
                 }
-                else
+
+                float distance = HGetDistance(dest, false);
+
+                Vector3D currentPos = Location;
+
+                PlayerCM.ArrowKeyDown(key);
+                while ((int) distance > 1)
                 {
+                    if (currentPos.Equals(Location))
+                    {
+                        //break;
+                    }
+
+                    if (StopMovement)
+                    {
+                        break;
+                    }
+
                     currentPos = Location;
+                    distance = HGetDistance(dest, false);
+                    Thread.Sleep(50);
+                    Application.DoEvents();
                 }
-
-                // TODO: controllare se non si è attaccati
-
-                // TODO: controllare se si è ancora vivi
-
-                // TODO: controllare se si è ancora in gioco
-
-                distance = GetDistance(dest, false);
-                LastDistance = distance;
-
-                Thread.Sleep(100);
-                Application.DoEvents();
+                PlayerCM.ArrowKeyUp(key);
             }
-            PlayerCM.ArrowKeyUp(key);
         }
 
         public void Stop()
         {
-            PlayerCM.ArrowKeyUp(CommandManager.ArrowKey.Up);
+            StopMovement = true;
         }
 
         public bool GoBack(Vector3D dest)
@@ -336,17 +357,17 @@ namespace BabBot.Wow
             PlayerCM.ArrowKeyUp(key);
         }
 
-        public void Face(float radius)
+        public void Face(float angle)
         {
             float face;
-            if (negativeAngle(radius - Orientation) < Math.PI)
+            if (negativeAngle(angle - Orientation) < Math.PI)
             {
-                face = negativeAngle(radius - Orientation);
+                face = negativeAngle(angle - Orientation);
                 FaceWithTimer(face, CommandManager.ArrowKey.Left);
             }
             else
             {
-                face = negativeAngle(Orientation - radius);
+                face = negativeAngle(Orientation - angle);
                 FaceWithTimer(face, CommandManager.ArrowKey.Right);
             }
         }

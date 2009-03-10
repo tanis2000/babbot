@@ -52,6 +52,14 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
+            this.btnWPTest = new System.Windows.Forms.Button();
+            this.lbWayPoints = new System.Windows.Forms.ListBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.label26 = new System.Windows.Forms.Label();
+            this.txtComputedFacing = new System.Windows.Forms.TextBox();
+            this.txtCurrentFace = new System.Windows.Forms.TextBox();
+            this.txtFaceRadian = new System.Windows.Forms.TextBox();
+            this.txtLastDistance = new System.Windows.Forms.TextBox();
             this.txtCurrentZ = new System.Windows.Forms.TextBox();
             this.txtCurrentY = new System.Windows.Forms.TextBox();
             this.txtCurrentX = new System.Windows.Forms.TextBox();
@@ -112,12 +120,8 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.txtLastDistance = new System.Windows.Forms.TextBox();
-            this.txtFaceRadian = new System.Windows.Forms.TextBox();
-            this.txtCurrentFace = new System.Windows.Forms.TextBox();
-            this.txtComputedFacing = new System.Windows.Forms.TextBox();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label27 = new System.Windows.Forms.Label();
+            this.btnClearWP = new System.Windows.Forms.Button();
+            this.cbWPRecord = new System.Windows.Forms.CheckBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -137,7 +141,7 @@
             this.helpToolStripMenuItem});
             this.msMain.Location = new System.Drawing.Point(0, 0);
             this.msMain.Name = "msMain";
-            this.msMain.Size = new System.Drawing.Size(521, 24);
+            this.msMain.Size = new System.Drawing.Size(538, 24);
             this.msMain.TabIndex = 0;
             this.msMain.Text = "menuStrip1";
             // 
@@ -181,7 +185,7 @@
             this.tabControlMain.Location = new System.Drawing.Point(0, 24);
             this.tabControlMain.Name = "tabControlMain";
             this.tabControlMain.SelectedIndex = 0;
-            this.tabControlMain.Size = new System.Drawing.Size(521, 291);
+            this.tabControlMain.Size = new System.Drawing.Size(538, 396);
             this.tabControlMain.TabIndex = 1;
             // 
             // tabPageMain
@@ -204,7 +208,7 @@
             this.tabPageMain.Location = new System.Drawing.Point(4, 22);
             this.tabPageMain.Name = "tabPageMain";
             this.tabPageMain.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMain.Size = new System.Drawing.Size(513, 265);
+            this.tabPageMain.Size = new System.Drawing.Size(530, 370);
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main";
             this.tabPageMain.UseVisualStyleBackColor = true;
@@ -341,6 +345,10 @@
             // 
             // tabPageDebug
             // 
+            this.tabPageDebug.Controls.Add(this.cbWPRecord);
+            this.tabPageDebug.Controls.Add(this.btnClearWP);
+            this.tabPageDebug.Controls.Add(this.btnWPTest);
+            this.tabPageDebug.Controls.Add(this.lbWayPoints);
             this.tabPageDebug.Controls.Add(this.label27);
             this.tabPageDebug.Controls.Add(this.label26);
             this.tabPageDebug.Controls.Add(this.txtComputedFacing);
@@ -376,35 +384,99 @@
             this.tabPageDebug.Location = new System.Drawing.Point(4, 22);
             this.tabPageDebug.Name = "tabPageDebug";
             this.tabPageDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDebug.Size = new System.Drawing.Size(513, 265);
+            this.tabPageDebug.Size = new System.Drawing.Size(530, 370);
             this.tabPageDebug.TabIndex = 1;
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
             // 
+            // btnWPTest
+            // 
+            this.btnWPTest.Location = new System.Drawing.Point(399, 233);
+            this.btnWPTest.Name = "btnWPTest";
+            this.btnWPTest.Size = new System.Drawing.Size(96, 24);
+            this.btnWPTest.TabIndex = 52;
+            this.btnWPTest.Text = "WP Test";
+            this.btnWPTest.UseVisualStyleBackColor = true;
+            this.btnWPTest.Click += new System.EventHandler(this.btnWPTest_Click);
+            // 
+            // lbWayPoints
+            // 
+            this.lbWayPoints.FormattingEnabled = true;
+            this.lbWayPoints.Location = new System.Drawing.Point(10, 195);
+            this.lbWayPoints.Name = "lbWayPoints";
+            this.lbWayPoints.Size = new System.Drawing.Size(372, 95);
+            this.lbWayPoints.TabIndex = 51;
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(419, 159);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(90, 13);
+            this.label27.TabIndex = 49;
+            this.label27.Text = "Computed Facing";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(419, 134);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(76, 13);
+            this.label26.TabIndex = 48;
+            this.label26.Text = "Current Facing";
+            // 
+            // txtComputedFacing
+            // 
+            this.txtComputedFacing.Location = new System.Drawing.Point(337, 156);
+            this.txtComputedFacing.Name = "txtComputedFacing";
+            this.txtComputedFacing.Size = new System.Drawing.Size(76, 20);
+            this.txtComputedFacing.TabIndex = 47;
+            // 
+            // txtCurrentFace
+            // 
+            this.txtCurrentFace.Location = new System.Drawing.Point(337, 130);
+            this.txtCurrentFace.Name = "txtCurrentFace";
+            this.txtCurrentFace.Size = new System.Drawing.Size(76, 20);
+            this.txtCurrentFace.TabIndex = 46;
+            // 
+            // txtFaceRadian
+            // 
+            this.txtFaceRadian.Location = new System.Drawing.Point(329, 335);
+            this.txtFaceRadian.Name = "txtFaceRadian";
+            this.txtFaceRadian.Size = new System.Drawing.Size(53, 20);
+            this.txtFaceRadian.TabIndex = 45;
+            // 
+            // txtLastDistance
+            // 
+            this.txtLastDistance.Location = new System.Drawing.Point(329, 296);
+            this.txtLastDistance.Name = "txtLastDistance";
+            this.txtLastDistance.Size = new System.Drawing.Size(53, 20);
+            this.txtLastDistance.TabIndex = 44;
+            // 
             // txtCurrentZ
             // 
-            this.txtCurrentZ.Location = new System.Drawing.Point(222, 198);
+            this.txtCurrentZ.Location = new System.Drawing.Point(222, 296);
             this.txtCurrentZ.Name = "txtCurrentZ";
             this.txtCurrentZ.Size = new System.Drawing.Size(100, 20);
             this.txtCurrentZ.TabIndex = 43;
             // 
             // txtCurrentY
             // 
-            this.txtCurrentY.Location = new System.Drawing.Point(118, 198);
+            this.txtCurrentY.Location = new System.Drawing.Point(118, 296);
             this.txtCurrentY.Name = "txtCurrentY";
             this.txtCurrentY.Size = new System.Drawing.Size(100, 20);
             this.txtCurrentY.TabIndex = 42;
             // 
             // txtCurrentX
             // 
-            this.txtCurrentX.Location = new System.Drawing.Point(12, 198);
+            this.txtCurrentX.Location = new System.Drawing.Point(12, 296);
             this.txtCurrentX.Name = "txtCurrentX";
             this.txtCurrentX.Size = new System.Drawing.Size(100, 20);
             this.txtCurrentX.TabIndex = 41;
             // 
             // btnStopMovement
             // 
-            this.btnStopMovement.Location = new System.Drawing.Point(400, 198);
+            this.btnStopMovement.Location = new System.Drawing.Point(400, 296);
             this.btnStopMovement.Name = "btnStopMovement";
             this.btnStopMovement.Size = new System.Drawing.Size(96, 24);
             this.btnStopMovement.TabIndex = 40;
@@ -415,7 +487,7 @@
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(221, 221);
+            this.label25.Location = new System.Drawing.Point(221, 319);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(17, 13);
             this.label25.TabIndex = 38;
@@ -423,7 +495,7 @@
             // 
             // txtZ
             // 
-            this.txtZ.Location = new System.Drawing.Point(222, 237);
+            this.txtZ.Location = new System.Drawing.Point(222, 335);
             this.txtZ.Name = "txtZ";
             this.txtZ.Size = new System.Drawing.Size(100, 20);
             this.txtZ.TabIndex = 37;
@@ -431,7 +503,7 @@
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(115, 221);
+            this.label24.Location = new System.Drawing.Point(115, 319);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(17, 13);
             this.label24.TabIndex = 36;
@@ -439,7 +511,7 @@
             // 
             // txtY
             // 
-            this.txtY.Location = new System.Drawing.Point(116, 237);
+            this.txtY.Location = new System.Drawing.Point(116, 335);
             this.txtY.Name = "txtY";
             this.txtY.Size = new System.Drawing.Size(100, 20);
             this.txtY.TabIndex = 35;
@@ -447,7 +519,7 @@
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(9, 221);
+            this.label23.Location = new System.Drawing.Point(9, 319);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(17, 13);
             this.label23.TabIndex = 34;
@@ -455,14 +527,14 @@
             // 
             // txtX
             // 
-            this.txtX.Location = new System.Drawing.Point(10, 237);
+            this.txtX.Location = new System.Drawing.Point(10, 335);
             this.txtX.Name = "txtX";
             this.txtX.Size = new System.Drawing.Size(100, 20);
             this.txtX.TabIndex = 33;
             // 
             // btnMovementTest
             // 
-            this.btnMovementTest.Location = new System.Drawing.Point(400, 228);
+            this.btnMovementTest.Location = new System.Drawing.Point(400, 326);
             this.btnMovementTest.Name = "btnMovementTest";
             this.btnMovementTest.Size = new System.Drawing.Size(96, 24);
             this.btnMovementTest.TabIndex = 32;
@@ -604,7 +676,7 @@
             this.tabPageWayPoints.Location = new System.Drawing.Point(4, 22);
             this.tabPageWayPoints.Name = "tabPageWayPoints";
             this.tabPageWayPoints.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWayPoints.Size = new System.Drawing.Size(513, 265);
+            this.tabPageWayPoints.Size = new System.Drawing.Size(530, 370);
             this.tabPageWayPoints.TabIndex = 2;
             this.tabPageWayPoints.Text = "WayPoints";
             this.tabPageWayPoints.UseVisualStyleBackColor = true;
@@ -785,7 +857,7 @@
             this.tabPagePlayer.Location = new System.Drawing.Point(4, 22);
             this.tabPagePlayer.Name = "tabPagePlayer";
             this.tabPagePlayer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePlayer.Size = new System.Drawing.Size(513, 265);
+            this.tabPagePlayer.Size = new System.Drawing.Size(530, 370);
             this.tabPagePlayer.TabIndex = 3;
             this.tabPagePlayer.Text = "Player";
             this.tabPagePlayer.UseVisualStyleBackColor = true;
@@ -926,57 +998,32 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
             // 
-            // txtLastDistance
+            // btnClearWP
             // 
-            this.txtLastDistance.Location = new System.Drawing.Point(329, 198);
-            this.txtLastDistance.Name = "txtLastDistance";
-            this.txtLastDistance.Size = new System.Drawing.Size(53, 20);
-            this.txtLastDistance.TabIndex = 44;
+            this.btnClearWP.Location = new System.Drawing.Point(399, 263);
+            this.btnClearWP.Name = "btnClearWP";
+            this.btnClearWP.Size = new System.Drawing.Size(96, 24);
+            this.btnClearWP.TabIndex = 53;
+            this.btnClearWP.Text = "WP Clear";
+            this.btnClearWP.UseVisualStyleBackColor = true;
+            this.btnClearWP.Click += new System.EventHandler(this.btnClearWP_Click);
             // 
-            // txtFaceRadian
+            // cbWPRecord
             // 
-            this.txtFaceRadian.Location = new System.Drawing.Point(329, 237);
-            this.txtFaceRadian.Name = "txtFaceRadian";
-            this.txtFaceRadian.Size = new System.Drawing.Size(53, 20);
-            this.txtFaceRadian.TabIndex = 45;
-            // 
-            // txtCurrentFace
-            // 
-            this.txtCurrentFace.Location = new System.Drawing.Point(298, 61);
-            this.txtCurrentFace.Name = "txtCurrentFace";
-            this.txtCurrentFace.Size = new System.Drawing.Size(76, 20);
-            this.txtCurrentFace.TabIndex = 46;
-            // 
-            // txtComputedFacing
-            // 
-            this.txtComputedFacing.Location = new System.Drawing.Point(298, 87);
-            this.txtComputedFacing.Name = "txtComputedFacing";
-            this.txtComputedFacing.Size = new System.Drawing.Size(76, 20);
-            this.txtComputedFacing.TabIndex = 47;
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(380, 65);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(76, 13);
-            this.label26.TabIndex = 48;
-            this.label26.Text = "Current Facing";
-            // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(380, 90);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(90, 13);
-            this.label27.TabIndex = 49;
-            this.label27.Text = "Computed Facing";
+            this.cbWPRecord.AutoSize = true;
+            this.cbWPRecord.Location = new System.Drawing.Point(401, 195);
+            this.cbWPRecord.Name = "cbWPRecord";
+            this.cbWPRecord.Size = new System.Drawing.Size(82, 17);
+            this.cbWPRecord.TabIndex = 54;
+            this.cbWPRecord.Text = "WP Record";
+            this.cbWPRecord.UseVisualStyleBackColor = true;
+            this.cbWPRecord.CheckedChanged += new System.EventHandler(this.cbWPRecord_CheckedChanged);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(521, 315);
+            this.ClientSize = new System.Drawing.Size(538, 420);
             this.Controls.Add(this.tabControlMain);
             this.Controls.Add(this.msMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1098,6 +1145,10 @@
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.TextBox txtComputedFacing;
         private System.Windows.Forms.TextBox txtCurrentFace;
+        private System.Windows.Forms.ListBox lbWayPoints;
+        private System.Windows.Forms.Button btnWPTest;
+        private System.Windows.Forms.Button btnClearWP;
+        private System.Windows.Forms.CheckBox cbWPRecord;
     }
 }
 

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using BabBot.Bot;
 using BabBot.Common;
+using BabBot.Scripting;
 using BabBot.Wow;
 using Magic;
 
@@ -14,6 +15,13 @@ namespace BabBot.Manager
     public class ProcessManager
     {
         #region Delegates
+
+        /// <summary>
+        /// Update notification on player fields
+        /// </summary>
+        public delegate void PlayerUpdateEventHandler();
+
+        public delegate void PlayerWayPointEventHandler(Vector3D waypoint);
 
         /// <summary>
         /// Error is the Win32Exception.Message thrown.
@@ -34,11 +42,6 @@ namespace BabBot.Manager
         /// Process is the ID of the process that started.
         /// </summary>
         public delegate void WoWProcessStartedEventHandler(int process);
-
-        /// <summary>
-        /// Update notification on player fields
-        /// </summary>
-        public delegate void PlayerUpdateEventHandler();
 
         #endregion
 
@@ -67,6 +70,7 @@ namespace BabBot.Manager
         public static event WoWProcessAccessFailedEventHandler WoWProcessAccessFailed;
 
         public static event PlayerUpdateEventHandler PlayerUpdate;
+        public static event PlayerWayPointEventHandler PlayerWayPoint;
 
         #endregion
 
@@ -76,17 +80,17 @@ namespace BabBot.Manager
 
         private static readonly Config config;
         private static readonly BlackMagic wowProcess;
+        public static BotManager BotManager;
+        public static CommandManager CommandManager;
         public static bool InGame;
+        public static bool Initialized;
         public static ObjectManager ObjectManager;
         public static Player Player;
         private static Process process;
         public static bool ProcessRunning;
-        public static uint TLS;
-        public static bool Initialized;
         public static Profile Profile;
+        public static uint TLS;
         public static int WowHWND;
-        public static BotManager BotManager;
-        public static CommandManager CommandManager;
 
         static ProcessManager()
         {
@@ -169,7 +173,7 @@ namespace BabBot.Manager
 
             if (WoWProcessEnded != null)
             {
-                WoWProcessEnded(((Process)sender).Id);
+                WoWProcessEnded(((Process) sender).Id);
             }
         }
 
@@ -220,7 +224,7 @@ namespace BabBot.Manager
                 process = AppHelper.GetRunningWoWProcess(Config.GuestUsername);
                 if (process != null)
                 {
-                    afterProcessStart();    
+                    afterProcessStart();
                 }
                 else
                 {
@@ -243,6 +247,16 @@ namespace BabBot.Manager
             }
         }
 
+        public static void ResetWayPoint()
+        {
+            if (PlayerWayPoint != null)
+            {
+                Player.LastLocation.X = 0;
+                Player.LastLocation.Y = 0;
+                Player.LastLocation.Z = 0;
+            }
+        }
+
         /// <summary>
         /// Update all player informations: hp,mana,xp,position,etc...
         /// </summary>
@@ -258,6 +272,22 @@ namespace BabBot.Manager
             if (PlayerUpdate != null)
             {
                 PlayerUpdate();
+            }
+
+            if (PlayerWayPoint != null)
+            {
+                Vector3D last = Player.LastLocation;
+                if (last.X == 0 && last.Y == 0 && last.Z == 0)
+                {
+                    Player.LastLocation = Player.Location;
+                    last = Player.LastLocation;
+                }
+
+                if ((int) Player.HGetDistance(last, false) > 5 && (int) Player.HGetDistance(last, false) < 7)
+                {
+                    Player.LastLocation = Player.Location;
+                    PlayerWayPoint(Player.LastLocation);
+                }
             }
         }
 
@@ -319,7 +349,7 @@ namespace BabBot.Manager
             {
                 FindTLS();
                 InitializeObjectManager();
-                Scripting.Host.Go();
+                Host.Go();
                 Initialized = true;
             }
             catch

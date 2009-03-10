@@ -20,6 +20,11 @@
             Z = 0;
         }
 
+        public override string ToString()
+        {
+            return string.Format("{0}|{1}|{2}", X, Y, Z);
+        }
+
         public static bool operator ==(Vector3D v1, Vector3D v2)
         {
             return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z;
