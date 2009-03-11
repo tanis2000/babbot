@@ -99,5 +99,27 @@ namespace BabBot.Wow
             }
             return Mobs;
         }
+
+        public bool IsSitting()
+        {
+            return Convert.ToBoolean(ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_FIELD_BYTES_1) & (int)Descriptor.eUnitFlags.UF_SITTING);
+        }
+
+       	public bool IsTapped()
+	    {
+                return (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS) & 4) != 0;
+	    }
+
+        
+        public bool IsTappedByMe()
+	    {
+            return (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS) & 8) != 0;
+	    }
+
+        public bool IsAggro()
+	    {
+            return Convert.ToBoolean((ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_FIELD_FLAGS) >> 0x13) &1);
+	    }
+
     }
 }

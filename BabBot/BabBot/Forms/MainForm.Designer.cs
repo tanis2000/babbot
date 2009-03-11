@@ -52,6 +52,8 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
+            this.cbWPRecord = new System.Windows.Forms.CheckBox();
+            this.btnClearWP = new System.Windows.Forms.Button();
             this.btnWPTest = new System.Windows.Forms.Button();
             this.lbWayPoints = new System.Windows.Forms.ListBox();
             this.label27 = new System.Windows.Forms.Label();
@@ -120,8 +122,8 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.btnClearWP = new System.Windows.Forms.Button();
-            this.cbWPRecord = new System.Windows.Forms.CheckBox();
+            this.label28 = new System.Windows.Forms.Label();
+            this.tbPlayerIsSitting = new System.Windows.Forms.TextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -156,7 +158,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -171,7 +173,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -388,6 +390,27 @@
             this.tabPageDebug.TabIndex = 1;
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
+            // 
+            // cbWPRecord
+            // 
+            this.cbWPRecord.AutoSize = true;
+            this.cbWPRecord.Location = new System.Drawing.Point(401, 195);
+            this.cbWPRecord.Name = "cbWPRecord";
+            this.cbWPRecord.Size = new System.Drawing.Size(82, 17);
+            this.cbWPRecord.TabIndex = 54;
+            this.cbWPRecord.Text = "WP Record";
+            this.cbWPRecord.UseVisualStyleBackColor = true;
+            this.cbWPRecord.CheckedChanged += new System.EventHandler(this.cbWPRecord_CheckedChanged);
+            // 
+            // btnClearWP
+            // 
+            this.btnClearWP.Location = new System.Drawing.Point(399, 263);
+            this.btnClearWP.Name = "btnClearWP";
+            this.btnClearWP.Size = new System.Drawing.Size(96, 24);
+            this.btnClearWP.TabIndex = 53;
+            this.btnClearWP.Text = "WP Clear";
+            this.btnClearWP.UseVisualStyleBackColor = true;
+            this.btnClearWP.Click += new System.EventHandler(this.btnClearWP_Click);
             // 
             // btnWPTest
             // 
@@ -838,6 +861,8 @@
             // 
             // tabPagePlayer
             // 
+            this.tabPagePlayer.Controls.Add(this.tbPlayerIsSitting);
+            this.tabPagePlayer.Controls.Add(this.label28);
             this.tabPagePlayer.Controls.Add(this.label22);
             this.tabPagePlayer.Controls.Add(this.tbPlayerNearObjects);
             this.tabPagePlayer.Controls.Add(this.tbPlayerTargetName);
@@ -998,26 +1023,21 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
             // 
-            // btnClearWP
+            // label28
             // 
-            this.btnClearWP.Location = new System.Drawing.Point(399, 263);
-            this.btnClearWP.Name = "btnClearWP";
-            this.btnClearWP.Size = new System.Drawing.Size(96, 24);
-            this.btnClearWP.TabIndex = 53;
-            this.btnClearWP.Text = "WP Clear";
-            this.btnClearWP.UseVisualStyleBackColor = true;
-            this.btnClearWP.Click += new System.EventHandler(this.btnClearWP_Click);
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(290, 6);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(39, 13);
+            this.label28.TabIndex = 16;
+            this.label28.Text = "Sitting:";
             // 
-            // cbWPRecord
+            // tbPlayerIsSitting
             // 
-            this.cbWPRecord.AutoSize = true;
-            this.cbWPRecord.Location = new System.Drawing.Point(401, 195);
-            this.cbWPRecord.Name = "cbWPRecord";
-            this.cbWPRecord.Size = new System.Drawing.Size(82, 17);
-            this.cbWPRecord.TabIndex = 54;
-            this.cbWPRecord.Text = "WP Record";
-            this.cbWPRecord.UseVisualStyleBackColor = true;
-            this.cbWPRecord.CheckedChanged += new System.EventHandler(this.cbWPRecord_CheckedChanged);
+            this.tbPlayerIsSitting.Location = new System.Drawing.Point(335, 3);
+            this.tbPlayerIsSitting.Name = "tbPlayerIsSitting";
+            this.tbPlayerIsSitting.Size = new System.Drawing.Size(100, 20);
+            this.tbPlayerIsSitting.TabIndex = 17;
             // 
             // MainForm
             // 
@@ -1149,6 +1169,8 @@
         private System.Windows.Forms.Button btnWPTest;
         private System.Windows.Forms.Button btnClearWP;
         private System.Windows.Forms.CheckBox cbWPRecord;
+        private System.Windows.Forms.TextBox tbPlayerIsSitting;
+        private System.Windows.Forms.Label label28;
     }
 }
 

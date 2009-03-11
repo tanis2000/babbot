@@ -499,6 +499,285 @@
             CORPSE_FIELD_PAD = 0x84,
             TOTAL_CORPSE_FIELDS = 0xE
         }
+
+        public enum eObjType : uint
+        {
+            OT_NONE = 0,
+            OT_ITEM = 1,
+            OT_CONTAINER = 2,
+            OT_UNIT = 3,
+            OT_PLAYER = 4,
+            OT_GAMEOBJ = 5,
+            OT_DYNOBJ = 6,
+            OT_CORPSE = 7,
+            OT_FORCEDWORD = 0xFFFFFFFF
+        } // Credit ISXWoW
+
+        public enum eGObjType : uint
+        {
+            GO_MISC = 0,
+            GO_HERB = 0x9260000, //0x110
+            GO_MINERAL = 0x92A1000//0x1001
+        };
+
+        public enum ePlayerClass : uint
+        {
+            CLASS_NONE = 0,
+            CLASS_WARRIOR = 1,
+            CLASS_PALADIN = 2,
+            CLASS_HUNTER = 3,
+            CLASS_ROGUE = 4,
+            CLASS_PRIEST = 5,
+            CLASS_SHAMAN = 7,
+            CLASS_MAGE = 8,
+            CLASS_WARLOCK = 9,
+            CLASS_DRUID = 11
+        }; // Credit ISXWoW
+
+        public enum eUnitClassification : uint
+        {
+            UC_NORMAL = 0,
+            UC_ELITE = 1,
+            UC_RAREELITE = 2,
+            UC_WORLDBOSS = 3,
+            UC_RARE = 4
+        }; // Credit ISXWoW
+
+        public enum ePlayerRace : uint
+        {
+            RACE_NONE = 0,
+            RACE_HUMAN = 1,
+            RACE_ORC = 2,
+            RACE_DWARF = 3,
+            RACE_NIGHTELF = 4,
+            RACE_UNDEAD = 5,
+            RACE_TAUREN = 6,
+            RACE_GNOME = 7,
+            RACE_TROLL = 8,
+            RACE_BLOODELF = 10,
+            RACE_DRAENEI = 11
+        }; // Credit ISXWoW
+
+        public enum eUnitNPCFlags : uint
+        {
+            NPC_FLAG_CHAT = 0x1, // 1
+            // 2
+            NPC_FLAG_MERCHANT = 0x4,
+            NPC_FLAG_GRIFFON_MASTER = 0x8,
+            NPC_FLAG_SPIRIT_HEALER = 0x20,
+            NPC_FLAG_INNKEEPER = 0x80,
+            NPC_FLAG_BANKER = 0x100,
+            NPC_FLAG_AUCTIONEER = 0x1000,
+            NPC_FLAG_CAN_REPAIR = 0x4000
+        }; // Credit ISXWoW
+
+        public enum eUnitFlags : uint
+        {
+            UF_SITTING = 0x01,
+            UF_ELITE = 0x40,
+            UF_DEAD = 0x40000,
+            UF_FLYING = 0x100000
+        }; // Credit ISXWoW
+
+        public enum eUnitTypes : uint
+        {
+            UT_UNKNOWN = 0,
+            UT_CRITTER,
+            UT_DRAGONKIN,
+            UT_DEMON,
+            UT_ELEMENTAL,
+            UT_GIANT,
+            UT_UNDEAD,
+            UT_HUMANOID,
+            UT_BEAST,
+            UT_MECHANIC
+        };
+
+        public enum eUnitRelation : uint
+        {
+            UR_UNKNOWN1 = 0,
+            UR_ENEMY,
+            UR_UNKNOWN2,
+            UR_NEUTRAL,
+            UR_FRIEND
+        };
+
+        public enum eClientDB : uint
+        {
+            DB_AnimationData = 0,
+            DB_AreaPOI = 1,
+            DB_AreaTable = 2,
+            DB_AreaTrigger = 3,
+            DB_AttackAnimKits = 4,
+            DB_AttackAnimTypes = 5,
+            DB_AuctionHouse = 6,
+            DB_BankBagSlotPrices = 7,
+            DB_BattlemasterList = 8,
+            DB_CameraShakes = 9,
+            DB_Cfg_Categories = 10,
+            DB_Cfg_Configs = 11,
+            DB_CharBaseInfo = 12,
+            DB_CharHairGeosets = 13,
+            DB_CharSections = 14,
+            DB_CharStartOutfit = 15,
+            DB_CharTitles = 16,
+            DB_CharVariations = 17,
+            DB_CharacterFacialHairStyles = 18,
+            DB_ChatChannels = 19,
+            DB_ChatProfanity = 20,
+            DB_ChrClasses = 21,
+            DB_ChrRaces = 22,
+            DB_CinematicCamera = 23,
+            DB_CinematicSequences = 24,
+            DB_CreatureDisplayInfo = 25,
+            DB_CreatureDisplayInfoExtra = 26,
+            DB_CreatureFamily = 27,
+            DB_CreatureModelData = 28,
+            DB_CreatureSoundData = 29,
+            DB_CreatureSpellData = 30,
+            DB_CreatureType = 31,
+            DB_DeathThudLookups = 32,
+            DB_DurabilityCosts = 33,
+            DB_DurabilityQuality = 34,
+            DB_Emotes = 35,
+            DB_EmotesText = 36,
+            DB_EmotesTextData = 37,
+            DB_EmotesTextSound = 38,
+            DB_EnvironmentalDamage = 39,
+            DB_Exhaustion = 40,
+            DB_Faction = 41,
+            DB_FactionGroup = 42,
+            DB_FactionTemplate = 43,
+            DB_FootprintTextures = 44,
+            DB_FootstepTerrainLookup = 45,
+            DB_GameObjectArtKit = 46,
+            DB_GameObjectDisplayInfo = 47,
+            DB_GameTables = 48,
+            DB_GameTips = 49,
+            DB_GemProperties = 50,
+            DB_GMSurveyCurrentSurvey = 51,
+            DB_GMSurveyQuestions = 52,
+            DB_GMSurveySurveys = 53,
+            DB_GMTicketCategory = 54,
+            DB_GroundEffectDoodad = 55,
+            DB_GroundEffectTexture = 56,
+            DB_gtCombatRatings = 57,
+            DB_gtChanceToMeleeCrit = 58,
+            DB_gtChanceToMeleeCritBase = 59,
+            DB_gtChanceToSpellCrit = 60,
+            DB_gtChanceToSpellCritBase = 61,
+            DB_gtOCTRegenHP = 62,
+            DB_gtOCTRegenMP = 63,
+            DB_gtRegenHPPerSpt = 64,
+            DB_gtRegenMPPerSpt = 65,
+            DB_HelmetGeosetVisData = 66,
+            DB_ItemBagFamily = 67,
+            DB_ItemClass = 68,
+            DB_ItemDisplayInfo = 69,
+            DB_ItemExtendedCost = 70,
+            DB_ItemGroupSounds = 71,
+            DB_ItemPetFood = 72,
+            DB_ItemRandomProperties = 73,
+            DB_ItemRandomSuffix = 74,
+            DB_ItemSet = 75,
+            DB_ItemSubClass = 76,
+            DB_ItemSubClassMask = 77,
+            DB_ItemVisualEffects = 78,
+            DB_ItemVisuals = 79,
+            DB_LanguageWords = 80,
+            DB_Languages = 81,
+            DB_LfgDungeons = 82,
+            DB_Light = 83,
+            DB_LightFloatBand = 84,
+            DB_LightIntBand = 85,
+            DB_LightParams = 86,
+            DB_LightSkybox = 87,
+            DB_LiquidType = 88,
+            DB_LoadingScreens = 89,
+            DB_LoadingScreenTaxiSplines = 90,
+            DB_Lock = 91,
+            DB_LockType = 92,
+            DB_MailTemplate = 93,
+            DB_Map = 94,
+            DB_Material = 95,
+            DB_NameGen = 96,
+            DB_NPCSounds = 97,
+            DB_NamesProfanity = 98,
+            DB_NamesReserved = 99,
+            DB_Package = 100,
+            DB_PageTextMaterial = 101,
+            DB_PaperDollItemFrame = 102,
+            DB_PetLoyalty = 103,
+            DB_PetPersonality = 104,
+            DB_QuestInfo = 105,
+            DB_QuestSort = 106,
+            DB_Resistances = 107,
+            DB_RandPropPoints = 108,
+            DB_ServerMessages = 109,
+            DB_SheatheSoundLookups = 110,
+            DB_SkillCostsData = 111,
+            DB_SkillLineAbility = 112,
+            DB_SkillLineCategory = 113,
+            DB_SkillLine = 114,
+            DB_SkillRaceClassInfo = 115,
+            DB_SkillTiers = 116,
+            DB_SoundAmbience = 117,
+            DB_SoundEntries = 118,
+            DB_SoundProviderPreferences = 119,
+            DB_SoundSamplePreferences = 120,
+            DB_SoundWaterType = 121,
+            DB_SpamMessages = 122,
+            DB_SpellCastTimes = 123,
+            DB_SpellCategory = 124,
+            DB_SpellChainEffects = 125,
+            DB_Spell = 126,
+            DB_SpellDispelType = 127,
+            DB_SpellDuration = 128,
+            DB_SpellEffectCameraShakes = 129,
+            DB_SpellFocusObject = 130,
+            DB_SpellIcon = 131,
+            DB_SpellItemEnchantment = 132,
+            DB_SpellItemEnchantmentCondition = 133,
+            DB_SpellMechanic = 134,
+            DB_SpellMissileMotion = 135,
+            DB_SpellRadius = 136,
+            DB_SpellRange = 137,
+            DB_SpellShapeshiftForm = 138,
+            DB_SpellVisual = 139,
+            DB_SpellVisualEffectName = 140,
+            DB_SpellVisualKit = 141,
+            DB_StableSlotPrices = 142,
+            DB_Stationery = 143,
+            DB_StringLookups = 144,
+            DB_Talent = 145,
+            DB_TalentTab = 146,
+            DB_TaxiNodes = 147,
+            DB_TaxiPath = 148,
+            DB_TaxiPathNode = 149,
+            DB_TerrainType = 150,
+            DB_TerrainTypeSounds = 151,
+            DB_TotemCategory = 152,
+            DB_TransportAnimation = 153,
+            DB_UISoundLookups = 154,
+            DB_UnitBlood = 155,
+            DB_UnitBloodLevels = 156,
+            DB_VocalUISounds = 157,
+            DB_WMOAreaTable = 158,
+            DB_WeaponImpactSounds = 159,
+            DB_WeaponSwingSounds2 = 160,
+            DB_Weather = 161,
+            DB_WorldMapArea = 162,
+            DB_WorldMapTransforms = 163,
+            DB_WorldMapContinent = 164,
+            DB_WorldMapOverlay = 165,
+            DB_WorldSafeLocs = 166,
+            DB_WorldStateUI = 167,
+            DB_ZoneIntroMusicTable = 168,
+            DB_ZoneMusic = 169,
+            NUM_DATABASES = 170,
+        };
+
+
     }
 #pragma warning restore 1591
 }

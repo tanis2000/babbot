@@ -201,7 +201,7 @@ namespace BabBot.Wow
 
         public bool IsDead()
         {
-            if (Hp == 0)
+            if (Hp <= 0)
             {
                 return true;
             }
@@ -213,6 +213,11 @@ namespace BabBot.Wow
             // return ( GetKnownField( PLAYER_FLAGS )&0x10 ) != 0;
             // 
             throw new NotImplementedException();
+        }
+
+        public bool IsSitting()
+        {
+            return Unit.IsSitting();
         }
 
         public bool IsInCombat()

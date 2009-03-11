@@ -60,6 +60,8 @@ namespace BabBot.Forms
 
                 var facing = (float) ((ProcessManager.Player.LastFaceRadian*180)/Math.PI);
                 txtComputedFacing.Text = string.Format("{0}°", facing);
+
+                tbPlayerIsSitting.Text = ProcessManager.Player.IsSitting().ToString();
             }
         }
 

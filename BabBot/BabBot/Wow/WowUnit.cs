@@ -8,16 +8,14 @@ namespace BabBot.Wow
     public class WowUnit : WowObject
     {
         public string Name;
-
-        public WowUnit()
-        {
-        }
+        private Unit unit;
 
         public WowUnit(WowObject o)
         {
             Guid = o.Guid;
             ObjectPointer = o.ObjectPointer;
             Type = o.Type;
+            unit = new Unit(ObjectPointer);
         }
     }
 }
