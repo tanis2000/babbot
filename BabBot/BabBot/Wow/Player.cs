@@ -292,7 +292,7 @@ namespace BabBot.Wow
             return res;
         }
 
-        private int RandomNumber(int min, int max)
+        private static int RandomNumber(int min, int max)
         {
             var random = new Random();
             return random.Next(min, max);
@@ -309,9 +309,10 @@ namespace BabBot.Wow
 
                 // Random jump
                 int rndJmp = RandomNumber(1, 8);
+                bool doJmp = false;
                 if (rndJmp == 1 || rndJmp == 3)
                 {
-                    PlayerCM.SendKeys(" ");
+                    doJmp = true;
                 }
 
                 float distance = HGetDistance(dest, false);
@@ -329,6 +330,12 @@ namespace BabBot.Wow
                     if (StopMovement)
                     {
                         break;
+                    }
+
+                    if (doJmp)
+                    {
+                        doJmp = false;
+                        PlayerCM.SendKeys(" ");
                     }
 
                     currentPos = Location;
