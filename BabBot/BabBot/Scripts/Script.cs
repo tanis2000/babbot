@@ -58,6 +58,8 @@ public class Script : IScript
                 break;
             case PlayerState.PreCombat:
                 break;
+            case PlayerState.InCombat:
+                break;
             case PlayerState.PostCombat:
                 break;
             case PlayerState.Sale:

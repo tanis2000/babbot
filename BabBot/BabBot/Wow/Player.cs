@@ -69,6 +69,10 @@ namespace BabBot.Wow
         /// </summary>
         PreCombat,
         /// <summary>
+        /// We are fighting
+        /// </summary>
+        InCombat,
+        /// <summary>
         /// After Combat
         /// </summary>
         PostCombat,
@@ -219,13 +223,28 @@ namespace BabBot.Wow
             throw new NotImplementedException();
         }
 
+        public bool IsAggro()
+        {
+            return Unit.IsAggro();
+        }
+
         public bool IsSitting()
         {
             return Unit.IsSitting();
         }
 
+        public bool IsBeingAttacked()
+        {
+            /// We check the list of mobs around us and if any of them has us as target and has aggro
+            /// it means that we are being attacked by that mob. It can be more than one mob
+            /// but we don't care. As long as one is attacking us, this will return true.
+            return false;
+        }
+
         public bool IsInCombat()
         {
+            /// We should check if we are in combat (aka the resting buttons are greyed out)
+            /// We could as well make a method called CanRest() that calls this one
             throw new NotImplementedException();
         }
 
