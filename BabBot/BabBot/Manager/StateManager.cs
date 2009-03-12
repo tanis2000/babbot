@@ -30,6 +30,15 @@ namespace BabBot.Manager
                     /// That way we can also know the location of the mob
                     /// in case we want to move closer in order to be able to fight
                     /// if it's a caster
+                    /// 
+                    /// Idea #1:
+                    /// get the mob GUID (we have it) 
+                    /// get the location of that mob
+                    /// turn in order to face it
+                    /// send TAB and check the current target GUID and keep
+                    /// TABbing until the GUID matches
+                    /// 
+                    /// Should we implement this in the cscript? (I think so)
                     CurrentState = PlayerState.PreCombat;
                 }
             }

@@ -57,6 +57,7 @@ public class Script : IScript
             case PlayerState.PostLoot:
                 break;
             case PlayerState.PreCombat:
+                OnPreCombat();
                 break;
             case PlayerState.InCombat:
                 break;
@@ -109,6 +110,11 @@ public class Script : IScript
         /// check what happens around us (like if there's anything to
         /// attack or anything attacking us, or if we run out of mana/health,
         /// or if we should rebuff something)
+    }
+
+    private void OnPreCombat()
+    {
+        
     }
 }
 
