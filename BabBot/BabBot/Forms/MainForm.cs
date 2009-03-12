@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using BabBot.Manager;
 using BabBot.Wow;
@@ -10,6 +11,8 @@ namespace BabBot.Forms
         public MainForm()
         {
             InitializeComponent();
+
+            Process.EnterDebugMode();
 
             // ProcessManager events binding
             ProcessManager.WoWProcessStarted += wow_ProcessStarted;
@@ -184,6 +187,7 @@ namespace BabBot.Forms
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             ProcessManager.BotManager.Stop();
+            Process.LeaveDebugMode();
         }
 
         private void btnMovementTest_Click(object sender, EventArgs e)
