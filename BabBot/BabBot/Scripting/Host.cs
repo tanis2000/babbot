@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using BabBot.Manager;
 using CSScriptLibrary;
 
 namespace BabBot.Scripting
@@ -15,23 +16,29 @@ namespace BabBot.Scripting
     public interface IScript
     {
         IHost Parent { set; }
-        void Execute();
+        IPlayerWrapper Player { set; }
+        void Init();
+        void Update();
     }
 
     public class Host : IHost
     {
+        private IScript script;
+
+        /*
         public static void Go()
         {
             Host host = new Host();
             host.Start();
         }
+        */
 
-
-        void Start()
+        public void Start()
         {
-            IScript script = Load("Scripts/script.cs");
+            script = Load("Scripts/script.cs");
             script.Parent = this;
-            script.Execute();
+            script.Player = new PlayerWrapper(ProcessManager.Player);
+            script.Init();
         }
 
         IScript Load(string script)
@@ -45,6 +52,11 @@ namespace BabBot.Scripting
         public void Test()
         {
             Console.WriteLine("test");
+        }
+
+        public void Update()
+        {
+            script.Update();
         }
 
 

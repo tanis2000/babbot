@@ -91,6 +91,7 @@ namespace BabBot.Manager
         public static Profile Profile;
         public static uint TLS;
         public static int WowHWND;
+        public static Host ScriptHost;
 
         static ProcessManager()
         {
@@ -105,6 +106,7 @@ namespace BabBot.Manager
             Profile = new Profile();
             WowHWND = 0;
             BotManager = new BotManager();
+            ScriptHost = new Host();
         }
 
         /// <summary>
@@ -350,7 +352,7 @@ namespace BabBot.Manager
             {
                 FindTLS();
                 InitializeObjectManager();
-                Host.Go();
+                ScriptHost.Start();
                 Initialized = true;
             }
             catch

@@ -106,6 +106,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Scripting\Host.cs" />
+    <Compile Include="Scripting\PlayerWrapper.cs" />
     <Compile Include="Scripts\Script.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

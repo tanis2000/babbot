@@ -75,7 +75,11 @@ namespace BabBot.Wow
         /// <summary>
         /// At the vendor/repair guy
         /// </summary>
-        Sale
+        Sale,
+        /// <summary>
+        /// We are walking through the waypoints
+        /// </summary>
+        Roaming
     }
 
     /// <summary>
