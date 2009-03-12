@@ -147,12 +147,13 @@ namespace BabBot.Manager
                 //process.WaitForInputIdle(15000);
                 if (process != null)
                 {
-                    WowHWND = AppHelper.WaitForWowWindow();
-                    CommandManager.WowHWND = WowHWND;
-
                     // Set before to use BlackMagic methods
                     process.EnableRaisingEvents = true;
                     process.Exited += exitProcess;
+
+                    WowHWND = AppHelper.WaitForWowWindow();
+                    CommandManager.WowHWND = WowHWND;
+
                     ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
                 }
             }
