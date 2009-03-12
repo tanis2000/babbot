@@ -17,5 +17,44 @@ namespace BabBot.Wow
             Type = o.Type;
             unit = new Unit(ObjectPointer);
         }
+
+        public bool HasTarget()
+        {
+            if (CurTargetGuid != 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public UInt64 CurTargetGuid
+        {
+            get
+            {
+                return unit.GetCurTargetGuid();
+            }
+        }
+
+        public bool IsAggro()
+        {
+            return unit.IsAggro();
+        }
+
+        public bool IsDead()
+        {
+            if (unit.GetHp() <= 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public Vector3D Location
+        {
+            get
+            {
+                return unit.GetPosition();
+            }
+        }
     }
 }

@@ -106,6 +106,7 @@ namespace BabBot.Wow
         private bool StopMovement;
         public Unit Unit; // The corresponding Unit in Wow's ObjectManager
         public uint Xp;
+        public UInt64 Guid; // Our own GUID
 
         /// <summary>
         /// Constructor
@@ -126,6 +127,7 @@ namespace BabBot.Wow
             LastDistance = 0.0f;
             LastFaceRadian = 0.0f;
             StopMovement = false;
+            Guid = 0;
         }
 
         public string CurTargetName
@@ -184,6 +186,7 @@ namespace BabBot.Wow
                 return;
             }
 
+            Guid = ProcessManager.ObjectManager.GetLocalGUID();
             Location = Unit.GetPosition();
             Hp = Unit.GetHp();
             MaxHp = Unit.GetMaxHp();
@@ -238,6 +241,35 @@ namespace BabBot.Wow
             /// We check the list of mobs around us and if any of them has us as target and has aggro
             /// it means that we are being attacked by that mob. It can be more than one mob
             /// but we don't care. As long as one is attacking us, this will return true.
+            List<WowUnit> l = Unit.GetNearMobs();
+            foreach (WowUnit obj in l)
+            {
+                if (obj.HasTarget())
+                {
+                    if (obj.CurTargetGuid ==  this.Guid)
+                    {
+                        if (obj.IsAggro())
+                        {
+                            // Ok this really means that this mob is attacking us
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsTargetDead()
+        {
+            if (HasTarget())
+            {
+                WowUnit target = Unit.GetCurTarget();
+                if (target.IsDead())
+                {
+                    return true;
+                }
+            }
             return false;
         }
 
@@ -255,6 +287,17 @@ namespace BabBot.Wow
                 return true;
             }
             return false;
+        }
+
+        public Vector3D GetTargetLocation()
+        {
+            if (HasTarget())
+            {
+                WowUnit target = Unit.GetCurTarget();
+                return target.Location;
+            }
+
+            return new Vector3D(0, 0, 0);
         }
 
         /// <summary>

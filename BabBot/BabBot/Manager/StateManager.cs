@@ -25,6 +25,11 @@ namespace BabBot.Manager
             {
                 if (ProcessManager.Player.IsBeingAttacked())
                 {
+                    /// We should target the mob that is attacking us
+                    /// and I have no clue how to do it at the moment.
+                    /// That way we can also know the location of the mob
+                    /// in case we want to move closer in order to be able to fight
+                    /// if it's a caster
                     CurrentState = PlayerState.PreCombat;
                 }
             }
@@ -38,13 +43,16 @@ namespace BabBot.Manager
             {
                 /// We should check if our target died and
                 /// in that case go to PostCombat
-                //CurrentState = PlayerState.PostCombat;
+                if (ProcessManager.Player.IsTargetDead())
+                {
+                    CurrentState = PlayerState.PostCombat;
+                }
             }
 
             if (CurrentState == PlayerState.PostCombat)
             {
                 /// We should check if we need to rest
-                //CurrentState = PlayerState.PreRest;
+                CurrentState = PlayerState.PreRest;
             }
 
             if (CurrentState == PlayerState.PreRest)
@@ -56,7 +64,7 @@ namespace BabBot.Manager
             if (CurrentState == PlayerState.Rest)
             {
                 /// We should check if we finished resting
-                //CurrentState = PlayerState.PostRest;
+                CurrentState = PlayerState.PostRest;
             }
 
             if (CurrentState == PlayerState.PostRest)

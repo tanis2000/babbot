@@ -77,6 +77,16 @@ namespace BabBot.Wow
             return ProcessManager.ObjectManager.GetName(ProcessManager.ObjectManager.GetObjectByGUID(GetCurTargetGuid()), GetCurTargetGuid());
         }
 
+        public WowUnit GetCurTarget()
+        {
+            WowObject o = new WowObject();
+            o.Guid = GetCurTargetGuid();
+            o.ObjectPointer = ProcessManager.ObjectManager.GetObjectByGUID(o.Guid);
+            o.Type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
+            WowUnit u = new WowUnit(o);
+            return u;
+        }
+
         public List<WowObject> GetNearObjects()
         {
             List<WowObject> l = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
