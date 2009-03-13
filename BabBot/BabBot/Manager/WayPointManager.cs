@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using BabBot.Bot;
+﻿using BabBot.Bot;
 
 namespace BabBot.Manager
 {
     public class WayPointManager
     {
-        public List<WayPointCollection> BranchesPath;
+        public WayPointCollection BranchPath;
         public WayPointCollection GhostPath;
         public WayPointCollection NormalPath;
         public WayPointCollection RepairPath;
@@ -20,7 +19,7 @@ namespace BabBot.Manager
             GhostPath = new WayPointCollection();
             VendorPath = new WayPointCollection();
             RepairPath = new WayPointCollection();
-            BranchesPath = new List<WayPointCollection>();
+            BranchPath = new WayPointCollection();
         }
 
         #region Properties
@@ -45,9 +44,9 @@ namespace BabBot.Manager
             get { return RepairPath.Count; }
         }
 
-        public int BranchesPathCount
+        public int BranchNodeCount
         {
-            get { return BranchesPath.Count; }
+            get { return BranchPath.Count; }
         }
 
         #endregion
