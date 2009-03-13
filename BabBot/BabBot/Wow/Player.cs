@@ -95,7 +95,7 @@ namespace BabBot.Wow
     /// </summary>
     public class Player
     {
-        private const int MAX_REACHTIME = 1800;
+        private const int MAX_REACHTIME = 5000;
         private readonly CommandManager PlayerCM;
         public UInt64 CurTargetGuid;
         public UInt64 Guid; // Our own GUID
@@ -491,7 +491,7 @@ namespace BabBot.Wow
                 DateTime end = DateTime.Now;
                 TimeSpan tsTravelTime = end - start;
 
-                TravelTime = tsTravelTime.Milliseconds;
+                TravelTime = tsTravelTime.Milliseconds + tsTravelTime.Seconds*1000;
 
                 if (currentDistance == (int) distance)
                 {
