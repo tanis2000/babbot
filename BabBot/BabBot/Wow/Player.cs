@@ -95,6 +95,7 @@ namespace BabBot.Wow
     /// </summary>
     public class Player
     {
+        private const int MAX_REACHTIME = 1800;
         private readonly CommandManager PlayerCM;
         public UInt64 CurTargetGuid;
         public UInt64 Guid; // Our own GUID
@@ -492,20 +493,18 @@ namespace BabBot.Wow
 
                 TravelTime = tsTravelTime.Milliseconds;
 
-                if (currentDistance == (int)distance)
+                if (currentDistance == (int) distance)
                 {
                     // sono bloccato? non mi sono mosso di una distanza significativa?
                     // anche qui da verificare, mi sa che bisogna lavorare in float con
                     // un po di tolleranza
                 }
-                /*else if (TravelTime > "valore da identificare con un po di test")
+                else if (TravelTime >= MAX_REACHTIME)
                 {
-                   // sono bloccato? mi sono mosso parecchio ma non ho ancora raggiunto
-                   // il wp di destinazione, è presumibile che sia infognato da qualche
-                   // parte
-                   
-                }*/
-
+                    TravelTime = 0;
+                    res = PlayerState.WayPointTimeout;
+                    break;
+                }
             }
 
             PlayerCM.ArrowKeyUp(key);

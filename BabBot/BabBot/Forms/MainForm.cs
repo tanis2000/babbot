@@ -220,7 +220,11 @@ namespace BabBot.Forms
                 {
                     string[] arrWp = wp.Split('|');
                     var dest = new Vector3D(float.Parse(arrWp[0]), float.Parse(arrWp[1]), float.Parse(arrWp[2]));
-                    ProcessManager.Player.MoveTo(dest);
+                    if (ProcessManager.Player.MoveTo(dest) == PlayerState.WayPointTimeout)
+                    {
+                        MessageBox.Show("Sono babbato da un babbo ostacolo!");
+                        break;
+                    }    
                 }
             }
         }
