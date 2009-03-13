@@ -60,6 +60,7 @@ public class Script : IScript
                 OnPreCombat();
                 break;
             case PlayerState.InCombat:
+                OnInCombat();
                 break;
             case PlayerState.PostCombat:
                 break;
@@ -132,8 +133,22 @@ public class Script : IScript
             // We found something to kill
             //player.AttackSelectedMob();
         }
+    }
 
-
+    private void OnInCombat()
+    {
+        if (player.IsBeingAttacked())
+        {
+            /// We are being attacked by a Mob. That means that we should fight back
+            /// by finding the mob first of all
+            if (player.SelectWhoIsAttackingUs())
+            {
+                /// We found who is attacking us and we fight back
+                /// TODO: find a solution as to get if we are already facing it
+                player.FaceTarget();
+                //player.PlayAction("combat"); // this should call the routine to fight back based on the bindings
+            }
+        }
     }
 }
 

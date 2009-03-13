@@ -102,7 +102,7 @@ namespace BabBot.Wow
         public uint MaxMp;
         public uint Mp;
         public float Orientation;
-        public PlayerState State;
+        //public PlayerState State;
         private bool StopMovement;
         public Unit Unit; // The corresponding Unit in Wow's ObjectManager
         public uint Xp;
@@ -122,7 +122,7 @@ namespace BabBot.Wow
             Xp = 0;
             CurTargetGuid = 0;
             Orientation = 0.0f;
-            State = PlayerState.Start;
+            //State = PlayerState.Start;
             PlayerCM = cm;
             LastDistance = 0.0f;
             LastFaceRadian = 0.0f;
@@ -163,6 +163,11 @@ namespace BabBot.Wow
                 }
                 return s;
             }
+        }
+
+        public PlayerState State
+        {
+            get { return ProcessManager.BotManager.State; }
         }
 
         /// <summary>
@@ -221,9 +226,7 @@ namespace BabBot.Wow
 
         public bool IsGhost()
         {
-            // return ( GetKnownField( PLAYER_FLAGS )&0x10 ) != 0;
-            // 
-            throw new NotImplementedException();
+            return Unit.IsGhost();
         }
 
         public bool IsAggro()
@@ -297,7 +300,7 @@ namespace BabBot.Wow
         {
             /// We should check if we are in combat (aka the resting buttons are greyed out)
             /// We could as well make a method called CanRest() that calls this one
-            throw new NotImplementedException();
+            throw new NotImplementedException("IsInCombat");
         }
 
         public bool HasTarget()
@@ -325,6 +328,16 @@ namespace BabBot.Wow
             WowUnit u = GetCurAttacker();
             if (u != null)
             {
+                // if we already have a target we'd better check if it's the one we want so
+                // we avoid tabbing around uselessly
+                if (HasTarget())
+                {
+                    if (CurTargetGuid == u.Guid)
+                    {
+                        // we are already on the target, that's fine
+                        return true;
+                    }
+                }
                 return SelectMob(u);
             }
             return false;
@@ -332,7 +345,7 @@ namespace BabBot.Wow
 
         public bool SelectMob(WowUnit u)
         {
-            // We face the target
+            // We face the target otherwise the tabbing won't work as it might be out of our scope
             Face(u.Location);
 
             // We tab till we have found our target or till we come back to the first GUID we met
@@ -355,6 +368,15 @@ namespace BabBot.Wow
 
 
             return false;
+        }
+
+        public void FaceTarget()
+        {
+            if (HasTarget())
+            {
+                WowUnit target = Unit.GetCurTarget();
+                Face(target.Location);
+            }
         }
 
         /// <summary>
@@ -486,7 +508,7 @@ namespace BabBot.Wow
 
         public bool GoBack(Vector3D dest)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("GoBack");
         }
 
         private void FaceWithTimer(float radius, CommandManager.ArrowKey key)
@@ -526,13 +548,13 @@ namespace BabBot.Wow
         // Actions
         public bool Cast(string SlotBar, string Key)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Cast");
         }
 
         // Messages
         public bool Say(string To, string Message)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Say");
         }
     }
 }

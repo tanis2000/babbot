@@ -131,5 +131,15 @@ namespace BabBot.Wow
             return Convert.ToBoolean((ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eObjectFields.OBJECT_FIELD_PADDING + 0x4 + (uint)Descriptor.eUnitFields.UNIT_FIELD_FLAGS) >> 0x13) &1);
 	    }
 
+        public bool IsGhost()
+        {
+            return
+                (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint) Descriptor.eObjectFields.OBJECT_FIELD_PADDING +
+                                                   0x4 + (uint) Descriptor.eUnitFields.UNIT_FIELD_PADDING + 0x4 +
+                                                   (uint) Descriptor.eItemFields.ITEM_FIELD_PAD + 0x4 +
+                                                   (uint) Descriptor.ePlayerFields.PLAYER_FLAGS) & 0x10) != 0;
+            //return (GetKnownField(PLAYER_FLAGS) & 0x10) != 0;
+        }
+
     }
 }

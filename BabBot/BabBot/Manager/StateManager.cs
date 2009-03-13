@@ -12,6 +12,11 @@ namespace BabBot.Manager
             CurrentState = LastState = PlayerState.Start;
         }
 
+        public PlayerState State
+        {
+            get { return CurrentState; }
+        }
+
         public void UpdateState()
         {
             LastState = CurrentState;

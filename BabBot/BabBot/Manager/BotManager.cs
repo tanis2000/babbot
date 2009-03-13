@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using BabBot.Common;
+using BabBot.Wow;
 
 namespace BabBot.Manager
 {
@@ -19,6 +20,11 @@ namespace BabBot.Manager
         {
             StateManager = new StateManager();
             workerThread = null;
+        }
+
+        public PlayerState State
+        {
+            get { return StateManager.State; }
         }
 
         protected void InitThreadObj()

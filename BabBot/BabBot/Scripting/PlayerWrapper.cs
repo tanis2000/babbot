@@ -15,6 +15,7 @@ namespace BabBot.Scripting
         PlayerState State();
         bool IsBeingAttacked();
         bool SelectWhoIsAttackingUs();
+        void FaceTarget();
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -60,6 +61,11 @@ namespace BabBot.Scripting
         public bool SelectWhoIsAttackingUs()
         {
             return player.SelectWhoIsAttackingUs();
+        }
+
+        public void FaceTarget()
+        {
+            player.FaceTarget();
         }
     }
 }
