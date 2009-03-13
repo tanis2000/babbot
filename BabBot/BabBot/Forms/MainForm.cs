@@ -65,6 +65,7 @@ namespace BabBot.Forms
                 txtComputedFacing.Text = string.Format("{0}°", facing);
 
                 tbPlayerIsSitting.Text = ProcessManager.Player.IsSitting().ToString();
+                txtTravelTime.Text = string.Format("{0} ms", ProcessManager.Player.TravelTime);
             }
         }
 
@@ -83,6 +84,8 @@ namespace BabBot.Forms
                 // Main Thread
                 btnRun.Enabled = true;
                 btnAttachToWow.Enabled = true;
+
+                // Stop the reading thread
                 ProcessManager.BotManager.Stop();
             }
         }
@@ -96,7 +99,10 @@ namespace BabBot.Forms
         {
             btnRun.Enabled = false;
             btnAttachToWow.Enabled = false;
-            StartBotThread();
+            
+            // Start the reading thread
+            ProcessManager.BotManager.Start();
+
         }
 
         private static void wow_ProcessAccessFailed(string error)
@@ -177,11 +183,6 @@ namespace BabBot.Forms
         {
             var f = new AboutForm();
             f.ShowDialog();
-        }
-
-        private static void StartBotThread()
-        {
-            ProcessManager.BotManager.Start();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)

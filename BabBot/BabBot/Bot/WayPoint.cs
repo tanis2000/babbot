@@ -1,27 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using BabBot.Wow;
 
 namespace BabBot.Bot
 {
-    public enum WayPointType : int
+    public enum WayPointType
     {
         Normal,
         Vendor,
         Repair,
-        Ghost
+        Ghost,
+        Branch
     }
 
     public class WayPointCollection : List<WayPoint>
     {
-        
     }
 
     public class WayPoint
     {
         public Vector3D Location;
         public WayPointType Type;
+
+        public WayPoint(Vector3D location, WayPointType type)
+        {
+            Location = location;
+            Type = type;
+        }
 
         public WayPoint(Vector3D location)
         {

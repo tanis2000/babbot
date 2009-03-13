@@ -20,6 +20,11 @@
             Z = 0;
         }
 
+        public bool IsValid()
+        {
+            return ((X == 0) && (Y == 0) && (Z == 0)) ? false : true;
+        }
+
         public override string ToString()
         {
             return string.Format("{0}|{1}|{2}", X, Y, Z);

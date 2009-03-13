@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BabBot.Wow
 {
     public class WowUnit : WowObject
     {
+        private readonly Unit unit;
         public string Name;
-        private Unit unit;
 
         public WowUnit(WowObject o)
         {
@@ -18,6 +15,21 @@ namespace BabBot.Wow
             unit = new Unit(ObjectPointer);
         }
 
+        public UInt64 CurTargetGuid
+        {
+            get { return unit.GetCurTargetGuid(); }
+        }
+
+        public Vector3D Location
+        {
+            get { return unit.GetPosition(); }
+        }
+
+        public float Orientation
+        {
+            get { return unit.GetFacing(); }
+        }
+
         public bool HasTarget()
         {
             if (CurTargetGuid != 0)
@@ -25,14 +37,6 @@ namespace BabBot.Wow
                 return true;
             }
             return false;
-        }
-
-        public UInt64 CurTargetGuid
-        {
-            get
-            {
-                return unit.GetCurTargetGuid();
-            }
         }
 
         public bool IsAggro()
@@ -47,19 +51,6 @@ namespace BabBot.Wow
                 return true;
             }
             return false;
-        }
-
-        public Vector3D Location
-        {
-            get
-            {
-                return unit.GetPosition();
-            }
-        }
-
-        public float Orientation
-        {
-            get { return unit.GetFacing(); }
         }
     }
 }

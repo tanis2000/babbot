@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BabBot.Wow;
+﻿using BabBot.Wow;
 
 namespace BabBot.Scripting
 {
@@ -28,12 +24,14 @@ namespace BabBot.Scripting
     public class PlayerWrapper : IPlayerWrapper
     {
         // Reference to the Player object
-        private Player player;
+        private readonly Player player;
 
         public PlayerWrapper(Player iPlayer)
         {
             player = iPlayer;
         }
+
+        #region IPlayerWrapper Members
 
         public string Test()
         {
@@ -109,5 +107,7 @@ namespace BabBot.Scripting
         {
             return player.AngleToTargetDegrees();
         }
+
+        #endregion
     }
 }

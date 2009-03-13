@@ -106,6 +106,8 @@
             this.tbCountNormal = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPagePlayer = new System.Windows.Forms.TabPage();
+            this.tbPlayerIsSitting = new System.Windows.Forms.TextBox();
+            this.label28 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
             this.tbPlayerTargetName = new System.Windows.Forms.TextBox();
@@ -122,8 +124,8 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.label28 = new System.Windows.Forms.Label();
-            this.tbPlayerIsSitting = new System.Windows.Forms.TextBox();
+            this.txtTravelTime = new System.Windows.Forms.TextBox();
+            this.label29 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -158,7 +160,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -173,7 +175,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -347,6 +349,8 @@
             // 
             // tabPageDebug
             // 
+            this.tabPageDebug.Controls.Add(this.label29);
+            this.tabPageDebug.Controls.Add(this.txtTravelTime);
             this.tabPageDebug.Controls.Add(this.cbWPRecord);
             this.tabPageDebug.Controls.Add(this.btnClearWP);
             this.tabPageDebug.Controls.Add(this.btnWPTest);
@@ -887,6 +891,22 @@
             this.tabPagePlayer.Text = "Player";
             this.tabPagePlayer.UseVisualStyleBackColor = true;
             // 
+            // tbPlayerIsSitting
+            // 
+            this.tbPlayerIsSitting.Location = new System.Drawing.Point(335, 3);
+            this.tbPlayerIsSitting.Name = "tbPlayerIsSitting";
+            this.tbPlayerIsSitting.Size = new System.Drawing.Size(100, 20);
+            this.tbPlayerIsSitting.TabIndex = 17;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(290, 6);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(39, 13);
+            this.label28.TabIndex = 16;
+            this.label28.Text = "Sitting:";
+            // 
             // label22
             // 
             this.label22.AutoSize = true;
@@ -1023,21 +1043,21 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
             // 
-            // label28
+            // txtTravelTime
             // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(290, 6);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(39, 13);
-            this.label28.TabIndex = 16;
-            this.label28.Text = "Sitting:";
+            this.txtTravelTime.Location = new System.Drawing.Point(337, 104);
+            this.txtTravelTime.Name = "txtTravelTime";
+            this.txtTravelTime.Size = new System.Drawing.Size(76, 20);
+            this.txtTravelTime.TabIndex = 55;
             // 
-            // tbPlayerIsSitting
+            // label29
             // 
-            this.tbPlayerIsSitting.Location = new System.Drawing.Point(335, 3);
-            this.tbPlayerIsSitting.Name = "tbPlayerIsSitting";
-            this.tbPlayerIsSitting.Size = new System.Drawing.Size(100, 20);
-            this.tbPlayerIsSitting.TabIndex = 17;
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(419, 110);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(85, 13);
+            this.label29.TabIndex = 56;
+            this.label29.Text = "Travel Time (ms)";
             // 
             // MainForm
             // 
@@ -1171,6 +1191,8 @@
         private System.Windows.Forms.CheckBox cbWPRecord;
         private System.Windows.Forms.TextBox tbPlayerIsSitting;
         private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.TextBox txtTravelTime;
     }
 }
 

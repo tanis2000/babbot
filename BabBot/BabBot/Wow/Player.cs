@@ -83,7 +83,11 @@ namespace BabBot.Wow
         /// <summary>
         /// We are walking through the waypoints
         /// </summary>
-        Roaming
+        Roaming,
+        /// <summary>
+        /// We are ready for the next action
+        /// </summary>
+        Ready
     }
 
     /// <summary>
@@ -93,9 +97,11 @@ namespace BabBot.Wow
     {
         private readonly CommandManager PlayerCM;
         public UInt64 CurTargetGuid;
+        public UInt64 Guid; // Our own GUID
         public uint Hp;
         public float LastDistance;
         public float LastFaceRadian;
+        // Milliseconds to reach the waypoint
         public Vector3D LastLocation;
         public Vector3D Location;
         public uint MaxHp;
@@ -104,9 +110,9 @@ namespace BabBot.Wow
         public float Orientation;
         //public PlayerState State;
         private bool StopMovement;
+        public int TravelTime;
         public Unit Unit; // The corresponding Unit in Wow's ObjectManager
         public uint Xp;
-        public UInt64 Guid; // Our own GUID
 
         /// <summary>
         /// Constructor
@@ -128,6 +134,7 @@ namespace BabBot.Wow
             LastFaceRadian = 0.0f;
             StopMovement = false;
             Guid = 0;
+            TravelTime = 0;
         }
 
         public string CurTargetName
@@ -249,7 +256,7 @@ namespace BabBot.Wow
             {
                 if (obj.HasTarget())
                 {
-                    if (obj.CurTargetGuid ==  this.Guid)
+                    if (obj.CurTargetGuid == Guid)
                     {
                         if (obj.IsAggro())
                         {
@@ -270,7 +277,7 @@ namespace BabBot.Wow
             {
                 if (obj.HasTarget())
                 {
-                    if (obj.CurTargetGuid == this.Guid)
+                    if (obj.CurTargetGuid == Guid)
                     {
                         if (obj.IsAggro())
                         {
@@ -354,16 +361,16 @@ namespace BabBot.Wow
 
         public bool FindMob(WowUnit u)
         {
-            ulong curGuid = 0;
-            ulong firstGuid = 0;
-
             PlayerCM.SendKeys(CommandManager.SK_TAB);
-            firstGuid = CurTargetGuid;
+            ulong firstGuid = CurTargetGuid;
 
             do
             {
                 PlayerCM.SendKeys(CommandManager.SK_TAB);
-                if (CurTargetGuid == u.Guid) return true;
+                if (CurTargetGuid == u.Guid)
+                {
+                    return true;
+                }
             } while ((CurTargetGuid != u.Guid) && (CurTargetGuid != firstGuid));
 
 
@@ -403,7 +410,7 @@ namespace BabBot.Wow
             }
             return 0.0f;
         }
-        
+
         public float AngleToTarget()
         {
             if (HasTarget())
@@ -414,23 +421,6 @@ namespace BabBot.Wow
             return 0.0f;
         }
 
-        public float FacingDegrees()
-        {
-            return (float) (Facing() * (180.0f/Math.PI));
-        }
-
-        public float TargetFacingDegrees()
-        {
-            return (float)(TargetFacing() * (180.0f / Math.PI));
-        }
-
-        public float AngleToTargetDegrees()
-        {
-            return (float)(AngleToTarget() * (180.0f / Math.PI));
-        }
-
-
-
         /// <summary>
         /// Selects the first mob with that name that we can target by tabbing
         /// </summary>
@@ -438,96 +428,6 @@ namespace BabBot.Wow
         public bool SelectMobByName(string name)
         {
             throw new NotImplementedException("SelectMobByName");
-        }
-
-        /// <summary>
-        /// Returns the angle that would face the x,y specified
-        /// </summary>
-        /// <param name="dest">Vector3D current destination points</param>
-        /// <returns>radian to face on</returns>
-        private float GetFaceRadian(Vector3D dest)
-        {
-            Vector3D currentPos = Location;
-            float wowFacing = negativeAngle((float) Math.Atan2((dest.Y - currentPos.Y), (dest.X - currentPos.X)));
-            LastFaceRadian = wowFacing;
-            return wowFacing;
-        }
-
-        private static float negativeAngle(float angle)
-        {
-            if (angle < 0)
-            {
-                angle += (float) (Math.PI*2);
-            }
-            return angle;
-        }
-
-        public float HGetDistance(Vector3D dest, bool UseZ)
-        {
-            Vector3D currentPos = Location;
-
-            float dX = currentPos.X - dest.X;
-            float dY = currentPos.Y - dest.Y;
-            float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
-
-            float res = 0;
-            if (UseZ)
-            {
-                res = (float) Math.Sqrt(dX*dX + dY*dY + dZ*dZ);
-            }
-            else
-            {
-                res = (float) Math.Sqrt(dX*dX + dY*dY);
-            }
-
-            LastDistance = res;
-
-            return res;
-        }
-
-        private int LGetDistance(Vector3D dest, bool UseZ)
-        {
-            Vector3D currentPos = Location;
-            var dX = (int) (currentPos.X - dest.X);
-            var dY = (int) (currentPos.Y - dest.Y);
-            int res = 0;
-
-            res = (int) Math.Sqrt(dX*dX + dY*dY);
-
-            LastDistance = res;
-            return res;
-        }
-
-        /// <summary>
-        /// Generic distance calculation. It does not update the LastDistance property
-        /// </summary>
-        /// <param name="dest"></param>
-        /// <param name="UseZ"></param>
-        /// <returns></returns>
-        private float GetDistance(Vector3D dest, bool UseZ)
-        {
-            Vector3D currentPos = Location;
-
-            float dX = currentPos.X - dest.X;
-            float dY = currentPos.Y - dest.Y;
-
-            float res = 0;
-            if (UseZ)
-            {
-                float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
-                res = (float)Math.Sqrt(dX * dX + dY * dY + dZ * dZ);
-            }
-            else
-            {
-                res = (float)Math.Sqrt(dX * dX + dY * dY);
-            }
-
-            return res;
-        }
-
-        private float GetDistance(Vector3D dest)
-        {
-            return GetDistance(dest, false);
         }
 
         private static int RandomNumber(int min, int max)
@@ -538,51 +438,70 @@ namespace BabBot.Wow
 
         public void MoveTo(Vector3D dest)
         {
-            if (!StopMovement)
+            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+
+            if (!dest.IsValid())
             {
-                const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
-
-                float angle = GetFaceRadian(dest);
-                Face(angle);
-
-                // Random jump
-                int rndJmp = RandomNumber(1, 8);
-                bool doJmp = false;
-                if (rndJmp == 1 || rndJmp == 3)
-                {
-                    doJmp = true;
-                }
-
-                float distance = HGetDistance(dest, false);
-
-                Vector3D currentPos = Location;
-
-                PlayerCM.ArrowKeyDown(key);
-                while ((int) distance > 1)
-                {
-                    if (currentPos.Equals(Location))
-                    {
-                        //break;
-                    }
-
-                    if (StopMovement)
-                    {
-                        break;
-                    }
-
-                    if (doJmp)
-                    {
-                        doJmp = false;
-                        PlayerCM.SendKeys(" ");
-                    }
-
-                    currentPos = Location;
-                    distance = HGetDistance(dest, false);
-                    Thread.Sleep(50);
-                    Application.DoEvents();
-                }
-                PlayerCM.ArrowKeyUp(key);
+                return;
             }
+
+            float angle = GetFaceRadian(dest);
+            Face(angle);
+
+            // Random jump
+            int rndJmp = RandomNumber(1, 8);
+            bool doJmp = false;
+            if (rndJmp == 1 || rndJmp == 3)
+            {
+                doJmp = true;
+            }
+
+            // Move on...
+            float distance = HGetDistance(dest, false);
+            PlayerCM.ArrowKeyDown(key);
+
+            // Start profiler for WayPointTimeOut
+            DateTime start = DateTime.Now;
+
+            while ((int) distance > 1)
+            {
+                var currentDistance = (int) distance;
+
+                if (doJmp)
+                {
+                    doJmp = false;
+                    PlayerCM.SendKeys(" ");
+                }
+
+                if (StopMovement)
+                {
+                    StopMovement = false;
+                    break;
+                }
+
+                distance = HGetDistance(dest, false);
+
+                DateTime end = DateTime.Now;
+                TimeSpan tsTravelTime = end - start;
+
+                TravelTime = tsTravelTime.Milliseconds;
+
+                if (currentDistance == distance)
+                {
+                    // sono bloccato? non mi sono mosso di una distanza significativa?
+                }
+                /*else if (TravelTime > "valore da identificare con un po di test")
+                {
+                   // sono bloccato? mi sono mosso parecchio ma non ho ancora raggiunto
+                   // il wp di destinazione, è presumibile che sia infognato da qualche
+                   // parte
+                }*/
+
+                Thread.Sleep(50);
+                Application.DoEvents();
+            }
+
+            PlayerCM.ArrowKeyUp(key);
         }
 
         public void Stop()
@@ -640,5 +559,101 @@ namespace BabBot.Wow
         {
             throw new NotImplementedException("Say");
         }
+
+        #region Mathematics functions
+
+        public float FacingDegrees()
+        {
+            return (float) (Facing()*(180.0f/Math.PI));
+        }
+
+        public float TargetFacingDegrees()
+        {
+            return (float) (TargetFacing()*(180.0f/Math.PI));
+        }
+
+        public float AngleToTargetDegrees()
+        {
+            return (float) (AngleToTarget()*(180.0f/Math.PI));
+        }
+
+        /// <summary>
+        /// Returns the angle that would face the x,y specified
+        /// </summary>
+        /// <param name="dest">Vector3D current destination points</param>
+        /// <returns>radian to face on</returns>
+        private float GetFaceRadian(Vector3D dest)
+        {
+            Vector3D currentPos = Location;
+            float wowFacing = negativeAngle((float) Math.Atan2((dest.Y - currentPos.Y), (dest.X - currentPos.X)));
+            LastFaceRadian = wowFacing;
+            return wowFacing;
+        }
+
+        private static float negativeAngle(float angle)
+        {
+            if (angle < 0)
+            {
+                angle += (float) (Math.PI*2);
+            }
+            return angle;
+        }
+
+        public float HGetDistance(Vector3D dest, bool UseZ)
+        {
+            Vector3D currentPos = Location;
+
+            float dX = currentPos.X - dest.X;
+            float dY = currentPos.Y - dest.Y;
+            float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
+
+            float res;
+            if (UseZ)
+            {
+                res = (float) Math.Sqrt(dX*dX + dY*dY + dZ*dZ);
+            }
+            else
+            {
+                res = (float) Math.Sqrt(dX*dX + dY*dY);
+            }
+
+            LastDistance = res;
+
+            return res;
+        }
+
+        /// <summary>
+        /// Generic distance calculation. It does not update the LastDistance property
+        /// </summary>
+        /// <param name="dest"></param>
+        /// <param name="UseZ"></param>
+        /// <returns></returns>
+        private float GetDistance(Vector3D dest, bool UseZ)
+        {
+            Vector3D currentPos = Location;
+
+            float dX = currentPos.X - dest.X;
+            float dY = currentPos.Y - dest.Y;
+
+            float res;
+            if (UseZ)
+            {
+                float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
+                res = (float) Math.Sqrt(dX*dX + dY*dY + dZ*dZ);
+            }
+            else
+            {
+                res = (float) Math.Sqrt(dX*dX + dY*dY);
+            }
+
+            return res;
+        }
+
+        private float GetDistance(Vector3D dest)
+        {
+            return GetDistance(dest, false);
+        }
+
+        #endregion
     }
 }
