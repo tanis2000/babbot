@@ -260,6 +260,26 @@ namespace BabBot.Wow
             return false;
         }
 
+        public WowUnit GetCurAttacker()
+        {
+            List<WowUnit> l = Unit.GetNearMobs();
+            foreach (WowUnit obj in l)
+            {
+                if (obj.HasTarget())
+                {
+                    if (obj.CurTargetGuid == this.Guid)
+                    {
+                        if (obj.IsAggro())
+                        {
+                            // Ok this really means that this mob is attacking us
+                            return obj;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         public bool IsTargetDead()
         {
             if (HasTarget())
@@ -298,6 +318,52 @@ namespace BabBot.Wow
             }
 
             return new Vector3D(0, 0, 0);
+        }
+
+        public bool SelectWhoIsAttackingUs()
+        {
+            WowUnit u = GetCurAttacker();
+            if (u != null)
+            {
+                return SelectMob(u);
+            }
+            return false;
+        }
+
+        public bool SelectMob(WowUnit u)
+        {
+            // We face the target
+            Face(u.Location);
+
+            // We tab till we have found our target or till we come back to the first GUID we met
+            return FindMob(u);
+        }
+
+        public bool FindMob(WowUnit u)
+        {
+            ulong curGuid = 0;
+            ulong firstGuid = 0;
+
+            PlayerCM.SendKeys(CommandManager.SK_TAB);
+            firstGuid = CurTargetGuid;
+
+            do
+            {
+                PlayerCM.SendKeys(CommandManager.SK_TAB);
+                if (CurTargetGuid == u.Guid) return true;
+            } while ((CurTargetGuid != u.Guid) && (CurTargetGuid != firstGuid));
+
+
+            return false;
+        }
+
+        /// <summary>
+        /// Selects the first mob with that name that we can target by tabbing
+        /// </summary>
+        /// <returns></returns>
+        public bool SelectMobByName(string name)
+        {
+            throw new NotImplementedException("SelectMobByName");
         }
 
         /// <summary>
@@ -449,6 +515,13 @@ namespace BabBot.Wow
                 FaceWithTimer(face, CommandManager.ArrowKey.Right);
             }
         }
+
+        public void Face(Vector3D dest)
+        {
+            float angle = GetFaceRadian(dest);
+            Face(angle);
+        }
+
 
         // Actions
         public bool Cast(string SlotBar, string Key)

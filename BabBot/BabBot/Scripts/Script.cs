@@ -112,9 +112,28 @@ public class Script : IScript
         /// or if we should rebuff something)
     }
 
+    /// <summary>
+    /// This happens when we are being attacked by some mobs or when we
+    /// have found something to kill 
+    /// </summary>
     private void OnPreCombat()
     {
-        
+        if (player.IsBeingAttacked())
+        {
+            /// We are being attacked by a Mob. That means that we should fight back
+            /// by finding the mob first of all
+            if (player.SelectWhoIsAttackingUs())
+            {
+                /// We found who is attacking us and we fight back
+                //player.PlayAction("combat"); // this should call the routine to fight back based on the bindings
+            }
+        } else
+        {
+            // We found something to kill
+            //player.AttackSelectedMob();
+        }
+
+
     }
 }
 
