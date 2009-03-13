@@ -144,8 +144,14 @@ public class Script : IScript
             if (player.SelectWhoIsAttackingUs())
             {
                 /// We found who is attacking us and we fight back
-                /// TODO: find a solution as to get if we are already facing it
-                player.FaceTarget();
+                if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
+                {
+                    player.FaceTarget();
+                }
+                if (player.DistanceFromTarget() > 3.0f)
+                {
+                    // we have to get closer
+                }
                 //player.PlayAction("combat"); // this should call the routine to fight back based on the bindings
             }
         }

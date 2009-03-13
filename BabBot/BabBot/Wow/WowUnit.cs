@@ -56,5 +56,10 @@ namespace BabBot.Wow
                 return unit.GetPosition();
             }
         }
+
+        public float Orientation
+        {
+            get { return unit.GetFacing(); }
+        }
     }
 }

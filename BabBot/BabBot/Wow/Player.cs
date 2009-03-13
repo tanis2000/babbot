@@ -379,6 +379,58 @@ namespace BabBot.Wow
             }
         }
 
+        public float DistanceFromTarget()
+        {
+            if (HasTarget())
+            {
+                WowUnit target = Unit.GetCurTarget();
+                return GetDistance(target.Location);
+            }
+            return 0.0f;
+        }
+
+        public float Facing()
+        {
+            return Orientation;
+        }
+
+        public float TargetFacing()
+        {
+            if (HasTarget())
+            {
+                WowUnit target = Unit.GetCurTarget();
+                return target.Orientation;
+            }
+            return 0.0f;
+        }
+        
+        public float AngleToTarget()
+        {
+            if (HasTarget())
+            {
+                WowUnit target = Unit.GetCurTarget();
+                return GetFaceRadian(target.Location);
+            }
+            return 0.0f;
+        }
+
+        public float FacingDegrees()
+        {
+            return (float) (Facing() * (180.0f/Math.PI));
+        }
+
+        public float TargetFacingDegrees()
+        {
+            return (float)(TargetFacing() * (180.0f / Math.PI));
+        }
+
+        public float AngleToTargetDegrees()
+        {
+            return (float)(AngleToTarget() * (180.0f / Math.PI));
+        }
+
+
+
         /// <summary>
         /// Selects the first mob with that name that we can target by tabbing
         /// </summary>
@@ -444,6 +496,38 @@ namespace BabBot.Wow
 
             LastDistance = res;
             return res;
+        }
+
+        /// <summary>
+        /// Generic distance calculation. It does not update the LastDistance property
+        /// </summary>
+        /// <param name="dest"></param>
+        /// <param name="UseZ"></param>
+        /// <returns></returns>
+        private float GetDistance(Vector3D dest, bool UseZ)
+        {
+            Vector3D currentPos = Location;
+
+            float dX = currentPos.X - dest.X;
+            float dY = currentPos.Y - dest.Y;
+
+            float res = 0;
+            if (UseZ)
+            {
+                float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
+                res = (float)Math.Sqrt(dX * dX + dY * dY + dZ * dZ);
+            }
+            else
+            {
+                res = (float)Math.Sqrt(dX * dX + dY * dY);
+            }
+
+            return res;
+        }
+
+        private float GetDistance(Vector3D dest)
+        {
+            return GetDistance(dest, false);
         }
 
         private static int RandomNumber(int min, int max)

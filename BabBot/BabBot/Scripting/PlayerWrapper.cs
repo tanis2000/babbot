@@ -16,6 +16,13 @@ namespace BabBot.Scripting
         bool IsBeingAttacked();
         bool SelectWhoIsAttackingUs();
         void FaceTarget();
+        float DistanceFromTarget();
+        float Facing();
+        float TargetFacing();
+        float AngleToTarget();
+        float FacingDegrees();
+        float TargetFacingDegrees();
+        float AngleToTargetDegrees();
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -66,6 +73,41 @@ namespace BabBot.Scripting
         public void FaceTarget()
         {
             player.FaceTarget();
+        }
+
+        public float DistanceFromTarget()
+        {
+            return player.DistanceFromTarget();
+        }
+
+        public float Facing()
+        {
+            return player.Facing();
+        }
+
+        public float TargetFacing()
+        {
+            return player.TargetFacing();
+        }
+
+        public float AngleToTarget()
+        {
+            return player.AngleToTarget();
+        }
+
+        public float FacingDegrees()
+        {
+            return player.FacingDegrees();
+        }
+
+        public float TargetFacingDegrees()
+        {
+            return player.TargetFacingDegrees();
+        }
+
+        public float AngleToTargetDegrees()
+        {
+            return player.AngleToTargetDegrees();
         }
     }
 }
