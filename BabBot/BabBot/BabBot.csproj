@@ -75,6 +75,7 @@
     <Compile Include="Manager\ProcessManager.cs" />
     <Compile Include="Bot\WayPoint.cs" />
     <Compile Include="Manager\StateManager.cs" />
+    <Compile Include="Manager\WayPointManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\AboutForm.resx">
