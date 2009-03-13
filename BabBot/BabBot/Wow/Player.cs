@@ -436,13 +436,13 @@ namespace BabBot.Wow
             return random.Next(min, max);
         }
 
-        public void MoveTo(Vector3D dest)
+        public PlayerState MoveTo(Vector3D dest)
         {
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
 
             if (!dest.IsValid())
             {
-                return;
+                return PlayerState.Ready;
             }
 
             float angle = GetFaceRadian(dest);
@@ -463,6 +463,8 @@ namespace BabBot.Wow
             // Start profiler for WayPointTimeOut
             DateTime start = DateTime.Now;
 
+            PlayerState res = PlayerState.Roaming;
+
             while ((int) distance > 1)
             {
                 var currentDistance = (int) distance;
@@ -475,33 +477,39 @@ namespace BabBot.Wow
 
                 if (StopMovement)
                 {
+                    res = PlayerState.Ready;
                     StopMovement = false;
                     break;
                 }
 
                 distance = HGetDistance(dest, false);
 
+                Thread.Sleep(50);
+                Application.DoEvents();
+
                 DateTime end = DateTime.Now;
                 TimeSpan tsTravelTime = end - start;
 
                 TravelTime = tsTravelTime.Milliseconds;
 
-                if (currentDistance == distance)
+                if (currentDistance == (int)distance)
                 {
                     // sono bloccato? non mi sono mosso di una distanza significativa?
+                    // anche qui da verificare, mi sa che bisogna lavorare in float con
+                    // un po di tolleranza
                 }
                 /*else if (TravelTime > "valore da identificare con un po di test")
                 {
                    // sono bloccato? mi sono mosso parecchio ma non ho ancora raggiunto
                    // il wp di destinazione, è presumibile che sia infognato da qualche
                    // parte
+                   
                 }*/
 
-                Thread.Sleep(50);
-                Application.DoEvents();
             }
 
             PlayerCM.ArrowKeyUp(key);
+            return res;
         }
 
         public void Stop()
