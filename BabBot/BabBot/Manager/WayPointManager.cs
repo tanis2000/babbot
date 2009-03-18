@@ -22,6 +22,29 @@ namespace BabBot.Manager
             BranchPath = new WayPointCollection();
         }
 
+        public void Reverse(WayPointType wpt)
+        {
+            switch (wpt)
+            {
+                case WayPointType.Vendor:
+                    VendorPath.Reverse();
+                    break;
+                case WayPointType.Repair:
+                    RepairPath.Reverse();
+                    break;
+                case WayPointType.Normal:
+                    NormalPath.Reverse();
+                    break;
+                case WayPointType.Ghost:
+                    GhostPath.Reverse();
+                    break;
+                case WayPointType.Branch:
+                    BranchPath.Reverse();
+                    break;
+            }
+        }
+
+
         #region Properties
 
         public int NormalNodeCount
