@@ -3,17 +3,8 @@
 #pragma warning disable 1591
     public static class Descriptor
     {
-        // Version: 3.0.9  Build number: 9551  Build date: Feb  3 2009
+        // Version: 3.1.0
 
-        /*----------------------------------
-        WoW Offset Dumper 0.1 - IDC Script
-        by kynox
-
-        Credits:
-        bobbysing, Patrick, Dominik, Azorbix
-        -----------------------------------*/
-
-        // Descriptors: 0x00FC3C98
         public enum eObjectFields : uint
         {
             OBJECT_FIELD_GUID = 0x0,
@@ -24,7 +15,6 @@
             TOTAL_OBJECT_FIELDS = 0x5
         }
 
-        // Descriptors: 0x00FC4030
         public enum eUnitFields : uint
         {
             UNIT_FIELD_CHARM = 0x6,
@@ -119,7 +109,6 @@
             TOTAL_UNIT_FIELDS = 0x59
         }
 
-        // Descriptors: 0x00FC3D38
         public enum eItemFields : uint
         {
             ITEM_FIELD_OWNER = 0x6,
@@ -163,7 +152,6 @@
             TOTAL_ITEM_FIELDS = 0x26
         }
 
-        // Descriptors: 0x00FC4728
         public enum ePlayerFields : uint
         {
             PLAYER_DUEL_ARBITER = 0x94,
@@ -380,7 +368,6 @@
             TOTAL_PLAYER_FIELDS = 0xD3
         }
 
-        // Descriptors: 0x00FC3CFC
         public enum eContainerFields : uint
         {
             CONTAINER_FIELD_NUM_SLOTS = 0x6,
@@ -389,7 +376,6 @@
             TOTAL_CONTAINER_FIELDS = 0x3
         }
 
-        // Descriptors: 0x00FC5C30
         public enum eGameObjectFields : uint
         {
             OBJECT_FIELD_CREATED_BY = 0x6,
@@ -403,7 +389,6 @@
             TOTAL_GAMEOBJECT_FIELDS = 0x8
         }
 
-        // Descriptors: 0x00FC5D38
         public enum eDynamicObjectFields : uint
         {
             DYNAMICOBJECT_CASTER = 0x6,
@@ -418,7 +403,6 @@
             TOTAL_DYNAMICOBJECT_FIELDS = 0x9
         }
 
-        // Descriptors: 0x00FC5DF0
         public enum eCorpseFields : uint
         {
             CORPSE_FIELD_OWNER = 0x6,
