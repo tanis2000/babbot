@@ -143,7 +143,7 @@ namespace BabBot.Wow
 
         public string GetNameFromGuid(ulong guid)
         {
-            const ulong nameStorePtr = 0x11AF470 + 0x8;  // Player name database
+            const ulong nameStorePtr = 0x01137CE0 + 8; // 3.0.9 0x11AF470 + 0x8;  // Player name database
             const ulong nameMaskOffset = 0x024;  // Offset for the mask used with GUID to select a linked list
             const ulong nameBaseOffset = 0x01c;  // Offset for the start of the name linked list
             const ulong nameStringOffset = 0x020;  // Offset to the C string in a name structure

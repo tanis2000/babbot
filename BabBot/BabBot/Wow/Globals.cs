@@ -7,19 +7,19 @@ namespace BabBot.Wow
 {
     public class Globals
     {
-        public const uint GameOffset = 0x127F13C;
+        public const uint GameOffset = 0x010B65F4; // 3.0.9: 0x127F13C
         //public const uint PlayerHealthOffset = 0xFF4;
         //public const uint PlayerMaxHealthOffset = 0x26E4;
         //public const uint PlayerManaOffset = 0xFF8;
         //public const uint PlayerMaxManaOffset = 0x26E8;
         //public const uint PlayerXpOffset = 0x3630;
         private static uint playerBaseOffset = 0x0;
-        public const uint PlayerBaseOffset1 = 0x30;
-        public const uint PlayerBaseOffset2 = 0x28;
-        public const uint PlayerXOffset = 0x7D0;
-        public const uint PlayerYOffset = 0x7D4;
-        public const uint PlayerZOffset = 0x7D8;
-        public const uint PlayerCurTargetGuidOffset = 0x10A68E0;
+        public const uint PlayerBaseOffset1 = 0x34; // 3.0.9: 0x30
+        public const uint PlayerBaseOffset2 = 0x24; // 3.0.9: 0x28;
+        public const uint PlayerXOffset = 0x798; // 3.0.9: 0x7D0
+        public const uint PlayerYOffset = 0x79C; // 3.0.9: 0x7D4;
+        public const uint PlayerZOffset = 0x7A0; // 3.0.9: 0x7D8;
+        public const uint PlayerCurTargetGuidOffset = 0x011CCF38; // 3.0.9: 0x10A68E0
 
         // ObjectManager
         public static uint ClientConnectionPointer = 0x0;
