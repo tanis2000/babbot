@@ -180,8 +180,8 @@ namespace BabBot.Wow
         private string GetUnitName(uint unit)
         {
             //unit names are easy to get!
-            uint aaa = ProcessManager.WowProcess.ReadUInt((unit + 0x970));
-            return ProcessManager.WowProcess.ReadASCIIString(ProcessManager.WowProcess.ReadUInt((aaa + 0x3C)), 40);
+            uint aaa = ProcessManager.WowProcess.ReadUInt((unit + 0x968 /* 3.0.9: 0x970 */));
+            return ProcessManager.WowProcess.ReadASCIIString(ProcessManager.WowProcess.ReadUInt((aaa + 0x54 /* 3.0.9: 0x3C */)), 40);
         }
 
 /*
