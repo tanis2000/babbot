@@ -150,6 +150,15 @@
     <None Include="Img\icon_32x32.ico" />
     <None Include="Img\icon_64x64.ico" />
     <None Include="Img\splash.jpg" />
+    <Content Include="Doc\ChangeLog.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Doc\COPYING.TXT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Doc\README.TXT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Lib\BlackMagic.dll" />
     <Content Include="Lib\BlackMagic.XML" />
     <Content Include="Lib\FASM.DLL" />

@@ -15,13 +15,13 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("BabBot")]
 [assembly: AssemblyDescription("BabBot your servant")]
-[assembly: AssemblyCompany("http://www.babbed.it/")]
+[assembly: AssemblyCompany("https://sourceforge.net/projects/babbot/")]
 [assembly: AssemblyProduct("BabBot")]
-[assembly: AssemblyCopyright("Copyright (C) tanis, caos 2009")]
+[assembly: AssemblyCopyright("Copyright (C) BabBot Team 2009")]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
 [assembly: Guid("d038566a-1937-478a-b5c5-b79c4afb253d")]
-[assembly: AssemblyVersion("1.0.0.94")]
-[assembly: AssemblyFileVersion("1.0.0.94")]
+[assembly: AssemblyVersion("1.0.0.98")]
+[assembly: AssemblyFileVersion("1.0.0.98")]
 
 

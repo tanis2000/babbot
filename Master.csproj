@@ -34,11 +34,10 @@
   <ItemGroup>
     <ZipFiles Include="BabBot\BabBot\bin\Release\BabBot.exe" Exclude="@(DefaultExclude)" />
     <ZipFiles Include="BabBot\BabBot\bin\Release\*.dll" Exclude="@(DefaultExclude)" />
-    <ZipFiles Include="BabBot\BabBot\bin\Release\*.xml" Exclude="@(DefaultExclude)" />
     <ZipFiles Include="BabBot\BabBot\bin\Release\Scripts\*.*" Exclude="@(DefaultExclude)" />
-    <ZipFiles Include="BabBot\BabBot\Doc\README.TXT" Exclude="@(DefaultExclude)" />
-    <ZipFiles Include="BabBot\BabBot\Doc\COPYING.TXT" Exclude="@(DefaultExclude)" />
-    <ZipFiles Include="BabBot\BabBot\Doc\ChangeLog.txt" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\Doc\README.TXT" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\Doc\COPYING.TXT" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\Doc\ChangeLog.txt" Exclude="@(DefaultExclude)" />
   </ItemGroup>
   <Target Name="Version">
     <SvnVersion LocalPath="$(MSBuildProjectDirectory)" ToolPath="C:\programmi\CollabNet Subversion Client">
