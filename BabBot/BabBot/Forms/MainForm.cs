@@ -1,6 +1,26 @@
-﻿using System;
+﻿/*
+    This file is part of BabBot.
+
+    BabBot is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BabBot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
+  
+    Copyright 2009 BabBot Team
+*/
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using BabBot.Bot;
+using BabBot.Common;
 using BabBot.Manager;
 using BabBot.Wow;
 
@@ -119,7 +139,7 @@ namespace BabBot.Forms
         {
             if (ProcessManager.ProcessRunning)
             {
-                ProcessManager.Player.UpdateFromClient();
+                //ProcessManager.Player.UpdateFromClient();
 
                 tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", ProcessManager.Player.Location.X,
                                                 ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z,
@@ -169,11 +189,25 @@ namespace BabBot.Forms
             var dlg = new OpenFileDialog {Multiselect = false, Filter = "BabBot Profile (*.xml)|*.xml"};
             if (dlg.ShowDialog() == DialogResult.OK)
             {
+                Common.Serializer<Bot.Profile> serializer = new Serializer<Profile>();
+                ProcessManager.Profile = serializer.Load(dlg.FileName);
                 ProcessManager.Profile.FileName = dlg.FileName;
-                ProcessManager.Profile.Load();
+                tbProfileName.Text = ProcessManager.Profile.Name;
+                tbProfileDescription.Text = ProcessManager.Profile.Description;
             }
         }
 
+        private void btnSaveProfile_Click(object sender, EventArgs e)
+        {
+            var dlg = new SaveFileDialog {Filter = "BabBot Profile (*.xml)|*.xml"};
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                ProcessManager.Profile.FileName = dlg.FileName;
+                Common.Serializer<Bot.Profile> serializer = new Serializer<Profile>();
+                serializer.Save(dlg.FileName, ProcessManager.Profile);
+            }
+        }
+        
         private void btnAttachToWow_Click(object sender, EventArgs e)
         {
             ProcessManager.AttachToWow();
@@ -260,5 +294,17 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
+
+        private void tbProfileName_TextChanged(object sender, EventArgs e)
+        {
+            ProcessManager.Profile.Name = tbProfileName.Text;
+        }
+
+        private void tbProfileDescription_TextChanged(object sender, EventArgs e)
+        {
+            ProcessManager.Profile.Description = tbProfileDescription.Text;
+        }
+
+
     }
 }

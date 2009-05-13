@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+    This file is part of BabBot.
+
+    BabBot is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BabBot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
+  
+    Copyright 2009 BabBot Team
+*/
+using System;
 using System.Collections.Generic;
 using System.Text;
 using BabBot.Manager;
@@ -19,7 +37,9 @@ namespace BabBot.Wow
         public const uint PlayerXOffset = 0x798; // 3.0.9: 0x7D0
         public const uint PlayerYOffset = 0x79C; // 3.0.9: 0x7D4;
         public const uint PlayerZOffset = 0x7A0; // 3.0.9: 0x7D8;
+        public const uint PlayerRotationOffset = 0x7A8; // 3.0.9: 0x7D8;
         public const uint PlayerCurTargetGuidOffset = 0x011CCF38; // 3.0.9: 0x10A68E0
+        public const uint NameStorePointer = 0x01137CE0 + 8; // 3.0.9 0x11AF470 + 0x8;  // Player name database
 
         // ObjectManager
         public static uint ClientConnectionPointer = 0x0;
@@ -32,7 +52,6 @@ namespace BabBot.Wow
         public static uint NextObject = 0x3C;
         public static uint TypeOffset = 0x14;
         public static uint DescriptorOffset = 0x08;
-        public static uint UnitFieldOffset = 0x110;
 
 
         public static uint PlayerBaseOffset

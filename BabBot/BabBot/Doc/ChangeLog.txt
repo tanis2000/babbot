@@ -1,0 +1,10 @@
+Current
+=======
+- Fixed some offsets for compatibility with v3.1.1 of the client
+- Optimized player related functions
+- Can load/save profiles (but they're not yet of any use atm)
+- Added all the required GPL license & copyright notes
+
+1.0.0.94
+========
+- First public **ALPHA** release

@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+    This file is part of BabBot.
+
+    BabBot is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BabBot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
+  
+    Copyright 2009 BabBot Team
+*/
+using System;
 using System.Collections.Generic;
 using System.Text;
 using BabBot.Manager;
@@ -16,17 +34,6 @@ namespace BabBot.Wow
         private uint holder;
         private uint tempHolder;
         private uint curObject;
-
-        public enum ObjectType : uint
-        {
-            Item = 0x01,
-            Container = 0x02,
-            Unit = 0x03,
-            Player = 0x04,
-            GameObject = 0x05, // Nodes, etc..
-            DynamicObject = 0x06, // Spells and stuff
-            Corpse = 0x07
-        }
 
         public ObjectManager()
         {
@@ -110,10 +117,10 @@ namespace BabBot.Wow
             }
         }
 
-        public ObjectType GetTypeByObject(uint obj)
+        public Descriptor.eObjType GetTypeByObject(uint obj)
         {
             //get the object's type from obj+0x14 (like normal)
-            ObjectType type = (ObjectType)ProcessManager.WowProcess.ReadByte(obj + 0x14);
+            Descriptor.eObjType type = (Descriptor.eObjType)ProcessManager.WowProcess.ReadByte(obj + 0x14);
             return type;
         }
 
@@ -124,16 +131,16 @@ namespace BabBot.Wow
                 return String.Empty;
 
             //get the object's type from obj+0x14 (like normal)
-            ObjectType type = GetTypeByObject(obj);
+            Descriptor.eObjType type = GetTypeByObject(obj);
 
             //determine what type of object it is and call associated routine
             switch (type)
             {
-                case ObjectType.Player:
+                case Descriptor.eObjType.OT_PLAYER:
                     //return GetPlayerName(obj);
                     return GetNameFromGuid(guid);
 
-                case ObjectType.Unit:
+                case Descriptor.eObjType.OT_UNIT:
                     return GetUnitName(obj);
 
                 default:
@@ -143,7 +150,7 @@ namespace BabBot.Wow
 
         public string GetNameFromGuid(ulong guid)
         {
-            const ulong nameStorePtr = 0x01137CE0 + 8; // 3.0.9 0x11AF470 + 0x8;  // Player name database
+            const ulong nameStorePtr = Globals.NameStorePointer;  // Player name database
             const ulong nameMaskOffset = 0x024;  // Offset for the mask used with GUID to select a linked list
             const ulong nameBaseOffset = 0x01c;  // Offset for the start of the name linked list
             const ulong nameStringOffset = 0x020;  // Offset to the C string in a name structure

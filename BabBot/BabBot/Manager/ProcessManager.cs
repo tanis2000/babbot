@@ -1,4 +1,22 @@
-﻿using System;
+﻿/*
+    This file is part of BabBot.
+
+    BabBot is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BabBot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
+  
+    Copyright 2009 BabBot Team
+*/
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using BabBot.Bot;
@@ -85,7 +103,7 @@ namespace BabBot.Manager
         public static bool InGame;
         public static bool Initialized;
         public static ObjectManager ObjectManager;
-        public static Player Player;
+        public static WowPlayer Player;
         private static Process process;
         public static bool ProcessRunning;
         public static Profile Profile;
@@ -99,7 +117,6 @@ namespace BabBot.Manager
             wowProcess = new BlackMagic();
             ProcessRunning = false;
             CommandManager = new CommandManager();
-            Player = new Player(CommandManager);
             InGame = false;
             TLS = 0x0;
             Initialized = false;
@@ -270,7 +287,7 @@ namespace BabBot.Manager
                 return;
             }
 
-            Player.UpdateFromClient();
+            //Player.UpdateFromClient();
 
             if (PlayerUpdate != null)
             {
@@ -340,7 +357,11 @@ namespace BabBot.Manager
             Globals.ClientConnectionOffset = wowProcess.ReadUInt(TLS + 0x1C);
             Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
             ObjectManager = new ObjectManager();
-            Player.AttachUnit(ObjectManager.GetLocalPlayerObject());
+            WowObject wo = new WowObject();
+            wo.ObjectPointer = ObjectManager.GetLocalPlayerObject();
+            wo.Guid = ObjectManager.GetGUIDByObject(wo.ObjectPointer);
+            wo.Type = ObjectManager.GetTypeByObject(wo.ObjectPointer);
+            Player = new WowPlayer(wo, CommandManager);
         }
 
         /// <summary>
