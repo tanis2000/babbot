@@ -18,7 +18,9 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
+using BabBot.Forms;
 using BabBot.Manager;
 
 namespace BabBot
@@ -33,7 +35,19 @@ namespace BabBot
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Forms.MainForm());
+            Forms.MainForm mainForm = new Forms.MainForm();
+            Application.ThreadException += new ThreadExceptionEventHandler(mainForm.UnhandledThreadExceptionHandler);
+            try
+            {
+                Application.Run(mainForm);
+            }
+            catch(Exception ex)
+            {
+                Forms.ExceptionForm form = new ExceptionForm(ex);
+                DialogResult result;
+                result = form.ShowDialog();
+                Application.Exit();
+            }
         }
 
     }

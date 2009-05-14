@@ -18,6 +18,7 @@
 */
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows.Forms;
 using BabBot.Bot;
 using BabBot.Common;
@@ -45,6 +46,23 @@ namespace BabBot.Forms
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
         }
 
+        #region Exception Handler
+        public void UnhandledThreadExceptionHandler(object sender, ThreadExceptionEventArgs e)
+        {
+            this.HandleUnhandledException(e.Exception);
+        }
+
+        public void HandleUnhandledException(Exception e)
+        {
+            // do what you want here.
+            if (MessageBox.Show("An unexpected error has occurred. Continue?",
+                "My application", MessageBoxButtons.YesNo, MessageBoxIcon.Stop,
+                MessageBoxDefaultButton.Button2) == DialogResult.No)
+            {
+                Application.Exit();
+            }
+        }
+        #endregion
 
         private void PlayerWayPoint(Vector3D waypoint)
         {

@@ -32,10 +32,12 @@ namespace BabBot.Bot
         None
     }
 
+    [Serializable]
     public class WayPointCollection : List<WayPoint>
     {
     }
 
+    [Serializable]
     public class WayPoint : IComparable<WayPoint>
     {
         public WayPoint ConnectedTO;

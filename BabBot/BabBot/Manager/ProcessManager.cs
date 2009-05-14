@@ -271,6 +271,10 @@ namespace BabBot.Manager
         {
             if (PlayerWayPoint != null)
             {
+                if (Player == null)
+                {
+                    throw new Exception("Cannot reset waypoints. No Player object found.");
+                }
                 Player.LastLocation.X = 0;
                 Player.LastLocation.Y = 0;
                 Player.LastLocation.Z = 0;
@@ -286,8 +290,6 @@ namespace BabBot.Manager
             {
                 return;
             }
-
-            //Player.UpdateFromClient();
 
             if (PlayerUpdate != null)
             {
