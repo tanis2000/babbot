@@ -143,6 +143,9 @@ namespace BabBot.Forms
 
         }
 
+
+        #region UI Event Handlers
+
         private static void wow_ProcessAccessFailed(string error)
         {
             MessageBox.Show(error, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -295,6 +298,18 @@ namespace BabBot.Forms
             }
         }
 
+        private void tbProfileName_TextChanged(object sender, EventArgs e)
+        {
+            ProcessManager.Profile.Name = tbProfileName.Text;
+        }
+
+        private void tbProfileDescription_TextChanged(object sender, EventArgs e)
+        {
+            ProcessManager.Profile.Description = tbProfileDescription.Text;
+        }
+
+        #endregion
+
         #region Nested type: PlayerUpdateDelegate
 
         private delegate void PlayerUpdateDelegate();
@@ -313,15 +328,7 @@ namespace BabBot.Forms
 
         #endregion
 
-        private void tbProfileName_TextChanged(object sender, EventArgs e)
-        {
-            ProcessManager.Profile.Name = tbProfileName.Text;
-        }
 
-        private void tbProfileDescription_TextChanged(object sender, EventArgs e)
-        {
-            ProcessManager.Profile.Description = tbProfileDescription.Text;
-        }
 
 
     }
