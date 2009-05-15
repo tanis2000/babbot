@@ -35,6 +35,9 @@ namespace BabBot.Forms
 
             Process.EnterDebugMode();
 
+            // Load the configuration file
+            LoadConfig();
+
             // ProcessManager events binding
             ProcessManager.WoWProcessStarted += wow_ProcessStarted;
             ProcessManager.WoWProcessEnded += wow_ProcessEnded;
@@ -308,7 +311,43 @@ namespace BabBot.Forms
             ProcessManager.Profile.Description = tbProfileDescription.Text;
         }
 
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OptionsForm form = new OptionsForm();
+            DialogResult res;
+            res = form.ShowDialog();
+            if (res == DialogResult.OK)
+            {
+                SaveConfig();
+            }
+        }
+
         #endregion
+
+        #region Load/Save Config
+
+        private void LoadConfig()
+        {
+            string fileName = "config.xml";
+            Common.Serializer<Config> serializer = new Serializer<Config>();
+
+            try
+            {
+                ProcessManager.Config = serializer.Load(fileName);
+            } catch (System.IO.FileNotFoundException ex)
+            {
+                // No configuration file, don't worry
+            }
+        }
+
+        private void SaveConfig()
+        {
+            string fileName = "config.xml";
+            Common.Serializer<Config> serializer = new Serializer<Config>();
+            serializer.Save(fileName, ProcessManager.Config);
+        }        
+        #endregion
+
 
         #region Nested type: PlayerUpdateDelegate
 
@@ -327,6 +366,7 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
+
 
 
 

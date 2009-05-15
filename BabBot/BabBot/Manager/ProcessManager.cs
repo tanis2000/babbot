@@ -96,7 +96,7 @@ namespace BabBot.Manager
 
         #endregion
 
-        private static readonly Config config;
+        private static Config config;
         private static readonly BlackMagic wowProcess;
         public static BotManager BotManager;
         public static CommandManager CommandManager;
@@ -148,6 +148,7 @@ namespace BabBot.Manager
         public static Config Config
         {
             get { return config; }
+            set { config = value; }
         }
 
         #region Private Methods
@@ -207,7 +208,14 @@ namespace BabBot.Manager
             try
             {
                 // Perry style = paranoid ;-)
-                string wowPath = AppHelper.GetWowInstallationPath();
+                string wowPath = Config.WowExePath;
+
+                // Ok, no one configured the path, let's try to find it on our own
+                if (string.IsNullOrEmpty(wowPath))
+                {
+                    wowPath = AppHelper.GetWowInstallationPath();
+                }
+
                 if (!string.IsNullOrEmpty(wowPath))
                 {
                     process = AppHelper.RunAs(Config.GuestUsername, "", null, wowPath);

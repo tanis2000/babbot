@@ -16,12 +16,15 @@
   
     Copyright 2009 BabBot Team
 */
+using System;
+
 namespace BabBot
 {
+    [Serializable]
     public class Config
     {
         public string GuestPassword = "";
         public string GuestUsername = "Guest";
-        public string WowExePath = @"c:\games\world of warcraft\wow.exe";
+        public string WowExePath = "";
     }
 }
