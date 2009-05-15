@@ -78,6 +78,7 @@
     <Compile Include="Common\GTimer.cs" />
     <Compile Include="Common\RunAs.cs" />
     <Compile Include="Common\Serializer.cs" />
+    <Compile Include="Common\WindowSize.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
