@@ -223,7 +223,7 @@ namespace BabBot.Manager
                 }
                 else
                 {
-                    throw new Exception("Wow is not installed or the registry key is missed.");
+                    throw new Exception("Wow is not installed or the registry key is missing.");
                 }
             }
             catch (Win32Exception w32e)
