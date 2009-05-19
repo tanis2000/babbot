@@ -18,10 +18,9 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using BabBot.Bot;
 using BabBot.Common;
 using BabBot.Manager;
 
@@ -455,6 +454,15 @@ namespace BabBot.Wow
         public bool GoBack(Vector3D dest)
         {
             throw new NotImplementedException("GoBack");
+        }
+
+        public void WalkToNextWayPoint(WayPointType wpType)
+        {
+            WayPoint wp = WayPointManager.Instance.GetNextWayPoint(wpType);
+            if (wp != null)
+            {
+                MoveTo(wp.Location);
+            }
         }
 
         private void FaceWithTimer(float radius, CommandManager.ArrowKey key)

@@ -385,6 +385,16 @@ namespace BabBot.Forms
             }
         }
 
+        private void btnStartBot_Click(object sender, EventArgs e)
+        {
+            StateManager.Instance.Start();
+        }
+
+        private void btnStopBot_Click(object sender, EventArgs e)
+        {
+            StateManager.Instance.Stop();
+        }
+
         #endregion
 
         #region Load/Save Config
@@ -447,6 +457,7 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
+
 
 
 

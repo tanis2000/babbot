@@ -48,6 +48,42 @@
             this.tbProfile = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.btnRun = new System.Windows.Forms.Button();
+            this.tabPageWayPoints = new System.Windows.Forms.TabPage();
+            this.cbAutoAddWaypoints = new System.Windows.Forms.CheckBox();
+            this.btnAddWayPoint = new System.Windows.Forms.Button();
+            this.comboWayPointTypes = new System.Windows.Forms.ComboBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnCopyFromVendor = new System.Windows.Forms.Button();
+            this.tbCountRepair = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.tbCountVendor = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.tbCountGhost = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.gbNormalWaypoints = new System.Windows.Forms.GroupBox();
+            this.tbCountNormal = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.tabPagePlayer = new System.Windows.Forms.TabPage();
+            this.tbPlayerIsSitting = new System.Windows.Forms.TextBox();
+            this.label28 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
+            this.tbPlayerTargetName = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.tbPlayerTarget = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.tbPlayerMaxMp = new System.Windows.Forms.TextBox();
+            this.tbPlayerMaxHp = new System.Windows.Forms.TextBox();
+            this.tbPlayerXp = new System.Windows.Forms.TextBox();
+            this.tbPlayerMp = new System.Windows.Forms.TextBox();
+            this.tbPlayerHp = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
             this.label29 = new System.Windows.Forms.Label();
             this.txtTravelTime = new System.Windows.Forms.TextBox();
@@ -87,58 +123,24 @@
             this.btnFindTLS = new System.Windows.Forms.Button();
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.tabPageWayPoints = new System.Windows.Forms.TabPage();
-            this.cbAutoAddWaypoints = new System.Windows.Forms.CheckBox();
-            this.btnAddWayPoint = new System.Windows.Forms.Button();
-            this.comboWayPointTypes = new System.Windows.Forms.ComboBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.btnCopyFromVendor = new System.Windows.Forms.Button();
-            this.tbCountRepair = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.tbCountVendor = new System.Windows.Forms.TextBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.tbCountGhost = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.gbNormalWaypoints = new System.Windows.Forms.GroupBox();
-            this.tbCountNormal = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.tabPagePlayer = new System.Windows.Forms.TabPage();
-            this.tbPlayerIsSitting = new System.Windows.Forms.TextBox();
-            this.label28 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
-            this.tbPlayerTargetName = new System.Windows.Forms.TextBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.tbPlayerTarget = new System.Windows.Forms.TextBox();
-            this.label20 = new System.Windows.Forms.Label();
-            this.tbPlayerMaxMp = new System.Windows.Forms.TextBox();
-            this.tbPlayerMaxHp = new System.Windows.Forms.TextBox();
-            this.tbPlayerXp = new System.Windows.Forms.TextBox();
-            this.tbPlayerMp = new System.Windows.Forms.TextBox();
-            this.tbPlayerHp = new System.Windows.Forms.TextBox();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
             this.btnUpdateLocation = new System.Windows.Forms.Button();
             this.lblOrientation = new System.Windows.Forms.Label();
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
+            this.btnStartBot = new System.Windows.Forms.Button();
+            this.btnStopBot = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
-            this.tabPageDebug.SuspendLayout();
             this.tabPageWayPoints.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gbNormalWaypoints.SuspendLayout();
             this.tabPagePlayer.SuspendLayout();
+            this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -165,7 +167,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -180,7 +182,7 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.optionsToolStripMenuItem.Text = "&Options..";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -195,7 +197,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -215,6 +217,8 @@
             // 
             // tabPageMain
             // 
+            this.tabPageMain.Controls.Add(this.btnStopBot);
+            this.tabPageMain.Controls.Add(this.btnStartBot);
             this.tabPageMain.Controls.Add(this.btnAttachToWow);
             this.tabPageMain.Controls.Add(this.label9);
             this.tabPageMain.Controls.Add(this.label8);
@@ -324,6 +328,359 @@
             this.btnRun.Text = "Run WoW";
             this.btnRun.UseVisualStyleBackColor = true;
             this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            // 
+            // tabPageWayPoints
+            // 
+            this.tabPageWayPoints.Controls.Add(this.cbAutoAddWaypoints);
+            this.tabPageWayPoints.Controls.Add(this.btnAddWayPoint);
+            this.tabPageWayPoints.Controls.Add(this.comboWayPointTypes);
+            this.tabPageWayPoints.Controls.Add(this.groupBox4);
+            this.tabPageWayPoints.Controls.Add(this.groupBox3);
+            this.tabPageWayPoints.Controls.Add(this.groupBox2);
+            this.tabPageWayPoints.Controls.Add(this.gbNormalWaypoints);
+            this.tabPageWayPoints.Location = new System.Drawing.Point(4, 22);
+            this.tabPageWayPoints.Name = "tabPageWayPoints";
+            this.tabPageWayPoints.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageWayPoints.Size = new System.Drawing.Size(530, 370);
+            this.tabPageWayPoints.TabIndex = 2;
+            this.tabPageWayPoints.Text = "WayPoints";
+            this.tabPageWayPoints.UseVisualStyleBackColor = true;
+            // 
+            // cbAutoAddWaypoints
+            // 
+            this.cbAutoAddWaypoints.AutoSize = true;
+            this.cbAutoAddWaypoints.Location = new System.Drawing.Point(320, 220);
+            this.cbAutoAddWaypoints.Name = "cbAutoAddWaypoints";
+            this.cbAutoAddWaypoints.Size = new System.Drawing.Size(119, 17);
+            this.cbAutoAddWaypoints.TabIndex = 6;
+            this.cbAutoAddWaypoints.Text = "Auto add waypoints";
+            this.cbAutoAddWaypoints.UseVisualStyleBackColor = true;
+            // 
+            // btnAddWayPoint
+            // 
+            this.btnAddWayPoint.Enabled = false;
+            this.btnAddWayPoint.Location = new System.Drawing.Point(209, 216);
+            this.btnAddWayPoint.Name = "btnAddWayPoint";
+            this.btnAddWayPoint.Size = new System.Drawing.Size(94, 23);
+            this.btnAddWayPoint.TabIndex = 5;
+            this.btnAddWayPoint.Text = "Add WayPoint";
+            this.btnAddWayPoint.UseVisualStyleBackColor = true;
+            // 
+            // comboWayPointTypes
+            // 
+            this.comboWayPointTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWayPointTypes.FormattingEnabled = true;
+            this.comboWayPointTypes.Items.AddRange(new object[] {
+            "Normal",
+            "Ghost",
+            "Vendor",
+            "Repair"});
+            this.comboWayPointTypes.Location = new System.Drawing.Point(8, 218);
+            this.comboWayPointTypes.Name = "comboWayPointTypes";
+            this.comboWayPointTypes.Size = new System.Drawing.Size(195, 21);
+            this.comboWayPointTypes.TabIndex = 4;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.btnCopyFromVendor);
+            this.groupBox4.Controls.Add(this.tbCountRepair);
+            this.groupBox4.Controls.Add(this.label13);
+            this.groupBox4.Location = new System.Drawing.Point(209, 112);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(200, 100);
+            this.groupBox4.TabIndex = 3;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Repair";
+            // 
+            // btnCopyFromVendor
+            // 
+            this.btnCopyFromVendor.Location = new System.Drawing.Point(9, 44);
+            this.btnCopyFromVendor.Name = "btnCopyFromVendor";
+            this.btnCopyFromVendor.Size = new System.Drawing.Size(110, 23);
+            this.btnCopyFromVendor.TabIndex = 5;
+            this.btnCopyFromVendor.Text = "Copy from Vendor";
+            this.btnCopyFromVendor.UseVisualStyleBackColor = true;
+            // 
+            // tbCountRepair
+            // 
+            this.tbCountRepair.Enabled = false;
+            this.tbCountRepair.Location = new System.Drawing.Point(50, 18);
+            this.tbCountRepair.Name = "tbCountRepair";
+            this.tbCountRepair.Size = new System.Drawing.Size(100, 20);
+            this.tbCountRepair.TabIndex = 4;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 21);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(38, 13);
+            this.label13.TabIndex = 3;
+            this.label13.Text = "Count:";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.tbCountVendor);
+            this.groupBox3.Controls.Add(this.label12);
+            this.groupBox3.Location = new System.Drawing.Point(3, 112);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(200, 100);
+            this.groupBox3.TabIndex = 2;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Vendor";
+            // 
+            // tbCountVendor
+            // 
+            this.tbCountVendor.Enabled = false;
+            this.tbCountVendor.Location = new System.Drawing.Point(51, 18);
+            this.tbCountVendor.Name = "tbCountVendor";
+            this.tbCountVendor.Size = new System.Drawing.Size(100, 20);
+            this.tbCountVendor.TabIndex = 3;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(7, 21);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(38, 13);
+            this.label12.TabIndex = 2;
+            this.label12.Text = "Count:";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.tbCountGhost);
+            this.groupBox2.Controls.Add(this.label11);
+            this.groupBox2.Location = new System.Drawing.Point(209, 6);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(200, 100);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Ghost";
+            // 
+            // tbCountGhost
+            // 
+            this.tbCountGhost.Enabled = false;
+            this.tbCountGhost.Location = new System.Drawing.Point(50, 17);
+            this.tbCountGhost.Name = "tbCountGhost";
+            this.tbCountGhost.Size = new System.Drawing.Size(100, 20);
+            this.tbCountGhost.TabIndex = 2;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 20);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(38, 13);
+            this.label11.TabIndex = 1;
+            this.label11.Text = "Count:";
+            // 
+            // gbNormalWaypoints
+            // 
+            this.gbNormalWaypoints.Controls.Add(this.tbCountNormal);
+            this.gbNormalWaypoints.Controls.Add(this.label10);
+            this.gbNormalWaypoints.Location = new System.Drawing.Point(3, 6);
+            this.gbNormalWaypoints.Name = "gbNormalWaypoints";
+            this.gbNormalWaypoints.Size = new System.Drawing.Size(200, 100);
+            this.gbNormalWaypoints.TabIndex = 0;
+            this.gbNormalWaypoints.TabStop = false;
+            this.gbNormalWaypoints.Text = "Normal";
+            // 
+            // tbCountNormal
+            // 
+            this.tbCountNormal.Enabled = false;
+            this.tbCountNormal.Location = new System.Drawing.Point(51, 17);
+            this.tbCountNormal.Name = "tbCountNormal";
+            this.tbCountNormal.Size = new System.Drawing.Size(100, 20);
+            this.tbCountNormal.TabIndex = 1;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(7, 20);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(38, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Count:";
+            // 
+            // tabPagePlayer
+            // 
+            this.tabPagePlayer.Controls.Add(this.tbPlayerIsSitting);
+            this.tabPagePlayer.Controls.Add(this.label28);
+            this.tabPagePlayer.Controls.Add(this.label22);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerNearObjects);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerTargetName);
+            this.tabPagePlayer.Controls.Add(this.label21);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerTarget);
+            this.tabPagePlayer.Controls.Add(this.label20);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerMaxMp);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerMaxHp);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerXp);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerMp);
+            this.tabPagePlayer.Controls.Add(this.tbPlayerHp);
+            this.tabPagePlayer.Controls.Add(this.label18);
+            this.tabPagePlayer.Controls.Add(this.label17);
+            this.tabPagePlayer.Controls.Add(this.label16);
+            this.tabPagePlayer.Controls.Add(this.label15);
+            this.tabPagePlayer.Controls.Add(this.label14);
+            this.tabPagePlayer.Location = new System.Drawing.Point(4, 22);
+            this.tabPagePlayer.Name = "tabPagePlayer";
+            this.tabPagePlayer.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPagePlayer.Size = new System.Drawing.Size(530, 370);
+            this.tabPagePlayer.TabIndex = 3;
+            this.tabPagePlayer.Text = "Player";
+            this.tabPagePlayer.UseVisualStyleBackColor = true;
+            // 
+            // tbPlayerIsSitting
+            // 
+            this.tbPlayerIsSitting.Location = new System.Drawing.Point(335, 3);
+            this.tbPlayerIsSitting.Name = "tbPlayerIsSitting";
+            this.tbPlayerIsSitting.Size = new System.Drawing.Size(100, 20);
+            this.tbPlayerIsSitting.TabIndex = 17;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(290, 6);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(39, 13);
+            this.label28.TabIndex = 16;
+            this.label28.Text = "Sitting:";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(3, 162);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(33, 13);
+            this.label22.TabIndex = 15;
+            this.label22.Text = "Near:";
+            // 
+            // tbPlayerNearObjects
+            // 
+            this.tbPlayerNearObjects.Location = new System.Drawing.Point(37, 159);
+            this.tbPlayerNearObjects.Multiline = true;
+            this.tbPlayerNearObjects.Name = "tbPlayerNearObjects";
+            this.tbPlayerNearObjects.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbPlayerNearObjects.Size = new System.Drawing.Size(430, 98);
+            this.tbPlayerNearObjects.TabIndex = 14;
+            this.tbPlayerNearObjects.WordWrap = false;
+            // 
+            // tbPlayerTargetName
+            // 
+            this.tbPlayerTargetName.Location = new System.Drawing.Point(79, 126);
+            this.tbPlayerTargetName.Name = "tbPlayerTargetName";
+            this.tbPlayerTargetName.Size = new System.Drawing.Size(388, 20);
+            this.tbPlayerTargetName.TabIndex = 13;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(3, 129);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(70, 13);
+            this.label21.TabIndex = 12;
+            this.label21.Text = "Target name:";
+            // 
+            // tbPlayerTarget
+            // 
+            this.tbPlayerTarget.Location = new System.Drawing.Point(50, 91);
+            this.tbPlayerTarget.Name = "tbPlayerTarget";
+            this.tbPlayerTarget.Size = new System.Drawing.Size(417, 20);
+            this.tbPlayerTarget.TabIndex = 11;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(3, 94);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(41, 13);
+            this.label20.TabIndex = 10;
+            this.label20.Text = "Target:";
+            // 
+            // tbPlayerMaxMp
+            // 
+            this.tbPlayerMaxMp.Enabled = false;
+            this.tbPlayerMaxMp.Location = new System.Drawing.Point(186, 32);
+            this.tbPlayerMaxMp.Name = "tbPlayerMaxMp";
+            this.tbPlayerMaxMp.Size = new System.Drawing.Size(88, 20);
+            this.tbPlayerMaxMp.TabIndex = 9;
+            // 
+            // tbPlayerMaxHp
+            // 
+            this.tbPlayerMaxHp.Enabled = false;
+            this.tbPlayerMaxHp.Location = new System.Drawing.Point(185, 3);
+            this.tbPlayerMaxHp.Name = "tbPlayerMaxHp";
+            this.tbPlayerMaxHp.Size = new System.Drawing.Size(88, 20);
+            this.tbPlayerMaxHp.TabIndex = 8;
+            // 
+            // tbPlayerXp
+            // 
+            this.tbPlayerXp.Enabled = false;
+            this.tbPlayerXp.Location = new System.Drawing.Point(37, 62);
+            this.tbPlayerXp.Name = "tbPlayerXp";
+            this.tbPlayerXp.Size = new System.Drawing.Size(88, 20);
+            this.tbPlayerXp.TabIndex = 7;
+            // 
+            // tbPlayerMp
+            // 
+            this.tbPlayerMp.Enabled = false;
+            this.tbPlayerMp.Location = new System.Drawing.Point(37, 35);
+            this.tbPlayerMp.Name = "tbPlayerMp";
+            this.tbPlayerMp.Size = new System.Drawing.Size(88, 20);
+            this.tbPlayerMp.TabIndex = 6;
+            // 
+            // tbPlayerHp
+            // 
+            this.tbPlayerHp.Enabled = false;
+            this.tbPlayerHp.Location = new System.Drawing.Point(37, 3);
+            this.tbPlayerHp.Name = "tbPlayerHp";
+            this.tbPlayerHp.Size = new System.Drawing.Size(88, 20);
+            this.tbPlayerHp.TabIndex = 5;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(6, 65);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(24, 13);
+            this.label18.TabIndex = 4;
+            this.label18.Text = "XP:";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(131, 6);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(48, 13);
+            this.label17.TabIndex = 3;
+            this.label17.Text = "Max HP:";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(131, 35);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(49, 13);
+            this.label16.TabIndex = 2;
+            this.label16.Text = "Max MP:";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(6, 35);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(26, 13);
+            this.label15.TabIndex = 1;
+            this.label15.Text = "MP:";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(6, 6);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(25, 13);
+            this.label14.TabIndex = 0;
+            this.label14.Text = "HP:";
             // 
             // tabPageDebug
             // 
@@ -685,359 +1042,6 @@
             this.label1.TabIndex = 17;
             this.label1.Text = "TLS:";
             // 
-            // tabPageWayPoints
-            // 
-            this.tabPageWayPoints.Controls.Add(this.cbAutoAddWaypoints);
-            this.tabPageWayPoints.Controls.Add(this.btnAddWayPoint);
-            this.tabPageWayPoints.Controls.Add(this.comboWayPointTypes);
-            this.tabPageWayPoints.Controls.Add(this.groupBox4);
-            this.tabPageWayPoints.Controls.Add(this.groupBox3);
-            this.tabPageWayPoints.Controls.Add(this.groupBox2);
-            this.tabPageWayPoints.Controls.Add(this.gbNormalWaypoints);
-            this.tabPageWayPoints.Location = new System.Drawing.Point(4, 22);
-            this.tabPageWayPoints.Name = "tabPageWayPoints";
-            this.tabPageWayPoints.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWayPoints.Size = new System.Drawing.Size(530, 370);
-            this.tabPageWayPoints.TabIndex = 2;
-            this.tabPageWayPoints.Text = "WayPoints";
-            this.tabPageWayPoints.UseVisualStyleBackColor = true;
-            // 
-            // cbAutoAddWaypoints
-            // 
-            this.cbAutoAddWaypoints.AutoSize = true;
-            this.cbAutoAddWaypoints.Location = new System.Drawing.Point(320, 220);
-            this.cbAutoAddWaypoints.Name = "cbAutoAddWaypoints";
-            this.cbAutoAddWaypoints.Size = new System.Drawing.Size(119, 17);
-            this.cbAutoAddWaypoints.TabIndex = 6;
-            this.cbAutoAddWaypoints.Text = "Auto add waypoints";
-            this.cbAutoAddWaypoints.UseVisualStyleBackColor = true;
-            // 
-            // btnAddWayPoint
-            // 
-            this.btnAddWayPoint.Enabled = false;
-            this.btnAddWayPoint.Location = new System.Drawing.Point(209, 216);
-            this.btnAddWayPoint.Name = "btnAddWayPoint";
-            this.btnAddWayPoint.Size = new System.Drawing.Size(94, 23);
-            this.btnAddWayPoint.TabIndex = 5;
-            this.btnAddWayPoint.Text = "Add WayPoint";
-            this.btnAddWayPoint.UseVisualStyleBackColor = true;
-            // 
-            // comboWayPointTypes
-            // 
-            this.comboWayPointTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboWayPointTypes.FormattingEnabled = true;
-            this.comboWayPointTypes.Items.AddRange(new object[] {
-            "Normal",
-            "Ghost",
-            "Vendor",
-            "Repair"});
-            this.comboWayPointTypes.Location = new System.Drawing.Point(8, 218);
-            this.comboWayPointTypes.Name = "comboWayPointTypes";
-            this.comboWayPointTypes.Size = new System.Drawing.Size(195, 21);
-            this.comboWayPointTypes.TabIndex = 4;
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.btnCopyFromVendor);
-            this.groupBox4.Controls.Add(this.tbCountRepair);
-            this.groupBox4.Controls.Add(this.label13);
-            this.groupBox4.Location = new System.Drawing.Point(209, 112);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(200, 100);
-            this.groupBox4.TabIndex = 3;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Repair";
-            // 
-            // btnCopyFromVendor
-            // 
-            this.btnCopyFromVendor.Location = new System.Drawing.Point(9, 44);
-            this.btnCopyFromVendor.Name = "btnCopyFromVendor";
-            this.btnCopyFromVendor.Size = new System.Drawing.Size(110, 23);
-            this.btnCopyFromVendor.TabIndex = 5;
-            this.btnCopyFromVendor.Text = "Copy from Vendor";
-            this.btnCopyFromVendor.UseVisualStyleBackColor = true;
-            // 
-            // tbCountRepair
-            // 
-            this.tbCountRepair.Enabled = false;
-            this.tbCountRepair.Location = new System.Drawing.Point(50, 18);
-            this.tbCountRepair.Name = "tbCountRepair";
-            this.tbCountRepair.Size = new System.Drawing.Size(100, 20);
-            this.tbCountRepair.TabIndex = 4;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 21);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(38, 13);
-            this.label13.TabIndex = 3;
-            this.label13.Text = "Count:";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.tbCountVendor);
-            this.groupBox3.Controls.Add(this.label12);
-            this.groupBox3.Location = new System.Drawing.Point(3, 112);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 100);
-            this.groupBox3.TabIndex = 2;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Vendor";
-            // 
-            // tbCountVendor
-            // 
-            this.tbCountVendor.Enabled = false;
-            this.tbCountVendor.Location = new System.Drawing.Point(51, 18);
-            this.tbCountVendor.Name = "tbCountVendor";
-            this.tbCountVendor.Size = new System.Drawing.Size(100, 20);
-            this.tbCountVendor.TabIndex = 3;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(7, 21);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(38, 13);
-            this.label12.TabIndex = 2;
-            this.label12.Text = "Count:";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.tbCountGhost);
-            this.groupBox2.Controls.Add(this.label11);
-            this.groupBox2.Location = new System.Drawing.Point(209, 6);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 100);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Ghost";
-            // 
-            // tbCountGhost
-            // 
-            this.tbCountGhost.Enabled = false;
-            this.tbCountGhost.Location = new System.Drawing.Point(50, 17);
-            this.tbCountGhost.Name = "tbCountGhost";
-            this.tbCountGhost.Size = new System.Drawing.Size(100, 20);
-            this.tbCountGhost.TabIndex = 2;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 20);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(38, 13);
-            this.label11.TabIndex = 1;
-            this.label11.Text = "Count:";
-            // 
-            // gbNormalWaypoints
-            // 
-            this.gbNormalWaypoints.Controls.Add(this.tbCountNormal);
-            this.gbNormalWaypoints.Controls.Add(this.label10);
-            this.gbNormalWaypoints.Location = new System.Drawing.Point(3, 6);
-            this.gbNormalWaypoints.Name = "gbNormalWaypoints";
-            this.gbNormalWaypoints.Size = new System.Drawing.Size(200, 100);
-            this.gbNormalWaypoints.TabIndex = 0;
-            this.gbNormalWaypoints.TabStop = false;
-            this.gbNormalWaypoints.Text = "Normal";
-            // 
-            // tbCountNormal
-            // 
-            this.tbCountNormal.Enabled = false;
-            this.tbCountNormal.Location = new System.Drawing.Point(51, 17);
-            this.tbCountNormal.Name = "tbCountNormal";
-            this.tbCountNormal.Size = new System.Drawing.Size(100, 20);
-            this.tbCountNormal.TabIndex = 1;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(7, 20);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(38, 13);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "Count:";
-            // 
-            // tabPagePlayer
-            // 
-            this.tabPagePlayer.Controls.Add(this.tbPlayerIsSitting);
-            this.tabPagePlayer.Controls.Add(this.label28);
-            this.tabPagePlayer.Controls.Add(this.label22);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerNearObjects);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerTargetName);
-            this.tabPagePlayer.Controls.Add(this.label21);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerTarget);
-            this.tabPagePlayer.Controls.Add(this.label20);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerMaxMp);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerMaxHp);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerXp);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerMp);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerHp);
-            this.tabPagePlayer.Controls.Add(this.label18);
-            this.tabPagePlayer.Controls.Add(this.label17);
-            this.tabPagePlayer.Controls.Add(this.label16);
-            this.tabPagePlayer.Controls.Add(this.label15);
-            this.tabPagePlayer.Controls.Add(this.label14);
-            this.tabPagePlayer.Location = new System.Drawing.Point(4, 22);
-            this.tabPagePlayer.Name = "tabPagePlayer";
-            this.tabPagePlayer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePlayer.Size = new System.Drawing.Size(530, 370);
-            this.tabPagePlayer.TabIndex = 3;
-            this.tabPagePlayer.Text = "Player";
-            this.tabPagePlayer.UseVisualStyleBackColor = true;
-            // 
-            // tbPlayerIsSitting
-            // 
-            this.tbPlayerIsSitting.Location = new System.Drawing.Point(335, 3);
-            this.tbPlayerIsSitting.Name = "tbPlayerIsSitting";
-            this.tbPlayerIsSitting.Size = new System.Drawing.Size(100, 20);
-            this.tbPlayerIsSitting.TabIndex = 17;
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(290, 6);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(39, 13);
-            this.label28.TabIndex = 16;
-            this.label28.Text = "Sitting:";
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(3, 162);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(33, 13);
-            this.label22.TabIndex = 15;
-            this.label22.Text = "Near:";
-            // 
-            // tbPlayerNearObjects
-            // 
-            this.tbPlayerNearObjects.Location = new System.Drawing.Point(37, 159);
-            this.tbPlayerNearObjects.Multiline = true;
-            this.tbPlayerNearObjects.Name = "tbPlayerNearObjects";
-            this.tbPlayerNearObjects.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbPlayerNearObjects.Size = new System.Drawing.Size(430, 98);
-            this.tbPlayerNearObjects.TabIndex = 14;
-            this.tbPlayerNearObjects.WordWrap = false;
-            // 
-            // tbPlayerTargetName
-            // 
-            this.tbPlayerTargetName.Location = new System.Drawing.Point(79, 126);
-            this.tbPlayerTargetName.Name = "tbPlayerTargetName";
-            this.tbPlayerTargetName.Size = new System.Drawing.Size(388, 20);
-            this.tbPlayerTargetName.TabIndex = 13;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(3, 129);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(70, 13);
-            this.label21.TabIndex = 12;
-            this.label21.Text = "Target name:";
-            // 
-            // tbPlayerTarget
-            // 
-            this.tbPlayerTarget.Location = new System.Drawing.Point(50, 91);
-            this.tbPlayerTarget.Name = "tbPlayerTarget";
-            this.tbPlayerTarget.Size = new System.Drawing.Size(417, 20);
-            this.tbPlayerTarget.TabIndex = 11;
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(3, 94);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(41, 13);
-            this.label20.TabIndex = 10;
-            this.label20.Text = "Target:";
-            // 
-            // tbPlayerMaxMp
-            // 
-            this.tbPlayerMaxMp.Enabled = false;
-            this.tbPlayerMaxMp.Location = new System.Drawing.Point(186, 32);
-            this.tbPlayerMaxMp.Name = "tbPlayerMaxMp";
-            this.tbPlayerMaxMp.Size = new System.Drawing.Size(88, 20);
-            this.tbPlayerMaxMp.TabIndex = 9;
-            // 
-            // tbPlayerMaxHp
-            // 
-            this.tbPlayerMaxHp.Enabled = false;
-            this.tbPlayerMaxHp.Location = new System.Drawing.Point(185, 3);
-            this.tbPlayerMaxHp.Name = "tbPlayerMaxHp";
-            this.tbPlayerMaxHp.Size = new System.Drawing.Size(88, 20);
-            this.tbPlayerMaxHp.TabIndex = 8;
-            // 
-            // tbPlayerXp
-            // 
-            this.tbPlayerXp.Enabled = false;
-            this.tbPlayerXp.Location = new System.Drawing.Point(37, 62);
-            this.tbPlayerXp.Name = "tbPlayerXp";
-            this.tbPlayerXp.Size = new System.Drawing.Size(88, 20);
-            this.tbPlayerXp.TabIndex = 7;
-            // 
-            // tbPlayerMp
-            // 
-            this.tbPlayerMp.Enabled = false;
-            this.tbPlayerMp.Location = new System.Drawing.Point(37, 35);
-            this.tbPlayerMp.Name = "tbPlayerMp";
-            this.tbPlayerMp.Size = new System.Drawing.Size(88, 20);
-            this.tbPlayerMp.TabIndex = 6;
-            // 
-            // tbPlayerHp
-            // 
-            this.tbPlayerHp.Enabled = false;
-            this.tbPlayerHp.Location = new System.Drawing.Point(37, 3);
-            this.tbPlayerHp.Name = "tbPlayerHp";
-            this.tbPlayerHp.Size = new System.Drawing.Size(88, 20);
-            this.tbPlayerHp.TabIndex = 5;
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(6, 65);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(24, 13);
-            this.label18.TabIndex = 4;
-            this.label18.Text = "XP:";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(131, 6);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(48, 13);
-            this.label17.TabIndex = 3;
-            this.label17.Text = "Max HP:";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(131, 35);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(49, 13);
-            this.label16.TabIndex = 2;
-            this.label16.Text = "Max MP:";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 35);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(26, 13);
-            this.label15.TabIndex = 1;
-            this.label15.Text = "MP:";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(6, 6);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(25, 13);
-            this.label14.TabIndex = 0;
-            this.label14.Text = "HP:";
-            // 
             // tabPageDebug2
             // 
             this.tabPageDebug2.Controls.Add(this.btnUpdateLocation);
@@ -1094,6 +1098,26 @@
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
             // 
+            // btnStartBot
+            // 
+            this.btnStartBot.Location = new System.Drawing.Point(48, 209);
+            this.btnStartBot.Name = "btnStartBot";
+            this.btnStartBot.Size = new System.Drawing.Size(75, 23);
+            this.btnStartBot.TabIndex = 16;
+            this.btnStartBot.Text = "Start";
+            this.btnStartBot.UseVisualStyleBackColor = true;
+            this.btnStartBot.Click += new System.EventHandler(this.btnStartBot_Click);
+            // 
+            // btnStopBot
+            // 
+            this.btnStopBot.Location = new System.Drawing.Point(129, 209);
+            this.btnStopBot.Name = "btnStopBot";
+            this.btnStopBot.Size = new System.Drawing.Size(75, 23);
+            this.btnStopBot.TabIndex = 17;
+            this.btnStopBot.Text = "Stop";
+            this.btnStopBot.UseVisualStyleBackColor = true;
+            this.btnStopBot.Click += new System.EventHandler(this.btnStopBot_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1110,8 +1134,6 @@
             this.tabControlMain.ResumeLayout(false);
             this.tabPageMain.ResumeLayout(false);
             this.tabPageMain.PerformLayout();
-            this.tabPageDebug.ResumeLayout(false);
-            this.tabPageDebug.PerformLayout();
             this.tabPageWayPoints.ResumeLayout(false);
             this.tabPageWayPoints.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -1124,6 +1146,8 @@
             this.gbNormalWaypoints.PerformLayout();
             this.tabPagePlayer.ResumeLayout(false);
             this.tabPagePlayer.PerformLayout();
+            this.tabPageDebug.ResumeLayout(false);
+            this.tabPageDebug.PerformLayout();
             this.tabPageDebug2.ResumeLayout(false);
             this.tabPageDebug2.PerformLayout();
             this.ResumeLayout(false);
@@ -1233,6 +1257,8 @@
         private System.Windows.Forms.Label lblLocation;
         private System.Windows.Forms.TextBox tbOrientation;
         private System.Windows.Forms.TextBox tbLocation;
+        private System.Windows.Forms.Button btnStopBot;
+        private System.Windows.Forms.Button btnStartBot;
     }
 }
 

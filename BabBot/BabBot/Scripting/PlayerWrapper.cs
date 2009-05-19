@@ -37,6 +37,8 @@ namespace BabBot.Scripting
         float FacingDegrees();
         float TargetFacingDegrees();
         float AngleToTargetDegrees();
+        void WalkToNextWayPoint(Bot.WayPointType wpType);
+        void Stop();
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -124,6 +126,16 @@ namespace BabBot.Scripting
         public float AngleToTargetDegrees()
         {
             return player.AngleToTargetDegrees();
+        }
+
+        public void WalkToNextWayPoint(Bot.WayPointType wpType)
+        {
+            player.WalkToNextWayPoint(wpType);
+        }
+
+        public void Stop()
+        {
+            player.Stop();
         }
 
         #endregion

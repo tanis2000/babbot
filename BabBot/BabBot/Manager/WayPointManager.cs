@@ -30,6 +30,12 @@ namespace BabBot.Manager
         public WayPointCollection RepairPath;
         public WayPointCollection VendorPath;
 
+        public int CurrentNormalWayPointIndex = 0;
+        public int CurrentGhostWayPointIndex = 0;
+        public int CurrentBranchWayPointIndex = 0;
+        public int CurrentRepairWayPointIndex = 0;
+        public int CurrentVendorWayPointIndex = 0;
+
         static WayPointManager()
         {
         }
@@ -82,7 +88,7 @@ namespace BabBot.Manager
             switch (wpt)
             {
                 case WayPointType.Vendor:
-                    VendorPath.Reverse();
+                    NormalPath.Reverse();
                     break;
                 case WayPointType.Repair:
                     RepairPath.Reverse();
@@ -99,6 +105,50 @@ namespace BabBot.Manager
             }
         }
 
+        public WayPoint GetNextWayPoint(WayPointType wpType)
+        {
+            switch (wpType)
+            {
+                case WayPointType.Vendor:
+                    if (VendorNodeCount == 0)
+                    {
+                        return null;
+                    }
+                    CurrentVendorWayPointIndex++;
+                    if (CurrentVendorWayPointIndex > VendorNodeCount) CurrentVendorWayPointIndex = 0;
+                    return VendorPath[CurrentVendorWayPointIndex];
+                    break;
+                case WayPointType.Repair:
+                    if (RepairNodeCount == 0)
+                    {
+                        return null;
+                    }
+                    CurrentRepairWayPointIndex++;
+                    if (CurrentRepairWayPointIndex > RepairNodeCount) CurrentRepairWayPointIndex = 0;
+                    return RepairPath[CurrentRepairWayPointIndex];
+                    break;
+                case WayPointType.Normal:
+                    if (NormalNodeCount == 0)
+                    {
+                        return null;
+                    }
+                    CurrentNormalWayPointIndex++;
+                    if (CurrentNormalWayPointIndex > NormalNodeCount) CurrentNormalWayPointIndex = 0;
+                    return NormalPath[CurrentNormalWayPointIndex];
+                    break;
+                case WayPointType.Ghost:
+                    if (GhostNodeCount == 0)
+                    {
+                        return null;
+                    }
+                    CurrentGhostWayPointIndex++;
+                    if (CurrentGhostWayPointIndex > GhostNodeCount) CurrentGhostWayPointIndex = 0;
+                    return GhostPath[CurrentGhostWayPointIndex];
+                    break;
+                default:
+                    return null;
+            }
+        }
 
         #region Properties
 

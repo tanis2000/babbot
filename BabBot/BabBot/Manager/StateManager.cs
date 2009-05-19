@@ -20,12 +20,27 @@ using BabBot.Wow;
 
 namespace BabBot.Manager
 {
-    public class StateManager
+    public sealed class StateManager
     {
+        static readonly StateManager instance = new StateManager();
+
         private PlayerState CurrentState;
         private PlayerState LastState;
 
+        static StateManager()
+        {
+        }
+
+        public static StateManager Instance
+        {
+            get { return instance; }
+        }
+
         public StateManager()
+        {
+        }
+
+        public void Init()
         {
             CurrentState = LastState = PlayerState.Start;
         }
@@ -119,6 +134,18 @@ namespace BabBot.Manager
             {
                 CurrentState = PlayerState.Graveyard;
             }
+        }
+
+        public void Start()
+        {
+            // Start botting
+            CurrentState = PlayerState.Start;
+        }
+
+        public void Stop()
+        {
+            // Stop botting
+            CurrentState = PlayerState.Stop;
         }
     }
 }

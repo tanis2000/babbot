@@ -17,6 +17,7 @@
     Copyright 2009 BabBot Team
 */
 using System;
+using BabBot.Bot;
 using BabBot.Scripting;
 using BabBot.Wow;
 
@@ -87,6 +88,9 @@ public class Script : IScript
             case PlayerState.Roaming:
                 OnRoaming();
                 break;
+            case PlayerState.Stop:
+                OnStop();
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -94,12 +98,21 @@ public class Script : IScript
     }
 
     /// <summary>
-    /// Called when we have attached ourselves to WoW's client.
-    /// This state happens only once of course
+    /// Called when we have attached ourselves to WoW's client or when we start botting.
     /// </summary>
     private void OnStart()
     {
         // No ideas for now :)
+    }
+
+    /// <summary>
+    /// Called when we have detach from WoW's client or when we hit the stop button and stop botting.
+    /// This state happens only once of course
+    /// </summary>
+    private void OnStop()
+    {
+        /// We stop movement just in case we're moving. Eventually we might want to stop fighting as well.
+        player.Stop();
     }
 
     /// <summary>
@@ -129,6 +142,10 @@ public class Script : IScript
         /// check what happens around us (like if there's anything to
         /// attack or anything attacking us, or if we run out of mana/health,
         /// or if we should rebuff something)
+        /// 
+        /// Right now we only walk through the waypoints as a proof of concept
+        Console.WriteLine("OnRoaming() -- Walking to the next waypoint");
+        player.WalkToNextWayPoint(WayPointType.Normal);
     }
 
     /// <summary>

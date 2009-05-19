@@ -36,7 +36,8 @@ namespace BabBot.Manager
         /// </summary>
         public BotManager()
         {
-            StateManager = new StateManager();
+            StateManager = StateManager.Instance;
+            StateManager.Init();
             workerThread = null;
         }
 

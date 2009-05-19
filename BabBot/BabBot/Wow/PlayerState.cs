@@ -98,6 +98,10 @@ namespace BabBot.Wow
         /// <summary>
         /// We are ready for the next action
         /// </summary>
-        Ready
+        Ready,
+        /// <summary>
+        /// We stopped botting
+        /// </summary>
+        Stop
     }
 }
