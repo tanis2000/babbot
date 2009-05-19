@@ -52,6 +52,8 @@ namespace BabBot.Wow
         public static uint NextObject = 0x3C;
         public static uint TypeOffset = 0x14;
         public static uint DescriptorOffset = 0x08;
+        public static uint cameraPointer = 0x0117108C;
+        public static uint cameraOffset = 0x00007834;
 
 
         public static uint PlayerBaseOffset
