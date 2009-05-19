@@ -110,6 +110,7 @@ namespace BabBot.Manager
         public static uint TLS;
         public static int WowHWND;
         public static Host ScriptHost;
+        //public static WayPointManager WayPointManager;
 
         static ProcessManager()
         {
@@ -124,6 +125,8 @@ namespace BabBot.Manager
             WowHWND = 0;
             BotManager = new BotManager();
             ScriptHost = new Host();
+            //WayPointManager = WayPointManager.Instance;
+            WayPointManager.Instance.Init();
         }
 
         /// <summary>

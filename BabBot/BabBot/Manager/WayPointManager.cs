@@ -20,24 +20,61 @@ using BabBot.Bot;
 
 namespace BabBot.Manager
 {
-    public class WayPointManager
+    public sealed class WayPointManager
     {
+        static readonly WayPointManager instance = new WayPointManager();
+
         public WayPointCollection BranchPath;
         public WayPointCollection GhostPath;
         public WayPointCollection NormalPath;
         public WayPointCollection RepairPath;
         public WayPointCollection VendorPath;
 
+        static WayPointManager()
+        {
+        }
+
         /// <summary>
         /// Base constructor
         /// </summary>
-        public WayPointManager()
+        private WayPointManager()
+        {
+        }
+
+        public static WayPointManager Instance
+        {
+            get { return instance; }
+        }
+
+        public void Init()
         {
             NormalPath = new WayPointCollection();
             GhostPath = new WayPointCollection();
             VendorPath = new WayPointCollection();
             RepairPath = new WayPointCollection();
             BranchPath = new WayPointCollection();
+        }
+
+        public void AddWayPoint(WayPoint wp)
+        {
+            switch (wp.WPType)
+            {
+                case WayPointType.Vendor:
+                    VendorPath.Add(wp);
+                    break;
+                case WayPointType.Repair:
+                    RepairPath.Add(wp);
+                    break;
+                case WayPointType.Ghost:
+                    GhostPath.Add(wp);
+                    break;
+                case WayPointType.Branch:
+                    BranchPath.Add(wp);
+                    break;
+                case WayPointType.Normal:
+                    NormalPath.Add(wp);
+                    break;
+            }
         }
 
         public void Reverse(WayPointType wpt)
@@ -75,7 +112,7 @@ namespace BabBot.Manager
             get { return GhostPath.Count; }
         }
 
-        public int VendorNoteCount
+        public int VendorNodeCount
         {
             get { return VendorPath.Count; }
         }
