@@ -218,7 +218,7 @@ namespace BabBot.Manager
 
                 if (!string.IsNullOrEmpty(wowPath))
                 {
-                    process = AppHelper.RunAs(Config.GuestUsername, "", null, wowPath);
+                    process = AppHelper.RunAs(Config.GuestUsername, Config.GuestPassword, null, wowPath);
                     afterProcessStart();
                 }
                 else
