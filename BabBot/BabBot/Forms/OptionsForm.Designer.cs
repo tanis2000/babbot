@@ -29,18 +29,19 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.btnOk = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tbWowExePath = new System.Windows.Forms.TextBox();
-            this.tbGuestUsername = new System.Windows.Forms.TextBox();
-            this.tbGuestPassword = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.btnBrowseWowExec = new System.Windows.Forms.Button();
             this.btnFindWowExePath = new System.Windows.Forms.Button();
+            this.btnBrowseWowExec = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tbGuestPassword = new System.Windows.Forms.TextBox();
+            this.tbGuestUsername = new System.Windows.Forms.TextBox();
+            this.tbWowExePath = new System.Windows.Forms.TextBox();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnOk = new System.Windows.Forms.Button();
+            this.cbDebugMode = new System.Windows.Forms.CheckBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -68,27 +69,6 @@
             this.splitContainer1.SplitterDistance = 302;
             this.splitContainer1.TabIndex = 0;
             // 
-            // btnOk
-            // 
-            this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(362, 6);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(75, 23);
-            this.btnOk.TabIndex = 0;
-            this.btnOk.Text = "OK";
-            this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(443, 6);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 1;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -101,6 +81,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.cbDebugMode);
             this.tabPage1.Controls.Add(this.btnFindWowExePath);
             this.tabPage1.Controls.Add(this.btnBrowseWowExec);
             this.tabPage1.Controls.Add(this.label3);
@@ -117,53 +98,15 @@
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tbWowExePath
+            // btnFindWowExePath
             // 
-            this.tbWowExePath.Location = new System.Drawing.Point(105, 11);
-            this.tbWowExePath.Name = "tbWowExePath";
-            this.tbWowExePath.Size = new System.Drawing.Size(241, 20);
-            this.tbWowExePath.TabIndex = 0;
-            // 
-            // tbGuestUsername
-            // 
-            this.tbGuestUsername.Location = new System.Drawing.Point(105, 41);
-            this.tbGuestUsername.Name = "tbGuestUsername";
-            this.tbGuestUsername.Size = new System.Drawing.Size(170, 20);
-            this.tbGuestUsername.TabIndex = 1;
-            // 
-            // tbGuestPassword
-            // 
-            this.tbGuestPassword.Location = new System.Drawing.Point(105, 73);
-            this.tbGuestPassword.Name = "tbGuestPassword";
-            this.tbGuestPassword.Size = new System.Drawing.Size(170, 20);
-            this.tbGuestPassword.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "WoW Executable";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 44);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(84, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Guest username";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 76);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Guest password";
+            this.btnFindWowExePath.Location = new System.Drawing.Point(435, 9);
+            this.btnFindWowExePath.Name = "btnFindWowExePath";
+            this.btnFindWowExePath.Size = new System.Drawing.Size(75, 23);
+            this.btnFindWowExePath.TabIndex = 7;
+            this.btnFindWowExePath.Text = "Auto-Find";
+            this.btnFindWowExePath.UseVisualStyleBackColor = true;
+            this.btnFindWowExePath.Click += new System.EventHandler(this.btnFindWowExePath_Click);
             // 
             // btnBrowseWowExec
             // 
@@ -175,15 +118,84 @@
             this.btnBrowseWowExec.UseVisualStyleBackColor = true;
             this.btnBrowseWowExec.Click += new System.EventHandler(this.btnBrowseWowExec_Click);
             // 
-            // btnFindWowExePath
+            // label3
             // 
-            this.btnFindWowExePath.Location = new System.Drawing.Point(435, 9);
-            this.btnFindWowExePath.Name = "btnFindWowExePath";
-            this.btnFindWowExePath.Size = new System.Drawing.Size(75, 23);
-            this.btnFindWowExePath.TabIndex = 7;
-            this.btnFindWowExePath.Text = "Auto-Find";
-            this.btnFindWowExePath.UseVisualStyleBackColor = true;
-            this.btnFindWowExePath.Click += new System.EventHandler(this.btnFindWowExePath_Click);
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 76);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(83, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Guest password";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 44);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(84, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Guest username";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 14);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "WoW Executable";
+            // 
+            // tbGuestPassword
+            // 
+            this.tbGuestPassword.Location = new System.Drawing.Point(105, 73);
+            this.tbGuestPassword.Name = "tbGuestPassword";
+            this.tbGuestPassword.Size = new System.Drawing.Size(170, 20);
+            this.tbGuestPassword.TabIndex = 2;
+            // 
+            // tbGuestUsername
+            // 
+            this.tbGuestUsername.Location = new System.Drawing.Point(105, 41);
+            this.tbGuestUsername.Name = "tbGuestUsername";
+            this.tbGuestUsername.Size = new System.Drawing.Size(170, 20);
+            this.tbGuestUsername.TabIndex = 1;
+            // 
+            // tbWowExePath
+            // 
+            this.tbWowExePath.Location = new System.Drawing.Point(105, 11);
+            this.tbWowExePath.Name = "tbWowExePath";
+            this.tbWowExePath.Size = new System.Drawing.Size(241, 20);
+            this.tbWowExePath.TabIndex = 0;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(443, 6);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 1;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // btnOk
+            // 
+            this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOk.Location = new System.Drawing.Point(362, 6);
+            this.btnOk.Name = "btnOk";
+            this.btnOk.Size = new System.Drawing.Size(75, 23);
+            this.btnOk.TabIndex = 0;
+            this.btnOk.Text = "OK";
+            this.btnOk.UseVisualStyleBackColor = true;
+            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            // 
+            // cbDebugMode
+            // 
+            this.cbDebugMode.AutoSize = true;
+            this.cbDebugMode.Location = new System.Drawing.Point(11, 112);
+            this.cbDebugMode.Name = "cbDebugMode";
+            this.cbDebugMode.Size = new System.Drawing.Size(88, 17);
+            this.cbDebugMode.TabIndex = 8;
+            this.cbDebugMode.Text = "Debug Mode";
+            this.cbDebugMode.UseVisualStyleBackColor = true;
             // 
             // OptionsForm
             // 
@@ -220,5 +232,6 @@
         private System.Windows.Forms.TextBox tbGuestUsername;
         private System.Windows.Forms.TextBox tbWowExePath;
         private System.Windows.Forms.Button btnFindWowExePath;
+        private System.Windows.Forms.CheckBox cbDebugMode;
     }
 }

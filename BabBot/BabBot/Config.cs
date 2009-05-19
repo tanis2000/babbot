@@ -26,5 +26,6 @@ namespace BabBot
         public string GuestPassword = "";
         public string GuestUsername = "Guest";
         public string WowExePath = "";
+        public bool DebugMode = false;
     }
 }

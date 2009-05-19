@@ -183,6 +183,18 @@ namespace BabBot.Forms
 
         }
 
+        private void ActivateDebugMode()
+        {
+            tabControlMain.TabPages["tabPageDebug"].Enabled = true;
+            tabControlMain.TabPages["tabPageDebug2"].Enabled = true;
+        }
+
+
+        private void DeactivateDebugMode()
+        {
+            tabControlMain.TabPages["tabPageDebug"].Enabled = false;
+            tabControlMain.TabPages["tabPageDebug2"].Enabled = false;
+        }
 
         #region UI Event Handlers
 
@@ -259,6 +271,9 @@ namespace BabBot.Forms
                 WayPointManager.Instance.VendorPath = ProcessManager.Profile.VendorWayPoints;
                 WayPointManager.Instance.RepairPath = ProcessManager.Profile.RepairWayPoints;
                 WayPointManager.Instance.GhostPath = ProcessManager.Profile.GhostWayPoints;
+
+                // UI Stuff
+                tbProfile.Text = dlg.FileName;
             }
         }
 
@@ -274,6 +289,9 @@ namespace BabBot.Forms
                 ProcessManager.Profile.RepairWayPoints = WayPointManager.Instance.RepairPath;
                 ProcessManager.Profile.GhostWayPoints = WayPointManager.Instance.GhostPath;
                 serializer.Save(dlg.FileName, ProcessManager.Profile);
+
+                // UI Stuff
+                tbProfile.Text = dlg.FileName;
             }
         }
 
@@ -379,6 +397,14 @@ namespace BabBot.Forms
             try
             {
                 ProcessManager.Config = serializer.Load(fileName);
+                if (ProcessManager.Config.DebugMode)
+                {
+                    ActivateDebugMode();
+                }
+                else
+                {
+                    DeactivateDebugMode();
+                }
             }
             catch (System.IO.FileNotFoundException ex)
             {
@@ -391,6 +417,15 @@ namespace BabBot.Forms
             string fileName = "config.xml";
             Common.Serializer<Config> serializer = new Serializer<Config>();
             serializer.Save(fileName, ProcessManager.Config);
+
+            if (ProcessManager.Config.DebugMode)
+            {
+                ActivateDebugMode();
+            } 
+            else
+            {
+                DeactivateDebugMode();
+            }
         }
         #endregion
 

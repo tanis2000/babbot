@@ -23,6 +23,7 @@ namespace BabBot.Forms
             tbWowExePath.Text = ProcessManager.Config.WowExePath;
             tbGuestUsername.Text = ProcessManager.Config.GuestUsername;
             tbGuestPassword.Text = ProcessManager.Config.GuestPassword;
+            cbDebugMode.Checked = ProcessManager.Config.DebugMode;
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -30,6 +31,7 @@ namespace BabBot.Forms
             ProcessManager.Config.WowExePath = tbWowExePath.Text;
             ProcessManager.Config.GuestUsername = tbGuestUsername.Text;
             ProcessManager.Config.GuestPassword = tbGuestPassword.Text;
+            ProcessManager.Config.DebugMode = cbDebugMode.Checked;
         }
 
         private void btnBrowseWowExec_Click(object sender, EventArgs e)

@@ -47,11 +47,6 @@
             this.btnLoadProfile = new System.Windows.Forms.Button();
             this.tbProfile = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.btnUpdateLocation = new System.Windows.Forms.Button();
-            this.lblOrientation = new System.Windows.Forms.Label();
-            this.lblLocation = new System.Windows.Forms.Label();
-            this.tbOrientation = new System.Windows.Forms.TextBox();
-            this.tbLocation = new System.Windows.Forms.TextBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
             this.label29 = new System.Windows.Forms.Label();
@@ -128,6 +123,12 @@
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.tabPageDebug2 = new System.Windows.Forms.TabPage();
+            this.btnUpdateLocation = new System.Windows.Forms.Button();
+            this.lblOrientation = new System.Windows.Forms.Label();
+            this.lblLocation = new System.Windows.Forms.Label();
+            this.tbOrientation = new System.Windows.Forms.TextBox();
+            this.tbLocation = new System.Windows.Forms.TextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -138,6 +139,7 @@
             this.groupBox2.SuspendLayout();
             this.gbNormalWaypoints.SuspendLayout();
             this.tabPagePlayer.SuspendLayout();
+            this.tabPageDebug2.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -163,7 +165,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -178,7 +180,7 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.optionsToolStripMenuItem.Text = "&Options..";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -193,16 +195,17 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // tabControlMain
             // 
             this.tabControlMain.Controls.Add(this.tabPageMain);
-            this.tabControlMain.Controls.Add(this.tabPageDebug);
             this.tabControlMain.Controls.Add(this.tabPageWayPoints);
             this.tabControlMain.Controls.Add(this.tabPagePlayer);
+            this.tabControlMain.Controls.Add(this.tabPageDebug);
+            this.tabControlMain.Controls.Add(this.tabPageDebug2);
             this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlMain.Location = new System.Drawing.Point(0, 24);
             this.tabControlMain.Name = "tabControlMain";
@@ -221,11 +224,6 @@
             this.tabPageMain.Controls.Add(this.btnLoadProfile);
             this.tabPageMain.Controls.Add(this.tbProfile);
             this.tabPageMain.Controls.Add(this.label7);
-            this.tabPageMain.Controls.Add(this.btnUpdateLocation);
-            this.tabPageMain.Controls.Add(this.lblOrientation);
-            this.tabPageMain.Controls.Add(this.lblLocation);
-            this.tabPageMain.Controls.Add(this.tbOrientation);
-            this.tabPageMain.Controls.Add(this.tbLocation);
             this.tabPageMain.Controls.Add(this.btnRun);
             this.tabPageMain.Location = new System.Drawing.Point(4, 22);
             this.tabPageMain.Name = "tabPageMain";
@@ -304,6 +302,7 @@
             // 
             this.tbProfile.Location = new System.Drawing.Point(48, 36);
             this.tbProfile.Name = "tbProfile";
+            this.tbProfile.ReadOnly = true;
             this.tbProfile.Size = new System.Drawing.Size(234, 20);
             this.tbProfile.TabIndex = 7;
             // 
@@ -315,48 +314,6 @@
             this.label7.Size = new System.Drawing.Size(39, 13);
             this.label7.TabIndex = 6;
             this.label7.Text = "Profile:";
-            // 
-            // btnUpdateLocation
-            // 
-            this.btnUpdateLocation.Location = new System.Drawing.Point(381, 197);
-            this.btnUpdateLocation.Name = "btnUpdateLocation";
-            this.btnUpdateLocation.Size = new System.Drawing.Size(112, 23);
-            this.btnUpdateLocation.TabIndex = 5;
-            this.btnUpdateLocation.Text = "Update Location";
-            this.btnUpdateLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateLocation.Click += new System.EventHandler(this.btnUpdateLocation_Click);
-            // 
-            // lblOrientation
-            // 
-            this.lblOrientation.AutoSize = true;
-            this.lblOrientation.Location = new System.Drawing.Point(7, 234);
-            this.lblOrientation.Name = "lblOrientation";
-            this.lblOrientation.Size = new System.Drawing.Size(61, 13);
-            this.lblOrientation.TabIndex = 4;
-            this.lblOrientation.Text = "Orientation:";
-            // 
-            // lblLocation
-            // 
-            this.lblLocation.AutoSize = true;
-            this.lblLocation.Location = new System.Drawing.Point(7, 202);
-            this.lblLocation.Name = "lblLocation";
-            this.lblLocation.Size = new System.Drawing.Size(51, 13);
-            this.lblLocation.TabIndex = 3;
-            this.lblLocation.Text = "Location:";
-            // 
-            // tbOrientation
-            // 
-            this.tbOrientation.Location = new System.Drawing.Point(74, 231);
-            this.tbOrientation.Name = "tbOrientation";
-            this.tbOrientation.Size = new System.Drawing.Size(301, 20);
-            this.tbOrientation.TabIndex = 2;
-            // 
-            // tbLocation
-            // 
-            this.tbLocation.Location = new System.Drawing.Point(74, 199);
-            this.tbLocation.Name = "tbLocation";
-            this.tbLocation.Size = new System.Drawing.Size(301, 20);
-            this.tbLocation.TabIndex = 1;
             // 
             // btnRun
             // 
@@ -1081,6 +1038,62 @@
             this.label14.TabIndex = 0;
             this.label14.Text = "HP:";
             // 
+            // tabPageDebug2
+            // 
+            this.tabPageDebug2.Controls.Add(this.btnUpdateLocation);
+            this.tabPageDebug2.Controls.Add(this.lblOrientation);
+            this.tabPageDebug2.Controls.Add(this.lblLocation);
+            this.tabPageDebug2.Controls.Add(this.tbOrientation);
+            this.tabPageDebug2.Controls.Add(this.tbLocation);
+            this.tabPageDebug2.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDebug2.Name = "tabPageDebug2";
+            this.tabPageDebug2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDebug2.Size = new System.Drawing.Size(530, 370);
+            this.tabPageDebug2.TabIndex = 4;
+            this.tabPageDebug2.Text = "More Debug";
+            this.tabPageDebug2.UseVisualStyleBackColor = true;
+            // 
+            // btnUpdateLocation
+            // 
+            this.btnUpdateLocation.Location = new System.Drawing.Point(386, 4);
+            this.btnUpdateLocation.Name = "btnUpdateLocation";
+            this.btnUpdateLocation.Size = new System.Drawing.Size(112, 23);
+            this.btnUpdateLocation.TabIndex = 10;
+            this.btnUpdateLocation.Text = "Update Location";
+            this.btnUpdateLocation.UseVisualStyleBackColor = true;
+            // 
+            // lblOrientation
+            // 
+            this.lblOrientation.AutoSize = true;
+            this.lblOrientation.Location = new System.Drawing.Point(12, 41);
+            this.lblOrientation.Name = "lblOrientation";
+            this.lblOrientation.Size = new System.Drawing.Size(61, 13);
+            this.lblOrientation.TabIndex = 9;
+            this.lblOrientation.Text = "Orientation:";
+            // 
+            // lblLocation
+            // 
+            this.lblLocation.AutoSize = true;
+            this.lblLocation.Location = new System.Drawing.Point(12, 9);
+            this.lblLocation.Name = "lblLocation";
+            this.lblLocation.Size = new System.Drawing.Size(51, 13);
+            this.lblLocation.TabIndex = 8;
+            this.lblLocation.Text = "Location:";
+            // 
+            // tbOrientation
+            // 
+            this.tbOrientation.Location = new System.Drawing.Point(79, 38);
+            this.tbOrientation.Name = "tbOrientation";
+            this.tbOrientation.Size = new System.Drawing.Size(301, 20);
+            this.tbOrientation.TabIndex = 7;
+            // 
+            // tbLocation
+            // 
+            this.tbLocation.Location = new System.Drawing.Point(79, 6);
+            this.tbLocation.Name = "tbLocation";
+            this.tbLocation.Size = new System.Drawing.Size(301, 20);
+            this.tbLocation.TabIndex = 6;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1111,6 +1124,8 @@
             this.gbNormalWaypoints.PerformLayout();
             this.tabPagePlayer.ResumeLayout(false);
             this.tabPagePlayer.PerformLayout();
+            this.tabPageDebug2.ResumeLayout(false);
+            this.tabPageDebug2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1125,12 +1140,7 @@
         private System.Windows.Forms.TabControl tabControlMain;
         private System.Windows.Forms.TabPage tabPageMain;
         private System.Windows.Forms.TabPage tabPageDebug;
-        private System.Windows.Forms.Label lblOrientation;
-        private System.Windows.Forms.Label lblLocation;
-        private System.Windows.Forms.TextBox tbOrientation;
-        private System.Windows.Forms.TextBox tbLocation;
         private System.Windows.Forms.Button btnRun;
-        private System.Windows.Forms.Button btnUpdateLocation;
         private System.Windows.Forms.TextBox tbCurMgr;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbPlayerBaseOffset;
@@ -1217,6 +1227,12 @@
         private System.Windows.Forms.TextBox txtTravelTime;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabPageDebug2;
+        private System.Windows.Forms.Button btnUpdateLocation;
+        private System.Windows.Forms.Label lblOrientation;
+        private System.Windows.Forms.Label lblLocation;
+        private System.Windows.Forms.TextBox tbOrientation;
+        private System.Windows.Forms.TextBox tbLocation;
     }
 }
 
