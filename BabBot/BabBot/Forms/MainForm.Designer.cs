@@ -38,6 +38,8 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.btnStopBot = new System.Windows.Forms.Button();
+            this.btnStartBot = new System.Windows.Forms.Button();
             this.btnAttachToWow = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -129,8 +131,6 @@
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
-            this.btnStartBot = new System.Windows.Forms.Button();
-            this.btnStopBot = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -236,6 +236,26 @@
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main";
             this.tabPageMain.UseVisualStyleBackColor = true;
+            // 
+            // btnStopBot
+            // 
+            this.btnStopBot.Location = new System.Drawing.Point(129, 209);
+            this.btnStopBot.Name = "btnStopBot";
+            this.btnStopBot.Size = new System.Drawing.Size(75, 23);
+            this.btnStopBot.TabIndex = 17;
+            this.btnStopBot.Text = "Stop";
+            this.btnStopBot.UseVisualStyleBackColor = true;
+            this.btnStopBot.Click += new System.EventHandler(this.btnStopBot_Click);
+            // 
+            // btnStartBot
+            // 
+            this.btnStartBot.Location = new System.Drawing.Point(48, 209);
+            this.btnStartBot.Name = "btnStartBot";
+            this.btnStartBot.Size = new System.Drawing.Size(75, 23);
+            this.btnStartBot.TabIndex = 16;
+            this.btnStartBot.Text = "Start";
+            this.btnStartBot.UseVisualStyleBackColor = true;
+            this.btnStartBot.Click += new System.EventHandler(this.btnStartBot_Click);
             // 
             // btnAttachToWow
             // 
@@ -1065,6 +1085,7 @@
             this.btnUpdateLocation.TabIndex = 10;
             this.btnUpdateLocation.Text = "Update Location";
             this.btnUpdateLocation.UseVisualStyleBackColor = true;
+            this.btnUpdateLocation.Click += new System.EventHandler(this.btnUpdateLocation_Click);
             // 
             // lblOrientation
             // 
@@ -1097,26 +1118,6 @@
             this.tbLocation.Name = "tbLocation";
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
-            // 
-            // btnStartBot
-            // 
-            this.btnStartBot.Location = new System.Drawing.Point(48, 209);
-            this.btnStartBot.Name = "btnStartBot";
-            this.btnStartBot.Size = new System.Drawing.Size(75, 23);
-            this.btnStartBot.TabIndex = 16;
-            this.btnStartBot.Text = "Start";
-            this.btnStartBot.UseVisualStyleBackColor = true;
-            this.btnStartBot.Click += new System.EventHandler(this.btnStartBot_Click);
-            // 
-            // btnStopBot
-            // 
-            this.btnStopBot.Location = new System.Drawing.Point(129, 209);
-            this.btnStopBot.Name = "btnStopBot";
-            this.btnStopBot.Size = new System.Drawing.Size(75, 23);
-            this.btnStopBot.TabIndex = 17;
-            this.btnStopBot.Text = "Stop";
-            this.btnStopBot.UseVisualStyleBackColor = true;
-            this.btnStopBot.Click += new System.EventHandler(this.btnStopBot_Click);
             // 
             // MainForm
             // 
