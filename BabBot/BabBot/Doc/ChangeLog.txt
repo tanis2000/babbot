@@ -1,9 +1,24 @@
-Current
-=======
+Current (1.0.0.113)
+===================
+- Updated offsets to 3.1.2
+- Basic movement through waypoints
+- UI changes
+- Added DebugMode to config
+- Load/Save of WayPoints
+- Recording of WayPoints
+- Added support for the new configuration file
+- Added an Options form
+- Added mouse support to interact with wow's window
+- Added a generic exception handler for unhandled exceptions (and bug reporting)
+
+
+1.0.0.99
+========
 - Fixed some offsets for compatibility with v3.1.1 of the client
 - Optimized player related functions
 - Can load/save profiles (but they're not yet of any use atm)
 - Added all the required GPL license & copyright notes
+
 
 1.0.0.94
 ========
