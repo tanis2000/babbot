@@ -499,6 +499,46 @@ namespace BabBot.Wow
         }
 
 
+        public void PlayAction(PlayerAction act, bool? toggle)
+        {
+            if (toggle != null)
+            {
+                if (act.Toggle)
+                {
+                    if ((bool)toggle)
+                    {
+                        if (!act.Active)
+                        {
+                            // attiva
+                            PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                            PlayerCM.SendKeys(act.Binding.Key);
+                            act.Active = true;
+                        }
+                    }
+                    else
+                    {
+                        if (act.Active)
+                        {
+                            // disattiva
+                            PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                            PlayerCM.SendKeys(act.Binding.Key);
+                            act.Active = true;
+                        }
+                    }
+                }
+            } 
+            else
+            {
+                PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                PlayerCM.SendKeys(act.Binding.Key);
+            }
+        }
+
+        public void PlayAction(PlayerAction act)
+        {
+            PlayAction(act, null);
+        }
+
         // Actions
         public bool Cast(string SlotBar, string Key)
         {

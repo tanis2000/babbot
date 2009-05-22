@@ -16,6 +16,7 @@
   
     Copyright 2009 BabBot Team
 */
+using BabBot.Bot;
 using BabBot.Wow;
 
 namespace BabBot.Scripting
@@ -39,6 +40,8 @@ namespace BabBot.Scripting
         float AngleToTargetDegrees();
         void WalkToNextWayPoint(Bot.WayPointType wpType);
         void Stop();
+        void PlayAction(PlayerAction action, bool toggle);
+        void PlayAction(PlayerAction action);
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -55,7 +58,7 @@ namespace BabBot.Scripting
 
         public string Test()
         {
-            return "test da player";
+            return "player.Test()";
         }
 
         public bool IsSitting()
@@ -136,6 +139,16 @@ namespace BabBot.Scripting
         public void Stop()
         {
             player.Stop();
+        }
+
+        public void PlayAction(PlayerAction action, bool toggle)
+        {
+            player.PlayAction(action, toggle);
+        }
+
+        public void PlayAction(PlayerAction action)
+        {
+            player.PlayAction(action);
         }
 
         #endregion

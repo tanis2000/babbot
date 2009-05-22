@@ -57,6 +57,7 @@ namespace BabBot.Manager
             if (CurrentState == PlayerState.Start)
             {
                 CurrentState = PlayerState.Roaming;
+                return;
             }
 
             if (CurrentState == PlayerState.Roaming)
@@ -78,61 +79,70 @@ namespace BabBot.Manager
                     /// 
                     /// Should we implement this in the cscript? (I think so)
                     CurrentState = PlayerState.PreCombat;
+                    return;
                 }
             }
 
             if (CurrentState == PlayerState.PreCombat)
             {
                 CurrentState = PlayerState.InCombat;
+                return;
             }
 
             if (CurrentState == PlayerState.InCombat)
             {
                 /// We should check if our target died and
-                /// in that case go to PostCombat
-                if (ProcessManager.Player.IsTargetDead())
-                {
-                    CurrentState = PlayerState.PostCombat;
-                }
+                /// in that case go to PostCombat, but we lose target once the
+                /// mob dies, so we cannot use that. We've got to come up with
+                /// a better idea. 
+                CurrentState = PlayerState.PostCombat;
+                return;
             }
 
             if (CurrentState == PlayerState.PostCombat)
             {
                 /// We should check if we need to rest
                 CurrentState = PlayerState.PreRest;
+                return;
             }
 
             if (CurrentState == PlayerState.PreRest)
             {
                 /// We should check if we finished resting
                 CurrentState = PlayerState.Rest;
+                return;
             }
 
             if (CurrentState == PlayerState.Rest)
             {
                 /// We should check if we finished resting
                 CurrentState = PlayerState.PostRest;
+                return;
             }
 
             if (CurrentState == PlayerState.PostRest)
             {
                 /// We finished resting, go back to roaming
                 CurrentState = PlayerState.Roaming;
+                return;
             }
 
             if (ProcessManager.Player.IsDead())
             {
                 CurrentState = PlayerState.Dead;
+                return;
             }
 
             if (ProcessManager.Player.IsGhost())
             {
                 CurrentState = PlayerState.Dead;
+                return;
             }
 
             if (ProcessManager.Player.IsAtGraveyard())
             {
                 CurrentState = PlayerState.Graveyard;
+                return;
             }
         }
 

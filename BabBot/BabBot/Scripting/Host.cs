@@ -64,7 +64,7 @@ namespace BabBot.Scripting
             CSScript.ShareHostRefAssemblies = true;
 
             AsmHelper helper = new AsmHelper(CSScript.Load(Path.GetFullPath(script), null, true));
-            return (IScript)helper.CreateObject("Script");
+            return (IScript)helper.CreateObject("BabBotScript.Script");
         }
 
         public void Test()

@@ -80,3 +80,8 @@ Spiegazione dettagliata di come funziona l'ObjectMAnager di WoW
 http://www.wowwiki.com/API_TargetUnit
 http://www.wowwiki.com/API_ClearTarget
 
+
+To attack with the melee attack by script:
+Slightly longer, but more complete method to just find attack anywhere on your bar.
+
+/script if not ma then for i = 1,72 do if IsAttackAction(i) then ma = i; end; end; end; if ma then if not IsCurrentAction(ma) then UseAction(ma); end; else AttackTarget("target");end; 

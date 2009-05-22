@@ -389,7 +389,7 @@ namespace BabBot.Manager
                 ScriptHost.Start();
                 Initialized = true;
             }
-            catch
+            catch (Exception ex)
             {
                 throw new Exception("Initialize failed!");
             }
