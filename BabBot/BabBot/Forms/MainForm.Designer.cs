@@ -126,7 +126,6 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
-            this.btnUpdateLocation = new System.Windows.Forms.Button();
             this.lblOrientation = new System.Windows.Forms.Label();
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
@@ -552,6 +551,7 @@
             // 
             // tbPlayerIsSitting
             // 
+            this.tbPlayerIsSitting.Enabled = false;
             this.tbPlayerIsSitting.Location = new System.Drawing.Point(335, 3);
             this.tbPlayerIsSitting.Name = "tbPlayerIsSitting";
             this.tbPlayerIsSitting.Size = new System.Drawing.Size(100, 20);
@@ -577,6 +577,7 @@
             // 
             // tbPlayerNearObjects
             // 
+            this.tbPlayerNearObjects.Enabled = false;
             this.tbPlayerNearObjects.Location = new System.Drawing.Point(37, 159);
             this.tbPlayerNearObjects.Multiline = true;
             this.tbPlayerNearObjects.Name = "tbPlayerNearObjects";
@@ -587,6 +588,7 @@
             // 
             // tbPlayerTargetName
             // 
+            this.tbPlayerTargetName.Enabled = false;
             this.tbPlayerTargetName.Location = new System.Drawing.Point(79, 126);
             this.tbPlayerTargetName.Name = "tbPlayerTargetName";
             this.tbPlayerTargetName.Size = new System.Drawing.Size(388, 20);
@@ -603,9 +605,10 @@
             // 
             // tbPlayerTarget
             // 
-            this.tbPlayerTarget.Location = new System.Drawing.Point(50, 91);
+            this.tbPlayerTarget.Enabled = false;
+            this.tbPlayerTarget.Location = new System.Drawing.Point(79, 91);
             this.tbPlayerTarget.Name = "tbPlayerTarget";
-            this.tbPlayerTarget.Size = new System.Drawing.Size(417, 20);
+            this.tbPlayerTarget.Size = new System.Drawing.Size(388, 20);
             this.tbPlayerTarget.TabIndex = 11;
             // 
             // label20
@@ -613,9 +616,9 @@
             this.label20.AutoSize = true;
             this.label20.Location = new System.Drawing.Point(3, 94);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(41, 13);
+            this.label20.Size = new System.Drawing.Size(71, 13);
             this.label20.TabIndex = 10;
-            this.label20.Text = "Target:";
+            this.label20.Text = "Target GUID:";
             // 
             // tbPlayerMaxMp
             // 
@@ -1064,7 +1067,6 @@
             // 
             // tabPageDebug2
             // 
-            this.tabPageDebug2.Controls.Add(this.btnUpdateLocation);
             this.tabPageDebug2.Controls.Add(this.lblOrientation);
             this.tabPageDebug2.Controls.Add(this.lblLocation);
             this.tabPageDebug2.Controls.Add(this.tbOrientation);
@@ -1076,16 +1078,6 @@
             this.tabPageDebug2.TabIndex = 4;
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
-            // 
-            // btnUpdateLocation
-            // 
-            this.btnUpdateLocation.Location = new System.Drawing.Point(386, 4);
-            this.btnUpdateLocation.Name = "btnUpdateLocation";
-            this.btnUpdateLocation.Size = new System.Drawing.Size(112, 23);
-            this.btnUpdateLocation.TabIndex = 10;
-            this.btnUpdateLocation.Text = "Update Location";
-            this.btnUpdateLocation.UseVisualStyleBackColor = true;
-            this.btnUpdateLocation.Click += new System.EventHandler(this.btnUpdateLocation_Click);
             // 
             // lblOrientation
             // 
@@ -1253,7 +1245,6 @@
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPageDebug2;
-        private System.Windows.Forms.Button btnUpdateLocation;
         private System.Windows.Forms.Label lblOrientation;
         private System.Windows.Forms.Label lblLocation;
         private System.Windows.Forms.TextBox tbOrientation;

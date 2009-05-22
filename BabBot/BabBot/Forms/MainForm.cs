@@ -125,6 +125,28 @@ namespace BabBot.Forms
             }
             else
             {
+                if (ProcessManager.ProcessRunning)
+                {
+                    //Misc info updates for the "Player" tab
+
+                    tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", ProcessManager.Player.Location.X,
+                                                    ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z,
+                                                    ProcessManager.Player.CurTargetGuid);
+                    tbOrientation.Text = String.Format("Or.: {0}", ProcessManager.Player.Orientation);
+                    tbPlayerHp.Text = ProcessManager.Player.Hp.ToString();
+                    tbPlayerMaxHp.Text = ProcessManager.Player.MaxHp.ToString();
+                    tbPlayerMp.Text = ProcessManager.Player.Mp.ToString();
+                    tbPlayerMaxMp.Text = ProcessManager.Player.MaxMp.ToString();
+                    tbPlayerXp.Text = ProcessManager.Player.Xp.ToString();
+                    tbPlayerTarget.Text = string.Format("{0:X}", ProcessManager.Player.CurTargetGuid);
+                    tbPlayerTargetName.Text = ProcessManager.Player.CurTargetName;
+                    tbPlayerNearObjects.Text = "Objects" + Environment.NewLine + "===========" + Environment.NewLine +
+                                               ProcessManager.Player.NearObjectsAsTextList + Environment.NewLine + "Mobs" +
+                                               Environment.NewLine +
+                                               "===========" + Environment.NewLine +
+                                               ProcessManager.Player.NearMobsAsTextList;
+                }
+
                 txtCurrentX.Text = ProcessManager.Player.Location.X.ToString();
                 txtCurrentY.Text = ProcessManager.Player.Location.Y.ToString();
                 txtCurrentZ.Text = ProcessManager.Player.Location.Z.ToString();
@@ -206,31 +228,6 @@ namespace BabBot.Forms
         private void btnRun_Click(object sender, EventArgs e)
         {
             ProcessManager.StartWow();
-        }
-
-        private void btnUpdateLocation_Click(object sender, EventArgs e)
-        {
-            if (ProcessManager.ProcessRunning)
-            {
-                //ProcessManager.Player.UpdateFromClient();
-
-                tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", ProcessManager.Player.Location.X,
-                                                ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z,
-                                                ProcessManager.Player.CurTargetGuid);
-                tbOrientation.Text = String.Format("Or.: {0}", ProcessManager.Player.Orientation);
-                tbPlayerHp.Text = ProcessManager.Player.Hp.ToString();
-                tbPlayerMaxHp.Text = ProcessManager.Player.MaxHp.ToString();
-                tbPlayerMp.Text = ProcessManager.Player.Mp.ToString();
-                tbPlayerMaxMp.Text = ProcessManager.Player.MaxMp.ToString();
-                tbPlayerXp.Text = ProcessManager.Player.Xp.ToString();
-                tbPlayerTarget.Text = string.Format("{0:X}", ProcessManager.Player.CurTargetGuid);
-                tbPlayerTargetName.Text = ProcessManager.Player.CurTargetName;
-                tbPlayerNearObjects.Text = "Objects" + Environment.NewLine + "===========" + Environment.NewLine +
-                                           ProcessManager.Player.NearObjectsAsTextList + Environment.NewLine + "Mobs" +
-                                           Environment.NewLine +
-                                           "===========" + Environment.NewLine +
-                                           ProcessManager.Player.NearMobsAsTextList;
-            }
         }
 
         private void btnFindTLS_Click(object sender, EventArgs e)
