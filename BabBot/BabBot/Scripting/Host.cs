@@ -43,17 +43,10 @@ namespace BabBot.Scripting
     {
         private IScript script;
 
-        /*
-        public static void Go()
-        {
-            Host host = new Host();
-            host.Start();
-        }
-        */
-
         public void Start()
         {
-            script = Load("Scripts/script.cs");
+            //script = Load("Scripts/script.cs");
+            script = Load("Scripts/paladin.cs");
             script.Parent = this;
             script.Player = new PlayerWrapper(ProcessManager.Player);
             script.Init();
@@ -64,7 +57,8 @@ namespace BabBot.Scripting
             CSScript.ShareHostRefAssemblies = true;
 
             AsmHelper helper = new AsmHelper(CSScript.Load(Path.GetFullPath(script), null, true));
-            return (IScript)helper.CreateObject("BabBotScript.Script");
+            //return (IScript)helper.CreateObject("BabBot.Scripts.Script");
+            return (IScript)helper.CreateObject("BabBot.Scripts.Paladin");
         }
 
         public void Test()

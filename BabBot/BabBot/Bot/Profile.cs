@@ -35,6 +35,7 @@ namespace BabBot.Bot
         public WayPointCollection VendorWayPoints;
         public WayPointCollection RepairWayPoints;
         public WayPointCollection BranchWayPoints;
+        public EnemyCollection Enemies;
 
         public Profile()
         {
@@ -45,6 +46,7 @@ namespace BabBot.Bot
             VendorWayPoints = new WayPointCollection();
             RepairWayPoints = new WayPointCollection();
             BranchWayPoints = new WayPointCollection();
+            Enemies = new EnemyCollection();
         }
 
         

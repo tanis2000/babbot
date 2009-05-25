@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot\Binding.cs" />
+    <Compile Include="Bot\Enemy.cs" />
     <Compile Include="Bot\PlayerAction.cs" />
     <Compile Include="Bot\Profile.cs" />
     <Compile Include="Common\Common.cs" />

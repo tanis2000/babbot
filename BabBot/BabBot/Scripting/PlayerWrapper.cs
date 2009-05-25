@@ -42,6 +42,7 @@ namespace BabBot.Scripting
         void Stop();
         void PlayAction(PlayerAction action, bool toggle);
         void PlayAction(PlayerAction action);
+        bool EnemyInSight();
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -149,6 +150,11 @@ namespace BabBot.Scripting
         public void PlayAction(PlayerAction action)
         {
             player.PlayAction(action);
+        }
+
+        public bool EnemyInSight()
+        {
+            return player.EnemyInSight();
         }
 
         #endregion

@@ -23,7 +23,7 @@ using BabBot.Bot;
 using BabBot.Scripting;
 using BabBot.Wow;
 
-namespace BabBotScript
+namespace BabBot.Scripts
 {
     public class Script : IScript
     {
@@ -32,7 +32,8 @@ namespace BabBotScript
         IHost IScript.Parent { set { parent = value; } }
         IPlayerWrapper IScript.Player { set { player = value; } }
 
-        private Paladin paladin; // TODO: load classes dynamically
+        protected BindingList Bindings;
+        protected PlayerActionList Actions;
 
         /// <summary>
         /// Local script initialization. Not much to do here at the moment
@@ -40,7 +41,8 @@ namespace BabBotScript
         void IScript.Init()
         {
             Console.WriteLine("Init() -- Begin");
-            paladin = new Paladin(this);
+            Bindings = new BindingList();
+            Actions = new PlayerActionList();
             Console.WriteLine("Init() -- End");
         }
 
@@ -155,6 +157,12 @@ namespace BabBotScript
             /// Right now we only walk through the waypoints as a proof of concept
             Console.WriteLine("OnRoaming() -- Walking to the next waypoint");
             player.WalkToNextWayPoint(WayPointType.Normal);
+
+            if (player.EnemyInSight())
+            {
+                // We found an enemy somewhere. Let's get ready for combat, aka we should face it, 
+                // use TAB to select it and then attack
+            }
         }
 
         /// <summary>
@@ -181,7 +189,7 @@ namespace BabBotScript
             }
         }
 
-        private void OnInCombat()
+        protected virtual void OnInCombat()
         {
             if (player.IsBeingAttacked())
             {
@@ -199,7 +207,7 @@ namespace BabBotScript
                         // we have to get closer (melee only though, we should also check if we're 
                         // using a melee or spell ability)
                     }
-                    paladin.Fight();
+                    //paladin.Fight();
                     //player.PlayAction("combat"); // this should call the routine to fight back based on the bindings
                 }
             }
@@ -208,36 +216,23 @@ namespace BabBotScript
         /// <summary>
         /// This happens when a combat has just ended.
         /// </summary>
-        private void OnPostCombat()
+        protected virtual void OnPostCombat()
         {
-            // TODO: this should not be done in here but somewhere in a thread in the main bot stuff
-            paladin.Actions["melee"].Active = false;
+            // We reset all actions listed as toggle
+            foreach (KeyValuePair<string, PlayerAction> pair in Actions)
+            {
+                if (pair.Value.Toggle) pair.Value.Active = false;
+            }
+        }
+
+        /// <summary>
+        /// This should be impelemented by the derived classes based upon the player class.
+        /// </summary>
+        protected virtual void Fight()
+        {
+            
         }
     }
 
-
-    public class ClassScriptList : List<ClassScript>
-    {
-
-    }
-
-    public abstract class ClassScript
-    {
-        protected Script script;
-        public BindingList Bindings;
-        public PlayerActionList Actions;
-
-        protected ClassScript(Script iScript)
-        {
-            script = iScript;
-            Bindings = new BindingList();
-            Actions = new PlayerActionList();
-        }
-
-        public void Fight()
-        {
-
-        }
-    }
 }
 

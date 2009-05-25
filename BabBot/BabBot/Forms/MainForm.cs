@@ -271,6 +271,8 @@ namespace BabBot.Forms
 
                 // UI Stuff
                 tbProfile.Text = dlg.FileName;
+                RefreshEnemiesList();
+
             }
         }
 
@@ -392,6 +394,38 @@ namespace BabBot.Forms
             StateManager.Instance.Stop();
         }
 
+        private void btnAddEnemyToList_Click(object sender, EventArgs e)
+        {
+            if (ProcessManager.Player.CurTargetName != "")
+            {
+                Enemy enemy = new Enemy(ProcessManager.Player.CurTargetName);
+                ProcessManager.Profile.Enemies.Add(enemy);
+                RefreshEnemiesList();
+              
+            }
+        }
+
+        private void btnRemoveEnemyFromList_Click(object sender, EventArgs e)
+        {
+            if (lbEnemies.Items.Count == 0) return;
+
+            if (lbEnemies.SelectedItem != null)
+            {
+                Enemy enemy = new Enemy(lbEnemies.SelectedItem.ToString());
+                ProcessManager.Profile.Enemies.Remove(enemy);
+                RefreshEnemiesList();
+            }
+        }
+
+        private void RefreshEnemiesList()
+        {
+            lbEnemies.Items.Clear();
+            foreach (var en in ProcessManager.Profile.Enemies)
+            {
+                lbEnemies.Items.Add(en.Name);
+            }            
+        }
+
         #endregion
 
         #region Load/Save Config
@@ -454,6 +488,10 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
+
+
+
+
 
 
 

@@ -72,10 +72,6 @@
             this.label28 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
-            this.tbPlayerTargetName = new System.Windows.Forms.TextBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.tbPlayerTarget = new System.Windows.Forms.TextBox();
-            this.label20 = new System.Windows.Forms.Label();
             this.tbPlayerMaxMp = new System.Windows.Forms.TextBox();
             this.tbPlayerMaxHp = new System.Windows.Forms.TextBox();
             this.tbPlayerXp = new System.Windows.Forms.TextBox();
@@ -130,6 +126,14 @@
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
+            this.tabPageEnemies = new System.Windows.Forms.TabPage();
+            this.tbPlayerTargetName = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.tbPlayerTarget = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.btnAddEnemyToList = new System.Windows.Forms.Button();
+            this.lbEnemies = new System.Windows.Forms.ListBox();
+            this.btnRemoveEnemyFromList = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -141,6 +145,7 @@
             this.tabPagePlayer.SuspendLayout();
             this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
+            this.tabPageEnemies.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -205,6 +210,7 @@
             this.tabControlMain.Controls.Add(this.tabPageMain);
             this.tabControlMain.Controls.Add(this.tabPageWayPoints);
             this.tabControlMain.Controls.Add(this.tabPagePlayer);
+            this.tabControlMain.Controls.Add(this.tabPageEnemies);
             this.tabControlMain.Controls.Add(this.tabPageDebug);
             this.tabControlMain.Controls.Add(this.tabPageDebug2);
             this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -527,10 +533,6 @@
             this.tabPagePlayer.Controls.Add(this.label28);
             this.tabPagePlayer.Controls.Add(this.label22);
             this.tabPagePlayer.Controls.Add(this.tbPlayerNearObjects);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerTargetName);
-            this.tabPagePlayer.Controls.Add(this.label21);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerTarget);
-            this.tabPagePlayer.Controls.Add(this.label20);
             this.tabPagePlayer.Controls.Add(this.tbPlayerMaxMp);
             this.tabPagePlayer.Controls.Add(this.tbPlayerMaxHp);
             this.tabPagePlayer.Controls.Add(this.tbPlayerXp);
@@ -585,40 +587,6 @@
             this.tbPlayerNearObjects.Size = new System.Drawing.Size(430, 98);
             this.tbPlayerNearObjects.TabIndex = 14;
             this.tbPlayerNearObjects.WordWrap = false;
-            // 
-            // tbPlayerTargetName
-            // 
-            this.tbPlayerTargetName.Enabled = false;
-            this.tbPlayerTargetName.Location = new System.Drawing.Point(79, 126);
-            this.tbPlayerTargetName.Name = "tbPlayerTargetName";
-            this.tbPlayerTargetName.Size = new System.Drawing.Size(388, 20);
-            this.tbPlayerTargetName.TabIndex = 13;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(3, 129);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(70, 13);
-            this.label21.TabIndex = 12;
-            this.label21.Text = "Target name:";
-            // 
-            // tbPlayerTarget
-            // 
-            this.tbPlayerTarget.Enabled = false;
-            this.tbPlayerTarget.Location = new System.Drawing.Point(79, 91);
-            this.tbPlayerTarget.Name = "tbPlayerTarget";
-            this.tbPlayerTarget.Size = new System.Drawing.Size(388, 20);
-            this.tbPlayerTarget.TabIndex = 11;
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(3, 94);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(71, 13);
-            this.label20.TabIndex = 10;
-            this.label20.Text = "Target GUID:";
             // 
             // tbPlayerMaxMp
             // 
@@ -1111,6 +1079,85 @@
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
             // 
+            // tabPageEnemies
+            // 
+            this.tabPageEnemies.Controls.Add(this.btnRemoveEnemyFromList);
+            this.tabPageEnemies.Controls.Add(this.lbEnemies);
+            this.tabPageEnemies.Controls.Add(this.btnAddEnemyToList);
+            this.tabPageEnemies.Controls.Add(this.tbPlayerTargetName);
+            this.tabPageEnemies.Controls.Add(this.label21);
+            this.tabPageEnemies.Controls.Add(this.tbPlayerTarget);
+            this.tabPageEnemies.Controls.Add(this.label20);
+            this.tabPageEnemies.Location = new System.Drawing.Point(4, 22);
+            this.tabPageEnemies.Name = "tabPageEnemies";
+            this.tabPageEnemies.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageEnemies.Size = new System.Drawing.Size(530, 370);
+            this.tabPageEnemies.TabIndex = 5;
+            this.tabPageEnemies.Text = "Enemies";
+            this.tabPageEnemies.UseVisualStyleBackColor = true;
+            // 
+            // tbPlayerTargetName
+            // 
+            this.tbPlayerTargetName.Enabled = false;
+            this.tbPlayerTargetName.Location = new System.Drawing.Point(82, 41);
+            this.tbPlayerTargetName.Name = "tbPlayerTargetName";
+            this.tbPlayerTargetName.Size = new System.Drawing.Size(388, 20);
+            this.tbPlayerTargetName.TabIndex = 17;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(6, 44);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(70, 13);
+            this.label21.TabIndex = 16;
+            this.label21.Text = "Target name:";
+            // 
+            // tbPlayerTarget
+            // 
+            this.tbPlayerTarget.Enabled = false;
+            this.tbPlayerTarget.Location = new System.Drawing.Point(82, 6);
+            this.tbPlayerTarget.Name = "tbPlayerTarget";
+            this.tbPlayerTarget.Size = new System.Drawing.Size(388, 20);
+            this.tbPlayerTarget.TabIndex = 15;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(6, 9);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(71, 13);
+            this.label20.TabIndex = 14;
+            this.label20.Text = "Target GUID:";
+            // 
+            // btnAddEnemyToList
+            // 
+            this.btnAddEnemyToList.Location = new System.Drawing.Point(82, 67);
+            this.btnAddEnemyToList.Name = "btnAddEnemyToList";
+            this.btnAddEnemyToList.Size = new System.Drawing.Size(75, 23);
+            this.btnAddEnemyToList.TabIndex = 18;
+            this.btnAddEnemyToList.Text = "Add to list";
+            this.btnAddEnemyToList.UseVisualStyleBackColor = true;
+            this.btnAddEnemyToList.Click += new System.EventHandler(this.btnAddEnemyToList_Click);
+            // 
+            // lbEnemies
+            // 
+            this.lbEnemies.FormattingEnabled = true;
+            this.lbEnemies.Location = new System.Drawing.Point(82, 103);
+            this.lbEnemies.Name = "lbEnemies";
+            this.lbEnemies.Size = new System.Drawing.Size(388, 212);
+            this.lbEnemies.TabIndex = 19;
+            // 
+            // btnRemoveEnemyFromList
+            // 
+            this.btnRemoveEnemyFromList.Location = new System.Drawing.Point(82, 322);
+            this.btnRemoveEnemyFromList.Name = "btnRemoveEnemyFromList";
+            this.btnRemoveEnemyFromList.Size = new System.Drawing.Size(108, 23);
+            this.btnRemoveEnemyFromList.TabIndex = 20;
+            this.btnRemoveEnemyFromList.Text = "Remove selected";
+            this.btnRemoveEnemyFromList.UseVisualStyleBackColor = true;
+            this.btnRemoveEnemyFromList.Click += new System.EventHandler(this.btnRemoveEnemyFromList_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1143,6 +1190,8 @@
             this.tabPageDebug.PerformLayout();
             this.tabPageDebug2.ResumeLayout(false);
             this.tabPageDebug2.PerformLayout();
+            this.tabPageEnemies.ResumeLayout(false);
+            this.tabPageEnemies.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1211,10 +1260,6 @@
         private System.Windows.Forms.Button btnAttachToWow;
         private System.Windows.Forms.TextBox tbWndHandle;
         private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.TextBox tbPlayerTarget;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.TextBox tbPlayerTargetName;
-        private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Button btnMovementTest;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TextBox tbPlayerNearObjects;
@@ -1251,6 +1296,14 @@
         private System.Windows.Forms.TextBox tbLocation;
         private System.Windows.Forms.Button btnStopBot;
         private System.Windows.Forms.Button btnStartBot;
+        private System.Windows.Forms.TabPage tabPageEnemies;
+        private System.Windows.Forms.TextBox tbPlayerTargetName;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.TextBox tbPlayerTarget;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.ListBox lbEnemies;
+        private System.Windows.Forms.Button btnAddEnemyToList;
+        private System.Windows.Forms.Button btnRemoveEnemyFromList;
     }
 }
 

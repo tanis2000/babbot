@@ -16,17 +16,22 @@
   
     Copyright 2009 BabBot Team
 */
+using System;
 using BabBot.Bot;
 using BabBot.Scripting;
-using BabBotScript;
 
-namespace BabBotScript
+namespace BabBot.Scripts
 {
-    public class Paladin : ClassScript
+    public class Paladin : Script, IScript
     {
          
-        public Paladin(Script iScript) : base(iScript)
+        void IScript.Init()
         {
+            Console.WriteLine("Paladin->Init()");
+            // TODO: find a way to override this function so that we don't have to clone those lines
+            Bindings = new BindingList();
+            Actions = new PlayerActionList();
+            
             // TODO: get that stuff out of the way and load bindings from the appropriate XML file
             Binding b = new Binding("melee", 1, "1");
             Bindings.Add(b.Name, b);
@@ -35,13 +40,46 @@ namespace BabBotScript
 
             PlayerAction a = new PlayerAction("attack", Bindings["melee"], 0.0f, 0.0f, false, true);
             Actions.Add(a.Name, a);
+            a = new PlayerAction("fakeattack", Bindings["test"], 0.0f, 2.0f, true, true);
+            Actions.Add(a.Name, a);
+
         }
 
         // TODO: add an interface for all common functions like this
-        public new void Fight()
+        protected override void Fight()
         {
             // TODO: Implement actual fight logic (only by PlayAction)
-            script.player.PlayAction(Actions["attack"], true);
+            Console.WriteLine("attack");
+            Console.WriteLine("num: " + Actions.Count);
+            player.PlayAction(Actions["attack"], true);
+            Console.WriteLine("fakeattack");
+            player.PlayAction(Actions["fakeattack"]);
         }
+
+        protected override void OnInCombat()
+        {
+            Console.WriteLine("Paladin->OnInCombat()");
+            if (player.IsBeingAttacked())
+            {
+                /// We are being attacked by a Mob. That means that we should fight back
+                /// by finding the mob first of all
+                if (player.SelectWhoIsAttackingUs())
+                {
+                    /// We found who is attacking us and we fight back
+                    if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
+                    {
+                        player.FaceTarget();
+                    }
+                    if (player.DistanceFromTarget() > 3.0f)
+                    {
+                        // we have to get closer (melee only though, we should also check if we're 
+                        // using a melee or spell ability)
+                    }
+                    Fight();
+                    //player.PlayAction("combat"); // this should call the routine to fight back based on the bindings
+                }
+            }
+        }
+
     }
 }

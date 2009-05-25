@@ -366,6 +366,25 @@ namespace BabBot.Wow
             throw new NotImplementedException("SelectMobByName");
         }
 
+
+        public bool EnemyInSight()
+        {
+            List<WowUnit> l = unit.GetNearMobs();
+
+            foreach (var enemy in ProcessManager.Profile.Enemies)
+            {
+                foreach (WowUnit obj in l)
+                {
+                    if (obj.Name == enemy.Name)
+                    {
+                        // We have him in sight
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         private static int RandomNumber(int min, int max)
         {
             var random = new Random();
