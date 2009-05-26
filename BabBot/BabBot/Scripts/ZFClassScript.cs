@@ -27,14 +27,12 @@ namespace BabBot.Scripts
 {
     /*
      * this class is for loading zf-style bindings files.
-     * currently it parses only lines like
-     * defact= key:1 slot:1 prevacttime:20 distle:30 cooldown:1.4 js:hasNoBuff(20375)&&checkMana(80)
      */
     public class ZFClassScript : Paladin, IScript
     {
         //delimiters for defact/precombat/combatseq/lootseq
         private static char[] dels = { ' ', '\t' };
-        private static char[] dels2 = { ':' };
+        private static char[] dels2 = { ':','=' };
 
         private string scriptName;
 
@@ -46,9 +44,15 @@ namespace BabBot.Scripts
         public ZFClassScript(string script_name)
         {
             scriptName = script_name;
+            xxx();
         }
 
         void IScript.Init()
+        {
+            xxx();
+        }
+
+        void xxx()
         {
             Bindings = new BindingList();
             Actions = new PlayerActionList();
@@ -168,6 +172,10 @@ namespace BabBot.Scripts
             bool toggle = false;
             int lifele = -1;
             int lifege = -1;
+            int distle = -1;
+            int distge = -1;
+            float gcd = 0.0f;
+
             //power: energy,mana,rage...
             //int powle = -1;
             //int powge = -1;
@@ -187,71 +195,69 @@ namespace BabBot.Scripts
                     {
                         string first = ttokens[0].Trim(); //act
                         string second = ttokens[1].Trim(); //sealOfComm
-                        if ("act".Equals(first))
+
+                        switch (first)
                         {
-                            actname = second;
+                            case "act":
+                                actname = second;
+                                break;
+                            case "slot":
+                                if ("key".Equals(second))
+                                {
+                                    //no slot, just key. (f.e. t for attack)
+                                    slot = -1;
+                                }
+                                else
+                                {
+                                    slot = System.Convert.ToInt32(second);
+                                }
+                                break;
+                            case "key":
+                                key = second;
+                                break;
+                            case "prevacttime":
+                                //TODO: check units (seconds, ms?)
+                                cooldown = System.Convert.ToSingle(second);
+                                break;
+                            case "cooldown":
+                                //TODO: check units (seconds, ms?)
+                                //FIXME: 1.4 is converted to 14.0 !!!
+                                gcd = System.Convert.ToSingle(second);
+                                break;
+                            case "lifele":
+                                lifele = System.Convert.ToInt32(second);
+                                break;
+                            case "lifege":
+                                lifege = System.Convert.ToInt32(second);
+                                break;
+                            case "distle":
+                                distle = System.Convert.ToInt32(second);
+                                reach = distle;
+                                break;
+                            case "distge":
+                                distge = System.Convert.ToInt32(second);
+                                break;
+
+                            default:
+                                Console.WriteLine("ZF: token '" + first + "' ignored.");
+                                break;
                         }
-                        else if ("slot".Equals(first))
-                        {
-                            if ("key".Equals(second))
-                            {
-                                //no slot, just key. (f.e. t)
-                                slot = -1;
-                            }
-                            else
-                            {
-                                slot = System.Convert.ToInt32(second);
-                            }
-                        }
-                        else if ("key".Equals(first))
-                        {
-                            key = second;
-                        }
-                        else if ("prevacttime".Equals(first))
-                        {
-                            //TODO: check units (seconds, ms?)
-                            cooldown = System.Convert.ToSingle(second);
-                        }
-                        else if ("distle".Equals(first))
-                        {
-                            //range?
-                            reach = System.Convert.ToSingle(second);
-                        }
-                        else if ("js".Equals(first))
-                        {
-                            //???
-                            //any way to support customer code?
-                        }
-                        else if ("cooldown".Equals(first))
-                        {
-                            Console.WriteLine("cooldown token ignored.");
-                            //???
-                            //is this(global cooldown) of any use in babbot?
-                            //TODO: check units (seconds, ms?)
-                        }
-                        else if ("lifele".Equals(first))
-                        {
-                            lifele = System.Convert.ToInt32(second);
-                        }
-                        else if ("lifege".Equals(first))
-                        {
-                            lifege = System.Convert.ToInt32(second);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("ZF:  ignoring bad token '" + s + "'.");
-                        //ignoring bad token: s
                     }
                 }
 
                 if (actname != null)
                 {
-                    // 1. slot MUST not be set - actions can work without actionbar ("t" => attack )
+                    // 1. slot MUST not be set - actions can work without actionbar ("t" => attack )                    
                     BabBot.Bot.Binding b = new BabBot.Bot.Binding(actname, slot, key);
+                    // 2. who needs the Bindings list??? each actiojn has its bbinding...
                     Bindings.Add(b.Name, b);
 
-                    PlayerAction a = new ZFPlayerAction(actname, b, reach, cooldown, self_cast, toggle, lifele, lifege);
+                    ZFPlayerAction a = new ZFPlayerAction(actname, b, reach, cooldown, self_cast, toggle);
+                    a.lifele = lifele;
+                    a.lifege = lifege;
+                    a.distle = distle;
+                    a.distge = distge;
+                    a.gcd    = gcd;
                     Actions.Add(a.Name, a);
                 }
                 else
@@ -280,6 +286,10 @@ namespace BabBot.Scripts
             {
                 Console.WriteLine("ZF: invoking " + action);
                 player.PlayAction(p);
+                if (p.gcd > 0)
+                {
+                    //sleep zfCooldown seconds 
+                }
             }
             else
             {
@@ -331,12 +341,17 @@ namespace BabBot.Scripts
         public int lifele;
         //true if life equals or greater then percent
         public int lifege;
+        //true if distance to target is equal or less
+        public int distle;
+        //true if distance to target is greater or less
+        public int distge;
+        //global cooldown
+        public float gcd;
 
-        public ZFPlayerAction(string iName, BabBot.Bot.Binding iBinding, float iRange, float iCoolDown, bool iSelfCast, bool iToggle, int iLifele, int iLifege)
+
+        public ZFPlayerAction(string iName, BabBot.Bot.Binding iBinding, float iRange, float iCoolDown, bool iSelfCast, bool iToggle)
             : base(iName, iBinding, iRange, iCoolDown, iSelfCast, iToggle)
         {
-            lifele = iLifele;
-            lifege = iLifege;
         }
 
 
@@ -345,6 +360,8 @@ namespace BabBot.Scripts
         {
             bool ret = true;
             //currently we have no access to player life - this must be changed.
+
+            //check life
             //int life_prc = me.life*100/me.maxLife;
             //if(lifele!=-1)
             //{
@@ -354,9 +371,24 @@ namespace BabBot.Scripts
             //{
             //    ret = ret && lifege>=life_prc;
             //}
+
+            //check distance
+            //int dist = ...;
+            //if(distle!=-1)
+            //{
+            //    ret = ret && distle <= dist;
+            //}
+            //if(distge!=-1)
+            //{
+            //    ret = ret && distge >= dist;
+            //}
+
+            //check power (energy,mana,rage)
+            
+            //check buffs/debuffs
+
             //TODO: rest of the keywords
             return ret;
         }
-
     }
 }
