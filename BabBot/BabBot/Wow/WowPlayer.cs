@@ -385,6 +385,38 @@ namespace BabBot.Wow
             return false;
         }
 
+        public void FaceClosestEnemy()
+        {
+            List<WowUnit> l = unit.GetNearMobs();
+
+            foreach (var enemy in ProcessManager.Profile.Enemies)
+            {
+                foreach (WowUnit obj in l)
+                {
+                    if (obj.Name == enemy.Name)
+                    {
+                        // We have him somewhere around us
+                        // Let's turn to face him so that we can tab-search
+                        if (SelectMob(obj))
+                        {
+                            // We managed to tab-target it
+                            FaceTarget();
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+
+        public void MoveToTarget(float tolerance)
+        {
+            if (HasTarget())
+            {
+                WowUnit target = unit.GetCurTarget();
+                MoveTo(target, tolerance);
+            }
+        }
+
         private static int RandomNumber(int min, int max)
         {
             var random = new Random();
@@ -392,6 +424,11 @@ namespace BabBot.Wow
         }
 
         public PlayerState MoveTo(Vector3D dest)
+        {
+            return MoveTo(dest, 1.0f);
+        }
+
+        public PlayerState MoveTo(Vector3D dest, float tolerance)
         {
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
 
@@ -420,9 +457,9 @@ namespace BabBot.Wow
 
             PlayerState res = PlayerState.Roaming;
 
-            while ((int) distance > 1)
+            while (distance > tolerance)
             {
-                var currentDistance = (int) distance;
+                var currentDistance = distance;
 
                 if (doJmp)
                 {
@@ -447,7 +484,84 @@ namespace BabBot.Wow
 
                 TravelTime = tsTravelTime.Milliseconds + tsTravelTime.Seconds*1000;
 
-                if (currentDistance == (int) distance)
+                if (currentDistance == distance)
+                {
+                    // sono bloccato? non mi sono mosso di una distanza significativa?
+                    // anche qui da verificare, mi sa che bisogna lavorare in float con
+                    // un po di tolleranza
+                }
+                else if (TravelTime >= MAX_REACHTIME)
+                {
+                    TravelTime = 0;
+                    res = PlayerState.WayPointTimeout;
+                    break;
+                }
+            }
+
+            PlayerCM.ArrowKeyUp(key);
+            return res;
+        }
+
+        public PlayerState MoveTo(WowUnit target, float tolerance)
+        {
+            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+
+            if (!target.Location.IsValid())
+            {
+                return PlayerState.Ready;
+            }
+
+            float angle = GetFaceRadian(target.Location);
+            Face(angle);
+
+            // Random jump
+            int rndJmp = RandomNumber(1, 8);
+            bool doJmp = false;
+            if (rndJmp == 1 || rndJmp == 3)
+            {
+                doJmp = true;
+            }
+
+            // Move on...
+            float distance = HGetDistance(target.Location, false);
+            PlayerCM.ArrowKeyDown(key);
+
+            // Start profiler for WayPointTimeOut
+            DateTime start = DateTime.Now;
+
+            PlayerState res = PlayerState.Roaming;
+
+            while (distance > tolerance)
+            {
+                var currentDistance = distance;
+
+                if (doJmp)
+                {
+                    doJmp = false;
+                    PlayerCM.SendKeys(" ");
+                }
+
+                if (StopMovement)
+                {
+                    res = PlayerState.Ready;
+                    StopMovement = false;
+                    break;
+                }
+
+                angle = GetFaceRadian(target.Location);
+                Face(angle);
+
+                distance = HGetDistance(target.Location, false);
+
+                Thread.Sleep(50);
+                Application.DoEvents();
+
+                DateTime end = DateTime.Now;
+                TimeSpan tsTravelTime = end - start;
+
+                TravelTime = tsTravelTime.Milliseconds + tsTravelTime.Seconds * 1000;
+
+                if (currentDistance == distance)
                 {
                     // sono bloccato? non mi sono mosso di una distanza significativa?
                     // anche qui da verificare, mi sa che bisogna lavorare in float con
@@ -468,6 +582,11 @@ namespace BabBot.Wow
         public void Stop()
         {
             StopMovement = true;
+        }
+
+        public void MoveForward()
+        {
+            PlayerCM.SendArrowKey(CommandManager.ArrowKey.Up);
         }
 
         public bool GoBack(Vector3D dest)

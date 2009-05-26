@@ -49,18 +49,21 @@ namespace BabBot.Scripts
         protected override void Fight()
         {
             // TODO: Implement actual fight logic (only by PlayAction)
+
             Console.WriteLine("attack");
-            Console.WriteLine("num: " + Actions.Count);
             player.PlayAction(Actions["attack"], true);
             Console.WriteLine("fakeattack");
             player.PlayAction(Actions["fakeattack"]);
         }
 
+        // TODO: with some refactoring we could use this as a generic routine
         protected override void OnInCombat()
         {
             Console.WriteLine("Paladin->OnInCombat()");
             if (player.IsBeingAttacked())
             {
+                Console.WriteLine("Paladin->OnInCombat() - We are being attacked");
+                // Someone initiated combat with us
                 /// We are being attacked by a Mob. That means that we should fight back
                 /// by finding the mob first of all
                 if (player.SelectWhoIsAttackingUs())
@@ -72,11 +75,39 @@ namespace BabBot.Scripts
                     }
                     if (player.DistanceFromTarget() > 3.0f)
                     {
-                        // we have to get closer (melee only though, we should also check if we're 
-                        // using a melee or spell ability)
+                        /// we have to get closer (melee only though, we should also check if we're 
+                        /// using a melee or spell ability)
+                        /// Ok, we're a low level paladin.. and we do not have any ranged attacks yet..
+                        /// So we get close first of all
+                        /// 
+                        Console.WriteLine("Paladin->OnInCombat() - Moving to target");
+                        player.MoveToTarget(3.0f);
                     }
                     Fight();
-                    //player.PlayAction("combat"); // this should call the routine to fight back based on the bindings
+                }
+            } 
+            else
+            {
+                Console.WriteLine("Paladin->OnInCombat() - We are initiating combat");
+                // We initiate combat
+                if (player.HasTarget())
+                {
+                    Console.WriteLine("Paladin->OnInCombat() - We've got a target");
+                    /// We found who is attacking us and we fight back
+                    if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
+                    {
+                        player.FaceTarget();
+                    }
+                    if (player.DistanceFromTarget() > 3.0f)
+                    {
+                        /// we have to get closer (melee only though, we should also check if we're 
+                        /// using a melee or spell ability)
+                        /// Ok, we're a low level paladin.. and we do not have any ranged attacks yet..
+                        /// So we get close first of all
+                        Console.WriteLine("Paladin->OnInCombat() - Moving to target");
+                        player.MoveToTarget(3.0f);
+                    }
+                    Fight();
                 }
             }
         }

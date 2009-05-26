@@ -81,12 +81,28 @@ namespace BabBot.Manager
                     CurrentState = PlayerState.PreCombat;
                     return;
                 }
+
+                if (ProcessManager.Player.EnemyInSight())
+                {
+                    /// We have an enemy somewhere around us, we'd better get ready for the fight
+                    CurrentState = PlayerState.PreCombat;
+                    return;
+                }
             }
 
             if (CurrentState == PlayerState.PreCombat)
             {
-                CurrentState = PlayerState.InCombat;
-                return;
+                if ((ProcessManager.Player.IsBeingAttacked()) || (ProcessManager.Player.HasTarget()))
+                {
+                    CurrentState = PlayerState.InCombat;
+                    return;
+                }
+
+                if (!ProcessManager.Player.HasTarget())
+                {
+                    CurrentState = PlayerState.Roaming;
+                    return;
+                }
             }
 
             if (CurrentState == PlayerState.InCombat)
@@ -95,8 +111,11 @@ namespace BabBot.Manager
                 /// in that case go to PostCombat, but we lose target once the
                 /// mob dies, so we cannot use that. We've got to come up with
                 /// a better idea. 
-                CurrentState = PlayerState.PostCombat;
-                return;
+                if (!ProcessManager.Player.HasTarget())
+                {
+                    CurrentState = PlayerState.PostCombat;
+                    return;
+                }
             }
 
             if (CurrentState == PlayerState.PostCombat)

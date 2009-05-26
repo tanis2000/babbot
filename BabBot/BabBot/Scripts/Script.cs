@@ -158,11 +158,6 @@ namespace BabBot.Scripts
             Console.WriteLine("OnRoaming() -- Walking to the next waypoint");
             player.WalkToNextWayPoint(WayPointType.Normal);
 
-            if (player.EnemyInSight())
-            {
-                // We found an enemy somewhere. Let's get ready for combat, aka we should face it, 
-                // use TAB to select it and then attack
-            }
         }
 
         /// <summary>
@@ -171,21 +166,36 @@ namespace BabBot.Scripts
         /// </summary>
         private void OnPreCombat()
         {
+            Console.WriteLine("OnPreCombat()");
             if (player.IsBeingAttacked())
             {
+                Console.WriteLine("OnPreCombat() - We are being attacked");
                 /// We are being attacked by a Mob. That means that we should fight back
                 /// by finding the mob first of all
                 if (player.SelectWhoIsAttackingUs())
                 {
-                    /// We found who is attacking us and we fight back
-                    //paladin.Fight();
-                    //player.PlayAction("combat"); // this should call the routine to fight back based on the bindings
+                    /// We found who is attacking us and we fight back (no rebuffing now)
+                    /// (If everything is correct at this point the StateManager will take care
+                    /// of switching to the OnCombat state)
                 }
             }
             else
             {
-                // We found something to kill
-                //player.AttackSelectedMob();
+                Console.WriteLine("OnPreCombat() - We are going to attack someone");
+                if (player.EnemyInSight())
+                {
+                    // Face the closest enemy
+                    Console.WriteLine("OnPreCombat() - Facing closest enemy (we should have a target now)");
+                    player.FaceClosestEnemy();
+
+                    // Let's check if we actually got it as our target
+                    if (player.HasTarget())
+                    {
+                        Console.WriteLine("OnPreCombat() - Affirmative. We have a target");
+                        /// Ok, we have the target, it's time to start attacking,
+                        /// but first we rebuff and drink up just in case
+                    }
+                }
             }
         }
 

@@ -43,6 +43,10 @@ namespace BabBot.Scripting
         void PlayAction(PlayerAction action, bool toggle);
         void PlayAction(PlayerAction action);
         bool EnemyInSight();
+        void FaceClosestEnemy();
+        bool HasTarget();
+        void MoveForward(); // Currently broken
+        void MoveToTarget(float tolerance);
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -155,6 +159,26 @@ namespace BabBot.Scripting
         public bool EnemyInSight()
         {
             return player.EnemyInSight();
+        }
+
+        public void FaceClosestEnemy()
+        {
+            player.FaceClosestEnemy();
+        }
+
+        public bool HasTarget()
+        {
+            return player.HasTarget();
+        }
+
+        public void MoveForward()
+        {
+            player.MoveForward();
+        }
+
+        public void MoveToTarget(float tolerance)
+        {
+            player.MoveToTarget(tolerance);
         }
 
         #endregion

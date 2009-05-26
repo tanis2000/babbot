@@ -162,6 +162,7 @@
     <Compile Include="Scripts\Script.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Scripts\ZFClassScript.cs" />
     <Compile Include="Wow\PlayerState.cs" />
     <Compile Include="Wow\Descriptor.cs" />
     <Compile Include="Wow\Globals.cs" />
