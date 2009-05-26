@@ -179,38 +179,38 @@ namespace BabBot.Scripts
         }
     }
 
+    public class ZFPlayerAction : PlayerAction
+    {
+        //true if life equals or less then percent 
+        public int lifele;
+        //true if life equals or greater then percent
+        public int lifege;
 
-    //public class ZFPlayerAction : PlayerAction
-    //{      
-    //    //true if life equals or less then percent 
-    //    public int lifele;
-    //    //true if life equals or greater then percent
-    //    public int lifege;        
-
-    //    public ZFPlayerAction (string iName, Binding iBinding, float iRange, float iCoolDown, bool iSelfCast, bool iToggle, int iLifele, int iLifege) : base (iName, iBinding, iRange, iCoolDown, iSelfCast, iToggle)
-    //    {
-    //        lifele = iLifele;
-    //        lifege = iLifege;
-    //    }
+        public ZFPlayerAction(string iName, BabBot.Bot.Binding iBinding, float iRange, float iCoolDown, bool iSelfCast, bool iToggle, int iLifele, int iLifege)
+            : base(iName, iBinding, iRange, iCoolDown, iSelfCast, iToggle)
+        {
+            lifele = iLifele;
+            lifege = iLifege;
+        }
 
 
-    //    //checks if the action should executed according to distle, distge, lifele, lifege, checkBuff ...
-    //    public bool shouldBeExecuted(IPlayerWrapper me)
-    //    {
-    //        bool ret = true;
-    //        //currently we have no access to player life - this must be changed.
-    //        //int life_prc = me.life*100/me.maxLife;
-    //        //if(lifele!=-1)
-    //        //{
-    //        //    ret = lifele<=life_prc;
-    //        //}
-    //        //if(lifege!=-1)
-    //        //{
-    //        //    ret = ret && lifege>=life_prc;
-    //        //}
-    //        //TODO: rest of the keywords
-    //        return ret;
-    //    }        
-        
-    //}
+        //checks if the action should executed according to distle, distge, lifele, lifege, checkBuff ...
+        public bool shouldBeExecuted(IPlayerWrapper me)
+        {
+            bool ret = true;
+            //currently we have no access to player life - this must be changed.
+            //int life_prc = me.life*100/me.maxLife;
+            //if(lifele!=-1)
+            //{
+            //    ret = lifele<=life_prc;
+            //}
+            //if(lifege!=-1)
+            //{
+            //    ret = ret && lifege>=life_prc;
+            //}
+            //TODO: rest of the keywords
+            return ret;
+        }
+
+    }
 }
