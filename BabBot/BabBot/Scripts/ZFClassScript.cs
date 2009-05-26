@@ -45,7 +45,7 @@ namespace BabBot.Scripts
 
         public ZFClassScript(string script_name)
         {
-            scriptName = script_name;            
+            scriptName = script_name;
         }
 
         void IScript.Init()
@@ -54,10 +54,10 @@ namespace BabBot.Scripts
             Actions = new PlayerActionList();
 
             preCombatList = new List<string>();
-            combatList    = new List<string>();
-            lootSeqList   = new List<string>();
+            combatList = new List<string>();
+            lootSeqList = new List<string>();
             //globalList    = new List<string>();
-            
+
             FileInfo exe_finfo = new FileInfo(Application.ExecutablePath);
             string full_script_file = Path.Combine(Path.Combine(exe_finfo.DirectoryName, "Scripts"), scriptName);
 
@@ -151,7 +151,7 @@ namespace BabBot.Scripts
                 }
                 else
                 {
-                    Console.WriteLine("ZF: invalid line: '"+trimmed+"' - ignored.");
+                    Console.WriteLine("ZF: invalid line: '" + trimmed + "' - ignored.");
                 }
             }
             return action_name;
@@ -193,7 +193,7 @@ namespace BabBot.Scripts
                         }
                         else if ("slot".Equals(first))
                         {
-                            if("key".Equals(second))
+                            if ("key".Equals(second))
                             {
                                 //no slot, just key. (f.e. t)
                                 slot = -1;
@@ -236,13 +236,13 @@ namespace BabBot.Scripts
                         else if ("lifege".Equals(first))
                         {
                             lifege = System.Convert.ToInt32(second);
-                        }                        
+                        }
                     }
                     else
-                     {
-                         Console.WriteLine("ZF:  ignoring bad token '" + s + "'.");
+                    {
+                        Console.WriteLine("ZF:  ignoring bad token '" + s + "'.");
                         //ignoring bad token: s
-                     }
+                    }
                 }
 
                 if (actname != null)
@@ -266,12 +266,12 @@ namespace BabBot.Scripts
                 // error parsing script_name: bad defact line: input
             }
         }
-        
 
-    //TODO:
-    //1. implement global actions (buffs) - check Paladin.cs when it ready, may be this can be done only once for all (sub)classes
-    //2. implement precombat/combat/loot sequences (the same as #1 - check Paladin.cs when it is ready)
-    //3. ??? support for customer scripting? or just provide some more checkMana/checkBuff/checkTargetisCasting keywords?   
+
+        //TODO:
+        //1. implement global actions (buffs) - check Paladin.cs when it ready, may be this can be done only once for all (sub)classes
+        //2. implement precombat/combat/loot sequences (the same as #1 - check Paladin.cs when it is ready)
+        //3. ??? support for customer scripting? or just provide some more checkMana/checkBuff/checkTargetisCasting keywords?   
 
         private void condPlayAction(string action)
         {
@@ -298,22 +298,15 @@ namespace BabBot.Scripts
 
         protected override void Fight()
         {
-            foreach (string action in preCombatList)
-            {             
-                condPlayAction(action);
-            }
-
-            while (player.HasTarget() /*&& !target.isDead() && bot.isRunning()*/)
-            {
-                foreach (string action in combatList)
-                {
-                    condPlayAction(action);
-                }
-            }
             //play once precombat actions
             //for action in precombatactions
             // if action.shouldBeExecuted(player) && action.isReady()
             //   playaction
+            foreach (string action in preCombatList)
+            {
+                condPlayAction(action);
+            }
+
 
             //while target is not dead and bot is not stopped and player is not dead
             //play combat sequence over and over again
@@ -322,6 +315,13 @@ namespace BabBot.Scripts
             //  for action in combatactions
             //    if action.shouldBeExecuted(player) && action.isReady()
             //      playaction
+            while (player.HasTarget() /*&& !target.isDead() && bot.isRunning()*/)
+            {
+                foreach (string action in combatList)
+                {
+                    condPlayAction(action);
+                }
+            }
         }
     }
 
