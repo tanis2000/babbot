@@ -44,7 +44,7 @@ namespace BabBot.Scripts
         public ZFClassScript(string script_name)
         {
             scriptName = script_name;
-            xxx();
+//            xxx();
         }
 
         void IScript.Init()
@@ -54,6 +54,9 @@ namespace BabBot.Scripts
 
         void xxx()
         {
+            float x = float.Parse("1.4", System.Globalization.CultureInfo.InvariantCulture);
+            System.Console.WriteLine("1.4 is " + x + "now.");
+
             Bindings = new BindingList();
             Actions = new PlayerActionList();
 
@@ -217,12 +220,11 @@ namespace BabBot.Scripts
                                 break;
                             case "prevacttime":
                                 //TODO: check units (seconds, ms?)
-                                cooldown = System.Convert.ToSingle(second);
+                                cooldown = float.Parse(second, System.Globalization.CultureInfo.InvariantCulture);
                                 break;
                             case "cooldown":
                                 //TODO: check units (seconds, ms?)
-                                //FIXME: 1.4 is converted to 14.0 !!!
-                                gcd = System.Convert.ToSingle(second);
+                                gcd = float.Parse(second, System.Globalization.CultureInfo.InvariantCulture);
                                 break;
                             case "lifele":
                                 lifele = System.Convert.ToInt32(second);
@@ -308,6 +310,9 @@ namespace BabBot.Scripts
 
         protected override void Fight()
         {
+            //looks like it will work another way.
+            //have to wait until Paladin.cs is ready.
+
             //play once precombat actions
             //for action in precombatactions
             // if action.shouldBeExecuted(player) && action.isReady()
