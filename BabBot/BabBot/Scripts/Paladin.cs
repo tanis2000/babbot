@@ -93,11 +93,7 @@ namespace BabBot.Scripts
                 if (player.HasTarget())
                 {
                     Console.WriteLine("Paladin->OnInCombat() - We've got a target");
-                    /// We found who is attacking us and we fight back
-                    if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
-                    {
-                        player.FaceTarget();
-                    }
+
                     if (player.DistanceFromTarget() > 3.0f)
                     {
                         /// we have to get closer (melee only though, we should also check if we're 
@@ -107,6 +103,16 @@ namespace BabBot.Scripts
                         Console.WriteLine("Paladin->OnInCombat() - Moving to target");
                         player.MoveToTarget(3.0f);
                     }
+
+                    if (player.DistanceFromTarget() < 3.0f)
+                    {
+                        /// We found who is attacking us and we fight back
+                        if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
+                        {
+                            player.FaceTarget();
+                        }
+                    }
+
                     Fight();
                 }
             }

@@ -393,6 +393,7 @@ namespace BabBot.Wow
         public void FaceClosestEnemy()
         {
             List<WowUnit> l = unit.GetNearMobs();
+            WowUnit closest = null;
 
             foreach (var enemy in ProcessManager.Profile.Enemies)
             {
@@ -400,15 +401,28 @@ namespace BabBot.Wow
                 {
                     if (obj.Name == enemy.Name)
                     {
-                        // We have him somewhere around us
-                        // Let's turn to face him so that we can tab-search
-                        if (SelectMob(obj))
+                        if (closest == null)
                         {
-                            // We managed to tab-target it
-                            FaceTarget();
+                            closest = obj;
+                        } else
+                        {
+                            if (GetDistance(closest.Location, false) > GetDistance(obj.Location, false))
+                            {
+                                closest = obj;
+                            }
                         }
-                        return;
                     }
+                }
+            }
+
+            if (closest != null)
+            {
+                // We have him somewhere around us
+                // Let's turn to face him so that we can tab-search
+                if (SelectMob(closest))
+                {
+                    // We managed to tab-target it
+                    FaceTarget();
                 }
             }
         }
@@ -595,9 +609,10 @@ namespace BabBot.Wow
                 {
                     distanceFromStep = HGetDistance(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y, path.locations[currentStep].Z), false);
                     Console.WriteLine("Step: " + currentStep);
-                    Console.WriteLine("Location: " + target.Location);
-                    Console.WriteLine("Distance: " + distanceFromStep);
-                    if (distanceFromStep < 3.0f)
+                    Console.WriteLine("Location: " + Location);
+                    Console.WriteLine("Distance from step: " + distanceFromStep);
+                    Console.WriteLine("Distance from target: " + distance);
+                    if (distanceFromStep < 10.0f)
                     {
                         if (currentStep < steps - 1)
                         {
