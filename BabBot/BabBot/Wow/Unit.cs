@@ -127,6 +127,23 @@ namespace BabBot.Wow
             return Mobs;
         }
 
+        public List<WowCorpse> GetNearCorpses()
+        {
+            List<WowCorpse> Corpses = new List<WowCorpse>();
+            List<WowObject> l = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
+            foreach (WowObject o in l)
+            {
+                Descriptor.eObjType type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
+                if (type == Descriptor.eObjType.OT_CORPSE)
+                {
+                    WowCorpse c = new WowCorpse(o);
+                    //c.Name = ProcessManager.ObjectManager.GetName(c.ObjectPointer, c.Guid);
+                    Corpses.Add(c);
+                }
+            }
+            return Corpses;
+        }
+
         public bool IsSitting()
         {
             return Convert.ToBoolean(ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_BYTES_1 * 0x04) & (int)Descriptor.eUnitFlags.UF_SITTING);

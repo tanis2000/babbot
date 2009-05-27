@@ -23,7 +23,13 @@ using System.Text;
 
 namespace BabBot.Wow
 {
-    class WowCorpse : WowObject
+    public class WowCorpse : WowObject
     {
+        public WowCorpse(WowObject o)
+        {
+            Guid = o.Guid;
+            ObjectPointer = o.ObjectPointer;
+            Type = o.Type;
+        }
     }
 }

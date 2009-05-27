@@ -27,5 +27,6 @@ namespace BabBot
         public string GuestUsername = "Guest";
         public string WowExePath = "";
         public bool DebugMode = false;
+        public string InteractKey = "{SHIFTD}ì{SHIFTU}";
     }
 }
