@@ -110,7 +110,7 @@ namespace BabBot.Manager
         public static uint TLS;
         public static int WowHWND;
         public static Host ScriptHost;
-        //public static WayPointManager WayPointManager;
+        public static Caronte.Caronte Caronte;
 
         static ProcessManager()
         {
@@ -125,8 +125,8 @@ namespace BabBot.Manager
             WowHWND = 0;
             BotManager = new BotManager();
             ScriptHost = new Host();
-            //WayPointManager = WayPointManager.Instance;
             WayPointManager.Instance.Init();
+            Caronte = new Caronte.Caronte();
         }
 
         /// <summary>
@@ -386,6 +386,7 @@ namespace BabBot.Manager
             {
                 FindTLS();
                 InitializeObjectManager();
+                Caronte.Init("Azeroth");
                 ScriptHost.Start();
                 Initialized = true;
             }

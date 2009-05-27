@@ -55,6 +55,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BlackMagic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Caronte, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="CSScriptLibrary, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\CSScriptLibrary.dll</HintPath>
@@ -192,6 +193,7 @@
     </Content>
     <Content Include="Lib\BlackMagic.dll" />
     <Content Include="Lib\BlackMagic.XML" />
+    <Content Include="Lib\Caronte.dll" />
     <Content Include="Lib\FASM.DLL" />
     <Content Include="Lib\fasmdll_managed.dll" />
   </ItemGroup>

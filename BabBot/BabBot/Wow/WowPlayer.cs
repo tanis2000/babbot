@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using BabBot.Bot;
 using BabBot.Common;
 using BabBot.Manager;
+using Pather.Graph;
 
 namespace BabBot.Wow
 {
@@ -298,11 +299,15 @@ namespace BabBot.Wow
         public bool FindMob(WowUnit u)
         {
             PlayerCM.SendKeys(CommandManager.SK_TAB);
+            Thread.Sleep(1000);
             ulong firstGuid = CurTargetGuid;
+
+            if (firstGuid == 0) return false;
 
             do
             {
                 PlayerCM.SendKeys(CommandManager.SK_TAB);
+                Thread.Sleep(1000);
                 if (CurTargetGuid == u.Guid)
                 {
                     return true;
@@ -505,13 +510,37 @@ namespace BabBot.Wow
         public PlayerState MoveTo(WowUnit target, float tolerance)
         {
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+            float angle = 0;
+            float distance = 0;
+            int steps = 0;
+            int currentStep = 0;
+            float distanceFromStep = 0;
 
             if (!target.Location.IsValid())
             {
                 return PlayerState.Ready;
             }
 
-            float angle = GetFaceRadian(target.Location);
+            Path path = ProcessManager.Caronte.CalculatePath(new Location(this.Location.X, this.Location.Y, this.Location.Z),
+                                                 new Location(target.Location.X, target.Location.Y, target.Location.Z));
+
+            
+            foreach (Pather.Graph.Location loc in path.locations)
+            {
+                Console.WriteLine("X: {0}  Y: {1}   Z: {2}", loc.X, loc.Y, loc.Z);
+            }
+            
+
+            steps = path.locations.Count;
+            if (steps > 0)
+            {
+                currentStep = 1;
+                angle = GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y, path.locations[currentStep].Z));
+            } else
+            {
+                angle = GetFaceRadian(target.Location);
+            }
+            
             Face(angle);
 
             // Random jump
@@ -523,7 +552,7 @@ namespace BabBot.Wow
             }
 
             // Move on...
-            float distance = HGetDistance(target.Location, false);
+            distance = HGetDistance(target.Location, false);
             PlayerCM.ArrowKeyDown(key);
 
             // Start profiler for WayPointTimeOut
@@ -534,6 +563,8 @@ namespace BabBot.Wow
             while (distance > tolerance)
             {
                 var currentDistance = distance;
+                
+
 
                 if (doJmp)
                 {
@@ -548,10 +579,32 @@ namespace BabBot.Wow
                     break;
                 }
 
-                angle = GetFaceRadian(target.Location);
+                if ((steps > 0) && (currentStep < steps-1))
+                {
+                    angle = GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y, path.locations[currentStep].Z));
+                }
+                else
+                {
+                    angle = GetFaceRadian(target.Location);
+                }
                 Face(angle);
 
                 distance = HGetDistance(target.Location, false);
+
+                if (steps > 0)
+                {
+                    distanceFromStep = HGetDistance(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y, path.locations[currentStep].Z), false);
+                    Console.WriteLine("Step: " + currentStep);
+                    Console.WriteLine("Location: " + target.Location);
+                    Console.WriteLine("Distance: " + distanceFromStep);
+                    if (distanceFromStep < 3.0f)
+                    {
+                        if (currentStep < steps - 1)
+                        {
+                            currentStep++;
+                        }
+                    }
+                }
 
                 Thread.Sleep(50);
                 Application.DoEvents();
@@ -628,6 +681,7 @@ namespace BabBot.Wow
                 face = negativeAngle(Orientation - angle);
                 FaceWithTimer(face, CommandManager.ArrowKey.Right);
             }
+            Thread.Sleep(500);
         }
 
         public void Face(Vector3D dest)

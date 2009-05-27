@@ -94,3 +94,5 @@ http://www.mmowned.com/forums/bots-programs/180772-source-ppather-pathfinder-you
 To loot, let's have the end user set the "Interact with Target" hotkey in WoW and use that one. We first have to 
 select the corpse of course. That can be used for vendoring and repairing. Having auto-loot on will get rid of having to
 click with the mouse on the stuff we are looting
+
+More stuff about pathing from MPQ files: http://www.mpqnav.com
