@@ -382,8 +382,12 @@ namespace BabBot.Wow
                 {
                     if (obj.Name == enemy.Name)
                     {
-                        // We have him in sight
-                        return true;
+                        // We have something. But if it's too far away we ignore it
+                        if (GetDistance(obj.Location, false) < 20.0f)
+                        {
+                            // We have him in sight
+                            return true;
+                        }
                     }
                 }
             }
@@ -593,15 +597,7 @@ namespace BabBot.Wow
                     break;
                 }
 
-                if ((steps > 0) && (currentStep < steps-1))
-                {
-                    angle = GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y, path.locations[currentStep].Z));
-                }
-                else
-                {
-                    angle = GetFaceRadian(target.Location);
-                }
-                Face(angle);
+
 
                 distance = HGetDistance(target.Location, false);
 
@@ -617,6 +613,16 @@ namespace BabBot.Wow
                         if (currentStep < steps - 1)
                         {
                             currentStep++;
+
+                            if ((steps > 0) && (currentStep < steps - 1))
+                            {
+                                angle = GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y, path.locations[currentStep].Z));
+                            }
+                            else
+                            {
+                                angle = GetFaceRadian(target.Location);
+                            }
+                            Face(angle);
                         }
                     }
                 }
@@ -654,7 +660,8 @@ namespace BabBot.Wow
 
         public void MoveForward()
         {
-            PlayerCM.SendArrowKey(CommandManager.ArrowKey.Up);
+            Vector3D dest = Location + (Location.Normalize()*3.0f);
+            MoveTo(dest);
         }
 
         public bool GoBack(Vector3D dest)

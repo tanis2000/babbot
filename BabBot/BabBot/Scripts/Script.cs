@@ -194,6 +194,10 @@ namespace BabBot.Scripts
                         Console.WriteLine("OnPreCombat() - Affirmative. We have a target");
                         /// Ok, we have the target, it's time to start attacking,
                         /// but first we rebuff and drink up just in case
+                    } else
+                    {
+                        // Let's try moving closer
+                        Console.WriteLine("OnPreCombat() - Can't target. This should not happen :-P");
                     }
                 }
             }
