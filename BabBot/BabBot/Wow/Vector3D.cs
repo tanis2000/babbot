@@ -16,6 +16,8 @@
   
     Copyright 2009 BabBot Team
 */
+using System;
+
 namespace BabBot.Wow
 {
     public class Vector3D
@@ -43,6 +45,16 @@ namespace BabBot.Wow
             return ((X == 0) && (Y == 0) && (Z == 0)) ? false : true;
         }
 
+        public Vector3D Normalize()
+        {
+            double length = Math.Sqrt(X*X+Y*Y+Z*Z);
+            Vector3D v = new Vector3D();
+            v.X = (float)(X / length);
+            v.Y = (float)(Y / length);
+            v.Z = (float)(Z / length);
+            return v;
+        }
+
         public override string ToString()
         {
             return string.Format("{0}|{1}|{2}", X, Y, Z);
@@ -56,6 +68,16 @@ namespace BabBot.Wow
         public static bool operator !=(Vector3D v1, Vector3D v2)
         {
             return !(v1 == v2);
+        }
+
+        public static Vector3D operator * (Vector3D v, float n)
+        {
+            return new Vector3D(v.X*n, v.Y*n, v.Z*n);
+        }
+
+        public static Vector3D operator +(Vector3D v1, Vector3D v2)
+        {
+            return new Vector3D(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
         }
 
         public bool Equals(Vector3D obj)
