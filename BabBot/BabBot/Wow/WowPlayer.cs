@@ -724,7 +724,10 @@ namespace BabBot.Wow
                         if (!act.Active)
                         {
                             // attiva
-                            PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                            if (act.Binding.Bar > 0) //support for keys which are not bound to any action bar
+                            {
+                                PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                            }
                             PlayerCM.SendKeys(act.Binding.Key);
                             act.Active = true;
                         }
@@ -734,7 +737,10 @@ namespace BabBot.Wow
                         if (act.Active)
                         {
                             // disattiva
-                            PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                            if (act.Binding.Bar > 0)
+                            {
+                                PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                            }
                             PlayerCM.SendKeys(act.Binding.Key);
                             act.Active = true;
                         }
@@ -743,7 +749,10 @@ namespace BabBot.Wow
             } 
             else
             {
-                PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                if (act.Binding.Bar > 0)
+                {
+                    PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                }
                 PlayerCM.SendKeys(act.Binding.Key);
             }
         }
