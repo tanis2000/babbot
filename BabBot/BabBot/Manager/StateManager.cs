@@ -168,12 +168,14 @@ namespace BabBot.Manager
         public void Start()
         {
             // Start botting
+            LastState = CurrentState;
             CurrentState = PlayerState.Start;
         }
 
         public void Stop()
         {
             // Stop botting
+            LastState = CurrentState;
             CurrentState = PlayerState.Stop;
         }
     }
