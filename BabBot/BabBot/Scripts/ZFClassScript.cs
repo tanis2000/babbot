@@ -39,7 +39,7 @@ namespace BabBot.Scripts
         private List<string> preCombatList;
         private List<string> combatList;
         private List<string> lootSeqList;
-        //private List<string> globalList;
+        private List<string> globalList;
 
         public ZFClassScript(string script_name)
         {
@@ -54,16 +54,13 @@ namespace BabBot.Scripts
 
         void xxx()
         {
-            float x = float.Parse("1.4", System.Globalization.CultureInfo.InvariantCulture);
-            System.Console.WriteLine("1.4 is " + x + "now.");
-
             Bindings = new BindingList();
             Actions = new PlayerActionList();
 
             preCombatList = new List<string>();
-            combatList = new List<string>();
-            lootSeqList = new List<string>();
-            //globalList    = new List<string>();
+            combatList    = new List<string>();
+            lootSeqList   = new List<string>();
+            globalList    = new List<string>();
 
             FileInfo exe_finfo = new FileInfo(Application.ExecutablePath);
             string full_script_file = Path.Combine(Path.Combine(exe_finfo.DirectoryName, "Scripts"), scriptName);
@@ -88,7 +85,7 @@ namespace BabBot.Scripts
                     }
                     else
                     {
-                        Console.WriteLine("ZF: precombat: unknown action : " + action_name + ", ignored.");
+                        ZFDBG("precombat: unknown action : " + action_name + ", ignored.");
                     }
                 }
                 else if (trimmed.StartsWith("combatseq"))
@@ -100,7 +97,7 @@ namespace BabBot.Scripts
                     }
                     else
                     {
-                        Console.WriteLine("ZF: combatseq: unknown action : " + action_name + ", ignored.");
+                        ZFDBG("combatseq: unknown action : " + action_name + ", ignored.");
                     }
                 }
                 else if (trimmed.StartsWith("lootseq"))
@@ -112,24 +109,25 @@ namespace BabBot.Scripts
                     }
                     else
                     {
-                        Console.WriteLine("ZF: lootseq: unknown action : " + action_name + ", ignored.");
+                        ZFDBG("lootseq: unknown action : " + action_name + ", ignored.");
                     }
                 }
-                //else if (trimmed.StartsWith("globalact"))
-                //{
-                //    string action_name = parseActionLine(trimmed);
-                //    if (Actions.ContainsKey(action_name))
-                //    {
-                //        globalList.Add(action_name);
-                //    }
-                //    else
-                //    {
-                //        Console.WriteLine("ZF: globalact: unknown action : " + action_name + ", ignored.");
-                //    }
-                //}
+                else if (trimmed.StartsWith("globalact"))
+                {
+                    //the timeout part will be ignored. use prevacttime in defact line to set a timer.
+                    string action_name = parseActionLine(trimmed);
+                    if (Actions.ContainsKey(action_name))
+                    {
+                        globalList.Add(action_name);
+                    }
+                    else
+                    {
+                        ZFDBG("globalact: unknown action : " + action_name + ", ignored.");
+                    }
+                }
             }
             re.Close();
-            Console.WriteLine("ZF: loading " + scriptName + " - done.");
+            ZFDBG("loading " + scriptName + " - done.");
         }
 
         private string parseActionLine(string trimmed)
@@ -145,7 +143,7 @@ namespace BabBot.Scripts
                 trimmed = trimmed.Substring(idx + 1).Trim();
                 //trimmed is now just act:sdw
                 string[] ttokens = trimmed.Trim().Split(dels2);
-                if (ttokens.Length == 2)
+                if (ttokens.Length >= 2)
                 {
                     if ("act".Equals(ttokens[0]))
                     {
@@ -153,12 +151,12 @@ namespace BabBot.Scripts
                     }
                     else
                     {
-                        Console.WriteLine("ZF: invalid line: '" + trimmed + "' - ignored.");
+                        ZFDBG("invalid line: '" + trimmed + "' - ignored.");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("ZF: invalid line: '" + trimmed + "' - ignored.");
+                    ZFDBG("invalid line: '" + trimmed + "' - ignored.");
                 }
             }
             return action_name;
@@ -241,7 +239,7 @@ namespace BabBot.Scripts
                                 break;
 
                             default:
-                                Console.WriteLine("ZF: token '" + first + "' ignored.");
+                                ZFDBG("token '" + first + "' ignored.");
                                 break;
                         }
                     }
@@ -259,18 +257,18 @@ namespace BabBot.Scripts
                     a.lifege = lifege;
                     a.distle = distle;
                     a.distge = distge;
-                    a.gcd    = gcd;
+                    a.gcd    = (int)(gcd*1000); //sec => ms
                     Actions.Add(a.Name, a);
                 }
                 else
                 {
-                    Console.WriteLine("ZF: ignoring '" + trimmed + "' - no act name found.");
+                    ZFDBG("ignoring '" + trimmed + "' - no act name found.");
                     //no action name => input line input ignored.
                 }
             }
             else
             {
-                Console.WriteLine("ZF: ignoring '" + trimmed + "' - no = found.");
+                ZFDBG("ignoring '" + trimmed + "' - no = found.");
                 // error parsing script_name: bad defact line: input
             }
         }
@@ -284,18 +282,23 @@ namespace BabBot.Scripts
         private void condPlayAction(string action)
         {
             ZFPlayerAction p = (ZFPlayerAction)Actions[action];
-            if (p.shouldBeExecuted(player) /*&& p.isReady()*/)
+            bool ready = p.isReady();
+            bool condition = p.shouldBeExecuted(player);
+
+            if (ready && condition)
             {
-                Console.WriteLine("ZF: invoking " + action);
+                ZFDBG("executing " + action);
                 player.PlayAction(p);
-                if (p.gcd > 0)
-                {
-                    //sleep zfCooldown seconds 
-                }
+                p.lastExecTime = System.DateTime.UtcNow;
+
+                //if (p.gcd > 0)
+                //{
+                //    System.Threading.Thread.Sleep(p.gcd); 
+                //}
             }
             else
             {
-                Console.WriteLine("ZF: skipping " + action);
+                ZFDBG("skipping " + action + "[ready="+ready+",condition="+condition+"]");
             }
         }
 
@@ -338,6 +341,12 @@ namespace BabBot.Scripts
                 }
             }
         }
+
+        private static void ZFDBG(string msg)
+        {
+            Console.WriteLine("ZF: " + msg);
+        }
+
     }
 
     public class ZFPlayerAction : PlayerAction
@@ -350,15 +359,29 @@ namespace BabBot.Scripts
         public int distle;
         //true if distance to target is greater or less
         public int distge;
-        //global cooldown
-        public float gcd;
+
+        //global cooldown in ms
+        public int gcd;
+
+        public System.DateTime lastExecTime;
 
 
         public ZFPlayerAction(string iName, BabBot.Bot.Binding iBinding, float iRange, float iCoolDown, bool iSelfCast, bool iToggle)
             : base(iName, iBinding, iRange, iCoolDown, iSelfCast, iToggle)
         {
+            lastExecTime = System.DateTime.MinValue;
         }
 
+
+        public bool isReady()
+        {
+            bool ret = true;
+            if (CoolDown > 0)
+            {                
+                ret = (lastExecTime + TimeSpan.FromSeconds(CoolDown)) < System.DateTime.UtcNow;
+            }
+            return ret;
+        }
 
         //checks if the action should executed according to distle, distge, lifele, lifege, checkBuff ...
         public bool shouldBeExecuted(IPlayerWrapper me)
@@ -392,8 +415,11 @@ namespace BabBot.Scripts
             
             //check buffs/debuffs
 
+            //check if target is casting
+
             //TODO: rest of the keywords
             return ret;
         }
     }
+
 }
