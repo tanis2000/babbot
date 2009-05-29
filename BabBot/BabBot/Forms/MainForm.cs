@@ -425,7 +425,11 @@ namespace BabBot.Forms
                 lbEnemies.Items.Add(en.Name);
             }            
         }
-
+        
+        private void btnDumpBagsToConsole_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine(ProcessManager.Player.BagsAsTextList);
+        }
         #endregion
 
         #region Load/Save Config
@@ -488,6 +492,8 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
+
+
 
 
 

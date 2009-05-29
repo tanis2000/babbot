@@ -145,6 +145,27 @@ namespace BabBot.Wow
             }
         }
 
+        public string BagsAsTextList
+        {
+            get
+            {
+                string s = string.Empty;
+                try
+                {
+                    List<WowContainer> l = unit.GetBags();
+                    foreach (WowContainer obj in l)
+                    {
+                        s += string.Format("{0:X}|Slots:{1}|Empty:{2}" + Environment.NewLine, obj.Guid, obj.GetSlots(),
+                                           obj.GetEmptySlots());
+                    }
+                } catch (Exception ex)
+                {
+                    throw (ex);
+                }
+                return s;
+            }
+        }
+
         public PlayerState State
         {
             get { return ProcessManager.BotManager.State; }

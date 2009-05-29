@@ -134,6 +134,7 @@
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
+            this.btnDumpBagsToConsole = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -1114,6 +1115,7 @@
             // 
             // tabPageDebug2
             // 
+            this.tabPageDebug2.Controls.Add(this.btnDumpBagsToConsole);
             this.tabPageDebug2.Controls.Add(this.lblOrientation);
             this.tabPageDebug2.Controls.Add(this.lblLocation);
             this.tabPageDebug2.Controls.Add(this.tbOrientation);
@@ -1157,6 +1159,16 @@
             this.tbLocation.Name = "tbLocation";
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
+            // 
+            // btnDumpBagsToConsole
+            // 
+            this.btnDumpBagsToConsole.Location = new System.Drawing.Point(15, 102);
+            this.btnDumpBagsToConsole.Name = "btnDumpBagsToConsole";
+            this.btnDumpBagsToConsole.Size = new System.Drawing.Size(133, 23);
+            this.btnDumpBagsToConsole.TabIndex = 10;
+            this.btnDumpBagsToConsole.Text = "Dump Bags to Console";
+            this.btnDumpBagsToConsole.UseVisualStyleBackColor = true;
+            this.btnDumpBagsToConsole.Click += new System.EventHandler(this.btnDumpBagsToConsole_Click);
             // 
             // MainForm
             // 
@@ -1304,6 +1316,7 @@
         private System.Windows.Forms.ListBox lbEnemies;
         private System.Windows.Forms.Button btnAddEnemyToList;
         private System.Windows.Forms.Button btnRemoveEnemyFromList;
+        private System.Windows.Forms.Button btnDumpBagsToConsole;
     }
 }
 

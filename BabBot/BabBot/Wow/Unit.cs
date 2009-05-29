@@ -144,6 +144,42 @@ namespace BabBot.Wow
             return Corpses;
         }
 
+        public List<WowContainer> GetBags()
+        {
+            List<WowContainer> Bags = new List<WowContainer>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                uint BagsPointer =
+                    ProcessManager.WowProcess.ReadUInt(ObjectPointer + (uint)
+                                                                       ((uint)Descriptor.ePlayerFields.PLAYER_FIELD_PACK_SLOT_1 + i*2) *
+                                                                       0x04);
+                Descriptor.eObjType type = ProcessManager.ObjectManager.GetTypeByObject(BagsPointer);
+                if (type == Descriptor.eObjType.OT_CONTAINER)
+                {
+                    WowObject o = new WowObject();
+                    o.ObjectPointer = BagsPointer;
+                    o.Guid = ProcessManager.ObjectManager.GetGUIDByObject(o.ObjectPointer);
+                    o.Type = type;
+                    WowContainer c = new WowContainer(o);
+                    Bags.Add(c);
+                }
+            }
+            /*
+            List<WowObject> l = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
+            foreach (WowObject o in l)
+            {
+                Descriptor.eObjType type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
+                if (type == Descriptor.eObjType.OT_UNIT)
+                {
+                    WowUnit u = new WowUnit(o);
+                    u.Name = ProcessManager.ObjectManager.GetName(u.ObjectPointer, u.Guid);
+                    Mobs.Add(u);
+                }
+            }*/
+            return Bags;
+        }
+
         public bool IsSitting()
         {
             return Convert.ToBoolean(ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_BYTES_1 * 0x04) & (int)Descriptor.eUnitFlags.UF_SITTING);
