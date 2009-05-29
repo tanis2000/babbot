@@ -20,10 +20,68 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BabBot.Manager;
 
 namespace BabBot.Wow
 {
-    class WowContainer : WowObject
+    public class WowContainer : WowItem
     {
+        public WowContainer(WowObject o) : base(o)
+        {
+            Guid = o.Guid;
+            ObjectPointer = o.ObjectPointer;
+            Type = o.Type;
+        }
+
+        public uint GetSlots()
+        {
+            return (uint)ProcessManager.WowProcess.ReadInt(ObjectPointer + (uint)Descriptor.eContainerFields.CONTAINER_FIELD_NUM_SLOTS * 0x04);
+        }
+
+        public WowItem GetContainedItem(uint n)
+        {
+            if (n >= GetSlots()) return null;
+
+            UInt64 guid = ProcessManager.WowProcess.ReadUInt64(ObjectPointer + (uint)Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 + (2*n) * 0x04);
+            WowObject o = new WowObject();
+            o.Guid = guid;
+            o.ObjectPointer = ProcessManager.ObjectManager.GetObjectByGUID(o.Guid);
+            o.Type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
+            WowItem item = new WowItem(o);
+            return item;
+        }
+
+        public uint GetFilledSlots()
+        {
+            uint nSlots = GetSlots();
+            uint nFilled = 0;
+            for (uint i = 0 ; i < nSlots; i++)
+            {
+                UInt64 guid = ProcessManager.WowProcess.ReadUInt64(ObjectPointer + (uint)Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 + (2 * i) * 0x04);
+                if (guid != 0)
+                {
+                    nFilled++;
+                }
+            }
+
+            return nFilled;
+        }
+
+        public uint GetEmptySlots()
+        {
+            uint nSlots = GetSlots();
+            uint nEmpty = 0;
+            for (uint i = 0; i < nSlots; i++)
+            {
+                UInt64 guid = ProcessManager.WowProcess.ReadUInt64(ObjectPointer + (uint)Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 + (2 * i) * 0x04);
+                if (guid == 0)
+                {
+                    nEmpty++;
+                }
+            }
+
+            return nEmpty;
+        }
+
     }
 }

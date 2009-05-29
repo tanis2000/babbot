@@ -388,6 +388,7 @@ namespace BabBot.Manager
                 InitializeObjectManager();
                 Caronte.Init("Azeroth");
                 ScriptHost.Start();
+                StateManager.Instance.Stop();
                 Initialized = true;
             }
             catch (Exception ex)
