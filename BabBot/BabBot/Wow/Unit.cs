@@ -171,5 +171,10 @@ namespace BabBot.Wow
                 (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint) Descriptor.ePlayerFields.PLAYER_FLAGS * 0x04) & 0x10) != 0;
         }
 
+        public bool IsLootable()
+        {
+            return (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS * 0x04) & 0x0D) != 0;
+        }
+
     }
 }

@@ -18,6 +18,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using BabBot.Bot;
@@ -36,6 +37,9 @@ namespace BabBot.Wow
         public Vector3D LastLocation;
         private bool StopMovement;
         public int TravelTime;
+
+        private WowUnit LastTargetedMob;
+        private List<WowUnit> LootableList;
 
         private readonly Unit unit; // The corresponding Unit in Wow's ObjectManager
 
@@ -57,6 +61,7 @@ namespace BabBot.Wow
             LastFaceRadian = 0.0f;
             StopMovement = false;
             TravelTime = 0;
+            LootableList = new List<WowUnit>();
         }
 
 
@@ -134,7 +139,7 @@ namespace BabBot.Wow
                 List<WowUnit> l = unit.GetNearMobs();
                 foreach (WowUnit obj in l)
                 {
-                    s += string.Format("{0:X}|{1}" + Environment.NewLine, obj.Guid, obj.Name);
+                    s += string.Format("{0:X}|{1}|Lootable:{2}" + Environment.NewLine, obj.Guid, obj.Name, obj.IsLootable());
                 }
                 return s;
             }
@@ -256,6 +261,14 @@ namespace BabBot.Wow
             return false;
         }
 
+        public void AddLastTargetToLootList()
+        {
+            if (LastTargetedMob != null)
+            {
+                LootableList.Add(LastTargetedMob);
+            }
+        }
+
         public Vector3D GetTargetLocation()
         {
             if (HasTarget())
@@ -279,6 +292,7 @@ namespace BabBot.Wow
                     if (CurTargetGuid == u.Guid)
                     {
                         // we are already on the target, that's fine
+                        LastTargetedMob = u;
                         return true;
                     }
                 }
@@ -310,6 +324,7 @@ namespace BabBot.Wow
                 Thread.Sleep(1000);
                 if (CurTargetGuid == u.Guid)
                 {
+                    LastTargetedMob = u;
                     return true;
                 }
             } while ((CurTargetGuid != u.Guid) && (CurTargetGuid != firstGuid));
@@ -431,6 +446,107 @@ namespace BabBot.Wow
             }
         }
 
+        public WowUnit FindClosestLootableMob()
+        {
+            WowUnit closest = null;
+
+            foreach (WowUnit lootable in LootableList)
+            {
+                if (closest == null)
+                {
+                    closest = lootable;
+                }
+                else
+                {
+                    if (GetDistance(closest.Location, false) > GetDistance(lootable.Location, false))
+                    {
+                        closest = lootable;
+                    }
+                }
+            }
+
+            if (closest != null)
+            {
+                Console.WriteLine("We have a lootable mob");
+                return closest;
+            }
+            Console.WriteLine("No lootable mob found");
+            return null;
+        }
+
+        public void FaceClosestLootableMob()
+        {
+            WowUnit closest = FindClosestLootableMob();
+
+            if (closest != null)
+            {
+                Console.WriteLine("Facing closest lootable mob");
+                Face(closest.Location);
+            }
+        }
+
+        public void MoveToClosestLootableMob()
+        {
+            WowUnit mob = FindClosestLootableMob();
+            if (mob != null)
+            {
+                Face(mob.Location);
+                MoveTo(mob.Location);
+            }
+        }
+
+        public void LootClosestLootableMob()
+        {
+            Console.WriteLine("===Lootable List===");
+            foreach (var wowUnit in LootableList)
+            {
+                Console.WriteLine(wowUnit.Guid + " - " + wowUnit.Name);
+            }
+            WowUnit mob = FindClosestLootableMob();
+            if (mob != null)
+            {
+                Face(mob.Location);
+                MoveTo(mob.Location, 3.0f);
+                Loot(mob);
+            }
+        }
+
+        public void Loot(WowUnit mob)
+        {
+            PlayerCM.MoveMouseToCenter();
+            ulong guid = ProcessManager.ObjectManager.GetMouseOverGUID();
+
+            if (guid == mob.Guid)
+            {
+                PlayerCM.RightClickOnCenter();
+                return;
+            }
+
+            /// We build a grid and go through it until we find the
+            /// corpse we want to loot or until we run out of points to
+            /// scan
+            //List<Point> grid = new List<Point>();
+            int startX = PlayerCM.WowWindowRect.Width/2 - 10*5;
+            int startY = PlayerCM.WowWindowRect.Height / 2 - 10 * 5;
+            for (int i = 0; i < 20; i++)
+            {
+                for (int j = 0 ; j < 20 ; j++)
+                {
+                    PlayerCM.MoveMouseRelative(startX + j*5, startY+i*5);
+                    Thread.Sleep(50);
+                    guid = ProcessManager.ObjectManager.GetMouseOverGUID();
+
+                    if (guid == mob.Guid)
+                    {
+                        PlayerCM.SingleClick("right");
+                        Thread.Sleep(250);
+                        LootableList.Remove(mob);
+                        return;
+                    }
+                }
+            }
+        }
+
         public void MoveToTarget(float tolerance)
         {
             if (HasTarget())
@@ -450,6 +566,7 @@ namespace BabBot.Wow
         {
             return MoveTo(dest, 1.0f);
         }
+
 
         public PlayerState MoveTo(Vector3D dest, float tolerance)
         {
@@ -525,6 +642,12 @@ namespace BabBot.Wow
             return res;
         }
 
+        /// <summary>
+        /// Chase a mob given its location and a distance tolerance
+        /// </summary>
+        /// <param name="target">Unit we want to reach</param>
+        /// <param name="tolerance">Distance at which we can stop</param>
+        /// <returns></returns>
         public PlayerState MoveTo(WowUnit target, float tolerance)
         {
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
@@ -533,16 +656,20 @@ namespace BabBot.Wow
             int steps = 0;
             int currentStep = 0;
             float distanceFromStep = 0;
+            Path path = new Path();
 
             if (!target.Location.IsValid())
             {
                 return PlayerState.Ready;
             }
 
-            Path path = ProcessManager.Caronte.CalculatePath(new Location(this.Location.X, this.Location.Y, this.Location.Z),
-                                                 new Location(target.Location.X, target.Location.Y, target.Location.Z));
+            distance = HGetDistance(target.Location, false);
 
-            
+            path =
+                ProcessManager.Caronte.CalculatePath(
+                    new Location(this.Location.X, this.Location.Y, this.Location.Z),
+                    new Location(target.Location.X, target.Location.Y, target.Location.Z));
+
             foreach (Pather.Graph.Location loc in path.locations)
             {
                 Console.WriteLine("X: {0}  Y: {1}   Z: {2}", loc.X, loc.Y, loc.Z);
@@ -570,7 +697,7 @@ namespace BabBot.Wow
             }
 
             // Move on...
-            distance = HGetDistance(target.Location, false);
+            
             PlayerCM.ArrowKeyDown(key);
 
             // Start profiler for WayPointTimeOut

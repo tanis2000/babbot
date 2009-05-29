@@ -157,7 +157,6 @@ namespace BabBot.Scripts
             /// Right now we only walk through the waypoints as a proof of concept
             Console.WriteLine("OnRoaming() -- Walking to the next waypoint");
             player.WalkToNextWayPoint(WayPointType.Normal);
-
         }
 
         /// <summary>
@@ -232,11 +231,14 @@ namespace BabBot.Scripts
         /// </summary>
         protected virtual void OnPostCombat()
         {
+            Console.WriteLine("OnPostCombat()");
             // We reset all actions listed as toggle
             foreach (KeyValuePair<string, PlayerAction> pair in Actions)
             {
                 if (pair.Value.Toggle) pair.Value.Active = false;
             }
+            player.AddLastTargetToLootList();
+            player.LootClosestLootableMob();
         }
 
         /// <summary>

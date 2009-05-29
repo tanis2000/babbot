@@ -385,39 +385,64 @@ namespace BabBot.Manager
         private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
-        public static int CenterX, CenterY;
-        public static Rectangle WowWindowRect;
+        public int CenterX, CenterY;
+        private Rectangle _WowWindowRect;
 
-        public static int CursorX()
+        public int CursorX()
         {
             return Cursor.Position.X;
         }
 
-        public static int CursorY()
+        public int CursorY()
         {
             return Cursor.Position.Y;
         }
 
-        public static void SetWindowSize(IntPtr WindowHandle)
+        public Rectangle WowWindowRect
         {
-            WowWindowRect = WindowSize.GetSize(WindowHandle);
+            get
+            {
+                if (_WowWindowRect.Width == 0 && _WowWindowRect.Height == 0)
+                {
+                    SetWindowSize();
+                }
+                return _WowWindowRect;
+            }
+            set { _WowWindowRect = value; }
+        }
+
+        
+        public void SetWindowSize()
+        {
+            WowWindowRect = WindowSize.GetSize((IntPtr)WowHWND);
             CenterX = WowWindowRect.Width/2 + WowWindowRect.X;
             CenterY = WowWindowRect.Height/2 + WowWindowRect.Y;
         }
 
-        public static void MoveMouseRelative(int X, int Y)
+        public void MoveMouseRelative(int X, int Y)
         {
             X += WowWindowRect.X;
             Y += WowWindowRect.Y;
             Cursor.Position = new Point(X, Y);
         }
 
-        public static void MoveMouse(int X, int Y)
+        public void MoveMouse(int X, int Y)
         {
             Cursor.Position = new Point(X, Y);
         }
 
-        public static void SingleClick(string MouseButton)
+        public void MoveMouseToCenter()
+        {
+            MoveMouse(WowWindowRect.Width / 2, WowWindowRect.Height / 2);
+        }
+
+        public void RightClickOnCenter()
+        {
+            SetWindowSize();
+            SingleClick(WowWindowRect.Width/2, WowWindowRect.Height/2, "right");
+        }
+
+        public void SingleClick(string MouseButton)
         {
             MouseButton = MouseButton.ToLower();
 
@@ -433,45 +458,7 @@ namespace BabBot.Manager
             }
         }
 
-        public static void SingleClick(int X, int Y, string MouseButton)
-        {
-            MoveMouse(X, Y);
-
-            MouseButton = MouseButton.ToLower();
-
-            if (MouseButton == "left")
-            {
-                LeftMouseDown();
-                LeftMouseUp();
-            }
-            if (MouseButton == "right")
-            {
-                RightMouseDown();
-                RightMouseUp();
-            }
-        }
-
-        public static void DoubleClick(String MouseButton)
-        {
-            MouseButton = MouseButton.ToLower();
-
-            if (MouseButton == "left")
-            {
-                LeftMouseDown();
-                LeftMouseUp();
-                LeftMouseDown();
-                LeftMouseUp();
-            }
-            if (MouseButton == "right")
-            {
-                RightMouseDown();
-                RightMouseUp();
-                RightMouseDown();
-                RightMouseUp();
-            }
-        }
-
-        public static void DoubleClick(int X, int Y, String MouseButton)
+        public void SingleClick(int X, int Y, string MouseButton)
         {
             MoveMouse(X, Y);
 
@@ -481,6 +468,22 @@ namespace BabBot.Manager
             {
                 LeftMouseDown();
                 LeftMouseUp();
+            }
+            if (MouseButton == "right")
+            {
+                RightMouseDown();
+                RightMouseUp();
+            }
+        }
+
+        public void DoubleClick(String MouseButton)
+        {
+            MouseButton = MouseButton.ToLower();
+
+            if (MouseButton == "left")
+            {
+                LeftMouseDown();
+                LeftMouseUp();
                 LeftMouseDown();
                 LeftMouseUp();
             }
@@ -493,7 +496,29 @@ namespace BabBot.Manager
             }
         }
 
-        public static void DragMouse(int FinishX, int FinishY, String MouseButton)
+        public void DoubleClick(int X, int Y, String MouseButton)
+        {
+            MoveMouse(X, Y);
+
+            MouseButton = MouseButton.ToLower();
+
+            if (MouseButton == "left")
+            {
+                LeftMouseDown();
+                LeftMouseUp();
+                LeftMouseDown();
+                LeftMouseUp();
+            }
+            if (MouseButton == "right")
+            {
+                RightMouseDown();
+                RightMouseUp();
+                RightMouseDown();
+                RightMouseUp();
+            }
+        }
+
+        public void DragMouse(int FinishX, int FinishY, String MouseButton)
         {
             MouseButton = MouseButton.ToLower();
 
@@ -517,7 +542,7 @@ namespace BabBot.Manager
             }
         }
 
-        public static void DragMouse(int StartX, int StartY, int FinishX, int FinishY, String MouseButton)
+        public void DragMouse(int StartX, int StartY, int FinishX, int FinishY, String MouseButton)
         {
             MoveMouse(StartX, StartY);
 
@@ -548,25 +573,25 @@ namespace BabBot.Manager
             }
         }
 
-        public static void LeftMouseDown()
+        public void LeftMouseDown()
         {
             Point Coordinates = Cursor.Position;
             mouse_event(MOUSEEVENTF_LEFTDOWN, Coordinates.X, Coordinates.Y, 0, 0);
         }
 
-        public static void LeftMouseUp()
+        public void LeftMouseUp()
         {
             Point Coordinates = Cursor.Position;
             mouse_event(MOUSEEVENTF_LEFTUP, Coordinates.X, Coordinates.Y, 0, 0);
         }
 
-        public static void RightMouseDown()
+        public void RightMouseDown()
         {
             Point Coordinates = Cursor.Position;
             mouse_event(MOUSEEVENTF_RIGHTDOWN, Coordinates.X, Coordinates.Y, 0, 0);
         }
 
-        public static void RightMouseUp()
+        public void RightMouseUp()
         {
             Point Coordinates = Cursor.Position;
             mouse_event(MOUSEEVENTF_RIGHTUP, Coordinates.X, Coordinates.Y, 0, 0);

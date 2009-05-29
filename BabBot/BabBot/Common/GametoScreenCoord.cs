@@ -91,7 +91,7 @@ namespace BabBot.Common
             if (pctMouse.X < 0 || pctMouse.Y < 0 || pctMouse.X > rc.right || pctMouse.Y > rc.bottom)
                 return false;
 
-            CommandManager.MoveMouse(pctMouse.X, pctMouse.Y);
+            ProcessManager.CommandManager.MoveMouse(pctMouse.X, pctMouse.Y);
             return true;
         }
     }

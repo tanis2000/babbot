@@ -70,5 +70,45 @@ namespace BabBot.Wow
             }
             return false;
         }
+
+        public bool IsLootable()
+        {
+            return unit.IsLootable();
+        }
+
+        public bool Equals(WowUnit obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            return (obj.Guid == Guid);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != typeof(WowUnit))
+            {
+                return false;
+            }
+            return Equals((WowUnit)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Guid.GetHashCode();
+        }
     }
 }

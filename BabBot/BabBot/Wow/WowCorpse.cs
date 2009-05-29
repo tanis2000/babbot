@@ -25,11 +25,19 @@ namespace BabBot.Wow
 {
     public class WowCorpse : WowObject
     {
+        private readonly Unit unit;
+
         public WowCorpse(WowObject o)
         {
             Guid = o.Guid;
             ObjectPointer = o.ObjectPointer;
             Type = o.Type;
+            unit = new Unit(ObjectPointer);
+        }
+
+        public Vector3D Location
+        {
+            get { return unit.GetPosition(); }
         }
     }
 }

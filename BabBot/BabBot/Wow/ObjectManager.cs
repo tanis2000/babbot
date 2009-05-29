@@ -191,6 +191,11 @@ namespace BabBot.Wow
             return ProcessManager.WowProcess.ReadASCIIString(ProcessManager.WowProcess.ReadUInt((aaa + 0x54 /* 3.0.9: 0x3C */)), 40);
         }
 
+        public ulong GetMouseOverGUID()
+        {
+            return ProcessManager.WowProcess.ReadUInt64(Globals.MouseOverGuidOffset);
+        }
+
 /*
         private string GetPlayerName(uint player)
         {

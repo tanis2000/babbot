@@ -33,6 +33,7 @@ namespace BabBot.Wow
         public const uint PlayerYOffset = 0x79C; // 3.1.0: 0x79C; // 3.0.9: 0x7D4;
         public const uint PlayerZOffset = 0x7A0; // 3.1.0: 0x79C; // 3.0.9: 0x7D8;
         public const uint PlayerRotationOffset = 0x7A8; // 3.1.0: 0x79C; // 3.0.9: 0x7D8;
+        public const uint MouseOverGuidOffset = 0x011D3F50;
         public const uint PlayerCurTargetGuidOffset = 0x011D3F60; // 3.1.0: 0x011CCF38; // 3.0.9: 0x10A68E0
         public const uint NameStorePointer = 0x0113ED00 + 0x8; // 3.1.0: 0x01137CE0 + 8; // 3.0.9 0x11AF470 + 0x8;  // Player name database
 

@@ -47,6 +47,10 @@ namespace BabBot.Scripting
         bool HasTarget();
         void MoveForward(); // Currently broken
         void MoveToTarget(float tolerance);
+        void MoveToClosestLootableMob();
+        void FaceClosestLootableMob();
+        void LootClosestLootableMob();
+        void AddLastTargetToLootList();
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -181,6 +185,25 @@ namespace BabBot.Scripting
             player.MoveToTarget(tolerance);
         }
 
+        public void FaceClosestLootableMob()
+        {
+            player.FaceClosestLootableMob();
+        }
+
+        public void MoveToClosestLootableMob()
+        {
+            player.MoveToClosestLootableMob();
+        }
+
+        public void LootClosestLootableMob()
+        {
+            player.LootClosestLootableMob();
+        }
+
+        public void AddLastTargetToLootList()
+        {
+            player.AddLastTargetToLootList();
+        }
         #endregion
     }
 }
