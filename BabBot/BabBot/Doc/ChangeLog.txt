@@ -1,4 +1,22 @@
-Current (1.0.0.113)
+Current (1.0.0.140)
+===================
+- Fixed bug #3: Player information now correctly updates in the main form.
+- Basic bindings (actionbar/slot stuff only for now) and test combat code for
+  a low level paladin which is our starting testbed.
+- Added the UI to select a mob and add it to our enemy list
+- Added a script to support zf style bindings
+- Better state management (scripting)
+- Added Caronte, a derivative pathing library forked from the modified
+  version of PPather by benthor
+- StateManager now stores the LastState correctly when starting and 
+  stopping the bot
+- Changed the way movement works when chasing a mob.  But it's still not 
+  taking into account the time spent calculating a new path and the fact 
+  that the mob might have moved in the meanwhile
+- Added Looting (yeah! BabBot can now loot the mobs it kills)
+
+
+1.0.0.113
 ===================
 - Updated offsets to 3.1.2
 - Basic movement through waypoints
