@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using StormDll;
 using Pather;
@@ -365,7 +366,11 @@ namespace Wmo
 
 		public override Model Load(String path) {
 			// change .mdx to .m2
-			string file=path.Substring(0, path.Length-4)+".m2";
+            string file = path;
+            if (Path.GetExtension(path).Equals(".mdx"))
+            {
+                file = Path.ChangeExtension(path, ".m2");
+            }
 
 			//Console.WriteLine("Load model " + path);
 			string localPath="PPather\\model.tmp";
