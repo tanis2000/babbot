@@ -50,6 +50,7 @@ namespace BabBot.Forms
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
+
         }
 
         #region Exception Handler
