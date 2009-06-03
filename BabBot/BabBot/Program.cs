@@ -17,38 +17,37 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Windows.Forms;
+using BabBot.Common;
 using BabBot.Forms;
-using BabBot.Manager;
 
 namespace BabBot
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Forms.MainForm mainForm = new Forms.MainForm();
-            Application.ThreadException += new ThreadExceptionEventHandler(mainForm.UnhandledThreadExceptionHandler);
+            var mainForm = new MainForm();
+            Application.ThreadException += mainForm.UnhandledThreadExceptionHandler;
             try
             {
+                AppHelper.StartHideProcess(); // comment this line if you have problem
                 Application.Run(mainForm);
+                AppHelper.StopHideProcess(); // comment this line if you have problem
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Forms.ExceptionForm form = new ExceptionForm(ex);
+                var form = new ExceptionForm(ex);
                 DialogResult result;
                 result = form.ShowDialog();
                 Application.Exit();
             }
         }
-
     }
 }

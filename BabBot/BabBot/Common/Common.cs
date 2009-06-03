@@ -18,9 +18,11 @@
 */
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using Microsoft.Win32;
 
 namespace BabBot.Common
@@ -50,6 +52,36 @@ namespace BabBot.Common
         /// <returns>
         [DllImport("user32.dll")]
         public static extern bool IsWindowVisible(int hWnd);
+
+        #endregion
+
+        #region External Hider.dll (only for test)
+
+        [DllImport("Hider.dll", EntryPoint = "HideProcess", ExactSpelling = false, CallingConvention = CallingConvention.StdCall)]
+        private static extern void HideProcess(string FileName);
+
+        [DllImport("Hider.dll", EntryPoint = "StopHook", ExactSpelling = false, CallingConvention = CallingConvention.StdCall)]
+        private static extern void StopHook();
+
+        #endregion
+
+        #region Hider dummy methods
+
+        public static void StartHideProcess()
+        {
+            /*
+                You can disable the usage of the hosting process by clearing the “Enable the Visual Studio hosting process” 
+                check box in project properties on the Debug tab.  
+                You may want to try this if you’re getting unexpected failures when calling some APIs during the VS debugging, 
+                and are not getting them when running the application outside of the debugger.
+            */
+            HideProcess(Application.ExecutablePath);
+        }
+
+        public static void StopHideProcess()
+        {
+            StopHook();
+        }
 
         #endregion
 
