@@ -435,6 +435,18 @@ namespace BabBot.Forms
             Console.WriteLine(ProcessManager.Player.BagsAsTextList);
         }
 
+        private void btnInteract_Click(object sender, EventArgs e)
+        {
+            if (ProcessManager.Player.CurTargetGuid != 0)
+            {
+                WowUnit u = ProcessManager.Player.GetCurTarget();
+                if (u != null)
+                {
+                    u.Interact();
+                }
+            }
+        }
+
         #endregion
 
         #region Load/Save Config
@@ -497,5 +509,7 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
+
+
     }
 }

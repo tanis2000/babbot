@@ -442,6 +442,12 @@ namespace BabBot.Manager
             SingleClick(WowWindowRect.Width/2, WowWindowRect.Height/2, "right");
         }
 
+        public void LeftClickOnCenter()
+        {
+            SetWindowSize();
+            SingleClick(WowWindowRect.Width / 2, WowWindowRect.Height / 2, "left");
+        }
+
         public void SingleClick(string MouseButton)
         {
             MouseButton = MouseButton.ToLower();

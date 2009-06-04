@@ -18,6 +18,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using BabBot.Manager;
 
 namespace BabBot.Wow
@@ -27,6 +28,7 @@ namespace BabBot.Wow
         public ulong ObjectGUID;
         public uint ObjectPointer;
         public uint UnitDescriptor;
+        public uint VMT;  
 
         public Unit(uint objectPointer)
         {
@@ -36,6 +38,7 @@ namespace BabBot.Wow
                 UnitDescriptor = ProcessManager.WowProcess.ReadUInt(ObjectPointer + Globals.DescriptorOffset);
                 //Console.WriteLine(string.Format("OP+DescOff: {0:X}", (ObjectPointer + Globals.DescriptorOffset)));
                 ObjectGUID = ProcessManager.WowProcess.ReadUInt64(ObjectPointer + Globals.GuidOffset);
+                VMT = ProcessManager.WowProcess.ReadUInt(ObjectPointer);
             }
             else
             {
@@ -238,5 +241,40 @@ namespace BabBot.Wow
                 (ProcessManager.WowProcess.ReadInt(UnitDescriptor +
                                                    (uint) Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS*0x04) & 0x0D) != 0;
         }
+        #region Code Injection Stuff
+
+        /// <summary>
+        /// Interacts with the object, loot, target etc.
+        /// </summary>
+        public void Interact()
+        {
+            if (ObjectPointer != 0)
+            {
+                try
+                {
+                    ProcessManager.SuspendMainWowThread();
+                    uint codecave = ProcessManager.WowProcess.AllocateMemory();
+                    ProcessManager.WowProcess.Asm.Clear();
+                    ProcessManager.WowProcess.Asm.AddLine("fs mov eax, [0x2C]");
+                    ProcessManager.WowProcess.Asm.AddLine("mov eax, [eax]");
+                    ProcessManager.WowProcess.Asm.AddLine("add eax, 0x10");
+                    ProcessManager.WowProcess.Asm.AddLine("mov dword [eax], {0}", Globals.CurMgr);
+                    ProcessManager.WowProcess.Asm.AddLine("mov ecx, {0}", ObjectPointer);
+                    ProcessManager.WowProcess.Asm.AddLine("call {0}", ProcessManager.WowProcess.ReadUInt(VMT + 38 * 4)); //0x6f26d0);//ProcessManager.WowProcess.ReadUInt(VMT + 38 * 4));
+                    ProcessManager.WowProcess.Asm.AddLine("retn");
+                    ProcessManager.WowProcess.Asm.InjectAndExecute(codecave);
+                    Thread.Sleep(10);
+                    ProcessManager.ResumeMainWowThread();
+                    ProcessManager.WowProcess.FreeMemory(codecave);
+                }
+                catch (Exception ex)
+                {
+                    ProcessManager.ResumeMainWowThread();
+                    throw new Exception("Interact() failed miserably!");
+                }
+            }
+        }
+        #endregion
+
     }
 }

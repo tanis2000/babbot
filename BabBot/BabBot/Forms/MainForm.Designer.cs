@@ -130,11 +130,12 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
+            this.btnDumpBagsToConsole = new System.Windows.Forms.Button();
             this.lblOrientation = new System.Windows.Forms.Label();
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
-            this.btnDumpBagsToConsole = new System.Windows.Forms.Button();
+            this.btnInteract = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -1115,6 +1116,7 @@
             // 
             // tabPageDebug2
             // 
+            this.tabPageDebug2.Controls.Add(this.btnInteract);
             this.tabPageDebug2.Controls.Add(this.btnDumpBagsToConsole);
             this.tabPageDebug2.Controls.Add(this.lblOrientation);
             this.tabPageDebug2.Controls.Add(this.lblLocation);
@@ -1127,6 +1129,16 @@
             this.tabPageDebug2.TabIndex = 4;
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
+            // 
+            // btnDumpBagsToConsole
+            // 
+            this.btnDumpBagsToConsole.Location = new System.Drawing.Point(15, 102);
+            this.btnDumpBagsToConsole.Name = "btnDumpBagsToConsole";
+            this.btnDumpBagsToConsole.Size = new System.Drawing.Size(133, 23);
+            this.btnDumpBagsToConsole.TabIndex = 10;
+            this.btnDumpBagsToConsole.Text = "Dump Bags to Console";
+            this.btnDumpBagsToConsole.UseVisualStyleBackColor = true;
+            this.btnDumpBagsToConsole.Click += new System.EventHandler(this.btnDumpBagsToConsole_Click);
             // 
             // lblOrientation
             // 
@@ -1160,15 +1172,15 @@
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
             // 
-            // btnDumpBagsToConsole
+            // btnInteract
             // 
-            this.btnDumpBagsToConsole.Location = new System.Drawing.Point(15, 102);
-            this.btnDumpBagsToConsole.Name = "btnDumpBagsToConsole";
-            this.btnDumpBagsToConsole.Size = new System.Drawing.Size(133, 23);
-            this.btnDumpBagsToConsole.TabIndex = 10;
-            this.btnDumpBagsToConsole.Text = "Dump Bags to Console";
-            this.btnDumpBagsToConsole.UseVisualStyleBackColor = true;
-            this.btnDumpBagsToConsole.Click += new System.EventHandler(this.btnDumpBagsToConsole_Click);
+            this.btnInteract.Location = new System.Drawing.Point(229, 101);
+            this.btnInteract.Name = "btnInteract";
+            this.btnInteract.Size = new System.Drawing.Size(75, 23);
+            this.btnInteract.TabIndex = 11;
+            this.btnInteract.Text = "Interact";
+            this.btnInteract.UseVisualStyleBackColor = true;
+            this.btnInteract.Click += new System.EventHandler(this.btnInteract_Click);
             // 
             // MainForm
             // 
@@ -1317,6 +1329,7 @@
         private System.Windows.Forms.Button btnAddEnemyToList;
         private System.Windows.Forms.Button btnRemoveEnemyFromList;
         private System.Windows.Forms.Button btnDumpBagsToConsole;
+        private System.Windows.Forms.Button btnInteract;
     }
 }
 

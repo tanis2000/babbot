@@ -242,3 +242,91 @@ Here's a cleaned up version of the above post, remembering that the tracking fla
 
 To remove a tracking flag, use Flags &= ~TRACK_WHATEVER;
 To check for a flag, use Flags & TRACK_WHATEVER;
+
+
+       public Mover(LocalPlayer Me)
+        {
+            const uint GetContinentName = 0x010A51F8;
+            string contintentName = Game.wow.ReadUTF8String(GetContinentName, 40);
+            ppather.Init(contintentName);
+            this.Me = Me;
+            mySpot.Update(Me.Location);
+            Logger.logToFile("PPather started on " + contintentName + ".");
+        }
+
+
+
+
+
+3.1.2
+DoString:
+
+Code:
+
+ public void DoString(string strScript)
+        {
+            uint pScript = m_OM.WoW.AllocateMemory(0x3000);
+            m_OM.WoW.WriteASCIIString(pScript, strScript);
+
+            uint codeCave = m_OM.WoW.AllocateMemory(0x1024);
+
+            m_OM.UpdateCurMgr();
+
+            m_OM.WoW.Asm.AddLine("mov ecx, {0}", pScript + strScript.Length - 1);
+            m_OM.WoW.Asm.AddLine("mov eax, " + pScript);
+
+            m_OM.WoW.Asm.AddLine("push 0");
+            m_OM.WoW.Asm.AddLine("push eax");
+            m_OM.WoW.Asm.AddLine("push eax");
+
+            m_OM.WoW.Asm.AddLine("mov eax, {0}", 0x0049AB60);
+            m_OM.WoW.Asm.AddLine("call eax");
+            m_OM.WoW.Asm.AddLine("add esp, 0xC");
+            m_OM.WoW.Asm.AddLine("retn");
+
+            m_OM.WoW.SuspendThread();
+            m_OM.WoW.Asm.InjectAndExecute(codeCave);
+            m_OM.WoW.FreeMemory(codeCave);
+            m_OM.WoW.FreeMemory(pScript);
+            m_OM.WoW.ResumeThread();
+        }
+
+GetLocalizedText:
+
+Code:
+
+public String GetLocalizedText(string variable)
+        {
+            uint codecave = m_OM.WoW.AllocateMemory(0x200);
+
+            m_OM.WoW.WriteASCIIString(codecave + 0x100, variable);
+
+            m_OM.WoW.Asm.Clear();
+
+            m_OM.UpdateCurMgr();
+
+            m_OM.Start(2500);
+
+            m_OM.WoW.Asm.AddLine("mov ecx, {0}", m_OM.LocalPlayer.BaseAddress);
+            m_OM.WoW.Asm.AddLine("push {0}", -1);
+            m_OM.WoW.Asm.AddLine("push {0}", codecave + 0x100);
+            m_OM.WoW.Asm.AddLine("call {0}", 0x005A8500);
+            m_OM.WoW.Asm.AddLine("retn");
+
+            m_OM.WoW.SuspendThread();
+
+            uint result = m_OM.WoW.Asm.InjectAndExecute(codecave);
+
+            String sResult = "null";
+            if (result != 0)
+            {
+                sResult = m_OM.ReadString(result);
+            }
+
+            m_OM.WoW.FreeMemory(codecave);
+
+            m_OM.WoW.ResumeThread();
+
+            return sResult;
+        }
+

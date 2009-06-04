@@ -76,6 +76,11 @@ namespace BabBot.Wow
             return unit.IsLootable();
         }
 
+        public void Interact()
+        {
+            unit.Interact();
+        }
+
         public bool Equals(WowUnit obj)
         {
             if (ReferenceEquals(null, obj))

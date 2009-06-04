@@ -396,5 +396,20 @@ namespace BabBot.Manager
                 throw new Exception("Initialize failed!");
             }
         }
+
+        public static void SuspendMainWowThread()
+        {
+            ProcessThread wowMainThread = SThread.GetMainThread(process.Id);
+            IntPtr hThread = SThread.OpenThread(wowMainThread.Id);
+            SThread.SuspendThread(hThread);
+        }
+
+        public static void ResumeMainWowThread()
+        {
+            ProcessThread wowMainThread = SThread.GetMainThread(process.Id);
+            IntPtr hThread = SThread.OpenThread(wowMainThread.Id);
+            SThread.ResumeThread(hThread);
+        }
+
     }
 }
