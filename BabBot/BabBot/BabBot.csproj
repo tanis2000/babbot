@@ -194,8 +194,6 @@
     <Content Include="Lib\BlackMagic.dll" />
     <Content Include="Lib\BlackMagic.XML" />
     <Content Include="Lib\Caronte.dll" />
-    <Content Include="Lib\FASM.DLL" />
-    <Content Include="Lib\fasmdll_managed.dll" />
     <Content Include="Lib\Hider.dll" />
   </ItemGroup>
   <ItemGroup>

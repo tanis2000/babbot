@@ -260,7 +260,7 @@ namespace BabBot.Wow
                     ProcessManager.WowProcess.Asm.AddLine("add eax, 0x10");
                     ProcessManager.WowProcess.Asm.AddLine("mov dword [eax], {0}", Globals.CurMgr);
                     ProcessManager.WowProcess.Asm.AddLine("mov ecx, {0}", ObjectPointer);
-                    ProcessManager.WowProcess.Asm.AddLine("call {0}", ProcessManager.WowProcess.ReadUInt(VMT + 38 * 4)); //0x6f26d0);//ProcessManager.WowProcess.ReadUInt(VMT + 38 * 4));
+                    ProcessManager.WowProcess.Asm.AddLine("call {0}", ProcessManager.WowProcess.ReadUInt(VMT + 38 * 4));
                     ProcessManager.WowProcess.Asm.AddLine("retn");
                     ProcessManager.WowProcess.Asm.InjectAndExecute(codecave);
                     Thread.Sleep(10);
