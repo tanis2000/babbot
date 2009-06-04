@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -61,7 +61,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\CSScriptLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="fasmdll_managed, Version=1.0.3221.34697, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -198,6 +197,12 @@
     <Content Include="Lib\FASM.DLL" />
     <Content Include="Lib\fasmdll_managed.dll" />
     <Content Include="Lib\Hider.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\fasmdll_managed\fasmdll_managed\fasmdll_managed.vcproj">
+      <Project>{61D8CF34-1FD7-4A01-BEC1-1A8E8050A9C6}</Project>
+      <Name>fasmdll_managed</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
