@@ -18,7 +18,6 @@
 */
 //css_import Paladin;
 using System;
-using System.Collections.Generic;
 using BabBot.Bot;
 using BabBot.Scripting;
 using BabBot.Wow;
@@ -27,13 +26,22 @@ namespace BabBot.Scripts
 {
     public class Script : IScript
     {
-        IHost parent;
-        public IPlayerWrapper player;
-        IHost IScript.Parent { set { parent = value; } }
-        IPlayerWrapper IScript.Player { set { player = value; } }
-
-        protected BindingList Bindings;
         protected PlayerActionList Actions;
+        protected BindingList Bindings;
+        private IHost parent;
+        public IPlayerWrapper player;
+
+        #region IScript Members
+
+        IHost IScript.Parent
+        {
+            set { parent = value; }
+        }
+
+        IPlayerWrapper IScript.Player
+        {
+            set { player = value; }
+        }
 
         /// <summary>
         /// Local script initialization. Not much to do here at the moment
@@ -107,6 +115,8 @@ namespace BabBot.Scripts
             }
             Console.WriteLine("Update() -- End");
         }
+
+        #endregion
 
         /// <summary>
         /// Called when we have attached ourselves to WoW's client or when we start botting.
@@ -193,7 +203,8 @@ namespace BabBot.Scripts
                         Console.WriteLine("OnPreCombat() - Affirmative. We have a target");
                         /// Ok, we have the target, it's time to start attacking,
                         /// but first we rebuff and drink up just in case
-                    } else
+                    }
+                    else
                     {
                         // Let's try moving closer
                         Console.WriteLine("OnPreCombat() - Can't target. This should not happen :-P");
@@ -233,9 +244,12 @@ namespace BabBot.Scripts
         {
             Console.WriteLine("OnPostCombat()");
             // We reset all actions listed as toggle
-            foreach (KeyValuePair<string, PlayerAction> pair in Actions)
+            foreach (var pair in Actions)
             {
-                if (pair.Value.Toggle) pair.Value.Active = false;
+                if (pair.Value.Toggle)
+                {
+                    pair.Value.Active = false;
+                }
             }
             player.AddLastTargetToLootList();
             player.LootClosestLootableMob();
@@ -246,9 +260,6 @@ namespace BabBot.Scripts
         /// </summary>
         protected virtual void Fight()
         {
-            
         }
     }
-
 }
-

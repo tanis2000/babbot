@@ -99,11 +99,11 @@ namespace BabBot.Wow
             {
                 return true;
             }
-            if (obj.GetType() != typeof(WowUnit))
+            if (obj.GetType() != typeof (WowUnit))
             {
                 return false;
             }
-            return Equals((WowUnit)obj);
+            return Equals((WowUnit) obj);
         }
 
         public override int GetHashCode()

@@ -47,11 +47,11 @@ namespace BabBot.Wow
 
         public Vector3D Normalize()
         {
-            double length = Math.Sqrt(X*X+Y*Y+Z*Z);
-            Vector3D v = new Vector3D();
-            v.X = (float)(X / length);
-            v.Y = (float)(Y / length);
-            v.Z = (float)(Z / length);
+            double length = Math.Sqrt(X*X + Y*Y + Z*Z);
+            var v = new Vector3D();
+            v.X = (float) (X/length);
+            v.Y = (float) (Y/length);
+            v.Z = (float) (Z/length);
             return v;
         }
 
@@ -70,7 +70,7 @@ namespace BabBot.Wow
             return !(v1 == v2);
         }
 
-        public static Vector3D operator * (Vector3D v, float n)
+        public static Vector3D operator *(Vector3D v, float n)
         {
             return new Vector3D(v.X*n, v.Y*n, v.Z*n);
         }

@@ -87,6 +87,5 @@ namespace BabBot.Bot
         }
 
         #endregion
-
     }
 }

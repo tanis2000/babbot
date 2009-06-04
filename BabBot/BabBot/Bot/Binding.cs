@@ -18,23 +18,20 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BabBot.Bot
 {
     [Serializable]
     public class BindingList : Dictionary<string, Binding>
     {
-        
     }
 
     [Serializable]
     public class Binding
     {
-        public string Name;
         public int Bar;
         public string Key;
+        public string Name;
 
         public Binding(string iName, int iBar, string iKey)
         {

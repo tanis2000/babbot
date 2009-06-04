@@ -17,13 +17,9 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Xml.Serialization;
-
 
 namespace BabBot.Common
 {
@@ -31,13 +27,13 @@ namespace BabBot.Common
     {
         public T Load(string FileName)
         {
-            using (FileStream fs = new FileStream(FileName, FileMode.Open))
+            using (var fs = new FileStream(FileName, FileMode.Open))
             {
-                XmlSerializer s = new XmlSerializer(typeof (T));
+                var s = new XmlSerializer(typeof (T));
                 try
                 {
                     fs.Seek(0, SeekOrigin.Begin);
-                    return (T)s.Deserialize(fs);
+                    return (T) s.Deserialize(fs);
                 }
                 catch
                 {
@@ -53,7 +49,7 @@ namespace BabBot.Common
         public bool Save(string FileName, T obj)
         {
             bool RetValue = true;
-            XmlSerializer s = new XmlSerializer(typeof(T));
+            var s = new XmlSerializer(typeof (T));
             using (TextWriter writer = new StreamWriter(FileName))
             {
                 try
@@ -62,15 +58,14 @@ namespace BabBot.Common
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+                    Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.StackTrace);
                     RetValue = false;
                 }
                 finally
                 {
                     writer.Close();
                 }
-
             }
             return RetValue;
         }

@@ -18,6 +18,7 @@
 */
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using BabBot.Bot;
@@ -50,25 +51,26 @@ namespace BabBot.Forms
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
-
         }
 
         #region Exception Handler
+
         public void UnhandledThreadExceptionHandler(object sender, ThreadExceptionEventArgs e)
         {
-            this.HandleUnhandledException(e.Exception);
+            HandleUnhandledException(e.Exception);
         }
 
         public void HandleUnhandledException(Exception e)
         {
             // do what you want here.
             if (MessageBox.Show("An unexpected error has occurred. Continue?",
-                "My application", MessageBoxButtons.YesNo, MessageBoxIcon.Stop,
-                MessageBoxDefaultButton.Button2) == DialogResult.No)
+                                "My application", MessageBoxButtons.YesNo, MessageBoxIcon.Stop,
+                                MessageBoxDefaultButton.Button2) == DialogResult.No)
             {
                 Application.Exit();
             }
         }
+
         #endregion
 
         private void Initialize()
@@ -96,7 +98,7 @@ namespace BabBot.Forms
 
                 if (cbAutoAddWaypoints.Checked)
                 {
-                    WayPoint wp = new WayPoint(waypoint);
+                    var wp = new WayPoint(waypoint);
                     switch (comboWayPointTypes.SelectedItem.ToString())
                     {
                         case "Vendor":
@@ -142,7 +144,8 @@ namespace BabBot.Forms
                     tbPlayerTarget.Text = string.Format("{0:X}", ProcessManager.Player.CurTargetGuid);
                     tbPlayerTargetName.Text = ProcessManager.Player.CurTargetName;
                     tbPlayerNearObjects.Text = "Objects" + Environment.NewLine + "===========" + Environment.NewLine +
-                                               ProcessManager.Player.NearObjectsAsTextList + Environment.NewLine + "Mobs" +
+                                               ProcessManager.Player.NearObjectsAsTextList + Environment.NewLine +
+                                               "Mobs" +
                                                Environment.NewLine +
                                                "===========" + Environment.NewLine +
                                                ProcessManager.Player.NearMobsAsTextList;
@@ -154,10 +157,10 @@ namespace BabBot.Forms
                 txtLastDistance.Text = ProcessManager.Player.LastDistance.ToString();
                 txtFaceRadian.Text = ProcessManager.Player.LastFaceRadian.ToString();
 
-                var orientation = (float)((ProcessManager.Player.Orientation * 180) / Math.PI);
+                var orientation = (float) ((ProcessManager.Player.Orientation*180)/Math.PI);
                 txtCurrentFace.Text = string.Format("{0}°", orientation);
 
-                var facing = (float)((ProcessManager.Player.LastFaceRadian * 180) / Math.PI);
+                var facing = (float) ((ProcessManager.Player.LastFaceRadian*180)/Math.PI);
                 txtComputedFacing.Text = string.Format("{0}°", facing);
 
                 tbPlayerIsSitting.Text = ProcessManager.Player.IsSitting().ToString();
@@ -177,7 +180,7 @@ namespace BabBot.Forms
             {
                 // Setup the cross-thread call
                 ProcessEndedDelegate del = wow_ProcessEnded;
-                object[] parameters = { process };
+                object[] parameters = {process};
                 Invoke(del, parameters);
             }
             else
@@ -203,7 +206,6 @@ namespace BabBot.Forms
 
             // Start the reading thread
             ProcessManager.BotManager.Start();
-
         }
 
         private void ActivateDebugMode()
@@ -257,10 +259,10 @@ namespace BabBot.Forms
 
         private void btnLoadProfile_Click(object sender, EventArgs e)
         {
-            var dlg = new OpenFileDialog { Multiselect = false, Filter = "BabBot Profile (*.xml)|*.xml" };
+            var dlg = new OpenFileDialog {Multiselect = false, Filter = "BabBot Profile (*.xml)|*.xml"};
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                Common.Serializer<Bot.Profile> serializer = new Serializer<Profile>();
+                var serializer = new Serializer<Profile>();
                 ProcessManager.Profile = serializer.Load(dlg.FileName);
                 ProcessManager.Profile.FileName = dlg.FileName;
                 tbProfileName.Text = ProcessManager.Profile.Name;
@@ -273,17 +275,16 @@ namespace BabBot.Forms
                 // UI Stuff
                 tbProfile.Text = dlg.FileName;
                 RefreshEnemiesList();
-
             }
         }
 
         private void btnSaveProfile_Click(object sender, EventArgs e)
         {
-            var dlg = new SaveFileDialog { Filter = "BabBot Profile (*.xml)|*.xml" };
+            var dlg = new SaveFileDialog {Filter = "BabBot Profile (*.xml)|*.xml"};
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 ProcessManager.Profile.FileName = dlg.FileName;
-                Common.Serializer<Bot.Profile> serializer = new Serializer<Profile>();
+                var serializer = new Serializer<Profile>();
                 ProcessManager.Profile.NormalWayPoints = WayPointManager.Instance.NormalPath;
                 ProcessManager.Profile.VendorWayPoints = WayPointManager.Instance.VendorPath;
                 ProcessManager.Profile.RepairWayPoints = WayPointManager.Instance.RepairPath;
@@ -376,7 +377,7 @@ namespace BabBot.Forms
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OptionsForm form = new OptionsForm();
+            var form = new OptionsForm();
             DialogResult res;
             res = form.ShowDialog();
             if (res == DialogResult.OK)
@@ -399,20 +400,22 @@ namespace BabBot.Forms
         {
             if (ProcessManager.Player.CurTargetName != "")
             {
-                Enemy enemy = new Enemy(ProcessManager.Player.CurTargetName);
+                var enemy = new Enemy(ProcessManager.Player.CurTargetName);
                 ProcessManager.Profile.Enemies.Add(enemy);
                 RefreshEnemiesList();
-              
             }
         }
 
         private void btnRemoveEnemyFromList_Click(object sender, EventArgs e)
         {
-            if (lbEnemies.Items.Count == 0) return;
+            if (lbEnemies.Items.Count == 0)
+            {
+                return;
+            }
 
             if (lbEnemies.SelectedItem != null)
             {
-                Enemy enemy = new Enemy(lbEnemies.SelectedItem.ToString());
+                var enemy = new Enemy(lbEnemies.SelectedItem.ToString());
                 ProcessManager.Profile.Enemies.Remove(enemy);
                 RefreshEnemiesList();
             }
@@ -421,16 +424,17 @@ namespace BabBot.Forms
         private void RefreshEnemiesList()
         {
             lbEnemies.Items.Clear();
-            foreach (var en in ProcessManager.Profile.Enemies)
+            foreach (Enemy en in ProcessManager.Profile.Enemies)
             {
                 lbEnemies.Items.Add(en.Name);
-            }            
+            }
         }
-        
+
         private void btnDumpBagsToConsole_Click(object sender, EventArgs e)
         {
             Console.WriteLine(ProcessManager.Player.BagsAsTextList);
         }
+
         #endregion
 
         #region Load/Save Config
@@ -438,7 +442,7 @@ namespace BabBot.Forms
         private void LoadConfig()
         {
             string fileName = "config.xml";
-            Common.Serializer<Config> serializer = new Serializer<Config>();
+            var serializer = new Serializer<Config>();
 
             try
             {
@@ -452,7 +456,7 @@ namespace BabBot.Forms
                     DeactivateDebugMode();
                 }
             }
-            catch (System.IO.FileNotFoundException ex)
+            catch (FileNotFoundException ex)
             {
                 // No configuration file, don't worry
             }
@@ -461,20 +465,20 @@ namespace BabBot.Forms
         private void SaveConfig()
         {
             string fileName = "config.xml";
-            Common.Serializer<Config> serializer = new Serializer<Config>();
+            var serializer = new Serializer<Config>();
             serializer.Save(fileName, ProcessManager.Config);
 
             if (ProcessManager.Config.DebugMode)
             {
                 ActivateDebugMode();
-            } 
+            }
             else
             {
                 DeactivateDebugMode();
             }
         }
-        #endregion
 
+        #endregion
 
         #region Nested type: PlayerUpdateDelegate
 
@@ -493,18 +497,5 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }

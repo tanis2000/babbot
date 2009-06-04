@@ -18,7 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using BabBot.Wow;
 
 namespace BabBot.Bot
 {
@@ -34,7 +33,6 @@ namespace BabBot.Bot
 
         public Enemy()
         {
-            
         }
 
         public Enemy(string iName)
@@ -66,11 +64,11 @@ namespace BabBot.Bot
             {
                 return true;
             }
-            if (obj.GetType() != typeof(Enemy))
+            if (obj.GetType() != typeof (Enemy))
             {
                 return false;
             }
-            return Equals((Enemy)obj);
+            return Equals((Enemy) obj);
         }
 
         public override int GetHashCode()

@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace BabBot.Forms
 {
     public partial class ExceptionForm : Form
     {
-        private Exception exception;
+        private readonly Exception exception;
 
         public ExceptionForm(Exception ex)
         {
@@ -31,7 +25,6 @@ namespace BabBot.Forms
                 tbExceptionMessage.Text += Environment.NewLine + Environment.NewLine + "== Inner Exception Stack ==" +
                                            Environment.NewLine + exception.InnerException.StackTrace;
             }
-
         }
     }
 }

@@ -25,17 +25,16 @@ namespace BabBot.Bot
     [Serializable]
     public class Profile
     {
-        [XmlIgnore] 
-        public string FileName;
+        public WayPointCollection BranchWayPoints;
+        public string Description;
+        public EnemyCollection Enemies;
+        [XmlIgnore] public string FileName;
+        public WayPointCollection GhostWayPoints;
 
         public string Name;
-        public string Description;
         public WayPointCollection NormalWayPoints;
-        public WayPointCollection GhostWayPoints;
-        public WayPointCollection VendorWayPoints;
         public WayPointCollection RepairWayPoints;
-        public WayPointCollection BranchWayPoints;
-        public EnemyCollection Enemies;
+        public WayPointCollection VendorWayPoints;
 
         public Profile()
         {
@@ -48,7 +47,5 @@ namespace BabBot.Bot
             BranchWayPoints = new WayPointCollection();
             Enemies = new EnemyCollection();
         }
-
-        
     }
 }

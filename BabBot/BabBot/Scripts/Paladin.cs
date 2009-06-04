@@ -24,26 +24,28 @@ namespace BabBot.Scripts
 {
     public class Paladin : Script, IScript
     {
-         
+        #region IScript Members
+
         void IScript.Init()
         {
             Console.WriteLine("Paladin->Init()");
             // TODO: find a way to override this function so that we don't have to clone those lines
             Bindings = new BindingList();
             Actions = new PlayerActionList();
-            
+
             // TODO: get that stuff out of the way and load bindings from the appropriate XML file
-            Binding b = new Binding("melee", 1, "1");
+            var b = new Binding("melee", 1, "1");
             Bindings.Add(b.Name, b);
             b = new Binding("test", 1, "2");
             Bindings.Add(b.Name, b);
 
-            PlayerAction a = new PlayerAction("attack", Bindings["melee"], 0.0f, 0.0f, false, true);
+            var a = new PlayerAction("attack", Bindings["melee"], 0.0f, 0.0f, false, true);
             Actions.Add(a.Name, a);
             a = new PlayerAction("fakeattack", Bindings["test"], 0.0f, 2.0f, true, true);
             Actions.Add(a.Name, a);
-
         }
+
+        #endregion
 
         // TODO: add an interface for all common functions like this
         protected override void Fight()
@@ -85,7 +87,7 @@ namespace BabBot.Scripts
                     }
                     Fight();
                 }
-            } 
+            }
             else
             {
                 Console.WriteLine("Paladin->OnInCombat() - We are initiating combat");
@@ -117,6 +119,5 @@ namespace BabBot.Scripts
                 }
             }
         }
-
     }
 }

@@ -17,10 +17,7 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using BabBot.Manager;
 using CSScriptLibrary;
 
@@ -43,6 +40,15 @@ namespace BabBot.Scripting
     {
         private IScript script;
 
+        #region IHost Members
+
+        public void Test()
+        {
+            Console.WriteLine("test");
+        }
+
+        #endregion
+
         public void Start()
         {
             //script = Load("Scripts/script.cs");
@@ -52,25 +58,18 @@ namespace BabBot.Scripting
             script.Init();
         }
 
-        IScript Load(string script)
+        private IScript Load(string script)
         {
             CSScript.ShareHostRefAssemblies = true;
 
-            AsmHelper helper = new AsmHelper(CSScript.Load(Path.GetFullPath(script), null, true));
+            var helper = new AsmHelper(CSScript.Load(Path.GetFullPath(script), null, true));
             //return (IScript)helper.CreateObject("BabBot.Scripts.Script");
-            return (IScript)helper.CreateObject("BabBot.Scripts.Paladin");
-        }
-
-        public void Test()
-        {
-            Console.WriteLine("test");
+            return (IScript) helper.CreateObject("BabBot.Scripts.Paladin");
         }
 
         public void Update()
         {
             script.Update();
         }
-
-
     }
 }

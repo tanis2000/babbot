@@ -22,32 +22,24 @@ namespace BabBot.Manager
 {
     public sealed class StateManager
     {
-        static readonly StateManager instance = new StateManager();
+        private static readonly StateManager instance = new StateManager();
 
         private PlayerState CurrentState;
         private PlayerState LastState;
-
-        static StateManager()
-        {
-        }
 
         public static StateManager Instance
         {
             get { return instance; }
         }
 
-        public StateManager()
+        public PlayerState State
         {
+            get { return CurrentState; }
         }
 
         public void Init()
         {
             CurrentState = LastState = PlayerState.Start;
-        }
-
-        public PlayerState State
-        {
-            get { return CurrentState; }
         }
 
         public void UpdateState()

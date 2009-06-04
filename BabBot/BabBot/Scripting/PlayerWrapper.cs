@@ -38,7 +38,7 @@ namespace BabBot.Scripting
         float FacingDegrees();
         float TargetFacingDegrees();
         float AngleToTargetDegrees();
-        void WalkToNextWayPoint(Bot.WayPointType wpType);
+        void WalkToNextWayPoint(WayPointType wpType);
         void Stop();
         void PlayAction(PlayerAction action, bool toggle);
         void PlayAction(PlayerAction action);
@@ -140,7 +140,7 @@ namespace BabBot.Scripting
             return player.AngleToTargetDegrees();
         }
 
-        public void WalkToNextWayPoint(Bot.WayPointType wpType)
+        public void WalkToNextWayPoint(WayPointType wpType)
         {
             player.WalkToNextWayPoint(wpType);
         }
@@ -204,6 +204,7 @@ namespace BabBot.Scripting
         {
             player.AddLastTargetToLootList();
         }
+
         #endregion
     }
 }

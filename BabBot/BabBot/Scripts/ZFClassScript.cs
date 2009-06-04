@@ -16,30 +16,33 @@
 
     Copyright 2009 BabBot Team
 */
-using BabBot.Bot;
-using BabBot.Scripting;
-using System.IO;
-using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Windows.Forms;
+using BabBot.Bot;
+using BabBot.Scripting;
+using Binding=BabBot.Bot.Binding;
 
 namespace BabBot.Scripts
 {
     /*
      * this class is for loading zf-style bindings files.
      */
+
     public class ZFClassScript : Paladin, IScript
     {
         //delimiters for defact/precombat/combatseq/lootseq
-        private static char[] dels = { ' ', '\t' };
-        private static char[] dels2 = { ':','=' };
+        private static readonly char[] dels = {' ', '\t'};
+        private static readonly char[] dels2 = {':', '='};
 
-        private string scriptName;
+        private readonly string scriptName;
 
-        private List<string> preCombatList;
         private List<string> combatList;
-        private List<string> lootSeqList;
         private List<string> globalList;
+        private List<string> lootSeqList;
+        private List<string> preCombatList;
 
         public ZFClassScript(string script_name)
         {
@@ -47,22 +50,26 @@ namespace BabBot.Scripts
 //            xxx();
         }
 
+        #region IScript Members
+
         void IScript.Init()
         {
             xxx();
         }
 
-        void xxx()
+        #endregion
+
+        private void xxx()
         {
             Bindings = new BindingList();
             Actions = new PlayerActionList();
 
             preCombatList = new List<string>();
-            combatList    = new List<string>();
-            lootSeqList   = new List<string>();
-            globalList    = new List<string>();
+            combatList = new List<string>();
+            lootSeqList = new List<string>();
+            globalList = new List<string>();
 
-            FileInfo exe_finfo = new FileInfo(Application.ExecutablePath);
+            var exe_finfo = new FileInfo(Application.ExecutablePath);
             string full_script_file = Path.Combine(Path.Combine(exe_finfo.DirectoryName, "Scripts"), scriptName);
 
             Console.WriteLine("ZF: loading " + scriptName + "...");
@@ -210,7 +217,7 @@ namespace BabBot.Scripts
                                 }
                                 else
                                 {
-                                    slot = System.Convert.ToInt32(second);
+                                    slot = Convert.ToInt32(second);
                                 }
                                 break;
                             case "key":
@@ -218,24 +225,24 @@ namespace BabBot.Scripts
                                 break;
                             case "prevacttime":
                                 //TODO: check units (seconds, ms?)
-                                cooldown = float.Parse(second, System.Globalization.CultureInfo.InvariantCulture);
+                                cooldown = float.Parse(second, CultureInfo.InvariantCulture);
                                 break;
                             case "cooldown":
                                 //TODO: check units (seconds, ms?)
-                                gcd = float.Parse(second, System.Globalization.CultureInfo.InvariantCulture);
+                                gcd = float.Parse(second, CultureInfo.InvariantCulture);
                                 break;
                             case "lifele":
-                                lifele = System.Convert.ToInt32(second);
+                                lifele = Convert.ToInt32(second);
                                 break;
                             case "lifege":
-                                lifege = System.Convert.ToInt32(second);
+                                lifege = Convert.ToInt32(second);
                                 break;
                             case "distle":
-                                distle = System.Convert.ToInt32(second);
+                                distle = Convert.ToInt32(second);
                                 reach = distle;
                                 break;
                             case "distge":
-                                distge = System.Convert.ToInt32(second);
+                                distge = Convert.ToInt32(second);
                                 break;
 
                             default:
@@ -248,16 +255,16 @@ namespace BabBot.Scripts
                 if (actname != null)
                 {
                     // 1. slot MUST not be set - actions can work without actionbar ("t" => attack )                    
-                    BabBot.Bot.Binding b = new BabBot.Bot.Binding(actname, slot, key);
+                    var b = new Binding(actname, slot, key);
                     // 2. who needs the Bindings list??? each actiojn has its bbinding...
                     Bindings.Add(b.Name, b);
 
-                    ZFPlayerAction a = new ZFPlayerAction(actname, b, reach, cooldown, self_cast, toggle);
+                    var a = new ZFPlayerAction(actname, b, reach, cooldown, self_cast, toggle);
                     a.lifele = lifele;
                     a.lifege = lifege;
                     a.distle = distle;
                     a.distge = distge;
-                    a.gcd    = (int)(gcd*1000); //sec => ms
+                    a.gcd = (int) (gcd*1000); //sec => ms
                     Actions.Add(a.Name, a);
                 }
                 else
@@ -281,7 +288,7 @@ namespace BabBot.Scripts
 
         private void condPlayAction(string action)
         {
-            ZFPlayerAction p = (ZFPlayerAction)Actions[action];
+            var p = (ZFPlayerAction) Actions[action];
             bool ready = p.isReady();
             bool condition = p.shouldBeExecuted(player);
 
@@ -289,7 +296,7 @@ namespace BabBot.Scripts
             {
                 ZFDBG("executing " + action);
                 player.PlayAction(p);
-                p.lastExecTime = System.DateTime.UtcNow;
+                p.lastExecTime = DateTime.UtcNow;
 
                 //if (p.gcd > 0)
                 //{
@@ -298,7 +305,7 @@ namespace BabBot.Scripts
             }
             else
             {
-                ZFDBG("skipping " + action + "[ready="+ready+",condition="+condition+"]");
+                ZFDBG("skipping " + action + "[ready=" + ready + ",condition=" + condition + "]");
             }
         }
 
@@ -346,30 +353,28 @@ namespace BabBot.Scripts
         {
             Console.WriteLine("ZF: " + msg);
         }
-
     }
 
     public class ZFPlayerAction : PlayerAction
     {
         //true if life equals or less then percent 
-        public int lifele;
-        //true if life equals or greater then percent
-        public int lifege;
-        //true if distance to target is equal or less
-        public int distle;
         //true if distance to target is greater or less
         public int distge;
+        public int distle;
 
         //global cooldown in ms
         public int gcd;
 
-        public System.DateTime lastExecTime;
+        public DateTime lastExecTime;
+        public int lifege;
+        public int lifele;
 
 
-        public ZFPlayerAction(string iName, BabBot.Bot.Binding iBinding, float iRange, float iCoolDown, bool iSelfCast, bool iToggle)
+        public ZFPlayerAction(string iName, Binding iBinding, float iRange, float iCoolDown, bool iSelfCast,
+                              bool iToggle)
             : base(iName, iBinding, iRange, iCoolDown, iSelfCast, iToggle)
         {
-            lastExecTime = System.DateTime.MinValue;
+            lastExecTime = DateTime.MinValue;
         }
 
 
@@ -377,8 +382,8 @@ namespace BabBot.Scripts
         {
             bool ret = true;
             if (CoolDown > 0)
-            {                
-                ret = (lastExecTime + TimeSpan.FromSeconds(CoolDown)) < System.DateTime.UtcNow;
+            {
+                ret = (lastExecTime + TimeSpan.FromSeconds(CoolDown)) < DateTime.UtcNow;
             }
             return ret;
         }
@@ -412,7 +417,7 @@ namespace BabBot.Scripts
             //}
 
             //check power (energy,mana,rage)
-            
+
             //check buffs/debuffs
 
             //check if target is casting
@@ -421,5 +426,4 @@ namespace BabBot.Scripts
             return ret;
         }
     }
-
 }

@@ -18,7 +18,6 @@
 */
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -57,10 +56,12 @@ namespace BabBot.Common
 
         #region External Hider.dll (only for test)
 
-        [DllImport("Hider.dll", EntryPoint = "HideProcess", ExactSpelling = false, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Hider.dll", EntryPoint = "HideProcess", ExactSpelling = false,
+            CallingConvention = CallingConvention.StdCall)]
         private static extern void HideProcess(string FileName);
 
-        [DllImport("Hider.dll", EntryPoint = "StopHook", ExactSpelling = false, CallingConvention = CallingConvention.StdCall)]
+        [DllImport("Hider.dll", EntryPoint = "StopHook", ExactSpelling = false,
+            CallingConvention = CallingConvention.StdCall)]
         private static extern void StopHook();
 
         #endregion

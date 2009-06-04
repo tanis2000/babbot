@@ -23,10 +23,10 @@ namespace BabBot
     [Serializable]
     public class Config
     {
+        public bool DebugMode;
         public string GuestPassword = "";
         public string GuestUsername = "Guest";
-        public string WowExePath = "";
-        public bool DebugMode = false;
         public string InteractKey = "{SHIFTD}ì{SHIFTU}";
+        public string WowExePath = "";
     }
 }

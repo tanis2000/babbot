@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 
 namespace BabBot.Common
 {
-    static class WindowSize
+    internal static class WindowSize
     {
         [DllImport("user32.dll")]
         private static extern bool GetWindowInfo(IntPtr hwnd, ref tagWINDOWINFO pwi);

@@ -23,11 +23,12 @@ namespace BabBot.Common
 {
     public class GThread
     {
-
         #region Delegates
 
-        public delegate void DlgThreadBeforeStart(); 
-        public delegate void DlgThreadBeforeStop(); 
+        public delegate void DlgThreadBeforeStart();
+
+        public delegate void DlgThreadBeforeStop();
+
         public delegate void DlgThreadException(Exception e, ThreadPhase phase);
 
         public delegate void DlgThreadFinalize();
@@ -86,19 +87,19 @@ namespace BabBot.Common
         public event DlgThreadRun OnRun; // Evento che viene generato ciclicamente quando il thread è attivo  
 
         public event DlgThreadBeforeStart OnBeforeStart;
-            // Evento che viene generato prima della partenza del thread - in capo al chiamante  
+        // Evento che viene generato prima della partenza del thread - in capo al chiamante  
 
         public event DlgThreadInitialize OnInitialize;
-            // Evento che viene generato subito dopo la partenza del thread - in capo al thread  
+        // Evento che viene generato subito dopo la partenza del thread - in capo al thread  
 
         public event DlgThreadBeforeStop OnBeforeStop;
-            // Evento che viene generato prima di fermare il thread - in capo al chiamante  
+        // Evento che viene generato prima di fermare il thread - in capo al chiamante  
 
         public event DlgThreadFinalize OnFinalize;
-            // Evento che viene generato appena prima l'arresto del thread - in capo al thread  
+        // Evento che viene generato appena prima l'arresto del thread - in capo al thread  
 
         public event DlgThreadException OnException;
-            // Evento che viene generato se avviene un'eccezione durante la vita del thread  
+        // Evento che viene generato se avviene un'eccezione durante la vita del thread  
 
         // Proprietà  
 

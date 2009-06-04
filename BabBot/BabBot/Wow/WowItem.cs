@@ -17,9 +17,6 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using BabBot.Manager;
 
 namespace BabBot.Wow
@@ -35,23 +32,33 @@ namespace BabBot.Wow
 
         public uint GetDurability()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(ObjectPointer + (uint)Descriptor.eItemFields.ITEM_FIELD_DURABILITY * 0x04);
+            return
+                (uint)
+                ProcessManager.WowProcess.ReadInt(ObjectPointer +
+                                                  (uint) Descriptor.eItemFields.ITEM_FIELD_DURABILITY*0x04);
         }
 
         public uint GetMaxDurability()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(ObjectPointer + (uint)Descriptor.eItemFields.ITEM_FIELD_MAXDURABILITY * 0x04);
+            return
+                (uint)
+                ProcessManager.WowProcess.ReadInt(ObjectPointer +
+                                                  (uint) Descriptor.eItemFields.ITEM_FIELD_MAXDURABILITY*0x04);
         }
 
         public uint GetStackCount()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(ObjectPointer + (uint)Descriptor.eItemFields.ITEM_FIELD_STACK_COUNT * 0x04);
+            return
+                (uint)
+                ProcessManager.WowProcess.ReadInt(ObjectPointer +
+                                                  (uint) Descriptor.eItemFields.ITEM_FIELD_STACK_COUNT*0x04);
         }
 
         public UInt64 GetContained(UInt64 guid)
         {
-            return ProcessManager.WowProcess.ReadUInt64(ObjectPointer + (uint)Descriptor.eItemFields.ITEM_FIELD_CONTAINED * 0x04);
+            return
+                ProcessManager.WowProcess.ReadUInt64(ObjectPointer +
+                                                     (uint) Descriptor.eItemFields.ITEM_FIELD_CONTAINED*0x04);
         }
-
     }
 }

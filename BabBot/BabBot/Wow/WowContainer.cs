@@ -17,9 +17,6 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using BabBot.Manager;
 
 namespace BabBot.Wow
@@ -35,19 +32,28 @@ namespace BabBot.Wow
 
         public uint GetSlots()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(ObjectPointer + (uint)Descriptor.eContainerFields.CONTAINER_FIELD_NUM_SLOTS * 0x04);
+            return
+                (uint)
+                ProcessManager.WowProcess.ReadInt(ObjectPointer +
+                                                  (uint) Descriptor.eContainerFields.CONTAINER_FIELD_NUM_SLOTS*0x04);
         }
 
         public WowItem GetContainedItem(uint n)
         {
-            if (n >= GetSlots()) return null;
+            if (n >= GetSlots())
+            {
+                return null;
+            }
 
-            UInt64 guid = ProcessManager.WowProcess.ReadUInt64(ObjectPointer + (uint)Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 + (2*n) * 0x04);
-            WowObject o = new WowObject();
+            UInt64 guid =
+                ProcessManager.WowProcess.ReadUInt64(ObjectPointer +
+                                                     (uint) Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 +
+                                                     (2*n)*0x04);
+            var o = new WowObject();
             o.Guid = guid;
             o.ObjectPointer = ProcessManager.ObjectManager.GetObjectByGUID(o.Guid);
             o.Type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
-            WowItem item = new WowItem(o);
+            var item = new WowItem(o);
             return item;
         }
 
@@ -55,9 +61,12 @@ namespace BabBot.Wow
         {
             uint nSlots = GetSlots();
             uint nFilled = 0;
-            for (uint i = 0 ; i < nSlots; i++)
+            for (uint i = 0; i < nSlots; i++)
             {
-                UInt64 guid = ProcessManager.WowProcess.ReadUInt64(ObjectPointer + (uint)Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 + (2 * i) * 0x04);
+                UInt64 guid =
+                    ProcessManager.WowProcess.ReadUInt64(ObjectPointer +
+                                                         (uint) Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 +
+                                                         (2*i)*0x04);
                 if (guid != 0)
                 {
                     nFilled++;
@@ -73,7 +82,10 @@ namespace BabBot.Wow
             uint nEmpty = 0;
             for (uint i = 0; i < nSlots; i++)
             {
-                UInt64 guid = ProcessManager.WowProcess.ReadUInt64(ObjectPointer + (uint)Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 + (2 * i) * 0x04);
+                UInt64 guid =
+                    ProcessManager.WowProcess.ReadUInt64(ObjectPointer +
+                                                         (uint) Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 +
+                                                         (2*i)*0x04);
                 if (guid == 0)
                 {
                     nEmpty++;
@@ -82,6 +94,5 @@ namespace BabBot.Wow
 
             return nEmpty;
         }
-
     }
 }

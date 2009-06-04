@@ -96,10 +96,11 @@ namespace BabBot.Manager
 
         #endregion
 
-        private static Config config;
         private static readonly BlackMagic wowProcess;
         public static BotManager BotManager;
+        public static Caronte.Caronte Caronte;
         public static CommandManager CommandManager;
+        private static Config config;
         public static bool InGame;
         public static bool Initialized;
         public static ObjectManager ObjectManager;
@@ -107,10 +108,9 @@ namespace BabBot.Manager
         private static Process process;
         public static bool ProcessRunning;
         public static Profile Profile;
+        public static Host ScriptHost;
         public static uint TLS;
         public static int WowHWND;
-        public static Host ScriptHost;
-        public static Caronte.Caronte Caronte;
 
         static ProcessManager()
         {
@@ -370,7 +370,7 @@ namespace BabBot.Manager
             Globals.ClientConnectionOffset = wowProcess.ReadUInt(TLS + 0x1C);
             Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
             ObjectManager = new ObjectManager();
-            WowObject wo = new WowObject();
+            var wo = new WowObject();
             wo.ObjectPointer = ObjectManager.GetLocalPlayerObject();
             wo.Guid = ObjectManager.GetGUIDByObject(wo.ObjectPointer);
             wo.Type = ObjectManager.GetTypeByObject(wo.ObjectPointer);

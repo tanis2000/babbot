@@ -16,14 +16,9 @@
   
     Copyright 2009 BabBot Team
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace BabBot.Wow
 {
-    class WowDynamicObject : WowObject
+    internal class WowDynamicObject : WowObject
     {
     }
 }

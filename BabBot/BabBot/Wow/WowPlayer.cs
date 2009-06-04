@@ -18,7 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using BabBot.Bot;
@@ -31,17 +30,15 @@ namespace BabBot.Wow
     public class WowPlayer : WowObject
     {
         private const int MAX_REACHTIME = 5000; // Milliseconds to reach the waypoint
+        private readonly List<WowUnit> LootableList;
         private readonly CommandManager PlayerCM;
+        private readonly Unit unit; // The corresponding Unit in Wow's ObjectManager
         public float LastDistance;
         public float LastFaceRadian;
         public Vector3D LastLocation;
+        private WowUnit LastTargetedMob;
         private bool StopMovement;
         public int TravelTime;
-
-        private WowUnit LastTargetedMob;
-        private List<WowUnit> LootableList;
-
-        private readonly Unit unit; // The corresponding Unit in Wow's ObjectManager
 
         /// <summary>
         /// Constructor
@@ -64,10 +61,8 @@ namespace BabBot.Wow
             LootableList = new List<WowUnit>();
         }
 
-
-
         #region Stats
-        
+
         public uint Hp
         {
             get { return unit.GetHp(); }
@@ -139,7 +134,8 @@ namespace BabBot.Wow
                 List<WowUnit> l = unit.GetNearMobs();
                 foreach (WowUnit obj in l)
                 {
-                    s += string.Format("{0:X}|{1}|Lootable:{2}" + Environment.NewLine, obj.Guid, obj.Name, obj.IsLootable());
+                    s += string.Format("{0:X}|{1}|Lootable:{2}" + Environment.NewLine, obj.Guid, obj.Name,
+                                       obj.IsLootable());
                 }
                 return s;
             }
@@ -158,7 +154,8 @@ namespace BabBot.Wow
                         s += string.Format("{0:X}|Slots:{1}|Empty:{2}" + Environment.NewLine, obj.Guid, obj.GetSlots(),
                                            obj.GetEmptySlots());
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     throw (ex);
                 }
@@ -337,7 +334,10 @@ namespace BabBot.Wow
             Thread.Sleep(1000);
             ulong firstGuid = CurTargetGuid;
 
-            if (firstGuid == 0) return false;
+            if (firstGuid == 0)
+            {
+                return false;
+            }
 
             do
             {
@@ -412,7 +412,7 @@ namespace BabBot.Wow
         {
             List<WowUnit> l = unit.GetNearMobs();
 
-            foreach (var enemy in ProcessManager.Profile.Enemies)
+            foreach (Enemy enemy in ProcessManager.Profile.Enemies)
             {
                 foreach (WowUnit obj in l)
                 {
@@ -435,7 +435,7 @@ namespace BabBot.Wow
             List<WowUnit> l = unit.GetNearMobs();
             WowUnit closest = null;
 
-            foreach (var enemy in ProcessManager.Profile.Enemies)
+            foreach (Enemy enemy in ProcessManager.Profile.Enemies)
             {
                 foreach (WowUnit obj in l)
                 {
@@ -444,7 +444,8 @@ namespace BabBot.Wow
                         if (closest == null)
                         {
                             closest = obj;
-                        } else
+                        }
+                        else
                         {
                             if (GetDistance(closest.Location, false) > GetDistance(obj.Location, false))
                             {
@@ -519,7 +520,7 @@ namespace BabBot.Wow
         public void LootClosestLootableMob()
         {
             Console.WriteLine("===Lootable List===");
-            foreach (var wowUnit in LootableList)
+            foreach (WowUnit wowUnit in LootableList)
             {
                 Console.WriteLine(wowUnit.Guid + " - " + wowUnit.Name);
             }
@@ -548,12 +549,12 @@ namespace BabBot.Wow
             /// scan
             //List<Point> grid = new List<Point>();
             int startX = PlayerCM.WowWindowRect.Width/2 - 10*5;
-            int startY = PlayerCM.WowWindowRect.Height / 2 - 10 * 5;
+            int startY = PlayerCM.WowWindowRect.Height/2 - 10*5;
             for (int i = 0; i < 20; i++)
             {
-                for (int j = 0 ; j < 20 ; j++)
+                for (int j = 0; j < 20; j++)
                 {
-                    PlayerCM.MoveMouseRelative(startX + j*5, startY+i*5);
+                    PlayerCM.MoveMouseRelative(startX + j*5, startY + i*5);
                     Thread.Sleep(50);
                     guid = ProcessManager.ObjectManager.GetMouseOverGUID();
 
@@ -620,7 +621,7 @@ namespace BabBot.Wow
 
             while (distance > tolerance)
             {
-                var currentDistance = distance;
+                float currentDistance = distance;
 
                 if (doJmp)
                 {
@@ -677,7 +678,7 @@ namespace BabBot.Wow
             int steps = 0;
             int currentStep = 0;
             float distanceFromStep = 0;
-            Path path = new Path();
+            var path = new Path();
 
             if (!target.Location.IsValid())
             {
@@ -688,25 +689,28 @@ namespace BabBot.Wow
 
             path =
                 ProcessManager.Caronte.CalculatePath(
-                    new Location(this.Location.X, this.Location.Y, this.Location.Z),
+                    new Location(Location.X, Location.Y, Location.Z),
                     new Location(target.Location.X, target.Location.Y, target.Location.Z));
 
-            foreach (Pather.Graph.Location loc in path.locations)
+            foreach (Location loc in path.locations)
             {
                 Console.WriteLine("X: {0}  Y: {1}   Z: {2}", loc.X, loc.Y, loc.Z);
             }
-            
+
 
             steps = path.locations.Count;
             if (steps > 0)
             {
                 currentStep = 1;
-                angle = GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y, path.locations[currentStep].Z));
-            } else
+                angle =
+                    GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y,
+                                               path.locations[currentStep].Z));
+            }
+            else
             {
                 angle = GetFaceRadian(target.Location);
             }
-            
+
             Face(angle);
 
             // Random jump
@@ -718,7 +722,7 @@ namespace BabBot.Wow
             }
 
             // Move on...
-            
+
             PlayerCM.ArrowKeyDown(key);
 
             // Start profiler for WayPointTimeOut
@@ -728,8 +732,7 @@ namespace BabBot.Wow
 
             while (distance > tolerance)
             {
-                var currentDistance = distance;
-                
+                float currentDistance = distance;
 
 
                 if (doJmp)
@@ -746,12 +749,14 @@ namespace BabBot.Wow
                 }
 
 
-
                 distance = HGetDistance(target.Location, false);
 
                 if (steps > 0)
                 {
-                    distanceFromStep = HGetDistance(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y, path.locations[currentStep].Z), false);
+                    distanceFromStep =
+                        HGetDistance(
+                            new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y,
+                                         path.locations[currentStep].Z), false);
                     Console.WriteLine("Step: " + currentStep);
                     Console.WriteLine("Location: " + Location);
                     Console.WriteLine("Distance from step: " + distanceFromStep);
@@ -764,7 +769,10 @@ namespace BabBot.Wow
 
                             if ((steps > 0) && (currentStep < steps - 1))
                             {
-                                angle = GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y, path.locations[currentStep].Z));
+                                angle =
+                                    GetFaceRadian(new Vector3D(path.locations[currentStep].X,
+                                                               path.locations[currentStep].Y,
+                                                               path.locations[currentStep].Z));
                             }
                             else
                             {
@@ -781,7 +789,7 @@ namespace BabBot.Wow
                 DateTime end = DateTime.Now;
                 TimeSpan tsTravelTime = end - start;
 
-                TravelTime = tsTravelTime.Milliseconds + tsTravelTime.Seconds * 1000;
+                TravelTime = tsTravelTime.Milliseconds + tsTravelTime.Seconds*1000;
 
                 if (currentDistance == distance)
                 {
@@ -867,14 +875,15 @@ namespace BabBot.Wow
             {
                 if (act.Toggle)
                 {
-                    if ((bool)toggle)
+                    if ((bool) toggle)
                     {
                         if (!act.Active)
                         {
                             // attiva
                             if (act.Binding.Bar > 0) //support for keys which are not bound to any action bar
                             {
-                                PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                                PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar +
+                                                  CommandManager.SK_SHIFT_UP);
                             }
                             PlayerCM.SendKeys(act.Binding.Key);
                             act.Active = true;
@@ -887,14 +896,15 @@ namespace BabBot.Wow
                             // disattiva
                             if (act.Binding.Bar > 0)
                             {
-                                PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
+                                PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar +
+                                                  CommandManager.SK_SHIFT_UP);
                             }
                             PlayerCM.SendKeys(act.Binding.Key);
                             act.Active = true;
                         }
                     }
                 }
-            } 
+            }
             else
             {
                 if (act.Binding.Bar > 0)

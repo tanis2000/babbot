@@ -18,16 +18,15 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using BabBot.Manager;
 
 namespace BabBot.Wow
 {
     public class Unit
     {
+        public ulong ObjectGUID;
         public uint ObjectPointer;
         public uint UnitDescriptor;
-        public ulong ObjectGUID;
 
         public Unit(uint objectPointer)
         {
@@ -42,34 +41,43 @@ namespace BabBot.Wow
             {
                 throw new Exception("Illegal object pointer");
             }
-
         }
 
         public uint GetHp()
         {
             return
                 (uint)
-                ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_HEALTH * 0x04);
+                ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint) Descriptor.eUnitFields.UNIT_FIELD_HEALTH*0x04);
         }
 
         public uint GetMaxHp()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_MAXHEALTH * 0x04);
+            return
+                (uint)
+                ProcessManager.WowProcess.ReadInt(UnitDescriptor +
+                                                  (uint) Descriptor.eUnitFields.UNIT_FIELD_MAXHEALTH*0x04);
         }
 
         public uint GetMp()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_POWER1 * 0x04);
+            return
+                (uint)
+                ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint) Descriptor.eUnitFields.UNIT_FIELD_POWER1*0x04);
         }
 
         public uint GetMaxMp()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_MAXPOWER1 * 0x04);
+            return
+                (uint)
+                ProcessManager.WowProcess.ReadInt(UnitDescriptor +
+                                                  (uint) Descriptor.eUnitFields.UNIT_FIELD_MAXPOWER1*0x04);
         }
 
         public uint GetXp()
         {
-            return (uint)ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.ePlayerFields.PLAYER_XP * 0x04);
+            return
+                (uint)
+                ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint) Descriptor.ePlayerFields.PLAYER_XP*0x04);
         }
 
         public float GetFacing()
@@ -80,27 +88,30 @@ namespace BabBot.Wow
         public Vector3D GetPosition()
         {
             return new Vector3D(ProcessManager.WowProcess.ReadFloat(ObjectPointer + Globals.PlayerXOffset),
-                ProcessManager.WowProcess.ReadFloat(ObjectPointer + Globals.PlayerYOffset),
-                ProcessManager.WowProcess.ReadFloat(ObjectPointer + Globals.PlayerZOffset));
+                                ProcessManager.WowProcess.ReadFloat(ObjectPointer + Globals.PlayerYOffset),
+                                ProcessManager.WowProcess.ReadFloat(ObjectPointer + Globals.PlayerZOffset));
         }
 
         public ulong GetCurTargetGuid()
         {
-            return ProcessManager.WowProcess.ReadUInt64(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_TARGET * 0x04);
+            return
+                ProcessManager.WowProcess.ReadUInt64(UnitDescriptor +
+                                                     (uint) Descriptor.eUnitFields.UNIT_FIELD_TARGET*0x04);
         }
 
         public string GetCurTargetName()
         {
-            return ProcessManager.ObjectManager.GetName(ProcessManager.ObjectManager.GetObjectByGUID(GetCurTargetGuid()), GetCurTargetGuid());
+            return ProcessManager.ObjectManager.GetName(
+                ProcessManager.ObjectManager.GetObjectByGUID(GetCurTargetGuid()), GetCurTargetGuid());
         }
 
         public WowUnit GetCurTarget()
         {
-            WowObject o = new WowObject();
+            var o = new WowObject();
             o.Guid = GetCurTargetGuid();
             o.ObjectPointer = ProcessManager.ObjectManager.GetObjectByGUID(o.Guid);
             o.Type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
-            WowUnit u = new WowUnit(o);
+            var u = new WowUnit(o);
             return u;
         }
 
@@ -112,14 +123,14 @@ namespace BabBot.Wow
 
         public List<WowUnit> GetNearMobs()
         {
-            List<WowUnit>Mobs = new List<WowUnit>();
+            var Mobs = new List<WowUnit>();
             List<WowObject> l = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
             foreach (WowObject o in l)
             {
                 Descriptor.eObjType type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
                 if (type == Descriptor.eObjType.OT_UNIT)
                 {
-                    WowUnit u = new WowUnit(o);
+                    var u = new WowUnit(o);
                     u.Name = ProcessManager.ObjectManager.GetName(u.ObjectPointer, u.Guid);
                     Mobs.Add(u);
                 }
@@ -129,14 +140,14 @@ namespace BabBot.Wow
 
         public List<WowCorpse> GetNearCorpses()
         {
-            List<WowCorpse> Corpses = new List<WowCorpse>();
+            var Corpses = new List<WowCorpse>();
             List<WowObject> l = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
             foreach (WowObject o in l)
             {
                 Descriptor.eObjType type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
                 if (type == Descriptor.eObjType.OT_CORPSE)
                 {
-                    WowCorpse c = new WowCorpse(o);
+                    var c = new WowCorpse(o);
                     //c.Name = ProcessManager.ObjectManager.GetName(c.ObjectPointer, c.Guid);
                     Corpses.Add(c);
                 }
@@ -146,22 +157,24 @@ namespace BabBot.Wow
 
         public List<WowContainer> GetBags()
         {
-            List<WowContainer> Bags = new List<WowContainer>();
+            var Bags = new List<WowContainer>();
 
             for (int i = 0; i < 5; i++)
             {
                 uint BagsPointer =
                     ProcessManager.WowProcess.ReadUInt(ObjectPointer + (uint)
-                                                                       ((uint)Descriptor.ePlayerFields.PLAYER_FIELD_PACK_SLOT_1 + i*2) *
+                                                                       ((uint)
+                                                                        Descriptor.ePlayerFields.
+                                                                            PLAYER_FIELD_PACK_SLOT_1 + i*2)*
                                                                        0x04);
                 Descriptor.eObjType type = ProcessManager.ObjectManager.GetTypeByObject(BagsPointer);
                 if (type == Descriptor.eObjType.OT_CONTAINER)
                 {
-                    WowObject o = new WowObject();
+                    var o = new WowObject();
                     o.ObjectPointer = BagsPointer;
                     o.Guid = ProcessManager.ObjectManager.GetGUIDByObject(o.ObjectPointer);
                     o.Type = type;
-                    WowContainer c = new WowContainer(o);
+                    var c = new WowContainer(o);
                     Bags.Add(c);
                 }
             }
@@ -182,35 +195,48 @@ namespace BabBot.Wow
 
         public bool IsSitting()
         {
-            return Convert.ToBoolean(ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_BYTES_1 * 0x04) & (int)Descriptor.eUnitFlags.UF_SITTING);
+            return
+                Convert.ToBoolean(
+                    ProcessManager.WowProcess.ReadInt(UnitDescriptor +
+                                                      (uint) Descriptor.eUnitFields.UNIT_FIELD_BYTES_1*0x04) &
+                    (int) Descriptor.eUnitFlags.UF_SITTING);
         }
 
-       	public bool IsTapped()
-	    {
-                return (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS * 0x04) & 4) != 0;
-	    }
+        public bool IsTapped()
+        {
+            return
+                (ProcessManager.WowProcess.ReadInt(UnitDescriptor +
+                                                   (uint) Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS*0x04) & 4) != 0;
+        }
 
-        
+
         public bool IsTappedByMe()
-	    {
-            return (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS * 0x04) & 8) != 0;
-	    }
+        {
+            return
+                (ProcessManager.WowProcess.ReadInt(UnitDescriptor +
+                                                   (uint) Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS*0x04) & 8) != 0;
+        }
 
         public bool IsAggro()
-	    {
-            return Convert.ToBoolean((ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_FIELD_FLAGS * 0x04) >> 0x13) &1);
-	    }
+        {
+            return
+                Convert.ToBoolean(
+                    (ProcessManager.WowProcess.ReadInt(UnitDescriptor +
+                                                       (uint) Descriptor.eUnitFields.UNIT_FIELD_FLAGS*0x04) >> 0x13) & 1);
+        }
 
         public bool IsGhost()
         {
             return
-                (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint) Descriptor.ePlayerFields.PLAYER_FLAGS * 0x04) & 0x10) != 0;
+                (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint) Descriptor.ePlayerFields.PLAYER_FLAGS*0x04) &
+                 0x10) != 0;
         }
 
         public bool IsLootable()
         {
-            return (ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS * 0x04) & 0x0D) != 0;
+            return
+                (ProcessManager.WowProcess.ReadInt(UnitDescriptor +
+                                                   (uint) Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS*0x04) & 0x0D) != 0;
         }
-
     }
 }

@@ -22,18 +22,17 @@ namespace BabBot.Bot
 {
     public class PlayerActionList : Dictionary<string, PlayerAction>
     {
-        
     }
 
     public class PlayerAction
     {
+        public bool Active;
+        public Binding Binding;
+        public float CoolDown;
         public string Name;
         public float Range;
-        public float CoolDown;
-        public Binding Binding;
         public bool SelfCast;
         public bool Toggle;
-        public bool Active;
 
         // TODO: we have to keep track of time for cooldowns
 

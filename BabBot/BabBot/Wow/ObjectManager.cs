@@ -18,7 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using BabBot.Manager;
 
 namespace BabBot.Wow
@@ -29,11 +28,11 @@ namespace BabBot.Wow
     /// </summary>
     public class ObjectManager
     {
-        private uint CurMgr;
-        private ulong LocalGUID;
+        private readonly uint CurMgr;
+        private readonly ulong LocalGUID;
+        private uint curObject;
         private uint holder;
         private uint tempHolder;
-        private uint curObject;
 
         public ObjectManager()
         {
@@ -61,7 +60,7 @@ namespace BabBot.Wow
                 {
                     return holder;
                 }
-                tempHolder = this.GetNextObject(holder);
+                tempHolder = GetNextObject(holder);
                 if ((tempHolder == 0) || (tempHolder == holder))
                 {
                     break;
@@ -88,8 +87,8 @@ namespace BabBot.Wow
 
         public List<WowObject> GetAllObjectsAroundLocalPlayer()
         {
-            List<WowObject> list = new List<WowObject>();
-            WowObject wo = new WowObject();
+            var list = new List<WowObject>();
+            var wo = new WowObject();
             curObject = GetFirstObject();
             tempHolder = curObject;
             try
@@ -120,7 +119,7 @@ namespace BabBot.Wow
         public Descriptor.eObjType GetTypeByObject(uint obj)
         {
             //get the object's type from obj+0x14 (like normal)
-            Descriptor.eObjType type = (Descriptor.eObjType)ProcessManager.WowProcess.ReadByte(obj + 0x14);
+            var type = (Descriptor.eObjType) ProcessManager.WowProcess.ReadByte(obj + 0x14);
             return type;
         }
 
@@ -128,7 +127,9 @@ namespace BabBot.Wow
         {
             //obj == base address of object
             if (obj <= 0)
+            {
                 return String.Empty;
+            }
 
             //get the object's type from obj+0x14 (like normal)
             Descriptor.eObjType type = GetTypeByObject(obj);
@@ -150,45 +151,53 @@ namespace BabBot.Wow
 
         public string GetNameFromGuid(ulong guid)
         {
-            const ulong nameStorePtr = Globals.NameStorePointer;  // Player name database
-            const ulong nameMaskOffset = 0x024;  // Offset for the mask used with GUID to select a linked list
-            const ulong nameBaseOffset = 0x01c;  // Offset for the start of the name linked list
-            const ulong nameStringOffset = 0x020;  // Offset to the C string in a name structure
+            const ulong nameStorePtr = Globals.NameStorePointer; // Player name database
+            const ulong nameMaskOffset = 0x024; // Offset for the mask used with GUID to select a linked list
+            const ulong nameBaseOffset = 0x01c; // Offset for the start of the name linked list
+            const ulong nameStringOffset = 0x020; // Offset to the C string in a name structure
 
             ulong mask, base_, offset, current, shortGUID, testGUID;
 
-            mask = ProcessManager.WowProcess.ReadUInt((uint)(nameStorePtr + nameMaskOffset));
-            base_ = ProcessManager.WowProcess.ReadUInt((uint)(nameStorePtr + nameBaseOffset));
+            mask = ProcessManager.WowProcess.ReadUInt((uint) (nameStorePtr + nameMaskOffset));
+            base_ = ProcessManager.WowProcess.ReadUInt((uint) (nameStorePtr + nameBaseOffset));
 
-            shortGUID = guid & 0xffffffff;  // Only half the guid is used to check for a hit
-            offset = 12 * (mask & shortGUID);  // select the appropriate linked list
+            shortGUID = guid & 0xffffffff; // Only half the guid is used to check for a hit
+            offset = 12*(mask & shortGUID); // select the appropriate linked list
 
-            current = ProcessManager.WowProcess.ReadUInt((uint)(base_ + offset + 8));
-            offset = ProcessManager.WowProcess.ReadUInt((uint)(base_ + offset));  // next-4 ?
+            current = ProcessManager.WowProcess.ReadUInt((uint) (base_ + offset + 8));
+            offset = ProcessManager.WowProcess.ReadUInt((uint) (base_ + offset)); // next-4 ?
             //current == 0 || (current & 0x1)
-            if ((current & 0x1) == 0x1) { return ""; }
+            if ((current & 0x1) == 0x1)
+            {
+                return "";
+            }
 
-            testGUID = ProcessManager.WowProcess.ReadUInt((uint)(current));
+            testGUID = ProcessManager.WowProcess.ReadUInt((uint) (current));
 
             while (testGUID != shortGUID)
             {
-                current = ProcessManager.WowProcess.ReadUInt((uint)(current + offset + 4));
+                current = ProcessManager.WowProcess.ReadUInt((uint) (current + offset + 4));
 
-                if ((current & 0x1) == 0x1) { return ""; }
-                testGUID = ProcessManager.WowProcess.ReadUInt((uint)(current));
+                if ((current & 0x1) == 0x1)
+                {
+                    return "";
+                }
+                testGUID = ProcessManager.WowProcess.ReadUInt((uint) (current));
             }
 
             // Found the guid in the name list...
             //ReadBytesIntoBuffer(current + nameStringOffset, numBytes, name);
-            return ProcessManager.WowProcess.ReadASCIIString((uint)(current + nameStringOffset), 40);
+            return ProcessManager.WowProcess.ReadASCIIString((uint) (current + nameStringOffset), 40);
         }
 
-        
+
         private string GetUnitName(uint unit)
         {
             //unit names are easy to get!
             uint aaa = ProcessManager.WowProcess.ReadUInt((unit + 0x968 /* 3.0.9: 0x970 */));
-            return ProcessManager.WowProcess.ReadASCIIString(ProcessManager.WowProcess.ReadUInt((aaa + 0x54 /* 3.0.9: 0x3C */)), 40);
+            return
+                ProcessManager.WowProcess.ReadASCIIString(
+                    ProcessManager.WowProcess.ReadUInt((aaa + 0x54 /* 3.0.9: 0x3C */)), 40);
         }
 
         public ulong GetMouseOverGUID()

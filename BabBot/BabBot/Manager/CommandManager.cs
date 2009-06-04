@@ -384,19 +384,9 @@ namespace BabBot.Manager
         private const int MOUSEEVENTF_LEFTUP = 0x04;
         private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
-
-        public int CenterX, CenterY;
         private Rectangle _WowWindowRect;
 
-        public int CursorX()
-        {
-            return Cursor.Position.X;
-        }
-
-        public int CursorY()
-        {
-            return Cursor.Position.Y;
-        }
+        public int CenterX, CenterY;
 
         public Rectangle WowWindowRect
         {
@@ -411,10 +401,20 @@ namespace BabBot.Manager
             set { _WowWindowRect = value; }
         }
 
-        
+        public int CursorX()
+        {
+            return Cursor.Position.X;
+        }
+
+        public int CursorY()
+        {
+            return Cursor.Position.Y;
+        }
+
+
         public void SetWindowSize()
         {
-            WowWindowRect = WindowSize.GetSize((IntPtr)WowHWND);
+            WowWindowRect = WindowSize.GetSize((IntPtr) WowHWND);
             CenterX = WowWindowRect.Width/2 + WowWindowRect.X;
             CenterY = WowWindowRect.Height/2 + WowWindowRect.Y;
         }
@@ -433,7 +433,7 @@ namespace BabBot.Manager
 
         public void MoveMouseToCenter()
         {
-            MoveMouse(WowWindowRect.Width / 2, WowWindowRect.Height / 2);
+            MoveMouse(WowWindowRect.Width/2, WowWindowRect.Height/2);
         }
 
         public void RightClickOnCenter()
@@ -598,6 +598,5 @@ namespace BabBot.Manager
         }
 
         #endregion
-
     }
 }

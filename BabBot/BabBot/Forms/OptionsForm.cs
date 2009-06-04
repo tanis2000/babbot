@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using BabBot.Common;
 using BabBot.Manager;
@@ -36,7 +30,7 @@ namespace BabBot.Forms
 
         private void btnBrowseWowExec_Click(object sender, EventArgs e)
         {
-            var dlg = new OpenFileDialog { Multiselect = false, Filter = "WoW Executable (*.exe)|*.exe" };
+            var dlg = new OpenFileDialog {Multiselect = false, Filter = "WoW Executable (*.exe)|*.exe"};
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 tbWowExePath.Text = dlg.FileName;
@@ -49,7 +43,8 @@ namespace BabBot.Forms
             if (!string.IsNullOrEmpty(wowPath))
             {
                 tbWowExePath.Text = wowPath;
-            } else
+            }
+            else
             {
                 MessageBox.Show("Cannot find WoW's installation path.");
             }

@@ -574,7 +574,7 @@ namespace BabBot.Common
             {
                 throw new Win32Exception();
             }
-            
+
             CloseHandle(processInfo.hProcess);
             CloseHandle(processInfo.hThread);
             return Process.GetProcessById(processInfo.dwProcessId);
