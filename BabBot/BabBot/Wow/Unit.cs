@@ -18,7 +18,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using BabBot.Manager;
 
 namespace BabBot.Wow
@@ -28,7 +27,7 @@ namespace BabBot.Wow
         public ulong ObjectGUID;
         public uint ObjectPointer;
         public uint UnitDescriptor;
-        public uint VMT;  
+        public uint VMT;
 
         public Unit(uint objectPointer)
         {
@@ -241,6 +240,7 @@ namespace BabBot.Wow
                 (ProcessManager.WowProcess.ReadInt(UnitDescriptor +
                                                    (uint) Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS*0x04) & 0x0D) != 0;
         }
+
         #region Code Injection Stuff
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace BabBot.Wow
                 */
             }
         }
-        #endregion
 
+        #endregion
     }
 }
