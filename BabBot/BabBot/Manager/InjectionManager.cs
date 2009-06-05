@@ -16,32 +16,28 @@
   
     Copyright 2009 BabBot Team
 */
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-
-using Magic;
 using BabBot.Wow;
+using Magic;
 
 namespace BabBot.Manager
 {
     public class InjectionManager
     {
         // Shortcut to the BM instance
+        // cache of GUID vs Relation to local player. These are static (more or less)
+        private readonly IDictionary<ulong, Descriptor.eUnitReaction> RelationCache =
+            new Dictionary<ulong, Descriptor.eUnitReaction>();
+
+        private readonly IDictionary<string, uint> SpellIdCache = new Dictionary<string, uint>();
+
         private BlackMagic wow
         {
-            get
-            {
-                return ProcessManager.WowProcess;
-            }
+            get { return ProcessManager.WowProcess; }
         }
-
-        // cache of spell Ids by name. These are static and saves repeated calls to GetSpellIdByName
-        private IDictionary<string, uint> SpellIdCache = new Dictionary<string, uint>();
-        // cache of GUID vs Relation to local player. These are static (more or less)
-        private IDictionary<ulong, Descriptor.eUnitReaction> RelationCache = new Dictionary<ulong, Descriptor.eUnitReaction>();
 
 
         /// <summary>
@@ -94,8 +90,8 @@ namespace BabBot.Manager
                 ProcessManager.ResumeMainWowThread();
             }
             return result;
-
         }
+
         /// <summary>
         /// Helper override which takes a WowObject instance instead of base address.
         /// </summary>
@@ -111,6 +107,7 @@ namespace BabBot.Manager
         {
             return CallVMT(objAddress, Globals.VMT.Interact);
         }
+
         public uint Interact(WowObject obj)
         {
             return Interact(obj);
@@ -120,6 +117,7 @@ namespace BabBot.Manager
         {
             return wow.ReadASCIIString(CallVMT(objAddress, Globals.VMT.GetName), 255).Trim();
         }
+
         public string GetName(WowObject obj)
         {
             return GetName(obj.ObjectPointer);
@@ -139,8 +137,8 @@ namespace BabBot.Manager
             ProcessManager.SuspendMainWowThread();
 
             uint codecave = wow.AllocateMemory();
-            uint hi = (uint)((guid >> 32) & 0xFFFFFFFF);
-            uint lo = (uint)(guid & 0xFFFFFFFF);
+            var hi = (uint) ((guid >> 32) & 0xFFFFFFFF);
+            var lo = (uint) (guid & 0xFFFFFFFF);
 
             wow.Asm.Clear();
             AsmUpdateCurMgr();
@@ -165,6 +163,7 @@ namespace BabBot.Manager
                 ProcessManager.ResumeMainWowThread();
             }
         }
+
         /// <summary>
         /// Helper override which takes a WowObject instance instead of GUID.
         /// </summary>
@@ -223,7 +222,10 @@ namespace BabBot.Manager
         public uint GetSpellIdByName(string name)
         {
             // If the spell id is in the cache, return that instead of hitting wow
-            if (SpellIdCache.ContainsKey(name)) return SpellIdCache[name];
+            if (SpellIdCache.ContainsKey(name))
+            {
+                return SpellIdCache[name];
+            }
 
             ProcessManager.SuspendMainWowThread();
 
@@ -261,7 +263,10 @@ namespace BabBot.Manager
                 SpellIdCache.Add(name, result);
                 return result;
             }
-            else return 0;
+            else
+            {
+                return 0;
+            }
         }
 
         /// <summary>
@@ -289,7 +294,9 @@ namespace BabBot.Manager
             {
                 Buff = wow.ReadUInt(CurrentBuff);
                 if (Buff == BuffToCheck)
+                {
                     return true;
+                }
 
                 CurrentBuff += Globals.NextBuff;
             }
@@ -311,8 +318,14 @@ namespace BabBot.Manager
 
         public Descriptor.eUnitReaction GetUnitRelation(WowUnit u1, WowUnit u2)
         {
-            if (u1 == null || u2 == null) { return Descriptor.eUnitReaction.Unknown; }
-            if (u1.ObjectPointer == ProcessManager.Player.ObjectPointer && RelationCache.ContainsKey(u2.Guid)) return RelationCache[u2.Guid];
+            if (u1 == null || u2 == null)
+            {
+                return Descriptor.eUnitReaction.Unknown;
+            }
+            if (u1.ObjectPointer == ProcessManager.Player.ObjectPointer && RelationCache.ContainsKey(u2.Guid))
+            {
+                return RelationCache[u2.Guid];
+            }
 
             ProcessManager.SuspendMainWowThread();
 
@@ -340,8 +353,11 @@ namespace BabBot.Manager
                 ProcessManager.ResumeMainWowThread();
             }
 
-            if (u1.ObjectPointer == ProcessManager.Player.ObjectPointer) RelationCache.Add(u2.Guid, (Descriptor.eUnitReaction)result);
-            return (Descriptor.eUnitReaction)result;
+            if (u1.ObjectPointer == ProcessManager.Player.ObjectPointer)
+            {
+                RelationCache.Add(u2.Guid, (Descriptor.eUnitReaction) result);
+            }
+            return (Descriptor.eUnitReaction) result;
         }
 
         #endregion
@@ -362,12 +378,13 @@ namespace BabBot.Manager
 
             wow.Asm.Clear();
             AsmUpdateCurMgr();
-            wow.Asm.AddLine("mov eax, {0}", System.Environment.TickCount);
-            wow.Asm.AddLine("mov ecx, {0}", wow.ReadUInt(Globals.Functions.CInputControl));  // Base of the CInputControl class
+            wow.Asm.AddLine("mov eax, {0}", Environment.TickCount);
+            wow.Asm.AddLine("mov ecx, {0}", wow.ReadUInt(Globals.Functions.CInputControl));
+                // Base of the CInputControl class
             wow.Asm.AddLine("push {0}", 0);
             wow.Asm.AddLine("push eax");
             wow.Asm.AddLine("push {0}", enable ? 1 : 0); // Enable
-            wow.Asm.AddLine("push {0}", (uint)flag);
+            wow.Asm.AddLine("push {0}", (uint) flag);
             wow.Asm.AddLine("call {0}", Globals.Functions.CInputControl_SetFlags);
             wow.Asm.AddLine("retn");
 
@@ -385,7 +402,6 @@ namespace BabBot.Manager
                 wow.FreeMemory(codecave);
                 ProcessManager.ResumeMainWowThread();
             }
-
         }
 
         #endregion
@@ -399,6 +415,7 @@ namespace BabBot.Manager
         {
             return FindPattern(pattern, mask, 0, 0);
         }
+
         /// <summary>
         /// Quick and dirty method for finding patterns in the wow executable.
         /// </summary>
@@ -406,6 +423,7 @@ namespace BabBot.Manager
         {
             return FindPattern(pattern, mask, add, 0);
         }
+
         /// <summary>
         /// Quick and dirty method for finding patterns in the wow executable.
         /// Note: this is not perfect and should not be relied on, verify results.
@@ -416,7 +434,7 @@ namespace BabBot.Manager
             uint mod = 0;
             if (add != 0)
             {
-                mod = wow.ReadUInt((uint)(loc + add));
+                mod = wow.ReadUInt((uint) (loc + add));
             }
 
             Console.WriteLine("final: 0x{0:X08} + 0x{1:X} + 0x{2:X} =  0x{0:X08}", loc, mod, rel, loc + mod + rel);
@@ -449,7 +467,7 @@ namespace BabBot.Manager
             wow.Asm.AddLine("mov eax, {0}", stringcave);
             wow.Asm.AddLine("push eax");
             wow.Asm.AddLine("push eax");
-            wow.Asm.AddLine("call {0}",Globals.Functions.Lua_DoString);
+            wow.Asm.AddLine("call {0}", Globals.Functions.Lua_DoString);
             wow.Asm.AddLine("add esp, 0xC");
             wow.Asm.AddLine("retn");
 
