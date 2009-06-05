@@ -130,17 +130,17 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
+            this.btnGetLuaText = new System.Windows.Forms.Button();
+            this.tbLuaVariable = new System.Windows.Forms.TextBox();
+            this.tbLuaResult = new System.Windows.Forms.TextBox();
+            this.btnDoString = new System.Windows.Forms.Button();
+            this.tbLuaScript = new System.Windows.Forms.TextBox();
             this.btnInteract = new System.Windows.Forms.Button();
             this.btnDumpBagsToConsole = new System.Windows.Forms.Button();
             this.lblOrientation = new System.Windows.Forms.Label();
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
-            this.tbLuaScript = new System.Windows.Forms.TextBox();
-            this.btnDoString = new System.Windows.Forms.Button();
-            this.tbLuaResult = new System.Windows.Forms.TextBox();
-            this.tbLuaVariable = new System.Windows.Forms.TextBox();
-            this.btnGetLuaText = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -178,7 +178,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -193,7 +193,7 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.optionsToolStripMenuItem.Text = "&Options..";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -208,7 +208,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -1140,6 +1140,50 @@
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
             // 
+            // btnGetLuaText
+            // 
+            this.btnGetLuaText.Location = new System.Drawing.Point(227, 188);
+            this.btnGetLuaText.Name = "btnGetLuaText";
+            this.btnGetLuaText.Size = new System.Drawing.Size(75, 23);
+            this.btnGetLuaText.TabIndex = 16;
+            this.btnGetLuaText.Text = "Get Result";
+            this.btnGetLuaText.UseVisualStyleBackColor = true;
+            this.btnGetLuaText.Click += new System.EventHandler(this.btnGetLuaText_Click);
+            // 
+            // tbLuaVariable
+            // 
+            this.tbLuaVariable.Location = new System.Drawing.Point(121, 190);
+            this.tbLuaVariable.Name = "tbLuaVariable";
+            this.tbLuaVariable.Size = new System.Drawing.Size(100, 20);
+            this.tbLuaVariable.TabIndex = 15;
+            // 
+            // tbLuaResult
+            // 
+            this.tbLuaResult.Location = new System.Drawing.Point(15, 218);
+            this.tbLuaResult.Multiline = true;
+            this.tbLuaResult.Name = "tbLuaResult";
+            this.tbLuaResult.ReadOnly = true;
+            this.tbLuaResult.Size = new System.Drawing.Size(509, 103);
+            this.tbLuaResult.TabIndex = 14;
+            // 
+            // btnDoString
+            // 
+            this.btnDoString.Location = new System.Drawing.Point(15, 188);
+            this.btnDoString.Name = "btnDoString";
+            this.btnDoString.Size = new System.Drawing.Size(100, 23);
+            this.btnDoString.TabIndex = 13;
+            this.btnDoString.Text = "Execute LUA";
+            this.btnDoString.UseVisualStyleBackColor = true;
+            this.btnDoString.Click += new System.EventHandler(this.btnDoString_Click);
+            // 
+            // tbLuaScript
+            // 
+            this.tbLuaScript.Location = new System.Drawing.Point(15, 94);
+            this.tbLuaScript.Multiline = true;
+            this.tbLuaScript.Name = "tbLuaScript";
+            this.tbLuaScript.Size = new System.Drawing.Size(507, 87);
+            this.tbLuaScript.TabIndex = 12;
+            // 
             // btnInteract
             // 
             this.btnInteract.Location = new System.Drawing.Point(154, 64);
@@ -1191,50 +1235,6 @@
             this.tbLocation.Name = "tbLocation";
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
-            // 
-            // tbLuaScript
-            // 
-            this.tbLuaScript.Location = new System.Drawing.Point(15, 94);
-            this.tbLuaScript.Multiline = true;
-            this.tbLuaScript.Name = "tbLuaScript";
-            this.tbLuaScript.Size = new System.Drawing.Size(507, 87);
-            this.tbLuaScript.TabIndex = 12;
-            // 
-            // btnDoString
-            // 
-            this.btnDoString.Location = new System.Drawing.Point(15, 188);
-            this.btnDoString.Name = "btnDoString";
-            this.btnDoString.Size = new System.Drawing.Size(100, 23);
-            this.btnDoString.TabIndex = 13;
-            this.btnDoString.Text = "Execute LUA";
-            this.btnDoString.UseVisualStyleBackColor = true;
-            this.btnDoString.Click += new System.EventHandler(this.btnDoString_Click);
-            // 
-            // tbLuaResult
-            // 
-            this.tbLuaResult.Location = new System.Drawing.Point(15, 218);
-            this.tbLuaResult.Multiline = true;
-            this.tbLuaResult.Name = "tbLuaResult";
-            this.tbLuaResult.ReadOnly = true;
-            this.tbLuaResult.Size = new System.Drawing.Size(509, 103);
-            this.tbLuaResult.TabIndex = 14;
-            // 
-            // tbLuaVariable
-            // 
-            this.tbLuaVariable.Location = new System.Drawing.Point(121, 190);
-            this.tbLuaVariable.Name = "tbLuaVariable";
-            this.tbLuaVariable.Size = new System.Drawing.Size(100, 20);
-            this.tbLuaVariable.TabIndex = 15;
-            // 
-            // btnGetLuaText
-            // 
-            this.btnGetLuaText.Location = new System.Drawing.Point(227, 188);
-            this.btnGetLuaText.Name = "btnGetLuaText";
-            this.btnGetLuaText.Size = new System.Drawing.Size(75, 23);
-            this.btnGetLuaText.TabIndex = 16;
-            this.btnGetLuaText.Text = "Get Result";
-            this.btnGetLuaText.UseVisualStyleBackColor = true;
-            this.btnGetLuaText.Click += new System.EventHandler(this.btnGetLuaText_Click);
             // 
             // MainForm
             // 

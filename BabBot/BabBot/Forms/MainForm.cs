@@ -520,11 +520,5 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
-
-
-
-
-
-
     }
 }
