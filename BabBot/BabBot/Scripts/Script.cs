@@ -31,6 +31,19 @@ namespace BabBot.Scripts
         private IHost parent;
         public IPlayerWrapper player;
 
+        #region Configurable properties
+
+        protected int MinMPPct = 50; // Minimum mana percentage to start drinking
+        protected int MinHPPct = 99; // Minimum health percentage to start eating
+
+        #endregion
+
+        #region Lists
+
+        protected SpellList HealingSpells;
+
+        #endregion
+
         #region IScript Members
 
         IHost IScript.Parent
@@ -51,6 +64,7 @@ namespace BabBot.Scripts
             Console.WriteLine("Init() -- Begin");
             Bindings = new BindingList();
             Actions = new PlayerActionList();
+            HealingSpells = new SpellList();
             Console.WriteLine("Init() -- End");
         }
 
@@ -76,6 +90,7 @@ namespace BabBot.Scripts
                 case PlayerState.PreRest:
                     break;
                 case PlayerState.Rest:
+                    OnRest();
                     break;
                 case PlayerState.PostRest:
                     break;
@@ -253,6 +268,26 @@ namespace BabBot.Scripts
             }
             player.AddLastTargetToLootList();
             player.LootClosestLootableMob();
+
+        }
+
+        protected virtual void OnRest()
+        {
+            Console.WriteLine("OnRest()");
+            
+            if (NeedMana())
+            {
+                Drink();
+            }
+            if (NeedHealth())
+            {
+                if (CanSelfHeal())
+                {
+                    // We cast a healing spell on ourselves before eating
+                    SelfHeal();
+                }
+                Eat();
+            }
         }
 
         /// <summary>
@@ -261,5 +296,65 @@ namespace BabBot.Scripts
         protected virtual void Fight()
         {
         }
+
+
+        #region Rest stuff 
+
+        protected bool NeedMana()
+        {
+            if (player.MpPct() < MinMPPct)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        protected bool NeedHealth()
+        {
+            if (player.HpPct() < MinHPPct)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// This should be implemented by the script of the corresponing player class and return whether
+        /// the toon can cast healing spells or not
+        /// </summary>
+        /// <returns>true if the toon can cast healing spells</returns>
+        protected virtual bool IsHealer()
+        {
+            return false;
+        }
+
+        protected bool CanSelfHeal()
+        {
+            /// We should also have a list of self healing spells with a priority on them
+            /// and go through that list and see if we have the mana and if the spell is
+            /// not on cooldown
+            if (IsHealer())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        protected virtual void SelfHeal()
+        {
+            
+        }
+
+        protected void Drink()
+        {
+            /// we should go through our list of drinks and use one of them
+        }
+
+        protected void Eat()
+        {
+            /// we should go through our list of food and use one of them
+        }
+
+        #endregion
     }
 }

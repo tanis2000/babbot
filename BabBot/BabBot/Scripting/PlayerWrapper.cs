@@ -17,6 +17,7 @@
     Copyright 2009 BabBot Team
 */
 using BabBot.Bot;
+using BabBot.Manager;
 using BabBot.Wow;
 
 namespace BabBot.Scripting
@@ -51,6 +52,12 @@ namespace BabBot.Scripting
         void FaceClosestLootableMob();
         void LootClosestLootableMob();
         void AddLastTargetToLootList();
+        void CastSpellByName(string name, bool onSelf);
+        void CastSpellByName(string name);
+        int Hp();
+        int Mp();
+        int HpPct();
+        int MpPct();
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -203,6 +210,36 @@ namespace BabBot.Scripting
         public void AddLastTargetToLootList()
         {
             player.AddLastTargetToLootList();
+        }
+
+        public void CastSpellByName(string name)
+        {
+            CastSpellByName(name, false);
+        }
+
+        public void CastSpellByName(string name, bool onSelf)
+        {
+            ProcessManager.Injector.CastSpellByName(name, onSelf);
+        }
+
+        public int Hp()
+        {
+            return (int)player.Hp;
+        }
+
+        public int Mp()
+        {
+            return (int)player.Mp;
+        }
+
+        public int HpPct()
+        {
+            return (int)((player.Hp/player.MaxHp)*100);
+        }
+
+        public int MpPct()
+        {
+            return (int)((player.Mp / player.MaxMp) * 100);
         }
 
         #endregion

@@ -271,9 +271,22 @@ namespace BabBot.Manager
         /// Note, this is somewhat unstable.
         /// </summary>
         /// <param name="name">Name of the spell to cast.</param>
+        /// <param name="onSelf">Boolean, if true will cast the spell on ourselves.</param>
+        /*
         public void CastSpellByName(string name)
         {
             CastSpellByID(GetSpellIdByName(name));
+        }
+         */
+        public void CastSpellByName(string name, bool onSelf)
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", name));
+            string castTime = ProcessManager.Injector.Lua_GetLocalizedText("castTime");
+
+            Int32 realCastTime = Convert.ToInt32(castTime); // milliseconds
+
+            Lua_DoString(string.Format("CastSpellByName(\"{0}\"{1});", name, onSelf ? ",\"player\"" : ""));
+            Thread.Sleep(realCastTime + 100);
         }
 
         /// <summary>

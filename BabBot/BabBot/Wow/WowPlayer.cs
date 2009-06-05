@@ -543,49 +543,15 @@ namespace BabBot.Wow
             }
         }
 
-        /*
-         * Injection version
+        
+        // Injection version
         public void Loot(WowUnit mob)
         {
-            PlayerCM.MoveMouseToCenter();
-            ulong guid = ProcessManager.ObjectManager.GetMouseOverGUID();
-
-            if (guid == mob.Guid)
-            {
-                PlayerCM.LeftClickOnCenter();
-                mob.Interact();
-                Thread.Sleep(250);
-                LootableList.Remove(mob);
-                return;
-            }
-
-            /// We build a grid and go through it until we find the
-            /// corpse we want to loot or until we run out of points to
-            /// scan
-            //List<Point> grid = new List<Point>();
-            int startX = PlayerCM.WowWindowRect.Width / 2 - 10 * 5;
-            int startY = PlayerCM.WowWindowRect.Height / 2 - 10 * 5;
-            for (int i = 0; i < 20; i++)
-            {
-                for (int j = 0; j < 20; j++)
-                {
-                    PlayerCM.MoveMouseRelative(startX + j * 5, startY + i * 5);
-                    Thread.Sleep(50);
-                    guid = ProcessManager.ObjectManager.GetMouseOverGUID();
-
-                    if (guid == mob.Guid)
-                    {
-                        PlayerCM.SingleClick("left");
-                        mob.Interact();
-                        Thread.Sleep(250);
-                        LootableList.Remove(mob);
-                        return;
-                    }
-                }
-            }
+            mob.Interact();
+            LootableList.Remove(mob);
         }
-        */
         
+        /* Old version (uses mouse)
         public void Loot(WowUnit mob)
         {
             PlayerCM.MoveMouseToCenter();
@@ -623,7 +589,7 @@ namespace BabBot.Wow
                 }
             }
         }
-        
+        */
 
         public void MoveToTarget(float tolerance)
         {

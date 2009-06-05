@@ -32,6 +32,7 @@ namespace BabBot.Scripts
             // TODO: find a way to override this function so that we don't have to clone those lines
             Bindings = new BindingList();
             Actions = new PlayerActionList();
+            HealingSpells = new SpellList();
 
             // TODO: get that stuff out of the way and load bindings from the appropriate XML file
             var b = new Binding("melee", 1, "1");
@@ -43,9 +44,32 @@ namespace BabBot.Scripts
             Actions.Add(a.Name, a);
             a = new PlayerAction("fakeattack", Bindings["test"], 0.0f, 2.0f, true, true);
             Actions.Add(a.Name, a);
+
+            // Populate the list of our healing spells
+            var s = new Spell("Holy Light", 1);
+            HealingSpells.Add(s);
+            // TODO: We should sort the list by weight now 
         }
 
         #endregion
+
+        protected override bool IsHealer()
+        {
+            return true;
+        }
+
+        protected override void SelfHeal()
+        {
+            Console.WriteLine("SelfHeal()");
+            foreach (var spell in HealingSpells)
+            {
+                if (!spell.IsOnCooldown() && (spell.Cost < player.Mp()))
+                {
+                    Console.WriteLine("SelfHeal() - Casting " + spell.Name);
+                    player.CastSpellByName(spell.Name, true);
+                }
+            }
+        }
 
         // TODO: add an interface for all common functions like this
         protected override void Fight()
