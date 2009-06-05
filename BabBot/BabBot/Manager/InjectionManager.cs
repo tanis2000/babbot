@@ -470,6 +470,57 @@ namespace BabBot.Manager
             }
         }
 
+        /// <summary>
+        /// This calls the LUA GetLocalizedText function to return the value of a variable obtained through DoString
+        /// </summary>
+        /// <param name="variable">Name of the variable</param>
+        /// <returns>Content of the variable we're querying</returns>
+        public String Lua_GetLocalizedText(string variable)
+        {
+            // TODO: Replace this with a proper LUA implementation.
+            // TODO: Check if this works
+
+            ProcessManager.SuspendMainWowThread();
+
+            String sResult = "null";
+
+            uint codecave = wow.AllocateMemory();
+            uint stringcave = wow.AllocateMemory(variable.Length + 1);
+            wow.WriteASCIIString(stringcave, variable);
+
+            wow.Asm.Clear();
+            AsmUpdateCurMgr();
+
+            wow.Asm.AddLine("mov ecx, {0}", ProcessManager.Player.ObjectPointer);
+            wow.Asm.AddLine("push {0}", -1);
+            wow.Asm.AddLine("push {0}", stringcave);
+            wow.Asm.AddLine("call {0}", Globals.Functions.Lua_GetLocalizedText);
+            wow.Asm.AddLine("retn");
+
+            try
+            {
+                uint result = wow.Asm.InjectAndExecute(codecave);
+                Thread.Sleep(10);
+
+                if (result != 0)
+                {
+                    sResult = wow.ReadASCIIString(result, 256);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                wow.FreeMemory(codecave);
+                wow.FreeMemory(stringcave);
+                ProcessManager.ResumeMainWowThread();
+            }
+
+            return sResult;
+        }
+
         #endregion
     }
 }

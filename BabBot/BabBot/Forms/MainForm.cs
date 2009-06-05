@@ -447,6 +447,17 @@ namespace BabBot.Forms
             }
         }
 
+        private void btnDoString_Click(object sender, EventArgs e)
+        {
+            ProcessManager.Injector.Lua_DoString(tbLuaScript.Text);
+        }
+
+        private void btnGetLuaText_Click(object sender, EventArgs e)
+        {
+            string s = ProcessManager.Injector.Lua_GetLocalizedText(tbLuaVariable.Text);
+            tbLuaResult.Text = s;
+        }
+
         #endregion
 
         #region Load/Save Config
@@ -509,6 +520,10 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
+
+
+
+
 
 
     }

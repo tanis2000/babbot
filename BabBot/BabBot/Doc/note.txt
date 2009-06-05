@@ -330,3 +330,20 @@ public String GetLocalizedText(string variable)
             return sResult;
         }
 
+
+
+To patch the function that checks for protected LUA functions:
+The lua protection check function is located at 0x4A4480.
+
+Code:
+
+004A4480        /$  55               PUSH EBP
+004A4481        |.  8BEC             MOV EBP,ESP
+004A4483        |.  833D 40B42E01 00 CMP DWORD PTR DS:[12EB440],0
+004A448A        |.  8B4D 08          MOV ECX,[ARG.1]                           ;  Wow.<ModuleEntryPoint>
+004A448D        |.  A1 C0680A01      MOV EAX,DWORD PTR DS:[10A68C0]
+
+To make this function always return true, you can just patch the very first opcodes to
+
+mov eax,1
+retn

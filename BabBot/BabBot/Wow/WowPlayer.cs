@@ -976,6 +976,7 @@ namespace BabBot.Wow
             PlayAction(act, null);
         }
 
+
         // Actions
         public bool Cast(string SlotBar, string Key)
         {

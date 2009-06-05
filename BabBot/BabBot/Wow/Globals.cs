@@ -106,7 +106,8 @@ namespace BabBot.Wow
                 GetUnitRelation = 0x005AA670, // 3.1.3
                 CInputControl = 0x0113F8E4, // 3.1.3
                 CInputControl_SetFlags = 0x00691BB0, // 3.1.3
-                Lua_DoString = 0x0049AAB0; // 3.1.3
+                Lua_DoString = 0x0049AAB0, // 3.1.3
+                Lua_GetLocalizedText = 0x005A8500; // 3.1.3
 
         }
 

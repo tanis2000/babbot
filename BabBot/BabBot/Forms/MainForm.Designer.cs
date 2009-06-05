@@ -130,12 +130,17 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
+            this.btnInteract = new System.Windows.Forms.Button();
             this.btnDumpBagsToConsole = new System.Windows.Forms.Button();
             this.lblOrientation = new System.Windows.Forms.Label();
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
-            this.btnInteract = new System.Windows.Forms.Button();
+            this.tbLuaScript = new System.Windows.Forms.TextBox();
+            this.btnDoString = new System.Windows.Forms.Button();
+            this.tbLuaResult = new System.Windows.Forms.TextBox();
+            this.tbLuaVariable = new System.Windows.Forms.TextBox();
+            this.btnGetLuaText = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -1116,6 +1121,11 @@
             // 
             // tabPageDebug2
             // 
+            this.tabPageDebug2.Controls.Add(this.btnGetLuaText);
+            this.tabPageDebug2.Controls.Add(this.tbLuaVariable);
+            this.tabPageDebug2.Controls.Add(this.tbLuaResult);
+            this.tabPageDebug2.Controls.Add(this.btnDoString);
+            this.tabPageDebug2.Controls.Add(this.tbLuaScript);
             this.tabPageDebug2.Controls.Add(this.btnInteract);
             this.tabPageDebug2.Controls.Add(this.btnDumpBagsToConsole);
             this.tabPageDebug2.Controls.Add(this.lblOrientation);
@@ -1130,9 +1140,19 @@
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
             // 
+            // btnInteract
+            // 
+            this.btnInteract.Location = new System.Drawing.Point(154, 64);
+            this.btnInteract.Name = "btnInteract";
+            this.btnInteract.Size = new System.Drawing.Size(75, 23);
+            this.btnInteract.TabIndex = 11;
+            this.btnInteract.Text = "Interact";
+            this.btnInteract.UseVisualStyleBackColor = true;
+            this.btnInteract.Click += new System.EventHandler(this.btnInteract_Click);
+            // 
             // btnDumpBagsToConsole
             // 
-            this.btnDumpBagsToConsole.Location = new System.Drawing.Point(15, 102);
+            this.btnDumpBagsToConsole.Location = new System.Drawing.Point(15, 64);
             this.btnDumpBagsToConsole.Name = "btnDumpBagsToConsole";
             this.btnDumpBagsToConsole.Size = new System.Drawing.Size(133, 23);
             this.btnDumpBagsToConsole.TabIndex = 10;
@@ -1172,15 +1192,49 @@
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
             // 
-            // btnInteract
+            // tbLuaScript
             // 
-            this.btnInteract.Location = new System.Drawing.Point(229, 101);
-            this.btnInteract.Name = "btnInteract";
-            this.btnInteract.Size = new System.Drawing.Size(75, 23);
-            this.btnInteract.TabIndex = 11;
-            this.btnInteract.Text = "Interact";
-            this.btnInteract.UseVisualStyleBackColor = true;
-            this.btnInteract.Click += new System.EventHandler(this.btnInteract_Click);
+            this.tbLuaScript.Location = new System.Drawing.Point(15, 94);
+            this.tbLuaScript.Multiline = true;
+            this.tbLuaScript.Name = "tbLuaScript";
+            this.tbLuaScript.Size = new System.Drawing.Size(507, 87);
+            this.tbLuaScript.TabIndex = 12;
+            // 
+            // btnDoString
+            // 
+            this.btnDoString.Location = new System.Drawing.Point(15, 188);
+            this.btnDoString.Name = "btnDoString";
+            this.btnDoString.Size = new System.Drawing.Size(100, 23);
+            this.btnDoString.TabIndex = 13;
+            this.btnDoString.Text = "Execute LUA";
+            this.btnDoString.UseVisualStyleBackColor = true;
+            this.btnDoString.Click += new System.EventHandler(this.btnDoString_Click);
+            // 
+            // tbLuaResult
+            // 
+            this.tbLuaResult.Location = new System.Drawing.Point(15, 218);
+            this.tbLuaResult.Multiline = true;
+            this.tbLuaResult.Name = "tbLuaResult";
+            this.tbLuaResult.ReadOnly = true;
+            this.tbLuaResult.Size = new System.Drawing.Size(509, 103);
+            this.tbLuaResult.TabIndex = 14;
+            // 
+            // tbLuaVariable
+            // 
+            this.tbLuaVariable.Location = new System.Drawing.Point(121, 190);
+            this.tbLuaVariable.Name = "tbLuaVariable";
+            this.tbLuaVariable.Size = new System.Drawing.Size(100, 20);
+            this.tbLuaVariable.TabIndex = 15;
+            // 
+            // btnGetLuaText
+            // 
+            this.btnGetLuaText.Location = new System.Drawing.Point(227, 188);
+            this.btnGetLuaText.Name = "btnGetLuaText";
+            this.btnGetLuaText.Size = new System.Drawing.Size(75, 23);
+            this.btnGetLuaText.TabIndex = 16;
+            this.btnGetLuaText.Text = "Get Result";
+            this.btnGetLuaText.UseVisualStyleBackColor = true;
+            this.btnGetLuaText.Click += new System.EventHandler(this.btnGetLuaText_Click);
             // 
             // MainForm
             // 
@@ -1330,6 +1384,11 @@
         private System.Windows.Forms.Button btnRemoveEnemyFromList;
         private System.Windows.Forms.Button btnDumpBagsToConsole;
         private System.Windows.Forms.Button btnInteract;
+        private System.Windows.Forms.TextBox tbLuaResult;
+        private System.Windows.Forms.Button btnDoString;
+        private System.Windows.Forms.TextBox tbLuaScript;
+        private System.Windows.Forms.Button btnGetLuaText;
+        private System.Windows.Forms.TextBox tbLuaVariable;
     }
 }
 
