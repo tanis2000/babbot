@@ -100,6 +100,7 @@ namespace BabBot.Manager
         public static BotManager BotManager;
         public static Caronte.Caronte Caronte;
         public static CommandManager CommandManager;
+        public static InjectionManager Injector;
         private static Config config;
         public static bool InGame;
         public static bool Initialized;
@@ -118,6 +119,7 @@ namespace BabBot.Manager
             wowProcess = new BlackMagic();
             ProcessRunning = false;
             CommandManager = new CommandManager();
+            Injector = new InjectionManager();
             InGame = false;
             TLS = 0x0;
             Initialized = false;

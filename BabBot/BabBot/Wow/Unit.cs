@@ -250,6 +250,9 @@ namespace BabBot.Wow
         {
             if (ObjectPointer != 0)
             {
+                ProcessManager.Injector.Interact(ObjectPointer);
+
+                /*
                 try
                 {
                     ProcessManager.SuspendMainWowThread();
@@ -272,6 +275,7 @@ namespace BabBot.Wow
                     ProcessManager.ResumeMainWowThread();
                     throw new Exception("Interact() failed miserably!");
                 }
+                */
             }
         }
         #endregion

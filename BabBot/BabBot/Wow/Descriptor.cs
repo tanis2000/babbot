@@ -832,6 +832,19 @@ namespace BabBot.Wow
             UR_FRIEND
         } ;
 
+        public enum eUnitReaction : int
+        {
+            Unknown = 0,
+            Hated,
+            Hostile,
+            Unfriendly,
+            Neutral,
+            Friendly,
+            Honored,
+            Revered,
+            Exalted
+        }
+
         #endregion
 
         #region eUnitTypes enum
@@ -849,6 +862,16 @@ namespace BabBot.Wow
             UT_BEAST,
             UT_MECHANIC
         } ;
+
+        #endregion
+
+        #region eUnitSex enum
+
+        public enum eUnitSex : uint
+        {
+            US_MALE = 0,
+            US_FEMALE
+        }
 
         #endregion
     }

@@ -50,6 +50,9 @@ namespace BabBot.Wow
         private static uint playerBaseOffset;
         public static uint TypeOffset = 0x14;
 
+        public static uint FirstBuff = 0xEBC; // Offset of the first buff from unit base
+        public static uint NextBuff = 0x4;  // Offset of next buff from a given buff
+
 
         public static uint PlayerBaseOffset
         {
@@ -80,5 +83,49 @@ namespace BabBot.Wow
                 throw new Exception("Trying to read the PlayerBaseOffset with an uninitialized process");
             }
         }
+
+        // Virtual Method Table offsets
+        public static class VMT
+        {
+            public const uint
+                GetPosition = 9 * 4,
+                GetFacing   = 10 * 4,
+                GetScale    = 11 * 4,
+                Interact    = 38 * 4,
+                GetName     = 48 * 4;
+        }
+
+        // WoW Function Addresses
+        public static class Functions
+        {
+            public const uint
+                CastSpellById = 0x004C4DB0, // 3.1.3
+                CastSpellByName = 0x004C4DF0, // 3.1.3 TODO: Test this function 
+                GetSpellIdByName = 0x006FF4A0, // 3.1.3
+                SelectUnit = 0x006EF810, // 3.1.3
+                GetUnitRelation = 0x005AA670, // 3.1.3
+                CInputControl = 0x0113F8E4, // 3.1.3
+                CInputControl_SetFlags = 0x00691BB0, // 3.1.3
+                Lua_DoString = 0x0049AAB0; // 3.1.3
+
+        }
+
+        // Movement flags for use with SetMovementFlag or to compare with current flag
+        public enum MovementFlags : int
+        {
+            // http://www.mmowned.com/forums/wow-memory-editing/147440-better-way-doing-nudge-hacks.html#post958082
+            MoveStop = 0x00,
+            MoveForward = 0x10,
+            MoveBackward = 0x20,
+            StrafeLeft = 0x40,
+            StrafeRight = 0x80,
+            TurnLeft = 0x100,
+            TurnRight = 0x200,
+            PitchDown = 0x400,
+            PitchUp = 0x800,
+            Autorun = 0x1000,
+            All = 0x1FF0
+        }
+
     }
 }
