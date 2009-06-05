@@ -33,8 +33,15 @@ namespace BabBot.Scripts
 
         #region Configurable properties
 
-        protected int MinMPPct = 50; // Minimum mana percentage to start drinking
-        protected int MinHPPct = 99; // Minimum health percentage to start eating
+        protected int MinMPPct = 80; // Minimum mana percentage to start drinking
+        protected int MinHPPct = 80; // Minimum health percentage to start eating
+        protected float MinMeleeDistance = 1.0f;
+        protected float MaxMeleeDistance = 5.0f;
+        protected float MinRangedDistance = 15.0f;
+        protected float MaxRangedDistance = 25.0f;
+        protected int HpPctEmergency = 25; // Minimum health percentage at which we call the emergency healing routine
+        protected int HpPctPotion = 20; // Minimum health percentage at which we look for a health potion
+        protected int MpPctPotion = 15; // Minimum mana percentage at which we look for a mana potion
 
         #endregion
 
@@ -355,6 +362,21 @@ namespace BabBot.Scripts
             /// we should go through our list of food and use one of them
         }
 
+        #endregion
+
+        #region Consumables
+
+        protected bool HasHealthPotion()
+        {
+            return false;
+        }
+
+        protected bool HasManaPotion()
+        {
+            return false;
+        }
+
+        
         #endregion
     }
 }

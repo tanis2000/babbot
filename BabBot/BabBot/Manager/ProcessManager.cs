@@ -388,7 +388,7 @@ namespace BabBot.Manager
             {
                 FindTLS();
                 InitializeObjectManager();
-                Caronte.Init(Player.GetCurrentMapContinent());
+                InitializeCaronte();
                 ScriptHost.Start();
                 StateManager.Instance.Stop();
                 Initialized = true;
@@ -397,6 +397,15 @@ namespace BabBot.Manager
             {
                 throw new Exception("Initialize failed!");
             }
+        }
+
+        public static void InitializeCaronte()
+        {
+            Caronte.Init(Player.GetCurrentMapContinent());
+
+            // We generate a fake path once to initialize the chunk loader stuff
+            Pather.Graph.Path path = ProcessManager.Caronte.CalculatePath(new Pather.Graph.Location(Player.Location.X, Player.Location.Y, Player.Location.Z), 
+                new Pather.Graph.Location(Player.Location.X+100, Player.Location.Y+100, Player.Location.Z));
         }
 
         public static void SuspendMainWowThread()

@@ -47,8 +47,6 @@ namespace BabBot.Scripting
             Console.WriteLine("test");
         }
 
-        #endregion
-
         public void Start()
         {
             //script = Load("Scripts/script.cs");
@@ -64,12 +62,14 @@ namespace BabBot.Scripting
 
             var helper = new AsmHelper(CSScript.Load(Path.GetFullPath(script), null, true));
             //return (IScript)helper.CreateObject("BabBot.Scripts.Script");
-            return (IScript) helper.CreateObject("BabBot.Scripts.Paladin");
+            return (IScript) helper.CreateObject("BabBot.Scripts.Toon");
         }
 
         public void Update()
         {
             script.Update();
         }
+
+        #endregion
     }
 }

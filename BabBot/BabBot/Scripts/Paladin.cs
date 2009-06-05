@@ -22,7 +22,7 @@ using BabBot.Scripting;
 
 namespace BabBot.Scripts
 {
-    public class Paladin : Script, IScript
+    public class Toon : Script, IScript
     {
         #region IScript Members
 
@@ -53,6 +53,17 @@ namespace BabBot.Scripts
 
         #endregion
 
+        #region Paladin specific settings
+
+        protected string multiAura = "Retribution Aura";
+        protected int HpHammer = 40;
+        protected int HpPctEmergency = 25;
+        protected int exorcismHp = 100;
+        protected bool useExorcism = true;
+        protected bool combatDebuff = false;
+
+        #endregion
+
         protected override bool IsHealer()
         {
             return true;
@@ -76,72 +87,184 @@ namespace BabBot.Scripts
         {
             // TODO: Implement actual fight logic (only by PlayAction)
 
-            Console.WriteLine("attack");
-            player.PlayAction(Actions["attack"], true);
-            Console.WriteLine("fakeattack");
-            player.PlayAction(Actions["fakeattack"]);
+
+
+
+            //Console.WriteLine("attack");
+            //player.PlayAction(Actions["attack"], true);
+            //Console.WriteLine("fakeattack");
+            //player.PlayAction(Actions["fakeattack"]);
         }
 
         // TODO: with some refactoring we could use this as a generic routine
         protected override void OnInCombat()
         {
             Console.WriteLine("Paladin->OnInCombat()");
-            if (player.IsBeingAttacked())
+
+            if (!player.HasTarget() || player.IsTargetDead())
             {
-                Console.WriteLine("Paladin->OnInCombat() - We are being attacked");
-                // Someone initiated combat with us
-                /// We are being attacked by a Mob. That means that we should fight back
-                /// by finding the mob first of all
-                if (player.SelectWhoIsAttackingUs())
+                return;
+            }
+
+            // TODO: Before uncommenting this part we need to work out a FindBestTarget routine
+            /*
+            if (player.IsTargetTapped() && !player.IsTargetTappedByMe())
+            {
+                player.SpellStopCasting();
+                player.ClearTarget();
+                player.FindBestTarget();
+                player.AttackTarget();
+            }
+            */
+
+            player.FaceTarget();
+
+            if (player.DistanceFromTarget() > MaxMeleeDistance)
+            {
+                Console.WriteLine("Paladin->OnInCombat() - Moving towards target");
+                player.FaceTarget();
+                player.MoveToTarget(MinMeleeDistance);
+                return;
+            }
+
+            if (player.IsMoving() && player.DistanceFromTarget() < MaxMeleeDistance && player.DistanceFromTarget() > MinMeleeDistance)
+            {
+                player.Stop();
+            }
+
+            if (player.DistanceFromTarget() < MinMeleeDistance)
+            {
+                player.MoveBackward(300);
+            }
+
+            if (!player.IsAttacking())
+            {
+                player.AttackTarget();
+            }
+
+            if (player.HpPct() <= HpPctEmergency)
+            {
+                Emergency();
+            }
+
+            if (player.HpPct() <= HpPctPotion && HasHealthPotion())
+            {
+                player.SpellStopCasting();
+                // TODO: implement a function to select the best health potion and drink it
+                //player.TakePotion("HP");
+            }
+
+            if (player.MpPct() <= MpPctPotion && HasManaPotion())
+            {
+                player.SpellStopCasting();
+                // TODO: implement a function to select the best mana potion and drink it
+                //player.TakePotion("MP");
+            }
+
+            if (player.HpPct() <= HpHammer && player.MpPct() > 5 && player.HpPct() >= HpPctEmergency && player.CanCast("Hammer of Justice"))
+            {
+                player.CastSpellByName("Hammer of Justice");
+
+                if (player.TargetHpPct() > 10)
                 {
-                    /// We found who is attacking us and we fight back
-                    if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
-                    {
-                        player.FaceTarget();
-                    }
-                    if (player.DistanceFromTarget() > 3.0f)
-                    {
-                        /// we have to get closer (melee only though, we should also check if we're 
-                        /// using a melee or spell ability)
-                        /// Ok, we're a low level paladin.. and we do not have any ranged attacks yet..
-                        /// So we get close first of all
-                        /// 
-                        Console.WriteLine("Paladin->OnInCombat() - Moving to target");
-                        player.MoveToTarget(3.0f);
-                    }
-                    Fight();
+                    HealSystem();
+                    Console.WriteLine("Hammer of Justice healing");
+                    return;
                 }
+                return;
+            }
+
+            // TODO: implement IsBeingAttackedByManyMobs by going through all the mobs who have aggro on us and are in range
+            /*
+            if (player.IsBeingAttackedByManyMobs())
+            {
+                if (player.CanCast(multiAura))
+                {
+                    player.CastSpellByName(multiAura);
+                }
+
+                if (player.CanCast("Consecration"))
+                {
+                    player.CastSpellByName("Consecration");
+                }
+            }
+            */
+
+            // TODO: implement TargetIsCasting()
+            /*
+            if (player.TargetIsCasting())
+            {
+                CastInterruption();
+            }
+            */
+
+            if (player.TargetHpPct() <= 20)
+            {
+                FinalFight();
             }
             else
             {
-                Console.WriteLine("Paladin->OnInCombat() - We are initiating combat");
-                // We initiate combat
-                if (player.HasTarget())
+                NormalFight();
+            }
+
+
+            // TODO: implement TargetCreatureType()
+            /*
+            if (useExorcism)
+            {
+                if (player.MpPct() > 30 && player.TargetHpPct() > exorcismHp && player.CanCast("Exorcism") && player.TargetCreatureType() == "Undead" || player.TargetCreatureType() == "Demon")
                 {
-                    Console.WriteLine("Paladin->OnInCombat() - We've got a target");
-
-                    if (player.DistanceFromTarget() > 3.0f)
-                    {
-                        /// we have to get closer (melee only though, we should also check if we're 
-                        /// using a melee or spell ability)
-                        /// Ok, we're a low level paladin.. and we do not have any ranged attacks yet..
-                        /// So we get close first of all
-                        Console.WriteLine("Paladin->OnInCombat() - Moving to target");
-                        player.MoveToTarget(3.0f);
-                    }
-
-                    if (player.DistanceFromTarget() < 3.0f)
-                    {
-                        /// We found who is attacking us and we fight back
-                        if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
-                        {
-                            player.FaceTarget();
-                        }
-                    }
-
-                    Fight();
+                    player.CastSpellByName("Exorcism");
                 }
             }
+            */
+
+            if (combatDebuff)
+            {
+                DebuffAll();
+            }
+
+            // TODO: implement reading of the player race
+            /*
+            if (player.Race() == "Blood Elf")
+            {
+                if (player.Buff("Mana Tap").Application > 0 && player.MpPct() <= 20)
+                {
+                    player.SpellStopCasting();
+                    player.CastSpellByName("Arcane Torrent");
+                }
+                if (player.TargetMpPct() > 0 && player.IsActionUsable("Mana Tap") && player.Buff("Mana Tap").Application < 3) 
+                {
+                    player.CastSpellByName("Mana Tap");
+                }
+            }
+             */
         }
+
+
+        protected void Emergency()
+        {
+        }
+
+        protected void HealSystem()
+        {
+        }
+
+        protected void CastInterruption()
+        { 
+        }
+
+        protected void FinalFight()
+        {
+        }
+
+        protected void NormalFight()
+        {
+        }
+
+        protected void DebuffAll()
+        {
+        }
+
     }
 }

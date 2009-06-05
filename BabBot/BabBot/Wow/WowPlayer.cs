@@ -39,6 +39,7 @@ namespace BabBot.Wow
         private WowUnit LastTargetedMob;
         private bool StopMovement;
         public int TravelTime;
+        private bool isMoving;
 
         /// <summary>
         /// Constructor
@@ -59,6 +60,7 @@ namespace BabBot.Wow
             StopMovement = false;
             TravelTime = 0;
             LootableList = new List<WowUnit>();
+            isMoving = false;
         }
 
         #region Stats
@@ -90,6 +92,29 @@ namespace BabBot.Wow
 
         #endregion
 
+        #region Target stats
+        public uint TargetHp
+        {
+            get { return CurTarget.Hp; }
+        }
+
+        public uint TargetMaxHp
+        {
+            get { return CurTarget.MaxHp; }
+        }
+
+        public uint TargetMaxMp
+        {
+            get { return CurTarget.MaxHp; }
+        }
+
+        public uint TargetMp
+        {
+            get { return CurTarget.Mp; }
+        }
+
+        #endregion
+
         public Vector3D Location
         {
             get { return unit.GetPosition(); }
@@ -108,6 +133,11 @@ namespace BabBot.Wow
         public string CurTargetName
         {
             get { return unit.GetCurTargetName(); }
+        }
+
+        public WowUnit CurTarget
+        {
+            get { return unit.GetCurTarget(); }
         }
 
         public string NearObjectsAsTextList
@@ -548,6 +578,7 @@ namespace BabBot.Wow
         public void Loot(WowUnit mob)
         {
             mob.Interact();
+            Thread.Sleep(250);
             LootableList.Remove(mob);
         }
         
@@ -616,8 +647,11 @@ namespace BabBot.Wow
         {
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
 
+            isMoving = true;
+
             if (!dest.IsValid())
             {
+                isMoving = false;
                 return PlayerState.Ready;
             }
 
@@ -683,6 +717,7 @@ namespace BabBot.Wow
             }
 
             PlayerCM.ArrowKeyUp(key);
+            isMoving = false;
             return res;
         }
 
@@ -702,8 +737,11 @@ namespace BabBot.Wow
             float distanceFromStep = 0;
             var path = new Path();
 
+            isMoving = true;
+
             if (!target.Location.IsValid())
             {
+                isMoving = false;
                 return PlayerState.Ready;
             }
 
@@ -828,6 +866,7 @@ namespace BabBot.Wow
             }
 
             PlayerCM.ArrowKeyUp(key);
+            isMoving = false;
             return res;
         }
 
@@ -836,10 +875,20 @@ namespace BabBot.Wow
             StopMovement = true;
         }
 
-        public void MoveForward()
+        public void MoveForward(int iTime)
         {
-            Vector3D dest = Location + (Location.Normalize()*3.0f);
-            MoveTo(dest);
+            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+            PlayerCM.ArrowKeyDown(key);
+            Thread.Sleep(iTime);
+            PlayerCM.ArrowKeyUp(key);
+        }
+
+        public void MoveBackward(int iTime)
+        {
+            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Down;
+            PlayerCM.ArrowKeyDown(key);
+            Thread.Sleep(iTime);
+            PlayerCM.ArrowKeyUp(key);
         }
 
         public bool GoBack(Vector3D dest)
@@ -983,6 +1032,45 @@ namespace BabBot.Wow
                     break;
 
             }
+        }
+
+        public void AttackTarget()
+        {
+            ProcessManager.Injector.Lua_DoString("AttackTarget();");
+        }
+
+        public void SpellStopCasting()
+        {
+            ProcessManager.Injector.Lua_DoString("SpellStopCasting();");
+        }
+
+        public bool IsMoving()
+        {
+            return isMoving;
+        }
+
+        public bool IsAttacking()
+        {
+            ProcessManager.Injector.Lua_DoString("action = IsCurrentAction(1);");
+            string action = ProcessManager.Injector.Lua_GetLocalizedText("action");
+            if (action == "1") return true; else return false;
+        }
+
+        public bool CanCast(string iName)
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", iName));
+            string cost = ProcessManager.Injector.Lua_GetLocalizedText("cost");
+
+            Int32 realCost = Convert.ToInt32(cost);
+
+            // TODO: We should do all the checks based on our class. For now we take for granted we're talking about mana
+
+            if (realCost <= Mp)
+            {
+                return true;
+            }
+
+            return false;
         }
 
 

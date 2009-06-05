@@ -48,6 +48,28 @@ namespace BabBot.Wow
             get { return unit.GetFacing(); }
         }
 
+
+        public uint Hp
+        {
+            get { return unit.GetHp(); }
+        }
+
+        public uint MaxHp
+        {
+            get { return unit.GetMaxHp(); }
+        }
+
+        public uint MaxMp
+        {
+            get { return unit.GetMaxHp(); }
+        }
+
+        public uint Mp
+        {
+            get { return unit.GetMp(); }
+        }
+
+
         public bool HasTarget()
         {
             if (CurTargetGuid != 0)

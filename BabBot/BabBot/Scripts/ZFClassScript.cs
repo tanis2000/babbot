@@ -31,7 +31,7 @@ namespace BabBot.Scripts
      * this class is for loading zf-style bindings files.
      */
 
-    public class ZFClassScript : Paladin, IScript
+    public class ZFClassScript : Toon, IScript
     {
         //delimiters for defact/precombat/combatseq/lootseq
         private static readonly char[] dels = {' ', '\t'};

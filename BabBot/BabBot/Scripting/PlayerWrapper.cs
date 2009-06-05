@@ -46,7 +46,8 @@ namespace BabBot.Scripting
         bool EnemyInSight();
         void FaceClosestEnemy();
         bool HasTarget();
-        void MoveForward(); // Currently broken
+        void MoveForward(int iTime);
+        void MoveBackward(int iTime);
         void MoveToTarget(float tolerance);
         void MoveToClosestLootableMob();
         void FaceClosestLootableMob();
@@ -58,6 +59,16 @@ namespace BabBot.Scripting
         int Mp();
         int HpPct();
         int MpPct();
+        bool IsTargetDead();
+        void AttackTarget();
+        void SpellStopCasting();
+        bool IsMoving();
+        bool IsAttacking();
+        bool CanCast(string iName);
+        int TargetHp();
+        int TargetMp();
+        int TargetHpPct();
+        int TargetMpPct();
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -182,9 +193,9 @@ namespace BabBot.Scripting
             return player.HasTarget();
         }
 
-        public void MoveForward()
+        public void MoveForward(int iTime)
         {
-            player.MoveForward();
+            player.MoveForward(iTime);
         }
 
         public void MoveToTarget(float tolerance)
@@ -241,6 +252,63 @@ namespace BabBot.Scripting
         {
             return (int)((player.Mp / player.MaxMp) * 100);
         }
+
+        public bool IsTargetDead()
+        {
+            return player.IsTargetDead();
+        }
+
+        public void AttackTarget()
+        {
+            player.AttackTarget();
+        }
+
+        public void SpellStopCasting()
+        {
+            player.SpellStopCasting();
+        }
+
+        public bool IsMoving()
+        {
+            return player.IsMoving();
+        }
+
+        public void MoveBackward(int iTime)
+        {
+            player.MoveBackward(iTime);
+        }
+
+        public bool IsAttacking()
+        {
+            return player.IsAttacking();
+        }
+
+        public bool CanCast(string iName)
+        {
+            return player.CanCast(iName);
+        }
+
+        public int TargetHp()
+        {
+            return (int)player.TargetHp;
+        }
+
+        public int TargetMp()
+        {
+            return (int)player.TargetMp;
+        }
+
+        public int TargetHpPct()
+        {
+            return (int)((player.TargetHp / player.TargetMaxHp) * 100);
+        }
+
+        public int TargetMpPct()
+        {
+            return (int)((player.TargetMp / player.TargetMaxMp) * 100);
+        }
+
+
 
         #endregion
     }
