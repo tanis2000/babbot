@@ -21,7 +21,7 @@ namespace CaronteTestProject
 
             foreach (Pather.Graph.Location loc in path.locations)
             {
-                Console.WriteLine("X: {0}  Y: {1}   Z: {2}", loc.X, loc.Y, loc.Z);
+                Console.WriteLine("X: {0}\t\tY: {1}\t\tZ: {2}", loc.X, loc.Y, loc.Z);
             }
         }
     }
