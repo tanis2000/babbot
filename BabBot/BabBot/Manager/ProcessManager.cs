@@ -388,7 +388,7 @@ namespace BabBot.Manager
             {
                 FindTLS();
                 InitializeObjectManager();
-                Caronte.Init("Azeroth");
+                Caronte.Init(Player.GetCurrentMapContinent());
                 ScriptHost.Start();
                 StateManager.Instance.Stop();
                 Initialized = true;

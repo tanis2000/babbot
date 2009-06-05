@@ -976,6 +976,49 @@ namespace BabBot.Wow
             PlayAction(act, null);
         }
 
+        /// <summary>
+        /// Gets the id of the continent we're in
+        /// </summary>
+        /// <returns>id of the continent</returns>
+        public int GetCurrentMapContinentId()
+        {
+            ProcessManager.Injector.Lua_DoString("SetMapToCurrentZone(); continent = GetCurrentMapContinent();");
+            string sId = ProcessManager.Injector.Lua_GetLocalizedText("continent");
+            return Convert.ToInt32(sId);
+        }
+
+        /// <summary>
+        /// Gets the name of the continent we're in (used by PPather)
+        /// </summary>
+        /// <returns>short name of the continent</returns>
+        public string GetCurrentMapContinent()
+        {
+            int id = GetCurrentMapContinentId();
+            switch (id)
+            {
+                default:
+                case -1:
+                    return "Unknown"; //if showing the cosmic map or a Battleground map. Also when showing The Scarlet Enclave, the Death Knights' starting area. 
+                    break;
+                case 0:
+                    return "All"; // if showing the entire world (both continents) 
+                    break;
+                case 1:
+                    return "Kalimdor"; //if showing the first continent (currently Kalimdor), or a zone map within it. 
+                    break;
+                case 2:
+                    return "Azeroth"; //if showing the second continent (currently Eastern Kingdoms), or a zone map within it. 
+                    break;
+                case 3:
+                    return "Outland"; //if showing the Outland, or a zone map within it. 
+                    break;
+                case 4:
+                    return "Northrend"; //if showing Northrend, or a zone map within it. 
+                    break;
+
+            }
+        }
+
 
         // Actions
         public bool Cast(string SlotBar, string Key)
