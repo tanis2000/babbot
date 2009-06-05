@@ -1010,7 +1010,7 @@ namespace BabBot.Wow
                     return "Azeroth"; //if showing the second continent (currently Eastern Kingdoms), or a zone map within it. 
                     break;
                 case 3:
-                    return "Outland"; //if showing the Outland, or a zone map within it. 
+                    return "Expansion01"; //if showing the Outland, or a zone map within it. 
                     break;
                 case 4:
                     return "Northrend"; //if showing Northrend, or a zone map within it. 
