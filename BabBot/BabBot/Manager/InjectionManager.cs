@@ -263,10 +263,7 @@ namespace BabBot.Manager
                 SpellIdCache.Add(name, result);
                 return result;
             }
-            else
-            {
-                return 0;
-            }
+            return 0;
         }
 
         /// <summary>
