@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bot\Bag.cs" />
     <Compile Include="Bot\Binding.cs" />
     <Compile Include="Bot\Spell.cs" />
     <Compile Include="Bot\Enemy.cs" />
