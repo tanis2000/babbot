@@ -28,7 +28,7 @@ namespace BabBot.Manager
     ///</summary>
     public class BotManager
     {
-        private readonly StateManager StateManager;
+        private readonly StateManager stateManager;
         private GThread workerThread;
 
         /// <summary>
@@ -36,14 +36,14 @@ namespace BabBot.Manager
         /// </summary>
         public BotManager()
         {
-            StateManager = StateManager.Instance;
-            StateManager.Init();
+            stateManager = StateManager.Instance;
+            stateManager.Init();
             workerThread = null;
         }
 
         public PlayerState State
         {
-            get { return StateManager.State; }
+            get { return stateManager.State; }
         }
 
         protected void InitThreadObj()
@@ -108,7 +108,7 @@ namespace BabBot.Manager
             {
                 ProcessManager.CheckInGame();
                 ProcessManager.UpdatePlayer();
-                StateManager.UpdateState();
+                stateManager.UpdateState();
                 ProcessManager.ScriptHost.Update();
             }
             Thread.Sleep(50);

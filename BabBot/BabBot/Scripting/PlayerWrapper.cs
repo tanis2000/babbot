@@ -76,6 +76,8 @@ namespace BabBot.Scripting
         bool HasItem(string i);
         void UseItem(Item i);
         void UseItem(string i);
+        bool HasBuff(string name);
+        bool HasDebuff(string name);
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -349,6 +351,17 @@ namespace BabBot.Scripting
         {
             player.UseItem(i);
         }
+
+        public bool HasBuff(string name)
+        {
+            return player.HasBuff(name);
+        }
+
+        public bool HasDebuff(string name)
+        {
+            return player.HasDebuff(name);
+        }
+
         #endregion
     }
 }

@@ -17,6 +17,7 @@
     Copyright 2009 BabBot Team
 */
 using BabBot.Wow;
+using BabBot.Scripting;
 
 namespace BabBot.Manager
 {
@@ -26,7 +27,7 @@ namespace BabBot.Manager
 
         private PlayerState CurrentState;
         private PlayerState LastState;
-
+        private IScript script;
         public static StateManager Instance
         {
             get { return instance; }
@@ -37,10 +38,18 @@ namespace BabBot.Manager
             get { return CurrentState; }
         }
 
+        public IScript Script
+        {
+            get { return script; }
+            set { script = value; }
+        }
+
         public void Init()
         {
             CurrentState = LastState = PlayerState.Start;
+            Stop();
         }
+
 
         public void UpdateState()
         {
@@ -127,7 +136,11 @@ namespace BabBot.Manager
             if (CurrentState == PlayerState.Rest)
             {
                 /// We should check if we finished resting
-                CurrentState = PlayerState.PostRest;
+
+                if (!script.NeedRest())
+                {
+                    CurrentState = PlayerState.PostRest;
+                }
                 return;
             }
 

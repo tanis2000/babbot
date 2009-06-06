@@ -330,9 +330,15 @@ namespace BabBot.Wow
 
         public void AddLastTargetToLootList()
         {
-            if (LastTargetedMob != null)
+            Thread.Sleep(500);
+            ProcessManager.Injector.Lua_DoString("TargetLastTarget();");
+            Thread.Sleep(500);
+            if (HasTarget())
             {
-                LootableList.Add(LastTargetedMob);
+                if (CurTarget.IsLootable())
+                {
+                    LootableList.Add(LastTargetedMob);
+                }
             }
         }
 
@@ -1123,6 +1129,20 @@ namespace BabBot.Wow
                     ProcessManager.Injector.Lua_DoString(string.Format("UseInventoryItem({0});", il.Slot));
                 }
             }
+        }
+
+        public bool HasBuff(string iName)
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitBuff(\"player\", \"{0}\")", iName));
+            string name = ProcessManager.Injector.Lua_GetLocalizedText("name");
+            if (name == "") return false; else return true;
+        }
+
+        public bool HasDebuff(string iName)
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitDebuff(\"player\", \"{0}\")", iName));
+            string name = ProcessManager.Injector.Lua_GetLocalizedText("name");
+            if (name == "") return false; else return true;
         }
 
         // Actions

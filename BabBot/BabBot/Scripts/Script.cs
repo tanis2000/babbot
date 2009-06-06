@@ -148,6 +148,16 @@ namespace BabBot.Scripts
             Console.WriteLine("Update() -- End");
         }
 
+        /// <summary>
+        /// This is called by the StateManager to check if we need to rest. It should be
+        /// implemented by each class
+        /// </summary>
+        /// <returns>true if we need to rest</returns>
+        public virtual bool NeedRest()
+        {
+            return false;
+        }
+
         #endregion
 
         /// <summary>
@@ -288,23 +298,12 @@ namespace BabBot.Scripts
 
         }
 
+        /// <summary>
+        /// This is the routine called when we need resting
+        /// This should be implemented in the spcific class script
+        /// </summary>
         protected virtual void OnRest()
         {
-            Console.WriteLine("OnRest()");
-            
-            if (NeedMana())
-            {
-                Drink();
-            }
-            if (NeedHealth())
-            {
-                if (CanSelfHeal())
-                {
-                    // We cast a healing spell on ourselves before eating
-                    SelfHeal();
-                }
-                Eat();
-            }
         }
 
 
@@ -407,6 +406,8 @@ namespace BabBot.Scripts
             i = new Item("Honey Bread", 0, 1);
             Food.Add(i);
             i = new Item("Shiny Red Apple", 0, 1);
+            Food.Add(i);
+            i = new Item("Darnassian Bleu", 0, 1);
             Food.Add(i);
             i = new Item("Freshly Baked Bread", 5, 1);
             Food.Add(i);

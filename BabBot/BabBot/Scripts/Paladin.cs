@@ -252,5 +252,43 @@ namespace BabBot.Scripts
         {
         }
 
+        public override bool NeedRest()
+        {
+            if ((player.HpPct() < 90) || (player.MpPct() < 90))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        protected override void OnRest()
+        {
+            Console.WriteLine("OnRest()");
+
+            if (NeedMana())
+            {
+                if (!player.HasBuff("Drink"))
+                {
+                    Drink();
+                }
+            }
+            if (NeedHealth())
+            {
+                if (!player.HasBuff("Drink") && !player.HasBuff("Food"))
+                {
+                    if (CanSelfHeal())
+                    {
+                        // We cast a healing spell on ourselves before eating
+                        SelfHeal();
+                    }
+                }
+
+                if (!player.HasBuff("Food"))
+                {
+                    Eat();
+                }
+            }
+        }
+
     }
 }

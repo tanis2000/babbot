@@ -34,6 +34,7 @@ namespace BabBot.Scripting
         IPlayerWrapper Player { set; }
         void Init();
         void Update();
+        bool NeedRest();
     }
 
     public class Host : IHost
@@ -54,14 +55,14 @@ namespace BabBot.Scripting
             script.Parent = this;
             script.Player = new PlayerWrapper(ProcessManager.Player);
             script.Init();
+            StateManager.Instance.Script = script;
         }
 
-        private IScript Load(string script)
+        private IScript Load(string iScript)
         {
             CSScript.ShareHostRefAssemblies = true;
 
-            var helper = new AsmHelper(CSScript.Load(Path.GetFullPath(script), null, true));
-            //return (IScript)helper.CreateObject("BabBot.Scripts.Script");
+            var helper = new AsmHelper(CSScript.Load(Path.GetFullPath(iScript), null, true));
             return (IScript) helper.CreateObject("BabBot.Scripts.Toon");
         }
 
@@ -70,6 +71,10 @@ namespace BabBot.Scripting
             script.Update();
         }
 
+        public IScript Script
+        {
+            get { return script; }
+        }
         #endregion
     }
 }
