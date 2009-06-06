@@ -26,8 +26,6 @@ namespace BabBot.Scripts
 {
     public class Script : IScript
     {
-        protected PlayerActionList Actions;
-        protected BindingList Bindings;
         private IHost parent;
         public IPlayerWrapper player;
 
@@ -47,7 +45,11 @@ namespace BabBot.Scripts
 
         #region Lists
 
+        protected PlayerActionList Actions;
+        protected BindingList Bindings;
         protected SpellList HealingSpells;
+        protected ItemList Food;
+        protected ItemList Drinks;
 
         #endregion
 
@@ -69,9 +71,17 @@ namespace BabBot.Scripts
         void IScript.Init()
         {
             Console.WriteLine("Init() -- Begin");
+            // Initialize all the lists
             Bindings = new BindingList();
             Actions = new PlayerActionList();
             HealingSpells = new SpellList();
+            Food = new ItemList();
+            Drinks = new ItemList();
+
+            // Initialize the list of food
+            InitializeFood();
+            // Initialize the list of drinks
+            InitializeDrinks();
             Console.WriteLine("Init() -- End");
         }
 
@@ -297,15 +307,167 @@ namespace BabBot.Scripts
             }
         }
 
-        /// <summary>
-        /// This should be impelemented by the derived classes based upon the player class.
-        /// </summary>
-        protected virtual void Fight()
+
+        #region Sit & Stand
+
+        protected bool IsSitting()
         {
+            // This should prevent drowning
+            if (player.IsSitting())
+            {
+                player.DoString("DescendStop()");
+                return true;
+            }
+            player.DoString("DescendStop()");
+            return false;
         }
 
+        protected void Sit()
+        {
+            if (!IsSitting())
+            {
+                player.DoString("DoEmote(\"SIT\")");
+                player.Wait(300);
+            }
+        }
 
-        #region Rest stuff 
+        protected void Stand()
+        {
+            if (IsSitting())
+            {
+                player.DoString("DoEmote(\"STAND\")");
+                player.Wait(300);
+            }
+        }
+
+        #endregion
+
+        #region Rest stuff
+
+        protected void InitializeDrinks() 
+        {
+            // Buyable Drinks
+            Item i = new Item("Refreshing Spring Water", 0, 1);
+            Drinks.Add(i);
+            i = new Item("Ice Cold Milk", 5, 1);
+            Drinks.Add(i);
+            i = new Item("Melon Juice", 15, 1);
+            Drinks.Add(i);
+            i = new Item("Sweet Nectar", 25, 1);
+            Drinks.Add(i);
+            i = new Item("Moonberry Juice", 35, 1);
+            Drinks.Add(i);
+            i = new Item("Morning Glory Dew", 45, 1);
+            Drinks.Add(i);
+            i = new Item("Footman's Waterskin", 55, 1);
+            Drinks.Add(i);
+            i = new Item("Grunt's Watersking", 55, 1);
+            Drinks.Add(i);
+            i = new Item("Filtered Draenic Water", 60, 1);
+            Drinks.Add(i);
+            i = new Item("Star's Lament", 55, 1);
+            Drinks.Add(i);
+            i = new Item("Star's Tears", 65, 1);
+            Drinks.Add(i);
+            i = new Item("Sweetened Goat's Milk", 60, 1);
+            Drinks.Add(i);
+            i = new Item("Pungent Seal Whey", 70, 1);
+            Drinks.Add(i);
+            i = new Item("Honeymint Tea", 75, 1);
+            Drinks.Add(i);
+
+            // Conjurable Drinks
+            i = new Item("Conjured Water", 0, 10);
+            Drinks.Add(i);
+            i = new Item("Conjured Fresh Water", 5, 10);
+            Drinks.Add(i);
+            i = new Item("Conjured Purified Water", 15, 10);
+            Drinks.Add(i);
+            i = new Item("Conjured Spring Water", 25, 10);
+            Drinks.Add(i);
+            i = new Item("Conjured Mineral Water", 35, 10);
+            Drinks.Add(i);
+            i = new Item("Conjured Sparkling Water", 45, 10);
+            Drinks.Add(i);
+            i = new Item("Conjured Crystal Water", 55, 10);
+            Drinks.Add(i);
+            i = new Item("Conjured Glacier Water", 65, 10);
+            Drinks.Add(i);
+
+            Drinks.Sort();
+        }
+
+        protected void InitializeFood()
+        {
+            // Buyable Food
+            Item i = new Item("Cactus Apple Surprise", 0, 1);
+            Food.Add(i);
+            i = new Item("Tough Hunk of Bread", 0, 1);
+            Food.Add(i);
+            i = new Item("Honey Bread", 0, 1);
+            Food.Add(i);
+            i = new Item("Shiny Red Apple", 0, 1);
+            Food.Add(i);
+            i = new Item("Freshly Baked Bread", 5, 1);
+            Food.Add(i);
+            i = new Item("Tel'Abim Banana", 5, 1);
+            Food.Add(i);
+            i = new Item("Moist Cornbread", 15, 1);
+            Food.Add(i);
+            i = new Item("Snapvine Watermelon", 15, 1);
+            Food.Add(i);
+            i = new Item("Mulgore Spice Bread", 25, 1);
+            Food.Add(i);
+            i = new Item("Hot Wolf Ribs", 25, 1);
+            Food.Add(i);
+            i = new Item("Goldenbark Apple", 25, 1);
+            Food.Add(i);
+            i = new Item("Soft Banana Bread", 35, 1);
+            Food.Add(i);
+            i = new Item("Moon Harvest Pumpkin", 35, 1);
+            Food.Add(i);
+            i = new Item("Homemade Cherry Pie", 45, 1);
+            Food.Add(i);
+            i = new Item("Deep Fried Plantains", 45, 1);
+            Food.Add(i);
+            i = new Item("Mag'har Grainbread", 55, 1);
+            Food.Add(i);
+            i = new Item("Skethyl Berries", 55, 1);
+            Food.Add(i);
+            i = new Item("Bladespire Bagel", 65, 1);
+            Food.Add(i);
+            i = new Item("Crusty Flatbread", 65, 1);
+            Food.Add(i);
+            i = new Item("Telaari Grapes", 65, 1);
+            Food.Add(i);
+            i = new Item("Tundra Berries", 65, 1);
+            Food.Add(i);
+            i = new Item("Sweet Potato Bread", 75, 1);
+            Food.Add(i);
+            i = new Item("Savory Snowplum", 75, 1);
+            Food.Add(i);
+
+            
+            // Conjurable Food
+            i = new Item("Conjured Muffin", 0, 10);
+            Food.Add(i);
+            i = new Item("Conjured Bread", 5, 10);
+            Food.Add(i);
+            i = new Item("Conjured Rye", 15, 10);
+            Food.Add(i);
+            i = new Item("Conjured Pumpernickel", 25, 10);
+            Food.Add(i);
+            i = new Item("Conjured Sourdough", 35, 10);
+            Food.Add(i);
+            i = new Item("Conjured Sweet Roll", 45, 10);
+            Food.Add(i);
+            i = new Item("Conjured Cinnamon Roll", 55, 10);
+            Food.Add(i);
+            i = new Item("Conjured Croissant", 65, 10);
+            Food.Add(i);
+
+            Food.Sort();
+        }
 
         protected bool NeedMana()
         {
@@ -352,9 +514,29 @@ namespace BabBot.Scripts
             
         }
 
+        protected Item FindBestDrink()
+        {
+            foreach (Item i in Drinks)
+            {
+                if (i.LevelRequired <= player.Level()) 
+                {
+                    if (player.HasItem(i))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return null;
+        }
+
         protected void Drink()
         {
             /// we should go through our list of drinks and use one of them
+            Item i = FindBestDrink();
+            if (i != null)
+            {
+                player.UseItem(i);
+            }
         }
 
         protected void Eat()

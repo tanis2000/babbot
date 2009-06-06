@@ -69,6 +69,11 @@ namespace BabBot.Wow
             get { return unit.GetMp(); }
         }
 
+        public uint Level
+        {
+            get { return unit.GetLevel(); }
+        }
+
 
         public bool HasTarget()
         {

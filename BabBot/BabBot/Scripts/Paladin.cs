@@ -82,20 +82,6 @@ namespace BabBot.Scripts
             }
         }
 
-        // TODO: add an interface for all common functions like this
-        protected override void Fight()
-        {
-            // TODO: Implement actual fight logic (only by PlayAction)
-
-
-
-
-            //Console.WriteLine("attack");
-            //player.PlayAction(Actions["attack"], true);
-            //Console.WriteLine("fakeattack");
-            //player.PlayAction(Actions["fakeattack"]);
-        }
-
         // TODO: with some refactoring we could use this as a generic routine
         protected override void OnInCombat()
         {

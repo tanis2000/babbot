@@ -82,6 +82,13 @@ namespace BabBot.Wow
                 ProcessManager.WowProcess.ReadInt(UnitDescriptor + (uint) Descriptor.ePlayerFields.PLAYER_XP*0x04);
         }
 
+        public uint GetLevel()
+        {
+            return
+                (uint)
+                ProcessManager.WowProcess.ReadInt(UnitDescriptor +
+                                                  (uint)Descriptor.eUnitFields.UNIT_FIELD_LEVEL * 0x04);
+        }
         public float GetFacing()
         {
             return ProcessManager.WowProcess.ReadFloat(ObjectPointer + Globals.PlayerRotationOffset);

@@ -124,6 +124,16 @@ namespace BabBot.Bot
             }
         }
 
+        public ItemLink Find(string name)
+        {
+            foreach (ItemLink il in Items)
+            {
+                if (il.ItemName == name) return il;
+            }
+
+            return null;
+        }
+
     }
 
     #region ItemLink 

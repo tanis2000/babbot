@@ -69,6 +69,13 @@ namespace BabBot.Scripting
         int TargetMp();
         int TargetHpPct();
         int TargetMpPct();
+        void DoString(string iCommand);
+        void Wait(int iTime);
+        int Level();
+        bool HasItem(Item i);
+        bool HasItem(string i);
+        void UseItem(Item i);
+        void UseItem(string i);
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -308,8 +315,40 @@ namespace BabBot.Scripting
             return (int)((player.TargetMp / player.TargetMaxMp) * 100);
         }
 
+        public void DoString(string iCommand)
+        {
+            ProcessManager.Injector.Lua_DoString(iCommand);
+        }
 
+        public void Wait(int iTime)
+        {
+            player.Wait(iTime);
+        }
 
+        public int Level()
+        {
+            return (int)player.Level;
+        }
+        
+        public bool HasItem(Item i)
+        {
+            return player.HasItem(i);
+        }
+
+        public bool HasItem(string i)
+        {
+            return player.HasItem(i);
+        }
+
+        public void UseItem(Item i)
+        {
+            player.UseItem(i);
+        }
+
+        public void UseItem(string i)
+        {
+            player.UseItem(i);
+        }
         #endregion
     }
 }

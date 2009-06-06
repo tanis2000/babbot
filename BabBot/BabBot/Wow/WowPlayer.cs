@@ -90,6 +90,11 @@ namespace BabBot.Wow
             get { return unit.GetXp(); }
         }
 
+        public uint Level
+        {
+            get { return unit.GetLevel(); }
+        }
+
         #endregion
 
         #region Target stats
@@ -113,6 +118,10 @@ namespace BabBot.Wow
             get { return CurTarget.Mp; }
         }
 
+        public uint TargetLevel
+        {
+            get { return CurTarget.Level; }
+        }
         #endregion
 
         public Vector3D Location
@@ -1073,6 +1082,48 @@ namespace BabBot.Wow
             return false;
         }
 
+        public void Wait(int iTime)
+        {
+            Thread.Sleep(iTime);
+        }
+
+        public bool HasItem(Item item)
+        {
+            return HasItem(item.Name);
+        }
+
+        public bool HasItem(string item) 
+        {
+            for (int i = 0; i <5 ; i++) {
+                Bag bag = new Bag(i);
+                bag.UpdateBagItems();
+                if (bag.Find(item) != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void UseItem(Item item)
+        {
+            UseItem(item.Name);
+        }
+
+        public void UseItem(string item)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                Bag bag = new Bag(i);
+                bag.UpdateBagItems();
+                ItemLink il = bag.Find(item);
+                if (il != null)
+                {
+                    ProcessManager.Injector.Lua_DoString(string.Format("UseInventoryItem({0});", il.Slot));
+                }
+            }
+        }
 
         // Actions
         public bool Cast(string SlotBar, string Key)
