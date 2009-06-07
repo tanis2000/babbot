@@ -27,13 +27,13 @@ namespace BabBot.Manager
 {
     public class InjectionManager
     {
-        // Shortcut to the BM instance
         // cache of GUID vs Relation to local player. These are static (more or less)
         private readonly IDictionary<ulong, Descriptor.eUnitReaction> RelationCache =
             new Dictionary<ulong, Descriptor.eUnitReaction>();
 
         private readonly IDictionary<string, uint> SpellIdCache = new Dictionary<string, uint>();
 
+        // Shortcut to the BM instance
         private BlackMagic wow
         {
             get { return ProcessManager.WowProcess; }
@@ -461,8 +461,6 @@ namespace BabBot.Manager
         /// <param name="command">A LUA command string to execute.</param>
         public void Lua_DoString(string command)
         {
-            // TODO: Replace this with a proper LUA implementation.
-
             ProcessManager.SuspendMainWowThread();
 
             uint codecave = wow.AllocateMemory();
@@ -505,7 +503,6 @@ namespace BabBot.Manager
         /// <returns>Content of the variable we're querying</returns>
         public String Lua_GetLocalizedText(string variable)
         {
-            // TODO: Replace this with a proper LUA implementation.
             // TODO: Check if this works
 
             ProcessManager.SuspendMainWowThread();
