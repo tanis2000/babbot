@@ -151,6 +151,17 @@ namespace BabBot.Manager
                 return;
             }
 
+
+            if (CurrentState == PlayerState.Dead)
+            {
+                /// Let's see if we are still dead or what
+                if (!ProcessManager.Player.IsDead())
+                {
+                    CurrentState = PlayerState.Roaming;
+                }
+                return;
+            }
+            
             if (ProcessManager.Player.IsDead())
             {
                 CurrentState = PlayerState.Dead;

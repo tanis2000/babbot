@@ -184,6 +184,7 @@ namespace BabBot.Scripts
         private void OnDead()
         {
             /// We should run back to our corpse
+            player.MoveToCorpse();
         }
 
         /// <summary>

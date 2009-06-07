@@ -248,6 +248,16 @@ namespace BabBot.Wow
                                                    (uint) Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS*0x04) & 0x0D) != 0;
         }
 
+        #region LocalPlayer ONLY stuff - don't call it for normal WowUnit
+        
+        public Vector3D GetPlayerCorpsePosition()
+        {
+            return new Vector3D(ProcessManager.WowProcess.ReadFloat(Globals.LocalPlayerCorpseOffset),
+                                ProcessManager.WowProcess.ReadFloat(Globals.LocalPlayerCorpseOffset + 0x04),
+                                ProcessManager.WowProcess.ReadFloat(Globals.LocalPlayerCorpseOffset + 0x08));
+        }
+        #endregion
+
         #region Code Injection Stuff
 
         /// <summary>
@@ -258,31 +268,6 @@ namespace BabBot.Wow
             if (ObjectPointer != 0)
             {
                 ProcessManager.Injector.Interact(ObjectPointer);
-
-                /*
-                try
-                {
-                    ProcessManager.SuspendMainWowThread();
-                    uint codecave = ProcessManager.WowProcess.AllocateMemory();
-                    ProcessManager.WowProcess.Asm.Clear();
-                    ProcessManager.WowProcess.Asm.AddLine("fs mov eax, [0x2C]");
-                    ProcessManager.WowProcess.Asm.AddLine("mov eax, [eax]");
-                    ProcessManager.WowProcess.Asm.AddLine("add eax, 0x10");
-                    ProcessManager.WowProcess.Asm.AddLine("mov dword [eax], {0}", Globals.CurMgr);
-                    ProcessManager.WowProcess.Asm.AddLine("mov ecx, {0}", ObjectPointer);
-                    ProcessManager.WowProcess.Asm.AddLine("call {0}", ProcessManager.WowProcess.ReadUInt(VMT + 38 * 4));
-                    ProcessManager.WowProcess.Asm.AddLine("retn");
-                    ProcessManager.WowProcess.Asm.InjectAndExecute(codecave);
-                    Thread.Sleep(10);
-                    ProcessManager.ResumeMainWowThread();
-                    ProcessManager.WowProcess.FreeMemory(codecave);
-                }
-                catch (Exception ex)
-                {
-                    ProcessManager.ResumeMainWowThread();
-                    throw new Exception("Interact() failed miserably!");
-                }
-                */
             }
         }
 

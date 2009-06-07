@@ -129,6 +129,11 @@ namespace BabBot.Wow
             get { return unit.GetPosition(); }
         }
 
+        public Vector3D CorpseLocation
+        {
+            get { return unit.GetPlayerCorpsePosition(); }
+        }
+
         public float Orientation
         {
             get { return unit.GetFacing(); }
@@ -1143,6 +1148,11 @@ namespace BabBot.Wow
             ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitDebuff(\"player\", \"{0}\")", iName));
             string name = ProcessManager.Injector.Lua_GetLocalizedText("name");
             if (name == "") return false; else return true;
+        }
+
+        public void MoveToCorpse()
+        {
+            MoveTo(CorpseLocation);
         }
 
         // Actions
