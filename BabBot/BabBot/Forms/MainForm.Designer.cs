@@ -148,6 +148,8 @@
             this.label32 = new System.Windows.Forms.Label();
             this.tbCorpseX = new System.Windows.Forms.TextBox();
             this.label33 = new System.Windows.Forms.Label();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -160,6 +162,7 @@
             this.tabPageEnemies.SuspendLayout();
             this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -170,7 +173,7 @@
             this.helpToolStripMenuItem});
             this.msMain.Location = new System.Drawing.Point(0, 0);
             this.msMain.Name = "msMain";
-            this.msMain.Size = new System.Drawing.Size(538, 24);
+            this.msMain.Size = new System.Drawing.Size(580, 24);
             this.msMain.TabIndex = 0;
             this.msMain.Text = "menuStrip1";
             // 
@@ -227,11 +230,11 @@
             this.tabControlMain.Controls.Add(this.tabPageEnemies);
             this.tabControlMain.Controls.Add(this.tabPageDebug);
             this.tabControlMain.Controls.Add(this.tabPageDebug2);
-            this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlMain.Location = new System.Drawing.Point(0, 24);
             this.tabControlMain.Name = "tabControlMain";
             this.tabControlMain.SelectedIndex = 0;
-            this.tabControlMain.Size = new System.Drawing.Size(538, 396);
+            this.tabControlMain.Size = new System.Drawing.Size(580, 396);
             this.tabControlMain.TabIndex = 1;
             // 
             // tabPageMain
@@ -380,7 +383,7 @@
             this.tabPageWayPoints.Location = new System.Drawing.Point(4, 22);
             this.tabPageWayPoints.Name = "tabPageWayPoints";
             this.tabPageWayPoints.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWayPoints.Size = new System.Drawing.Size(530, 370);
+            this.tabPageWayPoints.Size = new System.Drawing.Size(572, 370);
             this.tabPageWayPoints.TabIndex = 2;
             this.tabPageWayPoints.Text = "WayPoints";
             this.tabPageWayPoints.UseVisualStyleBackColor = true;
@@ -567,7 +570,7 @@
             this.tabPagePlayer.Location = new System.Drawing.Point(4, 22);
             this.tabPagePlayer.Name = "tabPagePlayer";
             this.tabPagePlayer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePlayer.Size = new System.Drawing.Size(530, 370);
+            this.tabPagePlayer.Size = new System.Drawing.Size(572, 370);
             this.tabPagePlayer.TabIndex = 3;
             this.tabPagePlayer.Text = "Player";
             this.tabPagePlayer.UseVisualStyleBackColor = true;
@@ -706,7 +709,7 @@
             this.tabPageEnemies.Location = new System.Drawing.Point(4, 22);
             this.tabPageEnemies.Name = "tabPageEnemies";
             this.tabPageEnemies.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageEnemies.Size = new System.Drawing.Size(530, 370);
+            this.tabPageEnemies.Size = new System.Drawing.Size(572, 370);
             this.tabPageEnemies.TabIndex = 5;
             this.tabPageEnemies.Text = "Enemies";
             this.tabPageEnemies.UseVisualStyleBackColor = true;
@@ -816,7 +819,7 @@
             this.tabPageDebug.Location = new System.Drawing.Point(4, 22);
             this.tabPageDebug.Name = "tabPageDebug";
             this.tabPageDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDebug.Size = new System.Drawing.Size(530, 370);
+            this.tabPageDebug.Size = new System.Drawing.Size(572, 370);
             this.tabPageDebug.TabIndex = 1;
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
@@ -1263,6 +1266,7 @@
             // 
             this.tbCorpseZ.Location = new System.Drawing.Point(240, 107);
             this.tbCorpseZ.Name = "tbCorpseZ";
+            this.tbCorpseZ.ReadOnly = true;
             this.tbCorpseZ.Size = new System.Drawing.Size(100, 20);
             this.tbCorpseZ.TabIndex = 43;
             // 
@@ -1279,6 +1283,7 @@
             // 
             this.tbCorpseY.Location = new System.Drawing.Point(134, 107);
             this.tbCorpseY.Name = "tbCorpseY";
+            this.tbCorpseY.ReadOnly = true;
             this.tbCorpseY.Size = new System.Drawing.Size(100, 20);
             this.tbCorpseY.TabIndex = 41;
             // 
@@ -1295,6 +1300,7 @@
             // 
             this.tbCorpseX.Location = new System.Drawing.Point(28, 107);
             this.tbCorpseX.Name = "tbCorpseX";
+            this.tbCorpseX.ReadOnly = true;
             this.tbCorpseX.Size = new System.Drawing.Size(100, 20);
             this.tbCorpseX.TabIndex = 39;
             // 
@@ -1307,15 +1313,35 @@
             this.label33.TabIndex = 45;
             this.label33.Text = "Corpse";
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 421);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(580, 22);
+            this.statusStrip1.TabIndex = 2;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(62, 17);
+            this.toolStripStatusLabel1.Text = "statusLabel";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(538, 420);
+            this.ClientSize = new System.Drawing.Size(580, 443);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControlMain);
             this.Controls.Add(this.msMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.msMain;
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(588, 470);
+            this.MinimumSize = new System.Drawing.Size(588, 470);
             this.Name = "MainForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.msMain.ResumeLayout(false);
@@ -1341,6 +1367,8 @@
             this.tabPageDebug.PerformLayout();
             this.tabPageDebug2.ResumeLayout(false);
             this.tabPageDebug2.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1467,6 +1495,8 @@
         private System.Windows.Forms.TextBox tbCorpseY;
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.TextBox tbCorpseX;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
 
