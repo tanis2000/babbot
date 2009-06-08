@@ -149,6 +149,10 @@ namespace BabBot.Forms
                                                Environment.NewLine +
                                                "===========" + Environment.NewLine +
                                                ProcessManager.Player.NearMobsAsTextList;
+
+                    tbCorpseX.Text = ProcessManager.Player.CorpseLocation.X.ToString();
+                    tbCorpseY.Text = ProcessManager.Player.CorpseLocation.Y.ToString();
+                    tbCorpseZ.Text = ProcessManager.Player.CorpseLocation.Z.ToString();
                 }
 
                 txtCurrentX.Text = ProcessManager.Player.Location.X.ToString();
@@ -342,9 +346,9 @@ namespace BabBot.Forms
                 {
                     string[] arrWp = wp.Split('|');
                     var dest = new Vector3D(float.Parse(arrWp[0]), float.Parse(arrWp[1]), float.Parse(arrWp[2]));
-                    if (ProcessManager.Player.MoveTo(dest) == PlayerState.WayPointTimeout)
+                    if (ProcessManager.Player.MoveTo(dest) == NavigationState.WayPointTimeout)
                     {
-                        MessageBox.Show("Sono babbato da un babbo ostacolo!");
+                        MessageBox.Show("We are stuck somewhere!");
                         break;
                     }
                 }

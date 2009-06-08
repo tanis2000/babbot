@@ -141,6 +141,13 @@
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.tbCorpseZ = new System.Windows.Forms.TextBox();
+            this.label31 = new System.Windows.Forms.Label();
+            this.tbCorpseY = new System.Windows.Forms.TextBox();
+            this.label32 = new System.Windows.Forms.Label();
+            this.tbCorpseX = new System.Windows.Forms.TextBox();
+            this.label33 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -178,7 +185,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -193,7 +200,7 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.optionsToolStripMenuItem.Text = "&Options..";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -208,7 +215,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -536,6 +543,13 @@
             // 
             // tabPagePlayer
             // 
+            this.tabPagePlayer.Controls.Add(this.label33);
+            this.tabPagePlayer.Controls.Add(this.label30);
+            this.tabPagePlayer.Controls.Add(this.tbCorpseZ);
+            this.tabPagePlayer.Controls.Add(this.label31);
+            this.tabPagePlayer.Controls.Add(this.tbCorpseY);
+            this.tabPagePlayer.Controls.Add(this.label32);
+            this.tabPagePlayer.Controls.Add(this.tbCorpseX);
             this.tabPagePlayer.Controls.Add(this.tbPlayerIsSitting);
             this.tabPagePlayer.Controls.Add(this.label28);
             this.tabPagePlayer.Controls.Add(this.label22);
@@ -1236,6 +1250,63 @@
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
             // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(239, 91);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(17, 13);
+            this.label30.TabIndex = 44;
+            this.label30.Text = "Z:";
+            // 
+            // tbCorpseZ
+            // 
+            this.tbCorpseZ.Location = new System.Drawing.Point(240, 107);
+            this.tbCorpseZ.Name = "tbCorpseZ";
+            this.tbCorpseZ.Size = new System.Drawing.Size(100, 20);
+            this.tbCorpseZ.TabIndex = 43;
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(133, 91);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(17, 13);
+            this.label31.TabIndex = 42;
+            this.label31.Text = "Y:";
+            // 
+            // tbCorpseY
+            // 
+            this.tbCorpseY.Location = new System.Drawing.Point(134, 107);
+            this.tbCorpseY.Name = "tbCorpseY";
+            this.tbCorpseY.Size = new System.Drawing.Size(100, 20);
+            this.tbCorpseY.TabIndex = 41;
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(27, 91);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(17, 13);
+            this.label32.TabIndex = 40;
+            this.label32.Text = "X:";
+            // 
+            // tbCorpseX
+            // 
+            this.tbCorpseX.Location = new System.Drawing.Point(28, 107);
+            this.tbCorpseX.Name = "tbCorpseX";
+            this.tbCorpseX.Size = new System.Drawing.Size(100, 20);
+            this.tbCorpseX.TabIndex = 39;
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(346, 110);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(40, 13);
+            this.label33.TabIndex = 45;
+            this.label33.Text = "Corpse";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1389,6 +1460,13 @@
         private System.Windows.Forms.TextBox tbLuaScript;
         private System.Windows.Forms.Button btnGetLuaText;
         private System.Windows.Forms.TextBox tbLuaVariable;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.TextBox tbCorpseZ;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.TextBox tbCorpseY;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.TextBox tbCorpseX;
     }
 }
 
