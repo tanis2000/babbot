@@ -657,14 +657,29 @@ namespace BabBot.Wow
             return random.Next(min, max);
         }
 
-        public PlayerState MoveTo(Vector3D dest)
+        /// <summary>
+        /// Makes the player walk from the current location to the location of "dest" with 
+        /// a default tolerance of 1 yard.
+        /// </summary>
+        /// <param name="dest">Destination</param>
+        /// <returns>A NavigationState indicating what the result of the movement was</returns>
+        public NavigationState MoveTo(Vector3D dest)
         {
             return MoveTo(dest, 1.0f);
         }
 
 
-        public PlayerState MoveTo(Vector3D dest, float tolerance)
+        /// <summary>
+        /// Makes the player walk from the current location to the location of "dest"
+        /// </summary>
+        /// <param name="dest">Destination</param>
+        /// <param name="tolerance">A value indicating the tolerance. i.e. if we pass
+        /// 3.0f as tolerance, the bot will stop moving when reaching 3 yards from the
+        /// destination.</param>
+        /// <returns>A NavigationState indicating what the result of the movement was</returns>
+        public NavigationState MoveTo(Vector3D dest, float tolerance)
         {
+            // TODO: add PPather usage here as well
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
 
             isMoving = true;
@@ -672,13 +687,11 @@ namespace BabBot.Wow
             if (!dest.IsValid())
             {
                 isMoving = false;
-                return PlayerState.Ready;
+                return NavigationState.Ready;
             }
 
-            float angle = GetFaceRadian(dest);
-            Face(angle);
-
             // Random jump
+            // TODO: make this configurable
             int rndJmp = RandomNumber(1, 8);
             bool doJmp = false;
             if (rndJmp == 1 || rndJmp == 3)
@@ -690,10 +703,15 @@ namespace BabBot.Wow
             float distance = HGetDistance(dest, false);
             PlayerCM.ArrowKeyDown(key);
 
+            /// We face our destination waypoint while we are already moving, so that it looks 
+            /// more human-like
+            float angle = GetFaceRadian(dest);
+            Face(angle);
+
             // Start profiler for WayPointTimeOut
             DateTime start = DateTime.Now;
 
-            PlayerState res = PlayerState.Roaming;
+            NavigationState res = NavigationState.Roaming;
 
             while (distance > tolerance)
             {
@@ -707,7 +725,7 @@ namespace BabBot.Wow
 
                 if (StopMovement)
                 {
-                    res = PlayerState.Ready;
+                    res = NavigationState.Ready;
                     StopMovement = false;
                     break;
                 }
@@ -724,14 +742,14 @@ namespace BabBot.Wow
 
                 if (currentDistance == distance)
                 {
-                    // sono bloccato? non mi sono mosso di una distanza significativa?
-                    // anche qui da verificare, mi sa che bisogna lavorare in float con
-                    // un po di tolleranza
+                    /// We should come up with a routine to get us unstuck.
+                    /// Of course we should also add some tolerance here as it is unlikely that
+                    /// we will be exactly in the same position when we get stuck
                 }
                 else if (TravelTime >= MAX_REACHTIME)
                 {
                     TravelTime = 0;
-                    res = PlayerState.WayPointTimeout;
+                    res = NavigationState.WayPointTimeout;
                     break;
                 }
             }
@@ -746,8 +764,8 @@ namespace BabBot.Wow
         /// </summary>
         /// <param name="target">Unit we want to reach</param>
         /// <param name="tolerance">Distance at which we can stop</param>
-        /// <returns></returns>
-        public PlayerState MoveTo(WowUnit target, float tolerance)
+        /// <returns>A NavigationState indicating what the result of the movement was</returns>
+        public NavigationState MoveTo(WowUnit target, float tolerance)
         {
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
             float angle = 0;
@@ -755,19 +773,18 @@ namespace BabBot.Wow
             int steps = 0;
             int currentStep = 0;
             float distanceFromStep = 0;
-            var path = new Path();
 
             isMoving = true;
 
             if (!target.Location.IsValid())
             {
                 isMoving = false;
-                return PlayerState.Ready;
+                return NavigationState.Ready;
             }
 
             distance = HGetDistance(target.Location, false);
 
-            path =
+            Path path =
                 ProcessManager.Caronte.CalculatePath(
                     new Location(Location.X, Location.Y, Location.Z),
                     new Location(target.Location.X, target.Location.Y, target.Location.Z));
@@ -808,7 +825,7 @@ namespace BabBot.Wow
             // Start profiler for WayPointTimeOut
             DateTime start = DateTime.Now;
 
-            PlayerState res = PlayerState.Roaming;
+            NavigationState res = NavigationState.Roaming;
 
             while (distance > tolerance)
             {
@@ -823,7 +840,7 @@ namespace BabBot.Wow
 
                 if (StopMovement)
                 {
-                    res = PlayerState.Ready;
+                    res = NavigationState.Ready;
                     StopMovement = false;
                     break;
                 }
@@ -873,14 +890,14 @@ namespace BabBot.Wow
 
                 if (currentDistance == distance)
                 {
-                    // sono bloccato? non mi sono mosso di una distanza significativa?
-                    // anche qui da verificare, mi sa che bisogna lavorare in float con
-                    // un po di tolleranza
+                    /// We should come up with a routine to get us unstuck.
+                    /// Of course we should also add some tolerance here as it is unlikely that
+                    /// we will be exactly in the same position when we get stuck
                 }
                 else if (TravelTime >= MAX_REACHTIME)
                 {
                     TravelTime = 0;
-                    res = PlayerState.WayPointTimeout;
+                    res = NavigationState.WayPointTimeout;
                     break;
                 }
             }
@@ -890,11 +907,19 @@ namespace BabBot.Wow
             return res;
         }
 
+        /// <summary>
+        /// When called, this will stop the bot if it's navigating through waypoints
+        /// or chasing a mob
+        /// </summary>
         public void Stop()
         {
             StopMovement = true;
         }
 
+        /// <summary>
+        /// Moves forward for iTime milliseconds
+        /// </summary>
+        /// <param name="iTime">how long we should move (milliseconds)</param>
         public void MoveForward(int iTime)
         {
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
@@ -903,6 +928,10 @@ namespace BabBot.Wow
             PlayerCM.ArrowKeyUp(key);
         }
 
+        /// <summary>
+        /// Moves backward for iTime milliseconds
+        /// </summary>
+        /// <param name="iTime">how long we should move (milliseconds)</param>
         public void MoveBackward(int iTime)
         {
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Down;
@@ -911,11 +940,10 @@ namespace BabBot.Wow
             PlayerCM.ArrowKeyUp(key);
         }
 
-        public bool GoBack(Vector3D dest)
-        {
-            throw new NotImplementedException("GoBack");
-        }
-
+        /// <summary>
+        /// Iterates through the waypoints and makes us walk to the next one in the list
+        /// </summary>
+        /// <param name="wpType">The type of waypoint we're going to (Normal, Vendor, GraveYard, etc..)</param>
         public void WalkToNextWayPoint(WayPointType wpType)
         {
             WayPoint wp = WayPointManager.Instance.GetNextWayPoint(wpType);
@@ -1069,8 +1097,15 @@ namespace BabBot.Wow
             return isMoving;
         }
 
+        /// <summary>
+        /// Checks whether we are attacking something or not
+        /// Note that this supposes that we have the Attack action in the
+        /// first slot of the first action bar
+        /// </summary>
+        /// <returns>true if we are attacking</returns>
         public bool IsAttacking()
         {
+            // TODO: find a way to read if we are attacking without checking the action bar
             ProcessManager.Injector.Lua_DoString("action = IsCurrentAction(1);");
             string action = ProcessManager.Injector.Lua_GetLocalizedText("action");
             if (action == "1") return true; else return false;
