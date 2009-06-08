@@ -103,7 +103,11 @@ namespace BabBot.Scripts
             }
             */
 
-            player.FaceTarget();
+            // We turn to face the target if we're facing away for some reason
+            if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
+            {
+                player.FaceTarget();
+            }
 
             if (player.DistanceFromTarget() > MaxMeleeDistance)
             {

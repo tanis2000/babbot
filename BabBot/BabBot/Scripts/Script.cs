@@ -256,28 +256,14 @@ namespace BabBot.Scripts
             }
         }
 
+        /// <summary>
+        /// This routine gets called every time we end up fighting (because we pulled or 
+        /// because a mob aggroed)
+        /// This should be implemented in the spcific class script
+        /// </summary>
         protected virtual void OnInCombat()
         {
-            if (player.IsBeingAttacked())
-            {
-                /// We are being attacked by a Mob. That means that we should fight back
-                /// by finding the mob first of all
-                if (player.SelectWhoIsAttackingUs())
-                {
-                    /// We found who is attacking us and we fight back
-                    if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
-                    {
-                        player.FaceTarget();
-                    }
-                    if (player.DistanceFromTarget() > 3.0f)
-                    {
-                        // we have to get closer (melee only though, we should also check if we're 
-                        // using a melee or spell ability)
-                    }
-                    //paladin.Fight();
-                    //player.PlayAction("combat"); // this should call the routine to fight back based on the bindings
-                }
-            }
+            throw new NotImplementedException("OnInCombat() not implemented.");
         }
 
         /// <summary>
@@ -305,6 +291,7 @@ namespace BabBot.Scripts
         /// </summary>
         protected virtual void OnRest()
         {
+            throw new NotImplementedException("OnRest() not implemented.");
         }
 
 
