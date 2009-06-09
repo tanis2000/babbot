@@ -36,7 +36,7 @@ namespace BabBot.Wow
         public const uint PlayerXOffset = 0x798; // 3.1.0: 0x798; // 3.0.9: 0x7D0
         public const uint PlayerYOffset = 0x79C; // 3.1.0: 0x79C; // 3.0.9: 0x7D4;
         public const uint PlayerZOffset = 0x7A0; // 3.1.0: 0x79C; // 3.0.9: 0x7D8;
-        public const uint LocalPlayerCorpseOffset = 0x010A6B3C; // 3.1.3 untested - it's a static one, not relative to the TLS
+        public const uint LocalPlayerCorpseOffset = 0x011D41D8; // 3.1.0: 0x010A6B3C;
         public static uint cameraOffset = 0x00007834; // 3.1.0: 0x00007834;
         public static uint cameraPointer = 0x0117108C; // 3.1.0: 0x0117108C;
         public static uint ClientConnection;
