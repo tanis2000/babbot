@@ -51,6 +51,8 @@ namespace BabBot.Forms
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
+
+            ProcessManager.UpdateStatus += UpdateStatus;
         }
 
         #region Exception Handler
@@ -210,6 +212,11 @@ namespace BabBot.Forms
 
             // Start the reading thread
             ProcessManager.BotManager.Start();
+        }
+
+        private void UpdateStatus(string iStatus)
+        {
+            statusLabel.Text = iStatus;
         }
 
         private void ActivateDebugMode()

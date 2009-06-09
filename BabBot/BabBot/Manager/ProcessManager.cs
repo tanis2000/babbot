@@ -61,6 +61,12 @@ namespace BabBot.Manager
         /// </summary>
         public delegate void WoWProcessStartedEventHandler(int process);
 
+        /// <summary>
+        /// Updates the status bar
+        /// </summary>
+        /// <param name="iStatus">what to write in the statusbar</param>
+        public delegate void UpdateStatusEventHandler(string iStatus);
+
         #endregion
 
         #region WOWApplication Events
@@ -89,6 +95,8 @@ namespace BabBot.Manager
 
         public static event PlayerUpdateEventHandler PlayerUpdate;
         public static event PlayerWayPointEventHandler PlayerWayPoint;
+
+        public static event UpdateStatusEventHandler UpdateStatus;
 
         #endregion
 
@@ -353,15 +361,27 @@ namespace BabBot.Manager
         /// </summary>
         public static void FindTLS()
         {
-            // search for the code pattern that we want (in this case, WoW TLS)
-            TLS = SPattern.FindPattern(process.Handle, process.MainModule,
-                                       "EB 02 33 C0 8B D 00 00 00 00 64 8B 15 00 00 00 00 8B 34 8A 8B D 00 00 00 00 89 81 00 00 00 00",
-                                       "xxxxxx????xxx????xxxxx????xx????");
-
-
-            if (TLS == uint.MaxValue)
+            try
             {
-                throw new Exception("Could not find WoW's Object Manager.");
+                // search for the code pattern that we want (in this case, WoW TLS)
+                TLS = SPattern.FindPattern(process.Handle, process.MainModule,
+                                           "EB 02 33 C0 8B D 00 00 00 00 64 8B 15 00 00 00 00 8B 34 8A 8B D 00 00 00 00 89 81 00 00 00 00",
+                                           "xxxxxx????xxx????xxxxx????xx????");
+
+
+                if (TLS == uint.MaxValue)
+                {
+                    throw new Exception("Could not find WoW's Object Manager.");
+                }
+
+                if (UpdateStatus != null)
+                {
+                    UpdateStatus("TLS found");
+                }
+
+            } catch (Exception ex)
+            {
+                throw new Exception("Cannot find the TLS");
             }
         }
 
@@ -386,6 +406,10 @@ namespace BabBot.Manager
         {
             try
             {
+                if (UpdateStatus != null)
+                {
+                    UpdateStatus("Looking for the TLS");
+                }
                 FindTLS();
                 InitializeObjectManager();
                 InitializeCaronte();

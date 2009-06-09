@@ -433,6 +433,15 @@ namespace BabBot.Wow
             return 0.0f;
         }
 
+        public float DistanceFromCorpse()
+        {
+            if (IsDead() || IsGhost())
+            {
+                return GetDistance(CorpseLocation);
+            }
+            return 0.0f;
+        }
+
         public float Facing()
         {
             return Orientation;
@@ -1188,6 +1197,11 @@ namespace BabBot.Wow
         public void MoveToCorpse()
         {
             MoveTo(CorpseLocation);
+        }
+
+        public void RetrieveCorpse()
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("RetrieveCorpse();"));
         }
 
         // Actions

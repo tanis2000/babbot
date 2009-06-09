@@ -155,7 +155,7 @@ namespace BabBot.Manager
             if (CurrentState == PlayerState.Dead)
             {
                 /// Let's see if we are still dead or what
-                if (!ProcessManager.Player.IsDead())
+                if ((!ProcessManager.Player.IsDead()) && (!ProcessManager.Player.IsGhost()))
                 {
                     CurrentState = PlayerState.Roaming;
                 }
@@ -174,11 +174,13 @@ namespace BabBot.Manager
                 return;
             }
 
+            /*
             if (ProcessManager.Player.IsAtGraveyard())
             {
                 CurrentState = PlayerState.Graveyard;
                 return;
             }
+             */
         }
 
         public void Start()

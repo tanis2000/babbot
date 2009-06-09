@@ -68,6 +68,13 @@
             this.tbCountNormal = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPagePlayer = new System.Windows.Forms.TabPage();
+            this.label33 = new System.Windows.Forms.Label();
+            this.label30 = new System.Windows.Forms.Label();
+            this.tbCorpseZ = new System.Windows.Forms.TextBox();
+            this.label31 = new System.Windows.Forms.Label();
+            this.tbCorpseY = new System.Windows.Forms.TextBox();
+            this.label32 = new System.Windows.Forms.Label();
+            this.tbCorpseX = new System.Windows.Forms.TextBox();
             this.tbPlayerIsSitting = new System.Windows.Forms.TextBox();
             this.label28 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
@@ -141,15 +148,8 @@
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
-            this.label30 = new System.Windows.Forms.Label();
-            this.tbCorpseZ = new System.Windows.Forms.TextBox();
-            this.label31 = new System.Windows.Forms.Label();
-            this.tbCorpseY = new System.Windows.Forms.TextBox();
-            this.label32 = new System.Windows.Forms.Label();
-            this.tbCorpseX = new System.Windows.Forms.TextBox();
-            this.label33 = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -254,7 +254,7 @@
             this.tabPageMain.Location = new System.Drawing.Point(4, 22);
             this.tabPageMain.Name = "tabPageMain";
             this.tabPageMain.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMain.Size = new System.Drawing.Size(530, 370);
+            this.tabPageMain.Size = new System.Drawing.Size(572, 370);
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main";
             this.tabPageMain.UseVisualStyleBackColor = true;
@@ -574,6 +574,66 @@
             this.tabPagePlayer.TabIndex = 3;
             this.tabPagePlayer.Text = "Player";
             this.tabPagePlayer.UseVisualStyleBackColor = true;
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(346, 110);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(40, 13);
+            this.label33.TabIndex = 45;
+            this.label33.Text = "Corpse";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(239, 91);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(17, 13);
+            this.label30.TabIndex = 44;
+            this.label30.Text = "Z:";
+            // 
+            // tbCorpseZ
+            // 
+            this.tbCorpseZ.Location = new System.Drawing.Point(240, 107);
+            this.tbCorpseZ.Name = "tbCorpseZ";
+            this.tbCorpseZ.ReadOnly = true;
+            this.tbCorpseZ.Size = new System.Drawing.Size(100, 20);
+            this.tbCorpseZ.TabIndex = 43;
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(133, 91);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(17, 13);
+            this.label31.TabIndex = 42;
+            this.label31.Text = "Y:";
+            // 
+            // tbCorpseY
+            // 
+            this.tbCorpseY.Location = new System.Drawing.Point(134, 107);
+            this.tbCorpseY.Name = "tbCorpseY";
+            this.tbCorpseY.ReadOnly = true;
+            this.tbCorpseY.Size = new System.Drawing.Size(100, 20);
+            this.tbCorpseY.TabIndex = 41;
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(27, 91);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(17, 13);
+            this.label32.TabIndex = 40;
+            this.label32.Text = "X:";
+            // 
+            // tbCorpseX
+            // 
+            this.tbCorpseX.Location = new System.Drawing.Point(28, 107);
+            this.tbCorpseX.Name = "tbCorpseX";
+            this.tbCorpseX.ReadOnly = true;
+            this.tbCorpseX.Size = new System.Drawing.Size(100, 20);
+            this.tbCorpseX.TabIndex = 39;
             // 
             // tbPlayerIsSitting
             // 
@@ -1152,7 +1212,7 @@
             this.tabPageDebug2.Location = new System.Drawing.Point(4, 22);
             this.tabPageDebug2.Name = "tabPageDebug2";
             this.tabPageDebug2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDebug2.Size = new System.Drawing.Size(530, 370);
+            this.tabPageDebug2.Size = new System.Drawing.Size(572, 370);
             this.tabPageDebug2.TabIndex = 4;
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
@@ -1253,81 +1313,21 @@
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
             // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(239, 91);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(17, 13);
-            this.label30.TabIndex = 44;
-            this.label30.Text = "Z:";
-            // 
-            // tbCorpseZ
-            // 
-            this.tbCorpseZ.Location = new System.Drawing.Point(240, 107);
-            this.tbCorpseZ.Name = "tbCorpseZ";
-            this.tbCorpseZ.ReadOnly = true;
-            this.tbCorpseZ.Size = new System.Drawing.Size(100, 20);
-            this.tbCorpseZ.TabIndex = 43;
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(133, 91);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(17, 13);
-            this.label31.TabIndex = 42;
-            this.label31.Text = "Y:";
-            // 
-            // tbCorpseY
-            // 
-            this.tbCorpseY.Location = new System.Drawing.Point(134, 107);
-            this.tbCorpseY.Name = "tbCorpseY";
-            this.tbCorpseY.ReadOnly = true;
-            this.tbCorpseY.Size = new System.Drawing.Size(100, 20);
-            this.tbCorpseY.TabIndex = 41;
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(27, 91);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(17, 13);
-            this.label32.TabIndex = 40;
-            this.label32.Text = "X:";
-            // 
-            // tbCorpseX
-            // 
-            this.tbCorpseX.Location = new System.Drawing.Point(28, 107);
-            this.tbCorpseX.Name = "tbCorpseX";
-            this.tbCorpseX.ReadOnly = true;
-            this.tbCorpseX.Size = new System.Drawing.Size(100, 20);
-            this.tbCorpseX.TabIndex = 39;
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(346, 110);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(40, 13);
-            this.label33.TabIndex = 45;
-            this.label33.Text = "Corpse";
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
+            this.statusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 421);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(580, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // statusLabel
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(62, 17);
-            this.toolStripStatusLabel1.Text = "statusLabel";
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(62, 17);
+            this.statusLabel.Text = "statusLabel";
             // 
             // MainForm
             // 
@@ -1496,7 +1496,7 @@
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.TextBox tbCorpseX;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
     }
 }
 

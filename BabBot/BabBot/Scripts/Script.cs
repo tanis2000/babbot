@@ -40,6 +40,7 @@ namespace BabBot.Scripts
         protected int HpPctEmergency = 25; // Minimum health percentage at which we call the emergency healing routine
         protected int HpPctPotion = 20; // Minimum health percentage at which we look for a health potion
         protected int MpPctPotion = 15; // Minimum mana percentage at which we look for a mana potion
+        protected float MinDistanceFromCorpse = 5.0f; // Minimum distance from corpse after which we stop pathing looking for it
 
         #endregion
 
@@ -184,8 +185,19 @@ namespace BabBot.Scripts
         private void OnDead()
         {
             /// We should run back to our corpse
-            Console.WriteLine("OnDead() -- Walking to corpse");
-            player.MoveToCorpse();
+            Console.WriteLine("OnDead()");
+            Console.WriteLine(string.Format("OnDead() - Distance from corpse: {0}", player.DistanceFromCorpse()));
+            if (player.DistanceFromCorpse() > MinDistanceFromCorpse)
+            {
+                Console.WriteLine("OnDead() -- Walking to corpse");
+                player.MoveToCorpse();
+            } else
+            {
+                // We try to resurrect
+                // TODO: we should check that there's no delay time running before trying this
+                Console.WriteLine("OnDead() -- Trying to resurrect");
+                player.RetrieveCorpse();
+            }
         }
 
         /// <summary>
