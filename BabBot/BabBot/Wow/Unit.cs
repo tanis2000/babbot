@@ -248,6 +248,14 @@ namespace BabBot.Wow
                                                    (uint) Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS*0x04) & 0x0D) != 0;
         }
 
+        public float BoundingRadius()
+        {
+            return
+                (ProcessManager.WowProcess.ReadInt(UnitDescriptor +
+                                                   (uint)Descriptor.eUnitFields.UNIT_FIELD_BOUNDINGRADIUS * 0x04));
+        }
+
+
         #region LocalPlayer ONLY stuff - don't call it for normal WowUnit
         
         public Vector3D GetPlayerCorpsePosition()

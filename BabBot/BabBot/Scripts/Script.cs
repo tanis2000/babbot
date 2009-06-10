@@ -41,6 +41,8 @@ namespace BabBot.Scripts
         protected int HpPctPotion = 20; // Minimum health percentage at which we look for a health potion
         protected int MpPctPotion = 15; // Minimum mana percentage at which we look for a mana potion
         protected float MinDistanceFromCorpse = 20.0f; // Minimum distance from corpse after which we stop pathing looking for it
+        protected float PullRange = 25.0f; // Distance at which we want to pull mobs
+        protected UnitWrapper LastTarget;
 
         #endregion
 
@@ -314,6 +316,106 @@ namespace BabBot.Scripts
             throw new NotImplementedException("OnRest() not implemented.");
         }
 
+        #region Ranges
+
+        protected float MinRanged()
+        {
+            return 11.0f + player.TargetBoundingRadius();
+        }
+
+        protected float MaxRanged()
+        {
+            if (player.TargetBoundingRadius() < 2.0f)
+            {
+                return 27.0f + player.TargetBoundingRadius();
+            }
+            return 29.0f;
+        }
+
+        protected float MinMelee()
+        {
+            return 1.0f + player.TargetBoundingRadius();
+        }
+
+        protected float MaxMelee()
+        {
+            if (player.TargetBoundingRadius() < 2.0f)
+            {
+                return 2.9f + player.TargetBoundingRadius();
+            }
+            return 4.5f;
+        }
+
+
+        #endregion
+
+        #region Casting 
+
+        protected bool IsCasting()
+        {
+            // TODO: We should also check if we're skinning, herbing etc as it counts as casting as well
+            return player.IsCasting();
+        }
+
+        #endregion
+
+        #region Common routines
+
+        protected void Flee()
+        {
+            Flee(true);
+        }
+
+        protected void Flee(bool iToggle)
+        {
+            // TODO: implement
+        }
+
+        /// <summary>
+        /// This method ensures that you've got the best target
+        /// </summary>
+        protected void TergetBestTarget() // aka BestTarget in Toon.iss
+        {
+            // TODO: implement
+        }
+
+        /// <summary>
+        /// Check if you've got the best target
+        /// </summary>
+        /// <returns>true if you've got the best target</returns>
+        protected bool TargetIsBestTarget()
+        {
+            // TODO: implement
+            return true;
+        }
+
+        /// <summary>
+        /// Returns the best target from the target collection
+        /// </summary>
+        /// <returns>the best target</returns>
+        protected UnitWrapper BestTarget()
+        {
+            // TODO: implement
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the next best target in the collection
+        /// </summary>
+        /// <returns>next best target</returns>
+        protected UnitWrapper NextBestTarget()
+        {
+            // TODO: implement
+            return null;
+        }
+
+        protected bool TargetIsNew()
+        {
+            // TODO: implement
+            return true;
+        }
+
+        #endregion
 
         #region Sit & Stand
 

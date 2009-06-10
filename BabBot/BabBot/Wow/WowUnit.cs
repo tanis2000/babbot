@@ -103,6 +103,11 @@ namespace BabBot.Wow
             return unit.IsLootable();
         }
 
+        public float BoundingRadius()
+        {
+            return unit.BoundingRadius();
+        }
+
         public void Interact()
         {
             unit.Interact();

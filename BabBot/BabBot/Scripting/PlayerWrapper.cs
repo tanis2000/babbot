@@ -83,6 +83,8 @@ namespace BabBot.Scripting
         float DistanceFromCorpse();
         void RetrieveCorpse();
         void RepopMe();
+        float TargetBoundingRadius();
+        bool IsCasting();
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -391,6 +393,17 @@ namespace BabBot.Scripting
         {
             player.RepopMe();
         }
+
+        public float TargetBoundingRadius()
+        {
+            return player.TargetBoundingRadius();
+        }
+
+        public bool IsCasting()
+        {
+            return player.IsCasting();
+        }
+
         #endregion
     }
 }

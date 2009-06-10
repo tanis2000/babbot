@@ -877,6 +877,7 @@ namespace BabBot.Wow
                     res = NavigationState.WayPointTimeout;
                     break;
                 }
+                Console.WriteLine(string.Format("Tolerance: {0} - Distance: {1}", tolerance, distance));
             }
 
             PlayerCM.ArrowKeyUp(key);
@@ -1231,6 +1232,27 @@ namespace BabBot.Wow
         public void RepopMe()
         {
             ProcessManager.Injector.Lua_DoString(string.Format("RepopMe();"));
+        }
+
+        public float TargetBoundingRadius()
+        {
+            if (!HasTarget())
+            {
+                return 0.0f;
+            }
+
+            return CurTarget.BoundingRadius();
+        }
+
+        public bool IsCasting()
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(\"player\")"));
+            string spell = ProcessManager.Injector.Lua_GetLocalizedText("spell");
+
+            ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitChannelInfo(\"player\")"));
+            string channel = ProcessManager.Injector.Lua_GetLocalizedText("spell");
+
+            if (channel == "" && spell == "") return false; else return true;
         }
         
         // Actions
