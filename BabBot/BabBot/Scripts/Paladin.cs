@@ -284,6 +284,7 @@ namespace BabBot.Scripts
                     {
                         // We cast a healing spell on ourselves before eating
                         SelfHeal();
+                        player.Wait(150);
                     }
                 }
 

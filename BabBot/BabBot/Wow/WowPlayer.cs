@@ -335,9 +335,9 @@ namespace BabBot.Wow
 
         public void AddLastTargetToLootList()
         {
-            Thread.Sleep(500);
+            Thread.Sleep(2000);
             ProcessManager.Injector.Lua_DoString("TargetLastTarget();");
-            Thread.Sleep(500);
+            Thread.Sleep(2000);
             if (HasTarget())
             {
                 if (CurTarget.IsLootable())
@@ -597,60 +597,26 @@ namespace BabBot.Wow
             if (mob != null)
             {
                 Face(mob.Location);
-                MoveTo(mob.Location, 3.0f);
+                if (GetDistance(mob.Location) > 5.0f)
+                {
+                    MoveTo(mob.Location, 5.0f);
+                }
                 Loot(mob);
             }
         }
 
         
-        // Injection version
+        /// <summary>
+        /// Loots a mob and remove it from the lootable list. We must already be near the corpse
+        /// </summary>
+        /// <param name="mob">Corpse that we want to loot</param>
         public void Loot(WowUnit mob)
         {
             mob.Interact();
-            Thread.Sleep(250);
+            Thread.Sleep(2000);
             LootableList.Remove(mob);
         }
         
-        /* Old version (uses mouse)
-        public void Loot(WowUnit mob)
-        {
-            PlayerCM.MoveMouseToCenter();
-            ulong guid = ProcessManager.ObjectManager.GetMouseOverGUID();
-
-            if (guid == mob.Guid)
-            {
-                PlayerCM.RightClickOnCenter();
-                Thread.Sleep(250);
-                LootableList.Remove(mob);
-                return;
-            }
-
-            /// We build a grid and go through it until we find the
-            /// corpse we want to loot or until we run out of points to
-            /// scan
-            //List<Point> grid = new List<Point>();
-            int startX = PlayerCM.WowWindowRect.Width/2 - 10*5;
-            int startY = PlayerCM.WowWindowRect.Height/2 - 10*5;
-            for (int i = 0; i < 20; i++)
-            {
-                for (int j = 0; j < 20; j++)
-                {
-                    PlayerCM.MoveMouseRelative(startX + j*5, startY + i*5);
-                    Thread.Sleep(50);
-                    guid = ProcessManager.ObjectManager.GetMouseOverGUID();
-
-                    if (guid == mob.Guid)
-                    {
-                        PlayerCM.SingleClick("right");
-                        Thread.Sleep(250);
-                        LootableList.Remove(mob);
-                        return;
-                    }
-                }
-            }
-        }
-        */
-
         public void MoveToTarget(float tolerance)
         {
             if (HasTarget())
@@ -749,11 +715,12 @@ namespace BabBot.Wow
 
                 TravelTime = tsTravelTime.Milliseconds + tsTravelTime.Seconds*1000;
 
-                if (currentDistance == distance)
+                // we take as granted that we should move at least 0.1 yards per cycle (might be a good idea to get this routine synchronized so that 
+                // we can actually know exactly how much we move "per-tick")
+                if (Math.Abs(currentDistance - distance) < 0.1f && Math.Abs(currentDistance - distance) > 0.0001f) 
                 {
-                    /// We should come up with a routine to get us unstuck.
-                    /// Of course we should also add some tolerance here as it is unlikely that
-                    /// we will be exactly in the same position when we get stuck
+                    Console.WriteLine(string.Format("Stuck! Distance difference: {0}", Math.Abs(currentDistance - distance)));
+                    Unstuck();
                 }
                 else if (TravelTime >= MAX_REACHTIME)
                 {
@@ -761,6 +728,7 @@ namespace BabBot.Wow
                     res = NavigationState.WayPointTimeout;
                     break;
                 }
+                Console.WriteLine(string.Format("Tolerance: {0} - Distance: {1}", tolerance, distance));
             }
 
             PlayerCM.ArrowKeyUp(key);
@@ -917,6 +885,31 @@ namespace BabBot.Wow
         }
 
         /// <summary>
+        /// Called by MoveTo to try and unstuck us if at all possible. It assumes
+        /// we are actually moving (thus up arrow key pressed)
+        /// </summary>
+        public void Unstuck()
+        {
+            // The first thing we try is jumping
+            PlayerCM.SendKeys(" ");
+            Thread.Sleep(250);
+            PlayerCM.SendKeys(" ");
+            Thread.Sleep(250);
+            PlayerCM.SendKeys(" ");
+            Thread.Sleep(250);
+
+            // Then we strafe right a bit
+            StrafeRight(300);
+            PlayerCM.SendKeys(" ");
+            Thread.Sleep(250);
+
+            // And then left a bit
+            StrafeLeft(300);
+            PlayerCM.SendKeys(" ");
+            Thread.Sleep(250);
+        }
+
+        /// <summary>
         /// When called, this will stop the bot if it's navigating through waypoints
         /// or chasing a mob
         /// </summary>
@@ -947,6 +940,32 @@ namespace BabBot.Wow
             PlayerCM.ArrowKeyDown(key);
             Thread.Sleep(iTime);
             PlayerCM.ArrowKeyUp(key);
+        }
+
+        /// <summary>
+        /// Strafes right for iTime milliseconds
+        /// </summary>
+        /// <param name="iTime">how long we should move (milliseconds)</param>
+        public void StrafeRight(int iTime)
+        {
+            for (int i = 0; i < iTime/100; i++)
+            {
+                PlayerCM.SendKeys("d");
+                Thread.Sleep(100);
+            }
+        }
+
+        /// <summary>
+        /// Strafes left for iTime milliseconds
+        /// </summary>
+        /// <param name="iTime">how long we should move (milliseconds)</param>
+        public void StrafeLeft(int iTime)
+        {
+            for (int i = 0; i < iTime/100; i++)
+            {
+                PlayerCM.SendKeys("a");
+                Thread.Sleep(100);
+            }
         }
 
         /// <summary>
@@ -1194,6 +1213,11 @@ namespace BabBot.Wow
             if (name == "") return false; else return true;
         }
 
+        public void MoveToCorpse(float tolerance)
+        {
+            MoveTo(CorpseLocation, tolerance);
+        }
+
         public void MoveToCorpse()
         {
             MoveTo(CorpseLocation);
@@ -1204,6 +1228,11 @@ namespace BabBot.Wow
             ProcessManager.Injector.Lua_DoString(string.Format("RetrieveCorpse();"));
         }
 
+        public void RepopMe()
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("RepopMe();"));
+        }
+        
         // Actions
         public bool Cast(string SlotBar, string Key)
         {

@@ -40,7 +40,7 @@ namespace BabBot.Scripts
         protected int HpPctEmergency = 25; // Minimum health percentage at which we call the emergency healing routine
         protected int HpPctPotion = 20; // Minimum health percentage at which we look for a health potion
         protected int MpPctPotion = 15; // Minimum mana percentage at which we look for a mana potion
-        protected float MinDistanceFromCorpse = 5.0f; // Minimum distance from corpse after which we stop pathing looking for it
+        protected float MinDistanceFromCorpse = 20.0f; // Minimum distance from corpse after which we stop pathing looking for it
 
         #endregion
 
@@ -186,11 +186,16 @@ namespace BabBot.Scripts
         {
             /// We should run back to our corpse
             Console.WriteLine("OnDead()");
+            if (!player.IsGhost())
+            {
+                Console.WriteLine("OnDead() - We are a ghost, let's try to repop");
+                player.RepopMe();
+            }
             Console.WriteLine(string.Format("OnDead() - Distance from corpse: {0}", player.DistanceFromCorpse()));
             if (player.DistanceFromCorpse() > MinDistanceFromCorpse)
             {
                 Console.WriteLine("OnDead() -- Walking to corpse");
-                player.MoveToCorpse();
+                player.MoveToCorpse(MinDistanceFromCorpse); // we accept being up to 20 yards away from the corpse
             } else
             {
                 // We try to resurrect
@@ -293,7 +298,9 @@ namespace BabBot.Scripts
                     pair.Value.Active = false;
                 }
             }
+            Console.WriteLine("OnPostCombat() - Adding last target to loot list");
             player.AddLastTargetToLootList();
+            Console.WriteLine("OnPostCombat() Looting closest lootable mob");
             player.LootClosestLootableMob();
 
         }
