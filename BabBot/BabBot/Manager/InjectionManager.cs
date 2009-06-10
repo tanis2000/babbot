@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
+using BabBot.Common;
 using BabBot.Wow;
 using Magic;
 
@@ -39,6 +41,16 @@ namespace BabBot.Manager
             get { return ProcessManager.WowProcess; }
         }
 
+        #region External function calls
+        [DllImport("kernel32", CharSet = CharSet.Ansi)]
+        private extern static IntPtr LoadLibrary(string libFileName);
+
+        [DllImport("kernel32")]
+        private extern static bool FreeLibrary(IntPtr hLibModule);
+
+        [DllImport("kernel32", CharSet = CharSet.Ansi)]
+        private extern static IntPtr GetProcAddress(IntPtr hLibModule, string procName);
+        #endregion
 
         /// <summary>
         /// Adds code to the FASM assembly stack to update the Current Manager. 
@@ -73,6 +85,20 @@ namespace BabBot.Manager
             AsmUpdateCurMgr();
             wow.Asm.AddLine("mov ecx, {0}", objAddress);
             wow.Asm.AddLine("call {0}", wow.ReadUInt(VMT + method));
+            wow.Asm.AddLine("push eax");
+
+            //Send a message back to know when to resume the mainthread
+            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            uint hwnd = (uint)AppHelper.BotHandle;
+
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0xBEEF);
+            wow.Asm.AddLine("push {0}", hwnd);
+            wow.Asm.AddLine("mov eax, {0}", sendmessage);
+            wow.Asm.AddLine("call eax");
+            wow.Asm.AddLine("pop eax");
+
             wow.Asm.AddLine("retn");
 
             try
@@ -87,7 +113,7 @@ namespace BabBot.Manager
             finally
             {
                 wow.FreeMemory(codecave);
-                ProcessManager.ResumeMainWowThread();
+                //ProcessManager.ResumeMainWowThread();
             }
             return result;
         }
@@ -146,6 +172,21 @@ namespace BabBot.Manager
             wow.Asm.AddLine("push {0}", lo);
             wow.Asm.AddLine("call {0}", Globals.Functions.SelectUnit);
             wow.Asm.AddLine("add esp, 0x08");
+
+            wow.Asm.AddLine("push eax");
+
+            //Send a message back to know when to resume the mainthread
+            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            uint hwnd = (uint)AppHelper.BotHandle;
+
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0xBEEF);
+            wow.Asm.AddLine("push {0}", hwnd);
+            wow.Asm.AddLine("mov eax, {0}", sendmessage);
+            wow.Asm.AddLine("call eax");
+            wow.Asm.AddLine("pop eax");
+            
             wow.Asm.AddLine("retn");
 
             try
@@ -160,7 +201,7 @@ namespace BabBot.Manager
             finally
             {
                 wow.FreeMemory(codecave);
-                ProcessManager.ResumeMainWowThread();
+                //ProcessManager.ResumeMainWowThread();
             }
         }
 
@@ -195,7 +236,22 @@ namespace BabBot.Manager
             wow.Asm.AddLine("push 0");
             wow.Asm.AddLine("push {0}", id);
             wow.Asm.AddLine("call {0}", Globals.Functions.CastSpellById);
-            wow.Asm.AddLine("add esp,16");
+            wow.Asm.AddLine("add esp, 0x10");
+
+            wow.Asm.AddLine("push eax");
+
+            //Send a message back to know when to resume the mainthread
+            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            uint hwnd = (uint)AppHelper.BotHandle;
+
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0xBEEF);
+            wow.Asm.AddLine("push {0}", hwnd);
+            wow.Asm.AddLine("mov eax, {0}", sendmessage);
+            wow.Asm.AddLine("call eax");
+            wow.Asm.AddLine("pop eax");
+            
             wow.Asm.AddLine("retn");
 
             try
@@ -210,7 +266,7 @@ namespace BabBot.Manager
             finally
             {
                 wow.FreeMemory(codecave);
-                ProcessManager.ResumeMainWowThread();
+                //ProcessManager.ResumeMainWowThread();
             }
         }
 
@@ -241,6 +297,21 @@ namespace BabBot.Manager
             wow.Asm.AddLine("push " + stringcave);
             wow.Asm.AddLine("call " + Globals.Functions.GetSpellIdByName);
             wow.Asm.AddLine("add esp,8");
+
+            wow.Asm.AddLine("push eax");
+
+            //Send a message back to know when to resume the mainthread
+            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            uint hwnd = (uint)AppHelper.BotHandle;
+
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0xBEEF);
+            wow.Asm.AddLine("push {0}", hwnd);
+            wow.Asm.AddLine("mov eax, {0}", sendmessage);
+            wow.Asm.AddLine("call eax");
+            wow.Asm.AddLine("pop eax");
+            
             wow.Asm.AddLine("retn");
 
             try
@@ -256,7 +327,7 @@ namespace BabBot.Manager
             {
                 wow.FreeMemory(codecave);
                 wow.FreeMemory(stringcave);
-                ProcessManager.ResumeMainWowThread();
+                //ProcessManager.ResumeMainWowThread();
             }
             if (result != uint.MaxValue)
             {
@@ -347,6 +418,21 @@ namespace BabBot.Manager
             wow.Asm.AddLine("mov ecx, {0}", u1.ObjectPointer);
             wow.Asm.AddLine("push {0}", u2.ObjectPointer);
             wow.Asm.AddLine("call {0}", Globals.Functions.GetUnitRelation);
+
+            wow.Asm.AddLine("push eax");
+
+            //Send a message back to know when to resume the mainthread
+            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            uint hwnd = (uint)AppHelper.BotHandle;
+
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0xBEEF);
+            wow.Asm.AddLine("push {0}", hwnd);
+            wow.Asm.AddLine("mov eax, {0}", sendmessage);
+            wow.Asm.AddLine("call eax");
+            wow.Asm.AddLine("pop eax");
+            
             wow.Asm.AddLine("retn");
 
             try
@@ -360,7 +446,7 @@ namespace BabBot.Manager
             finally
             {
                 wow.FreeMemory(codecave);
-                ProcessManager.ResumeMainWowThread();
+                //ProcessManager.ResumeMainWowThread();
             }
 
             if (u1.ObjectPointer == ProcessManager.Player.ObjectPointer)
@@ -396,6 +482,21 @@ namespace BabBot.Manager
             wow.Asm.AddLine("push {0}", enable ? 1 : 0); // Enable
             wow.Asm.AddLine("push {0}", (uint) flag);
             wow.Asm.AddLine("call {0}", Globals.Functions.CInputControl_SetFlags);
+
+            wow.Asm.AddLine("push eax");
+
+            //Send a message back to know when to resume the mainthread
+            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            uint hwnd = (uint)AppHelper.BotHandle;
+
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0xBEEF);
+            wow.Asm.AddLine("push {0}", hwnd);
+            wow.Asm.AddLine("mov eax, {0}", sendmessage);
+            wow.Asm.AddLine("call eax");
+            wow.Asm.AddLine("pop eax");
+            
             wow.Asm.AddLine("retn");
 
             try
@@ -410,7 +511,7 @@ namespace BabBot.Manager
             finally
             {
                 wow.FreeMemory(codecave);
-                ProcessManager.ResumeMainWowThread();
+                //ProcessManager.ResumeMainWowThread();
             }
         }
 
@@ -461,8 +562,6 @@ namespace BabBot.Manager
         /// <param name="command">A LUA command string to execute.</param>
         public void Lua_DoString(string command)
         {
-            ProcessManager.SuspendMainWowThread();
-
             uint codecave = wow.AllocateMemory();
             uint stringcave = wow.AllocateMemory(command.Length + 1);
             wow.WriteASCIIString(stringcave, command);
@@ -477,12 +576,25 @@ namespace BabBot.Manager
             wow.Asm.AddLine("push eax");
             wow.Asm.AddLine("call {0}", Globals.Functions.Lua_DoString);
             wow.Asm.AddLine("add esp, 0xC");
+
+            //Send a message back to know when to resume the mainthread
+            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            uint hwnd = (uint)AppHelper.BotHandle;
+
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0xBEEF);
+            wow.Asm.AddLine("push {0}", hwnd);
+            wow.Asm.AddLine("mov eax, {0}", sendmessage);
+            wow.Asm.AddLine("call eax");
+
             wow.Asm.AddLine("retn");
 
             try
             {
+                ProcessManager.SuspendMainWowThread();
                 wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
             }
             catch (Exception e)
             {
@@ -492,7 +604,7 @@ namespace BabBot.Manager
             {
                 wow.FreeMemory(codecave);
                 wow.FreeMemory(stringcave);
-                ProcessManager.ResumeMainWowThread();
+                //ProcessManager.ResumeMainWowThread();
             }
         }
 
@@ -503,10 +615,6 @@ namespace BabBot.Manager
         /// <returns>Content of the variable we're querying</returns>
         public String Lua_GetLocalizedText(string variable)
         {
-            // TODO: Check if this works
-
-            ProcessManager.SuspendMainWowThread();
-
             String sResult = "null";
 
             uint codecave = wow.AllocateMemory();
@@ -520,12 +628,28 @@ namespace BabBot.Manager
             wow.Asm.AddLine("push {0}", -1);
             wow.Asm.AddLine("push {0}", stringcave);
             wow.Asm.AddLine("call {0}", Globals.Functions.Lua_GetLocalizedText);
+            wow.Asm.AddLine("push eax");
+
+            //Send a message back to know when to resume the mainthread
+            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            uint hwnd = (uint)AppHelper.BotHandle;
+
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0xBEEF);
+            wow.Asm.AddLine("push {0}", hwnd);
+            wow.Asm.AddLine("mov eax, {0}", sendmessage);
+            wow.Asm.AddLine("call eax");
+            wow.Asm.AddLine("pop eax");
+            
             wow.Asm.AddLine("retn");
 
             try
             {
+                ProcessManager.SuspendMainWowThread();
+
                 uint result = wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
 
                 if (result != 0)
                 {
@@ -540,7 +664,7 @@ namespace BabBot.Manager
             {
                 wow.FreeMemory(codecave);
                 wow.FreeMemory(stringcave);
-                ProcessManager.ResumeMainWowThread();
+                //ProcessManager.ResumeMainWowThread();
             }
 
             return sResult;

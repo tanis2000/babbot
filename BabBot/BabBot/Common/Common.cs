@@ -40,6 +40,8 @@ namespace BabBot.Common
 
         #endregion
 
+        private static IntPtr botHandle;
+
         #region External Declarations
 
         [DllImport("user32.dll")]
@@ -283,6 +285,12 @@ namespace BabBot.Common
         public static int GetWowWindowHandle()
         {
             return FindWindow(null, WND_TITLE);
+        }
+
+        public static IntPtr BotHandle
+        {
+            get { return botHandle; }
+            set { botHandle = value; }
         }
 
         #endregion

@@ -75,10 +75,25 @@ namespace BabBot.Forms
 
         #endregion
 
+        [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0xBEEF)
+            {
+                Console.WriteLine("0xBEEF message recieved, resuming main WoW thread!");
+
+                ProcessManager.ResumeMainWowThread();
+            }
+
+            base.WndProc(ref m);
+        }
+
         private void Initialize()
         {
             // Set a default value for waypoint type combo
             comboWayPointTypes.SelectedIndex = 0;
+
+            AppHelper.BotHandle = this.Handle;
         }
 
         private void PlayerWayPoint(Vector3D waypoint)
