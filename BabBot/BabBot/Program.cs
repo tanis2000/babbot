@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
   
-    Copyright 2009 BabBot Team
+    Copyright 2009 BabBot Team -
 */
 using System;
 using System.Windows.Forms;
