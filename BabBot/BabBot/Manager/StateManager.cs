@@ -135,8 +135,7 @@ namespace BabBot.Manager
 
             if (CurrentState == PlayerState.Rest)
             {
-                /// We should check if we finished resting
-
+                /// We ask the script if we should keep resting
                 if (!script.NeedRest())
                 {
                     CurrentState = PlayerState.PostRest;
@@ -174,6 +173,13 @@ namespace BabBot.Manager
                 return;
             }
 
+            /// We ask the script if we should keep resting
+            if (script.NeedRest())
+            {
+                CurrentState = PlayerState.Rest;
+                return;
+            }
+
             /*
             if (ProcessManager.Player.IsAtGraveyard())
             {
@@ -181,6 +187,7 @@ namespace BabBot.Manager
                 return;
             }
              */
+
         }
 
         public void Start()

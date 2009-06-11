@@ -111,7 +111,7 @@ namespace BabBot.Manager
                 stateManager.UpdateState();
                 ProcessManager.ScriptHost.Update();
             }
-            Thread.Sleep(50);
+            Thread.Sleep(250);
         }
 
         #endregion

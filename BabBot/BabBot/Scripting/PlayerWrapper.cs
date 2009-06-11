@@ -85,6 +85,11 @@ namespace BabBot.Scripting
         void RepopMe();
         float TargetBoundingRadius();
         bool IsCasting();
+        bool IsCasting(string spellName);
+        Item GetMerchantItemInfo(int idx);
+        void BuyMerchantItem(int idx, int quantity);
+        void TargetMe();
+        bool IsInCombat();
     }
 
     public class PlayerWrapper : IPlayerWrapper
@@ -404,6 +409,30 @@ namespace BabBot.Scripting
             return player.IsCasting();
         }
 
+        public bool IsCasting(string spellName)
+        {
+            return player.IsCasting(spellName);
+        }
+
+        public Item GetMerchantItemInfo(int idx)
+        {
+            return player.GetMerchantItemInfo(idx);
+        }
+
+        public void BuyMerchantItem(int idx, int quantity)
+        {
+            player.BuyMerchantItem(idx, quantity);
+        }
+
+        public void TargetMe()
+        {
+            player.TargetMe();
+        }
+
+        public bool IsInCombat()
+        {
+            return player.IsInCombat();
+        }
         #endregion
     }
 }

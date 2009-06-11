@@ -31,6 +31,9 @@ namespace BabBot.Bot
         public string Name;
         public int LevelRequired;
         public int Priority;
+        public string Kind;
+        public int Price;
+        public int Quantity;
 
         public Item(string iName, int iLevelRequired, int iPriority)
         {

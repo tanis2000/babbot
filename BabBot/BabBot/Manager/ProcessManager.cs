@@ -428,8 +428,8 @@ namespace BabBot.Manager
             Caronte.Init(Player.GetCurrentMapContinent());
 
             // We generate a fake path once to initialize the chunk loader stuff
-            Pather.Graph.Path path = ProcessManager.Caronte.CalculatePath(new Pather.Graph.Location(Player.Location.X, Player.Location.Y, Player.Location.Z), 
-                new Pather.Graph.Location(Player.Location.X+100, Player.Location.Y+100, Player.Location.Z));
+            //Pather.Graph.Path path = ProcessManager.Caronte.CalculatePath(new Pather.Graph.Location(Player.Location.X, Player.Location.Y, Player.Location.Z), 
+            //    new Pather.Graph.Location(Player.Location.X+5, Player.Location.Y+5, Player.Location.Z));
         }
 
         public static void SuspendMainWowThread()

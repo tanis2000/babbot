@@ -118,12 +118,12 @@ namespace BabBot.Manager
             }
             catch (Exception e)
             {
+                ProcessManager.ResumeMainWowThread();
                 throw e;
             }
             finally
             {
                 wow.FreeMemory(codecave);
-                //ProcessManager.ResumeMainWowThread();
             }
             return result;
         }
@@ -193,12 +193,12 @@ namespace BabBot.Manager
             }
             catch (Exception e)
             {
+                ProcessManager.ResumeMainWowThread();
                 throw e;
             }
             finally
             {
                 wow.FreeMemory(codecave);
-                //ProcessManager.ResumeMainWowThread();
             }
         }
 
@@ -245,12 +245,12 @@ namespace BabBot.Manager
             }
             catch (Exception e)
             {
+                ProcessManager.ResumeMainWowThread();
                 throw e;
             }
             finally
             {
                 wow.FreeMemory(codecave);
-                //ProcessManager.ResumeMainWowThread();
             }
         }
 
@@ -292,13 +292,13 @@ namespace BabBot.Manager
             }
             catch (Exception e)
             {
+                ProcessManager.ResumeMainWowThread();
                 throw e;
             }
             finally
             {
                 wow.FreeMemory(codecave);
                 wow.FreeMemory(stringcave);
-                //ProcessManager.ResumeMainWowThread();
             }
             if (result != uint.MaxValue)
             {
@@ -324,6 +324,9 @@ namespace BabBot.Manager
         {
             ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", name));
             string castTime = ProcessManager.Injector.Lua_GetLocalizedText("castTime");
+
+            // empty cast time means we do not know that spell
+            if (castTime == "") return;
 
             Int32 realCastTime = Convert.ToInt32(castTime); // milliseconds
 
@@ -399,12 +402,12 @@ namespace BabBot.Manager
             }
             catch (Exception e)
             {
+                ProcessManager.ResumeMainWowThread();
                 throw e;
             }
             finally
             {
                 wow.FreeMemory(codecave);
-                //ProcessManager.ResumeMainWowThread();
             }
 
             if (u1.ObjectPointer == ProcessManager.Player.ObjectPointer)
@@ -451,12 +454,12 @@ namespace BabBot.Manager
             }
             catch (Exception e)
             {
+                ProcessManager.ResumeMainWowThread();
                 throw e;
             }
             finally
             {
                 wow.FreeMemory(codecave);
-                //ProcessManager.ResumeMainWowThread();
             }
         }
 
@@ -492,17 +495,17 @@ namespace BabBot.Manager
             {
                 ProcessManager.SuspendMainWowThread();
                 wow.Asm.InjectAndExecute(codecave);
-                //Thread.Sleep(10);
+                Thread.Sleep(10);
             }
             catch (Exception e)
             {
+                ProcessManager.ResumeMainWowThread();
                 throw e;
             }
             finally
             {
                 wow.FreeMemory(codecave);
                 wow.FreeMemory(stringcave);
-                //ProcessManager.ResumeMainWowThread();
             }
         }
 
@@ -535,7 +538,7 @@ namespace BabBot.Manager
                 ProcessManager.SuspendMainWowThread();
 
                 uint result = wow.Asm.InjectAndExecute(codecave);
-                //Thread.Sleep(10);
+                Thread.Sleep(10);
 
                 if (result != 0)
                 {
@@ -544,13 +547,13 @@ namespace BabBot.Manager
             }
             catch (Exception e)
             {
+                ProcessManager.ResumeMainWowThread();
                 throw e;
             }
             finally
             {
                 wow.FreeMemory(codecave);
                 wow.FreeMemory(stringcave);
-                //ProcessManager.ResumeMainWowThread();
             }
 
             return sResult;

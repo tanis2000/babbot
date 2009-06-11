@@ -319,9 +319,9 @@ namespace BabBot.Wow
 
         public bool IsInCombat()
         {
-            /// We should check if we are in combat (aka the resting buttons are greyed out)
-            /// We could as well make a method called CanRest() that calls this one
-            throw new NotImplementedException("IsInCombat");
+            ProcessManager.Injector.Lua_DoString("incombat = InCombatLockdown();");
+            string incombat = ProcessManager.Injector.Lua_GetLocalizedText("incombat");
+            if (incombat == "1") return true; else return false;
         }
 
         public bool HasTarget()
@@ -1145,6 +1145,9 @@ namespace BabBot.Wow
             ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", iName));
             string cost = ProcessManager.Injector.Lua_GetLocalizedText("cost");
 
+            // If we cannot get the info it means we don't know this spell
+            if (cost == "") return false;
+
             Int32 realCost = Convert.ToInt32(cost);
 
             // TODO: We should do all the checks based on our class. For now we take for granted we're talking about mana
@@ -1195,7 +1198,7 @@ namespace BabBot.Wow
                 ItemLink il = bag.Find(item);
                 if (il != null)
                 {
-                    ProcessManager.Injector.Lua_DoString(string.Format("UseInventoryItem({0});", il.Slot));
+                    ProcessManager.Injector.Lua_DoString(string.Format("UseContainerItem({0}, {1});", bag.BagID, il.Slot));
                 }
             }
         }
@@ -1254,7 +1257,52 @@ namespace BabBot.Wow
 
             if (channel == "" && spell == "") return false; else return true;
         }
-        
+
+        public bool IsCasting(string spellName)
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(\"player\")"));
+            string spell = ProcessManager.Injector.Lua_GetLocalizedText("spell");
+
+            ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitChannelInfo(\"player\")"));
+            string channel = ProcessManager.Injector.Lua_GetLocalizedText("spell");
+
+            if (channel == spellName ||  spell == spellName) return true; else return false;
+        }
+
+        public Item GetMerchantItemInfo(int idx)
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("name, texture, price, quantity, numAvailable, isUsable, extendedCost = GetMerchantItemInfo({0})", idx));
+            string name = ProcessManager.Injector.Lua_GetLocalizedText("name");
+            string price = ProcessManager.Injector.Lua_GetLocalizedText("price");
+            string quantity = ProcessManager.Injector.Lua_GetLocalizedText("quantity");
+            Item item = new Item(name, 0, 0);
+            item.Price = Convert.ToInt32(price);
+            item.Quantity = Convert.ToInt32(quantity);
+            return item;
+        }
+
+        public void BuyMerchantItem(int idx)
+        {
+            BuyMerchantItem(idx, 0);
+        }
+
+        public void BuyMerchantItem(int idx, int quantity)
+        {
+            if (quantity > 0)
+            {
+                ProcessManager.Injector.Lua_DoString(string.Format("BuyMerchantItem({0}, {1});", idx, quantity));
+            }
+            else
+            {
+                ProcessManager.Injector.Lua_DoString(string.Format("BuyMerchantItem({0});"));
+            }
+        }
+
+        public void TargetMe()
+        {
+            ProcessManager.Injector.Lua_DoString(string.Format("TargetUnit(\"player\");"));
+        }
+
         // Actions
         public bool Cast(string SlotBar, string Key)
         {

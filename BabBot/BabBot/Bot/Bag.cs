@@ -65,7 +65,7 @@ namespace BabBot.Bot
             string local = ProcessManager.Injector.Lua_GetLocalizedText("ItemLink");
 
             // |cff9d9d9d|Hitem:7073:0:0:0:0:0:0:0|h[Broken Fang]|h|r
-            if (local != "null")
+            if (local != "")
             {
                 int start = local.IndexOf('[') + 1;
                 int len = local.LastIndexOf(']') - start;
