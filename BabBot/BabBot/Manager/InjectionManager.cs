@@ -52,6 +52,8 @@ namespace BabBot.Manager
         private extern static IntPtr GetProcAddress(IntPtr hLibModule, string procName);
         #endregion
 
+        #region Common Assembly
+
         /// <summary>
         /// Adds code to the FASM assembly stack to update the Current Manager. 
         /// Used at the beginning of many injected function calls.
@@ -63,6 +65,26 @@ namespace BabBot.Manager
             wow.Asm.AddLine("add eax, 0x10");
             wow.Asm.AddLine("mov dword [eax], {0}", Globals.CurMgr);
         }
+
+        /// <summary>
+        /// Send a message back to the bot to know when to resume the mainthread
+        /// </summary>
+        private void AsmSendResumeMessage()
+        {
+            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            uint hwnd = (uint)AppHelper.BotHandle;
+
+            wow.Asm.AddLine("push eax");
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0x10);
+            wow.Asm.AddLine("push {0}", 0xBEEF);
+            wow.Asm.AddLine("push {0}", hwnd);
+            wow.Asm.AddLine("mov eax, {0}", sendmessage);
+            wow.Asm.AddLine("call eax");
+            wow.Asm.AddLine("pop eax");
+        }
+
+        #endregion
 
         #region VMT
 
@@ -79,32 +101,20 @@ namespace BabBot.Manager
 
             uint codecave = wow.AllocateMemory();
             uint VMT = wow.ReadUInt(objAddress);
-            uint result;
+            uint result = 0;
 
             wow.Asm.Clear();
             AsmUpdateCurMgr();
             wow.Asm.AddLine("mov ecx, {0}", objAddress);
             wow.Asm.AddLine("call {0}", wow.ReadUInt(VMT + method));
-            wow.Asm.AddLine("push eax");
 
-            //Send a message back to know when to resume the mainthread
-            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
-            uint hwnd = (uint)AppHelper.BotHandle;
-
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0xBEEF);
-            wow.Asm.AddLine("push {0}", hwnd);
-            wow.Asm.AddLine("mov eax, {0}", sendmessage);
-            wow.Asm.AddLine("call eax");
-            wow.Asm.AddLine("pop eax");
-
+            AsmSendResumeMessage();
             wow.Asm.AddLine("retn");
 
             try
             {
                 result = wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
             }
             catch (Exception e)
             {
@@ -173,26 +183,13 @@ namespace BabBot.Manager
             wow.Asm.AddLine("call {0}", Globals.Functions.SelectUnit);
             wow.Asm.AddLine("add esp, 0x08");
 
-            wow.Asm.AddLine("push eax");
-
-            //Send a message back to know when to resume the mainthread
-            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
-            uint hwnd = (uint)AppHelper.BotHandle;
-
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0xBEEF);
-            wow.Asm.AddLine("push {0}", hwnd);
-            wow.Asm.AddLine("mov eax, {0}", sendmessage);
-            wow.Asm.AddLine("call eax");
-            wow.Asm.AddLine("pop eax");
-            
+            AsmSendResumeMessage();
             wow.Asm.AddLine("retn");
 
             try
             {
                 wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
             }
             catch (Exception e)
             {
@@ -238,26 +235,13 @@ namespace BabBot.Manager
             wow.Asm.AddLine("call {0}", Globals.Functions.CastSpellById);
             wow.Asm.AddLine("add esp, 0x10");
 
-            wow.Asm.AddLine("push eax");
-
-            //Send a message back to know when to resume the mainthread
-            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
-            uint hwnd = (uint)AppHelper.BotHandle;
-
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0xBEEF);
-            wow.Asm.AddLine("push {0}", hwnd);
-            wow.Asm.AddLine("mov eax, {0}", sendmessage);
-            wow.Asm.AddLine("call eax");
-            wow.Asm.AddLine("pop eax");
-            
+            AsmSendResumeMessage();
             wow.Asm.AddLine("retn");
 
             try
             {
                 wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
             }
             catch (Exception e)
             {
@@ -298,26 +282,13 @@ namespace BabBot.Manager
             wow.Asm.AddLine("call " + Globals.Functions.GetSpellIdByName);
             wow.Asm.AddLine("add esp,8");
 
-            wow.Asm.AddLine("push eax");
-
-            //Send a message back to know when to resume the mainthread
-            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
-            uint hwnd = (uint)AppHelper.BotHandle;
-
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0xBEEF);
-            wow.Asm.AddLine("push {0}", hwnd);
-            wow.Asm.AddLine("mov eax, {0}", sendmessage);
-            wow.Asm.AddLine("call eax");
-            wow.Asm.AddLine("pop eax");
-            
+            AsmSendResumeMessage();
             wow.Asm.AddLine("retn");
 
             try
             {
                 result = wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
             }
             catch (Exception e)
             {
@@ -411,7 +382,7 @@ namespace BabBot.Manager
             ProcessManager.SuspendMainWowThread();
 
             uint codecave = wow.AllocateMemory();
-            uint result;
+            uint result = 0;
 
             wow.Asm.Clear();
             AsmUpdateCurMgr();
@@ -419,20 +390,7 @@ namespace BabBot.Manager
             wow.Asm.AddLine("push {0}", u2.ObjectPointer);
             wow.Asm.AddLine("call {0}", Globals.Functions.GetUnitRelation);
 
-            wow.Asm.AddLine("push eax");
-
-            //Send a message back to know when to resume the mainthread
-            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
-            uint hwnd = (uint)AppHelper.BotHandle;
-
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0xBEEF);
-            wow.Asm.AddLine("push {0}", hwnd);
-            wow.Asm.AddLine("mov eax, {0}", sendmessage);
-            wow.Asm.AddLine("call eax");
-            wow.Asm.AddLine("pop eax");
-            
+            AsmSendResumeMessage();
             wow.Asm.AddLine("retn");
 
             try
@@ -483,20 +441,7 @@ namespace BabBot.Manager
             wow.Asm.AddLine("push {0}", (uint) flag);
             wow.Asm.AddLine("call {0}", Globals.Functions.CInputControl_SetFlags);
 
-            wow.Asm.AddLine("push eax");
-
-            //Send a message back to know when to resume the mainthread
-            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
-            uint hwnd = (uint)AppHelper.BotHandle;
-
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0xBEEF);
-            wow.Asm.AddLine("push {0}", hwnd);
-            wow.Asm.AddLine("mov eax, {0}", sendmessage);
-            wow.Asm.AddLine("call eax");
-            wow.Asm.AddLine("pop eax");
-            
+            AsmSendResumeMessage();
             wow.Asm.AddLine("retn");
 
             try
@@ -513,43 +458,6 @@ namespace BabBot.Manager
                 wow.FreeMemory(codecave);
                 //ProcessManager.ResumeMainWowThread();
             }
-        }
-
-        #endregion
-
-        #region FindPattern
-
-        /// <summary>
-        /// Quick and dirty method for finding patterns in the wow executable.
-        /// </summary>
-        public uint FindPattern(string pattern, string mask)
-        {
-            return FindPattern(pattern, mask, 0, 0);
-        }
-
-        /// <summary>
-        /// Quick and dirty method for finding patterns in the wow executable.
-        /// </summary>
-        public uint FindPattern(string pattern, string mask, int add)
-        {
-            return FindPattern(pattern, mask, add, 0);
-        }
-
-        /// <summary>
-        /// Quick and dirty method for finding patterns in the wow executable.
-        /// Note: this is not perfect and should not be relied on, verify results.
-        /// </summary>
-        public uint FindPattern(string pattern, string mask, int add, uint rel)
-        {
-            uint loc = SPattern.FindPattern(wow.ProcessHandle, wow.MainModule, pattern, mask);
-            uint mod = 0;
-            if (add != 0)
-            {
-                mod = wow.ReadUInt((uint) (loc + add));
-            }
-
-            Console.WriteLine("final: 0x{0:X08} + 0x{1:X} + 0x{2:X} =  0x{0:X08}", loc, mod, rel, loc + mod + rel);
-            return loc + mod + rel;
         }
 
         #endregion
@@ -577,17 +485,7 @@ namespace BabBot.Manager
             wow.Asm.AddLine("call {0}", Globals.Functions.Lua_DoString);
             wow.Asm.AddLine("add esp, 0xC");
 
-            //Send a message back to know when to resume the mainthread
-            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
-            uint hwnd = (uint)AppHelper.BotHandle;
-
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0xBEEF);
-            wow.Asm.AddLine("push {0}", hwnd);
-            wow.Asm.AddLine("mov eax, {0}", sendmessage);
-            wow.Asm.AddLine("call eax");
-
+            AsmSendResumeMessage();
             wow.Asm.AddLine("retn");
 
             try
@@ -628,20 +526,8 @@ namespace BabBot.Manager
             wow.Asm.AddLine("push {0}", -1);
             wow.Asm.AddLine("push {0}", stringcave);
             wow.Asm.AddLine("call {0}", Globals.Functions.Lua_GetLocalizedText);
-            wow.Asm.AddLine("push eax");
 
-            //Send a message back to know when to resume the mainthread
-            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
-            uint hwnd = (uint)AppHelper.BotHandle;
-
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0x10);
-            wow.Asm.AddLine("push {0}", 0xBEEF);
-            wow.Asm.AddLine("push {0}", hwnd);
-            wow.Asm.AddLine("mov eax, {0}", sendmessage);
-            wow.Asm.AddLine("call eax");
-            wow.Asm.AddLine("pop eax");
-            
+            AsmSendResumeMessage();
             wow.Asm.AddLine("retn");
 
             try
@@ -670,6 +556,45 @@ namespace BabBot.Manager
             return sResult;
         }
 
+
         #endregion
+
+        #region FindPattern
+
+        /// <summary>
+        /// Quick and dirty method for finding patterns in the wow executable.
+        /// </summary>
+        public uint FindPattern(string pattern, string mask)
+        {
+            return FindPattern(pattern, mask, 0, 0);
+        }
+
+        /// <summary>
+        /// Quick and dirty method for finding patterns in the wow executable.
+        /// </summary>
+        public uint FindPattern(string pattern, string mask, int add)
+        {
+            return FindPattern(pattern, mask, add, 0);
+        }
+
+        /// <summary>
+        /// Quick and dirty method for finding patterns in the wow executable.
+        /// Note: this is not perfect and should not be relied on, verify results.
+        /// </summary>
+        public uint FindPattern(string pattern, string mask, int add, uint rel)
+        {
+            uint loc = SPattern.FindPattern(wow.ProcessHandle, wow.MainModule, pattern, mask);
+            uint mod = 0;
+            if (add != 0)
+            {
+                mod = wow.ReadUInt((uint)(loc + add));
+            }
+
+            Console.WriteLine("final: 0x{0:X08} + 0x{1:X} + 0x{2:X} =  0x{0:X08}", loc, mod, rel, loc + mod + rel);
+            return loc + mod + rel;
+        }
+
+        #endregion
+
     }
 }
