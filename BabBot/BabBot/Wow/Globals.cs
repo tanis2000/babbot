@@ -108,7 +108,11 @@ namespace BabBot.Wow
                 CInputControl = 0x0113F8E4, // 3.1.3
                 CInputControl_SetFlags = 0x00691BB0, // 3.1.3
                 Lua_DoString = 0x0049AAB0, // 3.1.3
-                Lua_GetLocalizedText = 0x005A82F0; // 3.1.3
+                Lua_GetLocalizedText = 0x005A82F0, // 3.1.3
+                Lua_Register = 0x004998E0, // 3.1.3
+                Lua_GetTop = 0x0091A8B0, // 3.1.3
+                Lua_ToString = 0x0091ADC0, // 3.1.3
+                Lua_GetState = 0x00499700; // 3.1.3
 
         }
 

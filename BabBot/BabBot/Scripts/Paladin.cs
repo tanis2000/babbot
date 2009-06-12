@@ -26,8 +26,6 @@ namespace BabBot.Scripts
     {
         #region IScript Members
 
-        //SConsumable Consumable;
-
         void IScript.Init()
         {
             Console.WriteLine("Paladin->Init()");
@@ -333,6 +331,11 @@ namespace BabBot.Scripts
 
         public override bool NeedRest()
         {
+            if (player.IsDead())
+            {
+                return false;
+            }
+
             if (player.IsInCombat())
             {
                 return false;
@@ -390,12 +393,12 @@ namespace BabBot.Scripts
 
             DebuffAll();
 
-            /*
+            
             if (scrollSpam && CanUseScroll())
             {
                 UseScroll();
             }
-            */
+            
 
             if (!debuffStatus)
             {
@@ -424,7 +427,7 @@ namespace BabBot.Scripts
                     return;
                 }
             }
-            /*
+            
             if (!player.HasBuff("Drink") && player.MpPct() <= RestMana && !player.IsCasting())
             {
                 if (Consumable.HasDrink())
@@ -436,7 +439,7 @@ namespace BabBot.Scripts
                     player.CastSpellByName("Blessing of Wisdom");
                 }
             }
-            */
+            
         }
 
     }

@@ -150,6 +150,7 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnInjectDll = new System.Windows.Forms.Button();
             this.txtConsole = new System.Windows.Forms.RichTextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
@@ -1201,6 +1202,7 @@
             // 
             // tabPageDebug2
             // 
+            this.tabPageDebug2.Controls.Add(this.btnInjectDll);
             this.tabPageDebug2.Controls.Add(this.btnGetLuaText);
             this.tabPageDebug2.Controls.Add(this.tbLuaVariable);
             this.tabPageDebug2.Controls.Add(this.tbLuaResult);
@@ -1332,6 +1334,15 @@
             this.statusLabel.Size = new System.Drawing.Size(62, 17);
             this.statusLabel.Text = "statusLabel";
             // 
+            // btnInjectDll
+            // 
+            this.btnInjectDll.Location = new System.Drawing.Point(235, 64);
+            this.btnInjectDll.Name = "btnInjectDll";
+            this.btnInjectDll.Size = new System.Drawing.Size(75, 23);
+            this.btnInjectDll.TabIndex = 17;
+            this.btnInjectDll.Text = "DLL Inject";
+            this.btnInjectDll.UseVisualStyleBackColor = true;
+            this.btnInjectDll.Click += new System.EventHandler(this.btnInjectDll_Click);
             // txtConsole
             // 
             this.txtConsole.Location = new System.Drawing.Point(6, 182);
@@ -1340,6 +1351,7 @@
             this.txtConsole.Size = new System.Drawing.Size(558, 182);
             this.txtConsole.TabIndex = 90;
             this.txtConsole.Text = "";
+            // 
             // 
             // MainForm
             // 
@@ -1509,6 +1521,7 @@
         private System.Windows.Forms.TextBox tbCorpseX;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.Button btnInjectDll;
         private System.Windows.Forms.RichTextBox txtConsole;
     }
 }

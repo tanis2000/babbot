@@ -1172,6 +1172,39 @@ namespace BabBot.Wow
 
         public bool HasItem(string item) 
         {
+            if (item == "") return false;
+
+            const string luaScript =
+            @"
+              function BabBotFindContainerItem(item)
+                  for bag = 0,4 do
+                    for slot = 1,GetContainerNumSlots(bag) do
+                      babbot_item = GetContainerItemLink(bag,slot);
+                      if babbot_item and babbot_item:find(""{0}"") then
+                        return true
+                      end
+                    end
+                  end
+                  return false
+              end
+              babbot_found = BabBotFindContainerItem(""{0}"");
+               if (babbot_found) then
+                 SendChatMessage(babbot_item, ""WHISPER"", ""Common"", ""Sam"");
+               end
+            ";
+
+            ProcessManager.Injector.Lua_DoString(string.Format(luaScript, item));
+            string found = ProcessManager.Injector.Lua_GetLocalizedText("babbot_found");
+            if (found == "")
+            {
+                return false;
+            } else
+            {
+                return true;
+            }
+
+
+            /*
             for (int i = 0; i <5 ; i++) {
                 Bag bag = new Bag(i);
                 bag.UpdateBagItems();
@@ -1180,7 +1213,7 @@ namespace BabBot.Wow
                     return true;
                 }
             }
-
+            */
             return false;
         }
 
@@ -1191,6 +1224,22 @@ namespace BabBot.Wow
 
         public void UseItem(string item)
         {
+            if (item == "") return;
+
+            const string luaScript = 
+            @"
+              for bag = 0,4 do
+                for slot = 1,GetContainerNumSlots(bag) do
+                  local item = GetContainerItemLink(bag,slot)
+                  if item and item:find(""{0}"") then
+                    UseContainerItem(bag,slot)
+                  end
+                end
+              end
+            ";
+
+            ProcessManager.Injector.Lua_DoString(string.Format(luaScript, item));
+            /*
             for (int i = 0; i < 5; i++)
             {
                 Bag bag = new Bag(i);
@@ -1201,6 +1250,7 @@ namespace BabBot.Wow
                     ProcessManager.Injector.Lua_DoString(string.Format("UseContainerItem({0}, {1});", bag.BagID, il.Slot));
                 }
             }
+             */
         }
 
         public bool HasBuff(string iName)
