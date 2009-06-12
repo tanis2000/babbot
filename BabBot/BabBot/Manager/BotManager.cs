@@ -99,7 +99,7 @@ namespace BabBot.Manager
 
         private void OnException(Exception e, GThread.ThreadPhase phase)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine(e.ToString());
         }
 
         private void OnRun()

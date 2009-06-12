@@ -473,6 +473,8 @@ namespace BabBot.Manager
         /// <param name="command">A LUA command string to execute.</param>
         public void Lua_DoString(string command)
         {
+            ProcessManager.SuspendMainWowThread();
+
             uint codecave = wow.AllocateMemory();
             uint stringcave = wow.AllocateMemory(command.Length + 1);
             wow.WriteASCIIString(stringcave, command);
@@ -493,7 +495,6 @@ namespace BabBot.Manager
 
             try
             {
-                ProcessManager.SuspendMainWowThread();
                 wow.Asm.InjectAndExecute(codecave);
                 Thread.Sleep(10);
             }
@@ -516,6 +517,8 @@ namespace BabBot.Manager
         /// <returns>Content of the variable we're querying</returns>
         public String Lua_GetLocalizedText(string variable)
         {
+            ProcessManager.SuspendMainWowThread();
+            
             String sResult = "null";
 
             uint codecave = wow.AllocateMemory();
@@ -535,8 +538,6 @@ namespace BabBot.Manager
 
             try
             {
-                ProcessManager.SuspendMainWowThread();
-
                 uint result = wow.Asm.InjectAndExecute(codecave);
                 Thread.Sleep(10);
 

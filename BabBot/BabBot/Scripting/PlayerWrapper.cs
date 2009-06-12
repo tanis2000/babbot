@@ -266,12 +266,12 @@ namespace BabBot.Scripting
 
         public int HpPct()
         {
-            return (int)((player.Hp/player.MaxHp)*100);
+            return (int)((float)((float)player.Hp / (float)player.MaxHp) * 100);
         }
 
         public int MpPct()
         {
-            return (int)((player.Mp / player.MaxMp) * 100);
+            return (int)((float)((float)player.Mp / (float)player.MaxMp) * 100);
         }
 
         public bool IsTargetDead()

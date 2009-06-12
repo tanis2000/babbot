@@ -390,10 +390,12 @@ namespace BabBot.Scripts
 
             DebuffAll();
 
+            /*
             if (scrollSpam && CanUseScroll())
             {
                 UseScroll();
             }
+            */
 
             if (!debuffStatus)
             {
@@ -422,7 +424,7 @@ namespace BabBot.Scripts
                     return;
                 }
             }
-
+            /*
             if (!player.HasBuff("Drink") && player.MpPct() <= RestMana && !player.IsCasting())
             {
                 if (Consumable.HasDrink())
@@ -434,7 +436,7 @@ namespace BabBot.Scripts
                     player.CastSpellByName("Blessing of Wisdom");
                 }
             }
-
+            */
         }
 
     }
