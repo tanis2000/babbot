@@ -5,13 +5,23 @@ using System.Windows.Forms;
 
 namespace BabBot.Common
 {
-    public static class Output
+    public sealed class Output
     {
+
+        private static readonly Output instance = new Output();
+
+        public static Output Instance
+        {
+            get { return instance; }
+        }
+
+
         #region Delegates
 
         public delegate void OutputEventHandler(string message);
 
         #endregion
+
 
         public static bool LogDebug;
 
@@ -51,7 +61,7 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        public static void ChatLog(string message)
+        internal static void ChatLog(string message)
         {
             using (StreamWriter w = new StreamWriter(Format("{0} ChatLog.txt", DateString), true))
             {
@@ -64,7 +74,7 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="exception">The exception to be logged</param>
         /// <returns>Nothing.</returns>
-        public static void LogError(Exception exception)
+        internal static void LogError(Exception exception)
         {
             using (StreamWriter w = new StreamWriter(Format("{0} DebugLog.txt", DateString), true))
             {
@@ -79,7 +89,7 @@ namespace BabBot.Common
         /// <param name="textFile">The text file. Using a full path will output to that path, otherwise it will output to the current directory.</param>
         /// <param name="message">The message.</param>
         /// <param name="args">The args.</param>
-        public static void LogText(string textFile, string message, params object[] args)
+        internal static void LogText(string textFile, string message, params object[] args)
         {
             using (TextWriter tw = new StreamWriter(DateString + " " + textFile, true))
             {
@@ -93,7 +103,7 @@ namespace BabBot.Common
         /// <param name="sender">Should always be "this"</param>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        public static void Debug(string message, object sender)
+        internal static void Debug(string message, object sender)
         {
             if (LogDebug)
             {
@@ -109,7 +119,7 @@ namespace BabBot.Common
         /// Debugs the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        public static void Debug(string message)
+        internal static void Debug(string message)
         {
             if (LogDebug)
             {
@@ -126,7 +136,7 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        public static void Echo(string message)
+        internal void Echo(string message)
         {
             if (OutputEvent != null)
             {
@@ -141,7 +151,7 @@ namespace BabBot.Common
         /// <param name="message">The message.</param>
         /// <param name="args">The args.</param>
         /// <returns></returns>
-        public static string Format(string message, params object[] args)
+        internal static string Format(string message, params object[] args)
         {
             return string.Format(CultureInfo.CurrentCulture, message, args);
         }
@@ -151,7 +161,7 @@ namespace BabBot.Common
         /// all subfolders will be created as well.)
         /// </summary>
         /// <param name="path">The path.</param>
-        public static void CreateDirectory(string path)
+        internal static void CreateDirectory(string path)
         {
             if (!Directory.Exists(path))
             {
@@ -166,7 +176,7 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="messageType">Type of the message.</param>
-        public static DialogResult MsgBox(string message, OBMessageBoxType messageType)
+        internal static DialogResult MsgBox(string message, OBMessageBoxType messageType)
         {
             if (String.IsNullOrEmpty(message))
             {
@@ -192,11 +202,12 @@ namespace BabBot.Common
         }
     }
 
-    public enum OBMessageBoxType
+    internal enum OBMessageBoxType
     {
         Error,
         Info,
         CriticalError,
         Warning
     }
+
 }

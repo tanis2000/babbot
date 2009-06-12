@@ -40,7 +40,10 @@ namespace BabBot.Forms
 
 
             // Load the configuration file
-            LogOutput("Initializing.....");
+            Output.OutputEvent += LogOutput;
+            Output.DebugEvent += LogDebug;
+            Output.Instance.Echo("Initializing.....");
+            
             LoadConfig();
 
             // Custom initialization of some components
@@ -55,10 +58,8 @@ namespace BabBot.Forms
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
-
             ProcessManager.UpdateStatus += UpdateStatus;
-            Output.OutputEvent += LogOutput;
-            Output.DebugEvent += LogDebug;
+
         }
 
         #region Exception Handler
