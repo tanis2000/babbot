@@ -195,11 +195,13 @@ namespace BabBot.Manager
             // Start botting
             LastState = CurrentState;
             CurrentState = PlayerState.Start;
+            Common.Output.Echo("Starting.....");
         }
 
         public void Stop()
         {
             // Stop botting
+            Common.Output.Echo("Stoping.....");
             LastState = CurrentState;
             CurrentState = PlayerState.Stop;
         }

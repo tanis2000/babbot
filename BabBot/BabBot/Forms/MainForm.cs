@@ -21,6 +21,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using System.Globalization;
+using System.Drawing;
 using BabBot.Bot;
 using BabBot.Common;
 using BabBot.Manager;
@@ -36,7 +38,9 @@ namespace BabBot.Forms
 
             Process.EnterDebugMode();
 
+
             // Load the configuration file
+            LogOutput("Initializing.....");
             LoadConfig();
 
             // Custom initialization of some components
@@ -53,6 +57,8 @@ namespace BabBot.Forms
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
 
             ProcessManager.UpdateStatus += UpdateStatus;
+            Output.OutputEvent += LogOutput;
+            Output.DebugEvent += LogDebug;
         }
 
         #region Exception Handler
@@ -546,5 +552,48 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
+
+        #region Logging
+
+        internal void LogDebug(string message)
+        {
+            if (txtConsole.InvokeRequired)
+            {
+                Output.OutputEventHandler handler = LogDebug;
+                Invoke(handler, new object[] { message });
+            }
+            else
+            {
+                txtConsole.AppendText(String.Format(CultureInfo.CurrentCulture, "[{0}] ",
+                                                    DateTime.Now.ToShortTimeString()));
+                txtConsole.SelectionColor = Color.Red;
+                txtConsole.AppendText(String.Format(CultureInfo.CurrentCulture, "{0}{1}", message, Environment.NewLine));
+                txtConsole.ScrollToCaret();
+            }
+        }
+
+        internal void LogOutput(string message)
+        {
+            if (txtConsole.InvokeRequired)
+            {
+                Output.OutputEventHandler handler = LogDebug;
+                Invoke(handler, new object[] { message });
+            }
+            else
+            {
+                txtConsole.SelectionColor = Color.Black;
+                // Bug: Font color would stay red when it shouldn't. This fixes it.
+                txtConsole.AppendText(String.Format(CultureInfo.CurrentCulture, "[{0}] {1}{2}",
+                                                    DateTime.Now.ToShortTimeString(), message,
+                                                    Environment.NewLine));
+                txtConsole.ScrollToCaret();
+            }
+        }
+        #endregion
+
+        private void tabPageMain_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

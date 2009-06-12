@@ -150,6 +150,7 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.txtConsole = new System.Windows.Forms.RichTextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -239,6 +240,7 @@
             // 
             // tabPageMain
             // 
+            this.tabPageMain.Controls.Add(this.txtConsole);
             this.tabPageMain.Controls.Add(this.btnStopBot);
             this.tabPageMain.Controls.Add(this.btnStartBot);
             this.tabPageMain.Controls.Add(this.btnAttachToWow);
@@ -258,10 +260,11 @@
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main";
             this.tabPageMain.UseVisualStyleBackColor = true;
+            this.tabPageMain.Click += new System.EventHandler(this.tabPageMain_Click);
             // 
             // btnStopBot
             // 
-            this.btnStopBot.Location = new System.Drawing.Point(129, 209);
+            this.btnStopBot.Location = new System.Drawing.Point(369, 153);
             this.btnStopBot.Name = "btnStopBot";
             this.btnStopBot.Size = new System.Drawing.Size(75, 23);
             this.btnStopBot.TabIndex = 17;
@@ -271,7 +274,7 @@
             // 
             // btnStartBot
             // 
-            this.btnStartBot.Location = new System.Drawing.Point(48, 209);
+            this.btnStartBot.Location = new System.Drawing.Point(288, 153);
             this.btnStartBot.Name = "btnStartBot";
             this.btnStartBot.Size = new System.Drawing.Size(75, 23);
             this.btnStartBot.TabIndex = 16;
@@ -292,7 +295,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(11, 96);
+            this.label9.Location = new System.Drawing.Point(8, 96);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(35, 13);
             this.label9.TabIndex = 14;
@@ -1329,6 +1332,15 @@
             this.statusLabel.Size = new System.Drawing.Size(62, 17);
             this.statusLabel.Text = "statusLabel";
             // 
+            // txtConsole
+            // 
+            this.txtConsole.Location = new System.Drawing.Point(6, 182);
+            this.txtConsole.Name = "txtConsole";
+            this.txtConsole.ReadOnly = true;
+            this.txtConsole.Size = new System.Drawing.Size(558, 182);
+            this.txtConsole.TabIndex = 90;
+            this.txtConsole.Text = "";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1497,6 +1509,7 @@
         private System.Windows.Forms.TextBox tbCorpseX;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.RichTextBox txtConsole;
     }
 }
 
