@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BabBot", "BabBot\BabBot.csp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fasmdll_managed", "..\fasmdll_managed\fasmdll_managed\fasmdll_managed.vcproj", "{61D8CF34-1FD7-4A01-BEC1-1A8E8050A9C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dante", "..\Dante\Dante.csproj", "{57ADA462-12C3-4788-BFE1-498A9F41C30C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,18 @@ Global
 		{61D8CF34-1FD7-4A01-BEC1-1A8E8050A9C6}.Release|Win32.ActiveCfg = Release|Win32
 		{61D8CF34-1FD7-4A01-BEC1-1A8E8050A9C6}.Release|Win32.Build.0 = Release|Win32
 		{61D8CF34-1FD7-4A01-BEC1-1A8E8050A9C6}.Release|x64.ActiveCfg = Release|Win32
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Release|Win32.ActiveCfg = Release|Any CPU
+		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

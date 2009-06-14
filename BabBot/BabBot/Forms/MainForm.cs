@@ -599,9 +599,6 @@ namespace BabBot.Forms
         }
         #endregion
 
-        private void tabPageMain_Click(object sender, EventArgs e)
-        {
 
-        }
     }
 }

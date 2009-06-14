@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -13,6 +13,8 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>Img\icon_64x64.ico</ApplicationIcon>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>BabBot.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -61,6 +63,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\CSScriptLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Dante, Version=1.0.0.0, Culture=neutral, PublicKeyToken=85381029ecd6945b, processorArchitecture=MSIL" />
+    <Reference Include="EasyHook, Version=2.5.0.0, Culture=neutral, PublicKeyToken=4b580fca19d0b0c5, processorArchitecture=MSIL" />
+    <Reference Include="fasmdll_managed, Version=1.0.3452.41441, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\fasmdll_managed.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -69,6 +77,7 @@
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -186,9 +195,15 @@
     <Compile Include="Wow\WowUnit.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="BabBot.snk" />
     <None Include="Img\icon_32x32.ico" />
     <None Include="Img\icon_64x64.ico" />
     <None Include="Img\splash.jpg" />
+    <None Include="Lib\EasyHook32.lib" />
+    <None Include="Lib\EasyHook32Drv.sys" />
+    <None Include="Lib\EasyHook64.lib" />
+    <None Include="Lib\EasyHook64Drv.sys" />
+    <None Include="Lib\EasyHookTestCert.cer" />
     <Content Include="Doc\ChangeLog.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -201,13 +216,14 @@
     <Content Include="Lib\BlackMagic.dll" />
     <Content Include="Lib\BlackMagic.XML" />
     <Content Include="Lib\Caronte.dll" />
+    <Content Include="Lib\EasyHook.dll" />
+    <Content Include="Lib\EasyHook.XML" />
+    <Content Include="Lib\EasyHook32.dll" />
+    <Content Include="Lib\EasyHook32Svc.exe" />
+    <Content Include="Lib\EasyHook64.dll" />
+    <Content Include="Lib\EasyHook64Svc.exe" />
+    <Content Include="Lib\fasmdll_managed.dll" />
     <Content Include="Lib\Hider.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\fasmdll_managed\fasmdll_managed\fasmdll_managed.vcproj">
-      <Project>{61D8CF34-1FD7-4A01-BEC1-1A8E8050A9C6}</Project>
-      <Name>fasmdll_managed</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

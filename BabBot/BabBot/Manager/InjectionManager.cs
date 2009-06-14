@@ -24,6 +24,8 @@ using System.Threading;
 using BabBot.Common;
 using BabBot.Wow;
 using Magic;
+using EasyHook;
+using System.Runtime.Remoting;
 
 namespace BabBot.Manager
 {
@@ -42,6 +44,9 @@ namespace BabBot.Manager
         }
 
         private uint state;
+
+        static String ChannelName = null;
+
 
         #region External function calls
         [DllImport("kernel32", CharSet = CharSet.Ansi)]
@@ -737,10 +742,27 @@ namespace BabBot.Manager
 
         public void InjectLua()
         {
-            //GetType().GetMethod("DumpParams");
+            /*
             state = Lua_GetState();
             DumpParamsDelegate x = new DumpParamsDelegate(DumpParams);
             Lua_Register("DumpParams", x);
+             */
+            try
+            {
+
+                RemoteHooking.IpcCreateServer<Dante.DanteInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
+
+                RemoteHooking.Inject(
+                    wow.ProcessId,
+                    "Dante.dll",
+                    "Dante.dll",
+                    ChannelName);
+            }
+            catch (Exception ExtInfo)
+            {
+                Console.WriteLine("There was an error while connecting to target:\r\n{0}", ExtInfo.ToString());
+            }
+
         }
 
         #endregion

@@ -38,6 +38,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.txtConsole = new System.Windows.Forms.RichTextBox();
             this.btnStopBot = new System.Windows.Forms.Button();
             this.btnStartBot = new System.Windows.Forms.Button();
             this.btnAttachToWow = new System.Windows.Forms.Button();
@@ -137,6 +138,7 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
+            this.btnInjectDll = new System.Windows.Forms.Button();
             this.btnGetLuaText = new System.Windows.Forms.Button();
             this.tbLuaVariable = new System.Windows.Forms.TextBox();
             this.tbLuaResult = new System.Windows.Forms.TextBox();
@@ -150,8 +152,6 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.btnInjectDll = new System.Windows.Forms.Button();
-            this.txtConsole = new System.Windows.Forms.RichTextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -261,7 +261,15 @@
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main";
             this.tabPageMain.UseVisualStyleBackColor = true;
-            this.tabPageMain.Click += new System.EventHandler(this.tabPageMain_Click);
+            // 
+            // txtConsole
+            // 
+            this.txtConsole.Location = new System.Drawing.Point(6, 182);
+            this.txtConsole.Name = "txtConsole";
+            this.txtConsole.ReadOnly = true;
+            this.txtConsole.Size = new System.Drawing.Size(558, 182);
+            this.txtConsole.TabIndex = 90;
+            this.txtConsole.Text = "";
             // 
             // btnStopBot
             // 
@@ -1222,6 +1230,16 @@
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
             // 
+            // btnInjectDll
+            // 
+            this.btnInjectDll.Location = new System.Drawing.Point(235, 64);
+            this.btnInjectDll.Name = "btnInjectDll";
+            this.btnInjectDll.Size = new System.Drawing.Size(75, 23);
+            this.btnInjectDll.TabIndex = 17;
+            this.btnInjectDll.Text = "DLL Inject";
+            this.btnInjectDll.UseVisualStyleBackColor = true;
+            this.btnInjectDll.Click += new System.EventHandler(this.btnInjectDll_Click);
+            // 
             // btnGetLuaText
             // 
             this.btnGetLuaText.Location = new System.Drawing.Point(227, 188);
@@ -1333,25 +1351,6 @@
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(62, 17);
             this.statusLabel.Text = "statusLabel";
-            // 
-            // btnInjectDll
-            // 
-            this.btnInjectDll.Location = new System.Drawing.Point(235, 64);
-            this.btnInjectDll.Name = "btnInjectDll";
-            this.btnInjectDll.Size = new System.Drawing.Size(75, 23);
-            this.btnInjectDll.TabIndex = 17;
-            this.btnInjectDll.Text = "DLL Inject";
-            this.btnInjectDll.UseVisualStyleBackColor = true;
-            this.btnInjectDll.Click += new System.EventHandler(this.btnInjectDll_Click);
-            // txtConsole
-            // 
-            this.txtConsole.Location = new System.Drawing.Point(6, 182);
-            this.txtConsole.Name = "txtConsole";
-            this.txtConsole.ReadOnly = true;
-            this.txtConsole.Size = new System.Drawing.Size(558, 182);
-            this.txtConsole.TabIndex = 90;
-            this.txtConsole.Text = "";
-            // 
             // 
             // MainForm
             // 

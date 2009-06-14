@@ -31,6 +31,19 @@ namespace BabBot
         [STAThread]
         private static void Main()
         {
+            try
+            {
+                EasyHook.Config.Register(
+                    "Dante.",
+                    "Dante.dll");
+            }
+            catch (ApplicationException ex)
+            {
+                MessageBox.Show("This is an administrative task!", "Permission denied...", MessageBoxButtons.OK);
+
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             var mainForm = new MainForm();
