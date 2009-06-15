@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -63,7 +63,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\CSScriptLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="Dante, Version=1.0.0.0, Culture=neutral, PublicKeyToken=85381029ecd6945b, processorArchitecture=MSIL" />
+    <Reference Include="Dante, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bcbc47c15ac8c435, processorArchitecture=MSIL" />
     <Reference Include="EasyHook, Version=2.5.0.0, Culture=neutral, PublicKeyToken=4b580fca19d0b0c5, processorArchitecture=MSIL" />
     <Reference Include="fasmdll_managed, Version=1.0.3452.41441, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -101,6 +101,7 @@
     <Compile Include="Common\Vector.cs" />
     <Compile Include="Common\WindowSize.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="DanteInterface.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>

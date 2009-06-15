@@ -55,6 +55,8 @@ namespace BabBot.Manager
         {
             LastState = CurrentState;
 
+            if (CurrentState == PlayerState.Stop) return;
+
             if (CurrentState == PlayerState.Start)
             {
                 CurrentState = PlayerState.Roaming;
