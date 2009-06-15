@@ -62,7 +62,10 @@ namespace Dante
             {
                 Lua_Register = (Lua_RegisterDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_Register, typeof(Lua_RegisterDelegate));
                 DumpParamsDelegate x = new DumpParamsDelegate(DumpParams);
-                Lua_Register("DumpParams", Marshal.GetFunctionPointerForDelegate(x));
+                IntPtr DumpParamsPtr = Marshal.GetFunctionPointerForDelegate(x);
+                Interface.SetFunctionPtr(RemoteHooking.GetCurrentProcessId(), DumpParamsPtr);
+
+                Lua_Register("DumpParams", (IntPtr)0x00401643);
                 Interface.OnEndScene(RemoteHooking.GetCurrentProcessId(), "Registered DumpParams()");
 
                 while (true)
