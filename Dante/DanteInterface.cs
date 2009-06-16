@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 namespace Dante
 {
     public abstract class DanteInterface : MarshalByRefObject
@@ -12,6 +13,7 @@ namespace Dante
         public abstract void ReportException(Exception InInfo);
         public abstract void Ping();
         public abstract void DumpParams(Int32 InClientPID, String InMessage);
-        public abstract void SetFunctionPtr(Int32 InClientPID, IntPtr Pointer);    
+        public abstract void SetFunctionPtr(Int32 InClientPID, IntPtr Pointer);
+    
     }
 }

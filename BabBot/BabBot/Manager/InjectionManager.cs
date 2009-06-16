@@ -769,12 +769,14 @@ namespace BabBot.Manager
         {
             try
             {
-                wow.WriteByte(0x00401643, 0xEA);
-                wow.WriteUInt(0x00401644, (uint)pointer);
+                wow.WriteByte(0x00401643, 0xE9); // 0xEA
+                wow.WriteUInt(0x00401644, (uint)pointer - 0x00401643 - 5);
+                /*
                 wow.WriteByte(0x00401648, 0x00);
                 wow.WriteByte(0x00401649, 0x00);
                 wow.WriteByte(0x0040164A, 0x00);
                 wow.WriteByte(0x0040164B, 0x00);
+                */
             }
             catch (Exception e)
             {

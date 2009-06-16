@@ -61,11 +61,13 @@ namespace Dante
             try
             {
                 Lua_Register = (Lua_RegisterDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_Register, typeof(Lua_RegisterDelegate));
-                DumpParamsDelegate x = new DumpParamsDelegate(DumpParams);
+                DumpParamsDelegate x = DumpParams;
+
                 IntPtr DumpParamsPtr = Marshal.GetFunctionPointerForDelegate(x);
+
                 Interface.SetFunctionPtr(RemoteHooking.GetCurrentProcessId(), DumpParamsPtr);
 
-                Lua_Register("DumpParams", (IntPtr)0x00401643);
+                Lua_Register("DumpParams", (IntPtr)0x00401643); // This is the code hole we want to use
                 Interface.OnEndScene(RemoteHooking.GetCurrentProcessId(), "Registered DumpParams()");
 
                 while (true)
@@ -167,8 +169,10 @@ namespace Dante
             return sResult;
         }
         */
-        public static void DumpParams(uint luaState)
+
+        public void DumpParams(uint luaState)
         {
+            int a = 0x12345678;
             /*
               int n = LuaGetTop(L);  // number of arguments
               for (int i=1; i<=n; i++) 
@@ -178,6 +182,8 @@ namespace Dante
                         printf("%s",out);
               }
              */
+
+            /*
             Main This = (Main)HookRuntimeInfo.Callback;
 
             lock (This.Queue)
@@ -185,6 +191,7 @@ namespace Dante
                 This.Queue.Push("[" + RemoteHooking.GetCurrentProcessId() + ":" +
                     RemoteHooking.GetCurrentThreadId() + "]: \"" + "Hello there, I'm DumpParams!" + "\"");
             }
+            */
 
             /*
             uint n = Lua_GetTop(luaState);
