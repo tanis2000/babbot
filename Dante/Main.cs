@@ -13,10 +13,43 @@ namespace Dante
     {
         DanteInterface Interface;
         Stack<String> Queue = new Stack<String>();
-        public delegate void DumpParamsDelegate(uint luaState);
+
+        public uint L;
+        public static string msg;
+
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void DumpParamsDelegate(uint luaState);
+
+        /*
+            __cdecl: caller pushes and pops args off stack, args passed right to left.
+
+            __stdcall: caller pushes, function pops args off stack. args passed right to left.
+
+            So __stdcall generates smaller code, because the instructions to pop the args are only in your binary once, not following every call. Because of this __stdcall cannot be used for functions that have a variable number of arguments: abc(char*, ...).
+
+            __fastcall: first 2 args are passed in registers, function pops args. Remaining parameters are passed left to right.
+
+            this: used by class/struct member functions, the this pointer is passed in ecx. Otherwise like cdecl
+
+            naked: caller removes args, no name decoration. Commonly used when writing asm code.
+        */
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void Lua_RegisterDelegate(string name, IntPtr function);
+        //public delegate void Lua_RegisterDelegate([MarshalAs(UnmanagedType.LPTStr)] string name, IntPtr function);
         Lua_RegisterDelegate Lua_Register;
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate uint Lua_GetTopDelegate(uint luaState);
+        Lua_GetTopDelegate Lua_GetTop;
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate string Lua_ToStringDelegate(uint luaState, uint idx);
+        Lua_ToStringDelegate Lua_ToString;
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate uint Lua_GetStateDelegate();
+        Lua_GetStateDelegate Lua_GetState;
 
         // WoW Function Addresses
         public static class Functions
@@ -56,11 +89,19 @@ namespace Dante
 
             RemoteHooking.WakeUpProcess();
 
+            msg = "";
             // wait for host process termination...
             
             try
             {
                 Lua_Register = (Lua_RegisterDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_Register, typeof(Lua_RegisterDelegate));
+                Lua_GetTop = (Lua_GetTopDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_GetTop, typeof(Lua_GetTopDelegate));
+                Lua_ToString = (Lua_ToStringDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_ToString, typeof(Lua_ToStringDelegate));
+                Lua_GetState = (Lua_GetStateDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_GetState, typeof(Lua_GetStateDelegate));
+
+                //L = Lua_GetState();
+                Interface.SendMessage(RemoteHooking.GetCurrentProcessId(), string.Format("Lua_GetState() = {0:X}", L));
+
                 DumpParamsDelegate x = DumpParams;
 
                 IntPtr DumpParamsPtr = Marshal.GetFunctionPointerForDelegate(x);
@@ -68,13 +109,13 @@ namespace Dante
                 Interface.SetFunctionPtr(RemoteHooking.GetCurrentProcessId(), DumpParamsPtr);
 
                 Lua_Register("DumpParams", (IntPtr)0x00401643); // This is the code hole we want to use
-                Interface.OnEndScene(RemoteHooking.GetCurrentProcessId(), "Registered DumpParams()");
+                Interface.SendMessage(RemoteHooking.GetCurrentProcessId(), "Registered DumpParams()");
 
                 while (true)
                 {
                     Thread.Sleep(500);
                     
-                    // transmit newly monitored file accesses...
+                    // transmit queued messages if any..
                     if (Queue.Count > 0)
                     {
                         String[] Package = null;
@@ -86,93 +127,30 @@ namespace Dante
                             Queue.Clear();
                         }
 
-                        Interface.OnEndScene(RemoteHooking.GetCurrentProcessId(), Package[0]);
+                        Interface.SendMessage(RemoteHooking.GetCurrentProcessId(), Package[0]);
                     }
                     else
+                    {
                         Interface.Ping();
+                        Interface.Ping2(msg);
+                    }
                 }
             }
             catch (Exception e)
             {
-                Interface.OnEndScene(RemoteHooking.GetCurrentProcessId(), e.ToString());
+                Interface.SendMessage(RemoteHooking.GetCurrentProcessId(), e.ToString());
                 // Ping() will raise an exception if host is unreachable
             }
         }
 
 
         #region LUA
-        /*
-        public static uint Lua_GetTop(uint luaState)
-        {
-            uint result = 0;
-            uint codecave = wow.AllocateMemory();
 
-            wow.Asm.Clear();
-
-            wow.Asm.AddLine("push {0}", luaState);
-            wow.Asm.AddLine("call {0}", Functions.Lua_GetTop);
-            wow.Asm.AddLine("add esp, 0x4");
-
-            wow.Asm.AddLine("retn");
-
-            try
-            {
-                result = wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                wow.FreeMemory(codecave);
-            }
-
-            return result;
-        }
-
-        public static string Lua_ToString(uint luaState, uint idx)
-        {
-            uint result = 0;
-            string sResult = "";
-            uint codecave = wow.AllocateMemory();
-
-            wow.Asm.Clear();
-
-            wow.Asm.AddLine("push 0");
-            wow.Asm.AddLine("push {0}", idx);
-            wow.Asm.AddLine("push {0}", luaState);
-            wow.Asm.AddLine("call {0}", Functions.Lua_ToString);
-            wow.Asm.AddLine("add esp, 0xC");
-
-            wow.Asm.AddLine("retn");
-
-            try
-            {
-                result = wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
-                if (result != 0)
-                {
-                    sResult = wow.ReadASCIIString(result, 256);
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                wow.FreeMemory(codecave);
-            }
-
-            return sResult;
-        }
-        */
 
         public void DumpParams(uint luaState)
         {
             int a = 0x12345678;
+            msg = "dump!";
             /*
               int n = LuaGetTop(L);  // number of arguments
               for (int i=1; i<=n; i++) 
@@ -198,126 +176,14 @@ namespace Dante
             for (uint i = 1; i <= n; i++)
             {
                 string res = Lua_ToString(luaState, i);
-                Console.WriteLine(res);
+                //Console.WriteLine(res);
             }
             */
 
         }
-        /*
-        public static void Lua_Register(string name, DumpParamsDelegate function)
-        {
-            uint codecave = wow.AllocateMemory();
-            uint stringcave = wow.AllocateMemory(name.Length + 1);
-            wow.WriteASCIIString(stringcave, name);
 
-            wow.Asm.Clear();
-
-            wow.Asm.AddLine("mov eax,{0}", function.Method.MethodHandle.Value);
-            wow.Asm.AddLine("push eax");
-            wow.Asm.AddLine("mov ecx,{0}", stringcave);
-            wow.Asm.AddLine("push ecx");
-            wow.Asm.AddLine("call {0}", Functions.Lua_Register);
-            wow.Asm.AddLine("add esp, 0x08");
-
-            wow.Asm.AddLine("retn");
-
-            try
-            {
-                wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally
-            {
-                wow.FreeMemory(codecave);
-            }
-        }
-         
-         */
         #endregion
 
 
-
-
-
-
-        /*
-
-
-
-        [UnmanagedFunctionPointer(CallingConvention.StdCall,
-            CharSet = CharSet.Unicode,
-            SetLastError = true)]
-        delegate void DEndScene(IntPtr device);
-
-        [UnmanagedFunctionPointer(CallingConvention.StdCall,
-    CharSet = CharSet.Unicode,
-    SetLastError = true)]
-        delegate IntPtr DDirect3DCreate9(ushort SDKVersion);
-
-        // just use a P-Invoke implementation to get native API access from C# (this step is not necessary for C++.NET)
-        [DllImport("d3d9.dll",
-            CharSet = CharSet.Unicode,
-            SetLastError = true,
-            CallingConvention = CallingConvention.StdCall)]
-        static extern void EndScene(IntPtr device);
-
-        [DllImport("d3d9.dll", EntryPoint = "Direct3DCreate9",
-CallingConvention = CallingConvention.StdCall),
-    SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.Interface)]
-        public static extern IntPtr Direct3DCreate9(ushort SDKVersion); 
-
-        // this is where we are intercepting all file accesses!
-        static void EndScene_Hooked(IntPtr device)
-        {
-
-            try
-            {
-                Main This = (Main)HookRuntimeInfo.Callback;
-
-                lock (This.Queue)
-                {
-                    This.Queue.Push("[" + RemoteHooking.GetCurrentProcessId() + ":" +
-                        RemoteHooking.GetCurrentThreadId() + "]: \"" + "test" + "\"");
-                }
-            }
-            catch
-            {
-            }
-
-            // call original API...
-            EndScene(device);
-        }
-
-        static IntPtr Direct3DCreate9_Hooked(ushort SDKVersion)
-        {
-
-
-
-            // call original API...
-            IntPtr p = Direct3DCreate9(SDKVersion);
-            
-            try
-            {
-                Main This = (Main)HookRuntimeInfo.Callback;
-
-                lock (This.Queue)
-                {
-                    This.Queue.Push("[" + RemoteHooking.GetCurrentProcessId() + ":" +
-                        RemoteHooking.GetCurrentThreadId() + "]: \"" + p.ToString() + "\"");
-                }
-            }
-            catch
-            {
-            }
-            
-            return p;
-        }
-    
-    */
     }
 }

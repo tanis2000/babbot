@@ -13,7 +13,7 @@ namespace Dante
             Console.WriteLine("FileMon has been installed in target {0}.\r\n", InClientPID);
         }
 
-        public void OnEndScene(Int32 InClientPID, String InMessage)
+        public void SendMessage(Int32 InClientPID, String InMessage)
         {
             Console.WriteLine(InMessage);
         }
@@ -26,6 +26,11 @@ namespace Dante
         public void Ping()
         {
             Console.WriteLine("Ping received");
+        }
+
+        public void Ping2(string msg)
+        {
+            Console.WriteLine("Ping: " + msg);
         }
 
         public void DumpParams(Int32 InClientPID, String InMessage)
