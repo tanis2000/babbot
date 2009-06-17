@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Dante
 {
@@ -11,6 +12,15 @@ namespace Dante
         public abstract void Ping2(string msg);
         public abstract void DumpParams(Int32 InClientPID, String InMessage);
         public abstract void SetFunctionPtr(Int32 InClientPID, IntPtr Pointer);
-    
+
+        public void DoString(string command)
+        {
+            Main.DoString(command);
+        }
+
+        public List<string> GetValues()
+        {
+            return Main.Values;
+        }
     }
 }

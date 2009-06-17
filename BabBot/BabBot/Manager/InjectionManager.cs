@@ -26,6 +26,7 @@ using BabBot.Wow;
 using Magic;
 using EasyHook;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels.Ipc;
 
 namespace BabBot.Manager
 {
@@ -567,191 +568,15 @@ namespace BabBot.Manager
             return sResult;
         }
 
-        public uint Lua_GetTop(uint luaState)
-        {
-            ProcessManager.SuspendMainWowThread();
-            uint result = 0;
-            uint codecave = wow.AllocateMemory();
-
-            wow.Asm.Clear();
-            AsmUpdateCurMgr();
-
-            wow.Asm.AddLine("push {0}", luaState);
-            wow.Asm.AddLine("call {0}", Globals.Functions.Lua_GetTop);
-            wow.Asm.AddLine("add esp, 0x4");
-
-            AsmSendResumeMessage();
-            wow.Asm.AddLine("retn");
-
-            try
-            {
-                result = wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
-            }
-            catch (Exception e)
-            {
-                ProcessManager.ResumeMainWowThread();
-                throw e;
-            }
-            finally
-            {
-                wow.FreeMemory(codecave);
-            }
-
-            return result;
-        }
-
-        public string Lua_ToString(uint luaState, uint idx)
-        {
-            ProcessManager.SuspendMainWowThread();
-            uint result = 0;
-            string sResult = "";
-            uint codecave = wow.AllocateMemory();
-
-            wow.Asm.Clear();
-            AsmUpdateCurMgr();
-
-            wow.Asm.AddLine("push 0");
-            wow.Asm.AddLine("push {0}", idx);
-            wow.Asm.AddLine("push {0}", luaState);
-            wow.Asm.AddLine("call {0}", Globals.Functions.Lua_ToString);
-            wow.Asm.AddLine("add esp, 0xC");
-
-            AsmSendResumeMessage();
-            wow.Asm.AddLine("retn");
-
-            try
-            {
-                result = wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
-                if (result != 0)
-                {
-                    sResult = wow.ReadASCIIString(result, 256);
-                }
-            }
-            catch (Exception e)
-            {
-                ProcessManager.ResumeMainWowThread();
-                throw e;
-            }
-            finally
-            {
-                wow.FreeMemory(codecave);
-            }
-
-            return sResult;
-        }
-
-        public void DumpParams(uint luaState)
-        {
-            /*
-              int n = LuaGetTop(L);  // number of arguments
-              for (int i=1; i<=n; i++) 
-              {
-                    const char *out=lua_tostring(L,i,NULL);
-                    if (out && out[0])
-                        printf("%s",out);
-              }
-             */
-
-            uint n = Lua_GetTop(luaState);
-            for (uint i = 1; i <= n; i++)
-            {
-                string res = Lua_ToString(luaState, i);
-                Console.WriteLine(res);
-            }
-
-        }
-
-        public void Lua_Register(string name, DumpParamsDelegate function)
-        {
-            ProcessManager.SuspendMainWowThread();
-            uint codecave = wow.AllocateMemory();
-            uint stringcave = wow.AllocateMemory(name.Length + 1);
-            wow.WriteASCIIString(stringcave, name);
-
-            wow.Asm.Clear();
-            AsmUpdateCurMgr();
-
-            wow.Asm.AddLine("mov eax,{0}", function.Method.MethodHandle.Value);
-            wow.Asm.AddLine("push eax");
-            wow.Asm.AddLine("mov ecx,{0}", stringcave);
-            wow.Asm.AddLine("push ecx");
-            wow.Asm.AddLine("call {0}", Globals.Functions.Lua_Register);
-            wow.Asm.AddLine("add esp, 0x08");
-
-            AsmSendResumeMessage();
-            wow.Asm.AddLine("retn");
-
-            try
-            {
-                wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
-            }
-            catch (Exception e)
-            {
-                ProcessManager.ResumeMainWowThread();
-                throw e;
-            }
-            finally
-            {
-                wow.FreeMemory(codecave);
-            }
-        }
-
-        /*
-        public uint Lua_GetState()
-        {
-            ProcessManager.SuspendMainWowThread();
-            uint result = 0;
-            uint codecave = wow.AllocateMemory();
-
-            wow.Asm.Clear();
-            AsmUpdateCurMgr();
-
-            wow.Asm.AddLine("call {0}", Globals.Functions.Lua_GetState);
-
-            AsmSendResumeMessage();
-            wow.Asm.AddLine("retn");
-
-            try
-            {
-                result = wow.Asm.InjectAndExecute(codecave);
-                Thread.Sleep(10);
-            }
-            catch (Exception e)
-            {
-                ProcessManager.ResumeMainWowThread();
-                throw e;
-            }
-            finally
-            {
-                wow.FreeMemory(codecave);
-            }
-
-            return result;
-        }
-        */
-
-        public uint Lua_GetState()
-        {
-            return ProcessManager.WowProcess.ReadUInt(0x010735F4);
-        }
-
-        public delegate void DumpParamsDelegate(uint luaState);
+        
 
         public void InjectLua()
         {
-            /*
-            state = Lua_GetState();
-            DumpParamsDelegate x = new DumpParamsDelegate(DumpParams);
-            Lua_Register("DumpParams", x);
-             */
             try
             {
 
                 RemoteHooking.IpcCreateServer<Dante.DanteInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
-
+                
                 RemoteHooking.Inject(
                     wow.ProcessId,
                     "Dante.dll",
@@ -769,14 +594,8 @@ namespace BabBot.Manager
         {
             try
             {
-                wow.WriteByte(0x00401643, 0xE9); // 0xEA
+                wow.WriteByte(0x00401643, 0xE9); // jmp near (5 bytes)
                 wow.WriteUInt(0x00401644, (uint)pointer - 0x00401643 - 5);
-                /*
-                wow.WriteByte(0x00401648, 0x00);
-                wow.WriteByte(0x00401649, 0x00);
-                wow.WriteByte(0x0040164A, 0x00);
-                wow.WriteByte(0x0040164B, 0x00);
-                */
             }
             catch (Exception e)
             {
@@ -785,6 +604,18 @@ namespace BabBot.Manager
 
 
         }
+
+        public void RemoteDoString(string command)
+        {
+            // TODO: Call the injected DLL
+        }
+
+        public List<string> RemoteGetValues()
+        {
+            // TODO: Call the injected DLL
+            return null;
+        }
+        
         #endregion
 
         #region FindPattern

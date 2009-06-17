@@ -27,6 +27,7 @@ using BabBot.Bot;
 using BabBot.Common;
 using BabBot.Manager;
 using BabBot.Wow;
+using System.Collections.Generic;
 
 namespace BabBot.Forms
 {
@@ -482,13 +483,23 @@ namespace BabBot.Forms
 
         private void btnDoString_Click(object sender, EventArgs e)
         {
-            ProcessManager.Injector.Lua_DoString(tbLuaScript.Text);
+            //ProcessManager.Injector.Lua_DoString(tbLuaScript.Text);
+            ProcessManager.Injector.RemoteDoString(tbLuaScript.Text);
         }
 
         private void btnGetLuaText_Click(object sender, EventArgs e)
         {
+            /*
             string s = ProcessManager.Injector.Lua_GetLocalizedText(tbLuaVariable.Text);
             tbLuaResult.Text = s;
+             */
+            List<string> s = ProcessManager.Injector.RemoteGetValues();
+            tbLuaResult.Clear();
+            foreach (string tmp in s)
+            {
+                tbLuaResult.Text += tmp + Environment.NewLine;
+            }
+
         }
 
         #endregion

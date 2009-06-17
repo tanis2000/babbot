@@ -1,24 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using EasyHook;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Security;
+using System.Diagnostics;
 
 namespace Dante
 {
     public class Main : EasyHook.IEntryPoint
     {
-        DanteInterface Interface;
-        Stack<String> Queue = new Stack<String>();
+        // WoW Function Addresses
+        private static class Functions
+        {
+            public const uint
+                Lua_DoString = 0x0049AAB0, // 3.1.3
+                Lua_GetLocalizedText = 0x005A82F0, // 3.1.3
+                Lua_Register = 0x004998E0, // 3.1.3
+                Lua_GetTop = 0x0091A8B0, // 3.1.3
+                Lua_ToString = 0x0091ADC0, // 3.1.3
+                Lua_GetState = 0x00499700; // 3.1.3
+        }
+        
+        // Common IPC interface
+        private DanteInterface Interface;
+        // Communication queue
+        private Stack<String> Queue = new Stack<String>();
 
-        public uint L;
-        public static string msg;
+        // Our lua_State
+        private static uint L;
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void DumpParamsDelegate(uint luaState);
+        // Temp test msg
+        private static string msg;
+
 
         /*
             __cdecl: caller pushes and pops args off stack, args passed right to left.
@@ -34,42 +48,37 @@ namespace Dante
             naked: caller removes args, no name decoration. Commonly used when writing asm code.
         */
 
+        #region delegates
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int CommandHandlerDelegate(uint luaState);
+
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate void Lua_RegisterDelegate(string name, IntPtr function);
-        //public delegate void Lua_RegisterDelegate([MarshalAs(UnmanagedType.LPTStr)] string name, IntPtr function);
-        Lua_RegisterDelegate Lua_Register;
+        private delegate void Lua_RegisterDelegate(string name, IntPtr function);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate uint Lua_GetTopDelegate(uint luaState);
-        Lua_GetTopDelegate Lua_GetTop;
+        private delegate uint Lua_GetTopDelegate(uint luaState);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate string Lua_ToStringDelegate(uint luaState, uint idx);
-        Lua_ToStringDelegate Lua_ToString;
+        private delegate string Lua_ToStringDelegate(uint luaState, uint idx, uint length);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate uint Lua_GetStateDelegate();
-        Lua_GetStateDelegate Lua_GetState;
+        private delegate uint Lua_GetStateDelegate();
 
-        // WoW Function Addresses
-        public static class Functions
-        {
-            public const uint
-                CastSpellById = 0x004C4DB0, // 3.1.3
-                CastSpellByName = 0x004C4DF0, // 3.1.3 TODO: Test this function 
-                GetSpellIdByName = 0x006FF4A0, // 3.1.3
-                SelectUnit = 0x006EF810, // 3.1.3
-                GetUnitRelation = 0x005AA670, // 3.1.3
-                CInputControl = 0x0113F8E4, // 3.1.3
-                CInputControl_SetFlags = 0x00691BB0, // 3.1.3
-                Lua_DoString = 0x0049AAB0, // 3.1.3
-                Lua_GetLocalizedText = 0x005A82F0, // 3.1.3
-                Lua_Register = 0x004998E0, // 3.1.3
-                Lua_GetTop = 0x0091A8B0, // 3.1.3
-                Lua_ToString = 0x0091ADC0, // 3.1.3
-                Lua_GetState = 0x00499700; // 3.1.3
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void Lua_DoStringDelegate(string command, string filename, uint pState);
 
-        }
+        #endregion
+
+        private static Lua_RegisterDelegate Lua_Register;
+        private static Lua_GetTopDelegate Lua_GetTop;
+        private static Lua_ToStringDelegate Lua_ToString;
+        private static Lua_GetStateDelegate Lua_GetState;
+        private static Lua_DoStringDelegate Lua_DoString;
+        private static CommandHandlerDelegate CommandHandler = InputHandler;
+
+
+        public static List<string> Values = new List<string>();
 
         public Main(
             RemoteHooking.IContext InContext,
@@ -98,18 +107,19 @@ namespace Dante
                 Lua_GetTop = (Lua_GetTopDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_GetTop, typeof(Lua_GetTopDelegate));
                 Lua_ToString = (Lua_ToStringDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_ToString, typeof(Lua_ToStringDelegate));
                 Lua_GetState = (Lua_GetStateDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_GetState, typeof(Lua_GetStateDelegate));
+                Lua_DoString = (Lua_DoStringDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_DoString, typeof(Lua_DoStringDelegate));
 
-                //L = Lua_GetState();
+                // Init the lua_State
+                L = Lua_GetState();
                 Interface.SendMessage(RemoteHooking.GetCurrentProcessId(), string.Format("Lua_GetState() = {0:X}", L));
 
-                DumpParamsDelegate x = DumpParams;
 
-                IntPtr DumpParamsPtr = Marshal.GetFunctionPointerForDelegate(x);
+                IntPtr CommandHandlerPtr = Marshal.GetFunctionPointerForDelegate(CommandHandler);
 
-                Interface.SetFunctionPtr(RemoteHooking.GetCurrentProcessId(), DumpParamsPtr);
+                Interface.SetFunctionPtr(RemoteHooking.GetCurrentProcessId(), CommandHandlerPtr);
 
-                Lua_Register("DumpParams", (IntPtr)0x00401643); // This is the code hole we want to use
-                Interface.SendMessage(RemoteHooking.GetCurrentProcessId(), "Registered DumpParams()");
+                Lua_Register("InputHandler", (IntPtr)0x00401643); // This is the code hole we want to use
+                Interface.SendMessage(RemoteHooking.GetCurrentProcessId(), "Registered InputHandler()");
 
                 while (true)
                 {
@@ -143,23 +153,36 @@ namespace Dante
             }
         }
 
+        public static T GetReturnVal<T>(string lua, uint retVal)
+        {
+            Lua_DoString(string.Format("InputHandler({0})", lua), "BabBot.lua", 0);
+            object tmp;
+
+            if (Values[(int)retVal] == "nil")
+                return default(T);
+
+            if (typeof(T) == typeof(bool))
+            {
+                tmp = Values[(int)retVal] == "1" || Values[(int)retVal].ToLower() == "true";
+            }
+            else
+            {
+                tmp = (T)Convert.ChangeType(Values[(int)retVal], typeof(T));
+            }
+            return (T)tmp;
+        }
+
+        public static void DoString(string command) 
+        {
+            Lua_DoString(string.Format("InputHandler({0})", command), "BabBot.lua", 0);
+        }
 
         #region LUA
 
 
-        public void DumpParams(uint luaState)
+        public static int InputHandler(uint luaState)
         {
-            int a = 0x12345678;
             msg = "dump!";
-            /*
-              int n = LuaGetTop(L);  // number of arguments
-              for (int i=1; i<=n; i++) 
-              {
-                    const char *out=lua_tostring(L,i,NULL);
-                    if (out && out[0])
-                        printf("%s",out);
-              }
-             */
 
             /*
             Main This = (Main)HookRuntimeInfo.Callback;
@@ -171,15 +194,14 @@ namespace Dante
             }
             */
 
-            /*
+            Values.Clear();
             uint n = Lua_GetTop(luaState);
             for (uint i = 1; i <= n; i++)
             {
-                string res = Lua_ToString(luaState, i);
-                //Console.WriteLine(res);
+                string res = Lua_ToString(luaState, i, 0);
+                Values.Add(res);
             }
-            */
-
+            return 0;
         }
 
         #endregion

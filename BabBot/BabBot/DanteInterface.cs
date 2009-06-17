@@ -43,6 +43,6 @@ namespace Dante
             Console.WriteLine(string.Format("Pointer: {0:X}", Pointer.ToInt32()));
             ProcessManager.Injector.PatchCode(Pointer);
         }
-    
+
     }
 }
