@@ -63,7 +63,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\CSScriptLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="Dante, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bcbc47c15ac8c435, processorArchitecture=MSIL" />
     <Reference Include="EasyHook, Version=2.5.0.0, Culture=neutral, PublicKeyToken=4b580fca19d0b0c5, processorArchitecture=MSIL" />
     <Reference Include="fasmdll_managed, Version=1.0.3452.41441, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -101,7 +100,8 @@
     <Compile Include="Common\Vector.cs" />
     <Compile Include="Common\WindowSize.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="DanteInterface.cs" />
+    <Compile Include="ISharedAssembly.cs" />
+    <Compile Include="OldDanteInterface.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>

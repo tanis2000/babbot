@@ -41,6 +41,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -52,6 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DanteInterface.cs" />
+    <Compile Include="ISharedAssembly.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

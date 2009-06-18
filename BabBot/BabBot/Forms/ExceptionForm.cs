@@ -12,7 +12,7 @@ namespace BabBot.Forms
             InitializeComponent();
             exception = ex;
 
-            tbExceptionMessage.Text = ex.Message;
+            tbExceptionMessage.Text = ex.ToString();
             if (ex.InnerException != null)
             {
                 tbExceptionMessage.Text += Environment.NewLine + Environment.NewLine + "== Inner Exception ==" +

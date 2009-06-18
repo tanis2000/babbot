@@ -6,7 +6,7 @@ using BabBot.Manager;
 
 namespace Dante
 {
-    public class DanteInterface : MarshalByRefObject
+    public class OldDanteInterface : MarshalByRefObject
     {
         public void IsInstalled(Int32 InClientPID)
         {

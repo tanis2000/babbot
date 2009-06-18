@@ -1,26 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Permissions;
 
 namespace Dante
 {
-    public abstract class DanteInterface : MarshalByRefObject
+    public class DanteInterface : MarshalByRefObject, ISharedAssembly
     {
-        public abstract void IsInstalled(Int32 InClientPID);
-        public abstract void SendMessage(Int32 InClientPID, String InMessage);
-        public abstract void ReportException(Exception InInfo);
-        public abstract void Ping();
-        public abstract void Ping2(string msg);
-        public abstract void DumpParams(Int32 InClientPID, String InMessage);
-        public abstract void SetFunctionPtr(Int32 InClientPID, IntPtr Pointer);
-
         public void DoString(string command)
         {
-            Main.DoString(command);
+            try
+            {
+                Log.Debug(string.Format("Calling DoString(\"{0}\")", command));
+                Main.DoString(command);
+                Log.Debug(string.Format("Done with DoString"));
+            }
+            catch(Exception e)
+            {
+                Log.Debug(e.ToString());
+            }
         }
 
         public List<string> GetValues()
         {
-            return Main.Values;
+            try {
+                Log.Debug(string.Format("Calling GetValues"));
+                return Main.Values;
+            }
+            catch (Exception e)
+            {
+                Log.Debug(e.ToString());
+            }
+            return new List<string>();
         }
+
+
     }
 }

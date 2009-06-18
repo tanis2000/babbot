@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using BabBot.Common;
 using BabBot.Wow;
@@ -27,6 +28,7 @@ using Magic;
 using EasyHook;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Remoting.Channels;
 
 namespace BabBot.Manager
 {
@@ -47,7 +49,7 @@ namespace BabBot.Manager
         private uint state;
 
         static String ChannelName = null;
-
+        static Dante.ISharedAssembly RemoteObject;
 
         #region External function calls
         [DllImport("kernel32", CharSet = CharSet.Ansi)]
@@ -575,13 +577,44 @@ namespace BabBot.Manager
             try
             {
 
-                RemoteHooking.IpcCreateServer<Dante.DanteInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
+                //RemoteHooking.IpcCreateServer<Dante.DanteInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
                 
                 RemoteHooking.Inject(
                     wow.ProcessId,
                     "Dante.dll",
                     "Dante.dll",
-                    ChannelName);
+                    ProcessManager.WowProcess.ProcessHandle);
+
+                IpcChannel ipcCh = new IpcChannel("ClientChannel");
+                ChannelServices.RegisterChannel(ipcCh, false);
+
+                RemoteObject =
+                   (Dante.ISharedAssembly)Activator.GetObject
+                   (typeof(Dante.ISharedAssembly),
+                    "ipc://localhost:8123/DanteRemoteObj");
+
+                /*
+                IpcChannel ipcCh = new IpcChannel();
+                WellKnownClientTypeEntry remoteType = new WellKnownClientTypeEntry(
+                typeof(Dante.ISharedAssembly),
+                "ipc://localhost:8123/DanteRemoteObj");
+                RemotingConfiguration.RegisterWellKnownClientType(remoteType);
+                //
+                // create a message sink
+                //
+                string objectUri;
+                IMessageSink msgSink = ipcCh.CreateMessageSink("ipc://localhost:8123/DanteRemoteObj", null, out objectUri);
+                if (msgSink != null)
+                {
+                    Console.WriteLine("Type of message sink is {0}", msgSink.ToString());
+                }
+
+                RemoteObject = new Dante.DanteInterface();
+                */
+
+
+
+
             }
             catch (Exception ExtInfo)
             {
@@ -607,13 +640,19 @@ namespace BabBot.Manager
 
         public void RemoteDoString(string command)
         {
-            // TODO: Call the injected DLL
+            try
+            {
+                RemoteObject.DoString(command);
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
         }
 
         public List<string> RemoteGetValues()
         {
-            // TODO: Call the injected DLL
-            return null;
+            return RemoteObject.GetValues();
         }
         
         #endregion

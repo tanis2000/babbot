@@ -6,9 +6,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fasmdll_managed", "..\fasmdll_managed\fasmdll_managed\fasmdll_managed.vcproj", "{61D8CF34-1FD7-4A01-BEC1-1A8E8050A9C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dante", "..\Dante\Dante.csproj", "{57ADA462-12C3-4788-BFE1-498A9F41C30C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0} = {BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
