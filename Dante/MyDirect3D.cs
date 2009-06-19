@@ -160,7 +160,7 @@ namespace Dante
 
             const uint VFTableLength = 119;
             // Allocate space for our new VFTable.
-            var NewVFTable =
+            IntPtr* NewVFTable =
                 (IntPtr*)Kernel32.HeapAlloc(Kernel32.GetProcessHeap(), 0, (UIntPtr)(VFTableLength * sizeof(IntPtr)));
 
             // Copy all of the original function pointers into our new VFTable.
@@ -289,7 +289,7 @@ namespace Dante
             // IDirect3D9 has 17 members.
             const uint VFTableLength = 17;
             // Allocate space for our new VFTable.
-            var NewVFTable =
+            IntPtr* NewVFTable =
                 (IntPtr*) Kernel32.HeapAlloc(Kernel32.GetProcessHeap(), 0, (UIntPtr) (VFTableLength*sizeof (IntPtr)));
 
             // Copy all of the original function pointers into our new VFTable.
