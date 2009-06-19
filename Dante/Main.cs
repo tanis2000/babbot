@@ -1,52 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Channels.Http;
-using EasyHook;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Security;
-using System.Diagnostics;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
-using System.Security.Permissions;
+using System.Threading;
+using EasyHook;
+
 
 namespace Dante
 {
-    public class Main : EasyHook.IEntryPoint
+    public class Main : IEntryPoint
     {
         // WoW Function Addresses
-        private static class Functions
-        {
-            public const uint
-                Lua_DoString = 0x0049AAB0, // 3.1.3
-                Lua_GetLocalizedText = 0x005A82F0, // 3.1.3
-                Lua_Register = 0x004998E0, // 3.1.3
-                Lua_GetTop = 0x0091A8B0, // 3.1.3
-                Lua_ToString = 0x0091ADC0, // 3.1.3
-                Lua_GetState = 0x00499700, // 3.1.3
-                Patch_Offset = 0x00401643; // 3.1.3 this is our codecave
-        }
-        
-        // Common IPC interface
-        private DanteInterface Interface;
-        // Communication queue
-        private Stack<String> Queue = new Stack<String>();
 
-        // Our lua_State
-        private static uint L;
-
-        // Temp test msg
-        private static string msg;
-
-        public static IntPtr WowProcessHandle;
-
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GetCurrentProcess();
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress,
-           byte[] lpBuffer, uint nSize, out int lpNumberOfBytesWritten);
+        #region ProcessAccessFlags enum
 
         [Flags]
         public enum ProcessAccessFlags : uint
@@ -62,11 +30,16 @@ namespace Dante
             QueryInformation = 0x00000400,
             Synchronize = 0x00100000
         }
-        [DllImport("kernel32.dll")]
-        static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
-           uint dwProcessId);
+
+        #endregion
+
+        private static readonly CommandHandlerDelegate CommandHandler = InputHandler;
 
         private static int BytesWritten;
+        public static IntPtr CommandHandlerPtr = Marshal.GetFunctionPointerForDelegate(CommandHandler);
+        private static uint L;
+        private static Lua_DoStringDelegate Lua_DoString;
+        private static Lua_GetStateDelegate Lua_GetState;
 
 
         /*
@@ -83,39 +56,62 @@ namespace Dante
             naked: caller removes args, no name decoration. Commonly used when writing asm code.
         */
 
+        private static Lua_GetTopDelegate Lua_GetTop;
+        private static Lua_RegisterDelegate Lua_Register;
+        private static Lua_ToStringDelegate Lua_ToString;
+        private static string msg;
+
+        public static List<string> Values = new List<string>();
+        public static IntPtr WowProcessHandle;
+        private DanteInterface Interface;
+        // Communication queue
+        private Stack<String> Queue = new Stack<String>();
+
         #region delegates
+
+        #region Nested type: CommandHandlerDelegate
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int CommandHandlerDelegate(uint luaState);
 
-        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        private delegate void Lua_RegisterDelegate(string name, IntPtr function);
+        #endregion
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint Lua_GetTopDelegate(uint luaState);
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate string Lua_ToStringDelegate(uint luaState, uint idx, uint length);
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint Lua_GetStateDelegate();
+        #region Nested type: Lua_DoStringDelegate
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void Lua_DoStringDelegate(string command, string filename, uint pState);
 
         #endregion
 
+        #region Nested type: Lua_GetStateDelegate
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate uint Lua_GetStateDelegate();
 
-        private static Lua_RegisterDelegate Lua_Register;
-        private static Lua_GetTopDelegate Lua_GetTop;
-        private static Lua_ToStringDelegate Lua_ToString;
-        private static Lua_GetStateDelegate Lua_GetState;
-        private static Lua_DoStringDelegate Lua_DoString;
-        private static CommandHandlerDelegate CommandHandler = InputHandler;
-        public static IntPtr CommandHandlerPtr = Marshal.GetFunctionPointerForDelegate(CommandHandler);
+        #endregion
 
-        public static List<string> Values = new List<string>();
+        #region Nested type: Lua_GetTopDelegate
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate uint Lua_GetTopDelegate(uint luaState);
+
+        #endregion
+
+        #region Nested type: Lua_RegisterDelegate
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        private delegate void Lua_RegisterDelegate(string name, IntPtr function);
+
+        #endregion
+
+        #region Nested type: Lua_ToStringDelegate
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate string Lua_ToStringDelegate(uint luaState, uint idx, uint length);
+
+        #endregion
+
+        #endregion
 
         public Main(
             RemoteHooking.IContext InContext,
@@ -126,43 +122,71 @@ namespace Dante
             Log.Debug(string.Format("ProcessHandle: {0}", WowProcessHandle));
         }
 
-        public void Run(
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetCurrentProcess();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress,
+                                                      byte[] lpBuffer, uint nSize, out int lpNumberOfBytesWritten);
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess,
+                                                 [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
+                                                 uint dwProcessId);
+
+        public unsafe void Run(
             RemoteHooking.IContext InContext,
             IntPtr processHandle)
         {
             Log.Debug("Run()");
             msg = "";
             // wait for host process termination...
-            
+
             try
             {
+
+                try
+                {
+                    Log.Debug(string.Format("Creating Direct3DCreate9Hook..."));
+                    Direct3DCreate9Hook = LocalHook.Create(LocalHook.GetProcAddress("D3D9.DLL", "Direct3DCreate9"),
+                                                new Direct3DCreate9Delegate(MyDirect3DCreate9),
+                                                this);
+
+                    Log.Debug(string.Format("SetExclusiveACL on Direct3DCreate9Hook..."));
+                    Direct3DCreate9Hook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
+                }
+                catch (Exception e)
+                {
+                    Log.Debug(string.Format("Exception on Direct3DCreate9Hook: " + e.Message));
+                }
+
                 // Start the server stuff
                 Log.Debug(string.Format("Waking up process.."));
                 RemoteHooking.WakeUpProcess();
 
-                Dictionary<string, string> props = new Dictionary<string, string>();  
+                var props = new Dictionary<string, string>();
                 props.Add("authorizedGroup", "Everyone");
-                props.Add("portName", "localhost:8123");  
+                props.Add("portName", "localhost:8123");
                 props.Add("exclusiveAddressUse", "false");
                 //IPC port name
                 Log.Debug(string.Format("Creating new channel.."));
-                IpcChannel ipcCh = new IpcChannel(props, null, null);
+                var ipcCh = new IpcChannel(props, null, null);
 
                 Log.Debug(string.Format("Registering Service.."));
                 ChannelServices.RegisterChannel(ipcCh, false);
 
                 Log.Debug(string.Format("IPC Channel Name: {0}", ipcCh.ChannelName));
                 Log.Debug(string.Format("IPC Channel Priority: {0}.", ipcCh.ChannelPriority));
-                ChannelDataStore channelData = (ChannelDataStore)ipcCh.ChannelData;
+                var channelData = (ChannelDataStore) ipcCh.ChannelData;
                 foreach (string uri in channelData.ChannelUris)
                 {
                     Log.Debug(string.Format("Channel URI is {0}.", uri));
                 }
 
                 RemotingConfiguration.RegisterWellKnownServiceType
-                   (typeof(Dante.DanteInterface),
-                           "DanteRemoteObj",
-                           WellKnownObjectMode.SingleCall);
+                    (typeof (DanteInterface),
+                     "DanteRemoteObj",
+                     WellKnownObjectMode.SingleCall);
 
                 string[] urls = ipcCh.GetUrlsForUri("DanteRemoteObj");
                 if (urls.Length > 0)
@@ -177,16 +201,26 @@ namespace Dante
 
 
                 Log.Debug(string.Format("Registering LUA functions.."));
-                Lua_Register = (Lua_RegisterDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_Register, typeof(Lua_RegisterDelegate));
-                Lua_GetTop = (Lua_GetTopDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_GetTop, typeof(Lua_GetTopDelegate));
-                Lua_ToString = (Lua_ToStringDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_ToString, typeof(Lua_ToStringDelegate));
-                Lua_GetState = (Lua_GetStateDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_GetState, typeof(Lua_GetStateDelegate));
-                Lua_DoString = (Lua_DoStringDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)Functions.Lua_DoString, typeof(Lua_DoStringDelegate));
+                Lua_Register =
+                    (Lua_RegisterDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_Register, typeof (Lua_RegisterDelegate));
+                Lua_GetTop =
+                    (Lua_GetTopDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_GetTop, typeof (Lua_GetTopDelegate));
+                Lua_ToString =
+                    (Lua_ToStringDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_ToString, typeof (Lua_ToStringDelegate));
+                Lua_GetState =
+                    (Lua_GetStateDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_GetState, typeof (Lua_GetStateDelegate));
+                Lua_DoString =
+                    (Lua_DoStringDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_DoString, typeof (Lua_DoStringDelegate));
 
                 // Init the lua_State
                 L = Lua_GetState();
                 Log.Debug(string.Format("GetState returned {0:X}", L));
-                
+
 
                 //Log.Debug(string.Format("Patching WoW.. CommandHandler: {0:X}", (uint)CommandHandlerPtr));
                 //int bw = SetFunctionPtr(CommandHandlerPtr);
@@ -194,7 +228,7 @@ namespace Dante
 
 
                 Log.Debug(string.Format("Registering our InputHandler.."));
-                Lua_Register("InputHandler", (IntPtr)Functions.Patch_Offset); // This is the code hole we want to use
+                Lua_Register("InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
 
                 while (true)
                 {
@@ -214,19 +248,46 @@ namespace Dante
             Lua_DoString(string.Format("InputHandler({0})", lua), "BabBot.lua", 0);
             object tmp;
 
-            if (Values[(int)retVal] == "nil")
-                return default(T);
-
-            if (typeof(T) == typeof(bool))
+            if (Values[(int) retVal] == "nil")
             {
-                tmp = Values[(int)retVal] == "1" || Values[(int)retVal].ToLower() == "true";
+                return default(T);
+            }
+
+            if (typeof (T) == typeof (bool))
+            {
+                tmp = Values[(int) retVal] == "1" || Values[(int) retVal].ToLower() == "true";
             }
             else
             {
-                tmp = (T)Convert.ChangeType(Values[(int)retVal], typeof(T));
+                tmp = (T) Convert.ChangeType(Values[(int) retVal], typeof (T));
             }
-            return (T)tmp;
+            return (T) tmp;
+            
         }
+
+        #region DirectX
+
+        private LocalHook Direct3DCreate9Hook;
+        private IDirect3D9 IDirect3D9;
+
+        // This is our fake version of Direct3DCreate9.  We call the real one but this let's us grab the IDirect3D pointer.
+        private static unsafe D3D9.IDirect3D9* MyDirect3DCreate9(ushort SdkVersion)
+        {
+            // Since this function is static we need to get a reference to "this".
+            Main This = (Main)HookRuntimeInfo.Callback;
+
+            // Create one of our custom IDirect3D9 objects (which insantiates a real one and passes most calls through to it).
+            This.IDirect3D9 = new IDirect3D9(SdkVersion);
+
+            // Return the IDirect3D9 pointer.
+            return This.IDirect3D9.NativeIDirect3D9;
+        }
+
+        // This is the wrapping that let's us give Win32 a delegate instead of a function pointer.
+        [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true)]
+        private unsafe delegate D3D9.IDirect3D9* Direct3DCreate9Delegate(ushort SdkVersion);
+
+        #endregion
 
 
         #region LUA
@@ -255,40 +316,69 @@ namespace Dante
         public static int SetFunctionPtr(IntPtr pointer)
         {
             bool ReturnVal;
-            uint p = (uint)pointer - Functions.Patch_Offset - 5;
-            byte[] buf = new byte[4];
-            byte[] buf2 = new byte[1];
+            uint p = (uint) pointer - Functions.Patch_Offset - 5;
+            var buf = new byte[4];
+            var buf2 = new byte[1];
             buf2[0] = 0xE9;
-            buf[3] = (byte)((p & 0xFF000000) >> 24);
-            buf[2] = (byte)((p & 0xFF0000) >> 16);
-            buf[1] = (byte)((p & 0xFF00) >> 8);
-            buf[0] = (byte)((p & 0xFF));
+            buf[3] = (byte) ((p & 0xFF000000) >> 24);
+            buf[2] = (byte) ((p & 0xFF0000) >> 16);
+            buf[1] = (byte) ((p & 0xFF00) >> 8);
+            buf[0] = (byte) ((p & 0xFF));
 
             IntPtr hProcess = GetCurrentProcess(); // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            Log.Debug(string.Format("SetFunctionPtr -> hProcess = {0:X}", (uint)hProcess));
+            Log.Debug(string.Format("SetFunctionPtr -> hProcess = {0:X}", (uint) hProcess));
 
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)Functions.Patch_Offset, buf2, 1, out BytesWritten);
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)(Functions.Patch_Offset+1), buf, 4, out BytesWritten);
+            ReturnVal = WriteProcessMemory(hProcess, (IntPtr) Functions.Patch_Offset, buf2, 1, out BytesWritten);
+            ReturnVal = WriteProcessMemory(hProcess, (IntPtr) (Functions.Patch_Offset + 1), buf, 4, out BytesWritten);
             return BytesWritten;
         }
 
         public static int RestoreFunctionPtr()
         {
             bool ReturnVal;
-            byte[] buf = new byte[5];
+            var buf = new byte[5];
             buf[0] = buf[1] = buf[2] = buf[3] = buf[4] = 0xCC;
 
             IntPtr hProcess = GetCurrentProcess(); // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            Log.Debug(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", (uint)hProcess));
+            Log.Debug(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", (uint) hProcess));
 
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)Functions.Patch_Offset, buf, 5, out BytesWritten);
+            ReturnVal = WriteProcessMemory(hProcess, (IntPtr) Functions.Patch_Offset, buf, 5, out BytesWritten);
             return BytesWritten;
         }
 
         #endregion
 
+        #region Nested type: Functions
 
+        private static class Functions
+        {
+            public const uint
+                Lua_DoString = 0x0049AAB0,
+                // 3.1.3
+                Lua_GetLocalizedText = 0x005A82F0; // 3.1.3 this is our codecave
+
+            public const uint
+                // 3.1.3
+                Lua_GetState = 0x00499700; // 3.1.3 this is our codecave
+
+            public const uint
+                // 3.1.3
+                Lua_GetTop = 0x0091A8B0; // 3.1.3 this is our codecave
+
+            public const uint
+                Lua_Register = 0x004998E0; // 3.1.3 this is our codecave
+
+            public const uint
+                // 3.1.3
+                Lua_ToString = 0x0091ADC0; // 3.1.3 this is our codecave
+
+            public const uint
+                // 3.1.3
+                Patch_Offset = 0x00401643; // 3.1.3 this is our codecave
+        }
+
+        #endregion
     }
 }
