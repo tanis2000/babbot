@@ -426,7 +426,8 @@ namespace BabBot.Manager
 
         public static void InitializeCaronte()
         {
-            Caronte.Init(Player.GetCurrentMapContinent());
+            //Caronte.Init(Player.GetCurrentMapContinent());
+            Caronte.Init("Azeroth"); // temporary fix to get things running while debugging LUA
 
             // We generate a fake path once to initialize the chunk loader stuff
             //Pather.Graph.Path path = ProcessManager.Caronte.CalculatePath(new Pather.Graph.Location(Player.Location.X, Player.Location.Y, Player.Location.Z), 

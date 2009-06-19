@@ -11,7 +11,7 @@ namespace Dante
             {
                 using (TextWriter streamWriter = new StreamWriter(@"c:\tmp\DanteLog.txt", true))
                 {
-                    streamWriter.WriteLine(string.Format("[{0}] {1}", DateTime.Now.TimeOfDay, msg));
+                    streamWriter.WriteLine(string.Format("[{0:HH:mm:ss}] {1}", DateTime.Now, msg));
                 }
             }
             catch

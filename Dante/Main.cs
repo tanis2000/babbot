@@ -59,13 +59,9 @@ namespace Dante
         private static Lua_GetTopDelegate Lua_GetTop;
         private static Lua_RegisterDelegate Lua_Register;
         private static Lua_ToStringDelegate Lua_ToString;
-        private static string msg;
 
         public static List<string> Values = new List<string>();
         public static IntPtr WowProcessHandle;
-        private DanteInterface Interface;
-        // Communication queue
-        private Stack<String> Queue = new Stack<String>();
 
         #region delegates
 
@@ -139,7 +135,6 @@ namespace Dante
             IntPtr processHandle)
         {
             Log.Debug("Run()");
-            msg = "";
             // wait for host process termination...
 
             try
@@ -164,10 +159,12 @@ namespace Dante
                 Log.Debug(string.Format("Waking up process.."));
                 RemoteHooking.WakeUpProcess();
 
-                var props = new Dictionary<string, string>();
-                props.Add("authorizedGroup", "Everyone");
-                props.Add("portName", "localhost:8123");
-                props.Add("exclusiveAddressUse", "false");
+                var props = new Dictionary<string, string>
+                                {
+                                    {"authorizedGroup", "Everyone"},
+                                    {"portName", "localhost:8123"},
+                                    {"exclusiveAddressUse", "false"}
+                                };
                 //IPC port name
                 Log.Debug(string.Format("Creating new channel.."));
                 var ipcCh = new IpcChannel(props, null, null);
@@ -189,16 +186,18 @@ namespace Dante
                      WellKnownObjectMode.SingleCall);
 
                 string[] urls = ipcCh.GetUrlsForUri("DanteRemoteObj");
-                if (urls.Length > 0)
+                if (urls != null)
                 {
-                    string objectUrl = urls[0];
-                    string objectUri;
-                    string channelUri = ipcCh.Parse(objectUrl, out objectUri);
-                    Log.Debug(string.Format("The object URI is {0}.", objectUri));
-                    Log.Debug(string.Format("The channel URI is {0}.", channelUri));
-                    Log.Debug(string.Format("The object URL is {0}.", objectUrl));
+                    if (urls.Length > 0)
+                    {
+                        string objectUrl = urls[0];
+                        string objectUri;
+                        string channelUri = ipcCh.Parse(objectUrl, out objectUri);
+                        Log.Debug(string.Format("The object URI is {0}.", objectUri));
+                        Log.Debug(string.Format("The channel URI is {0}.", channelUri));
+                        Log.Debug(string.Format("The object URL is {0}.", objectUrl));
+                    }
                 }
-
 
                 Log.Debug(string.Format("Registering LUA functions.."));
                 Lua_Register =
@@ -232,7 +231,7 @@ namespace Dante
 
                 while (true)
                 {
-                    Thread.Sleep(25);
+                    Thread.Sleep(250);
                 }
             }
             catch (Exception e)
@@ -299,8 +298,6 @@ namespace Dante
 
         public static int InputHandler(uint luaState)
         {
-            msg = "dump!";
-
             Values.Clear();
             uint n = Lua_GetTop(luaState);
             //Log.Debug(string.Format("LUA_State: {0:X}", luaState));
