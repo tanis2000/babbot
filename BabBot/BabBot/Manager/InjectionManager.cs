@@ -50,6 +50,7 @@ namespace BabBot.Manager
 
         static String ChannelName = null;
         static Dante.ISharedAssembly RemoteObject;
+        public bool Injected = false;
 
         #region External function calls
         [DllImport("kernel32", CharSet = CharSet.Ansi)]
@@ -333,7 +334,7 @@ namespace BabBot.Manager
         public void CastSpellByName(string name, bool onSelf)
         {
             ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", name));
-            string castTime = ProcessManager.Injector.Lua_GetLocalizedText("castTime");
+            string castTime = ProcessManager.Injector.Lua_GetLocalizedText(6);
 
             // empty cast time means we do not know that spell
             if (castTime == "") return;
@@ -477,6 +478,9 @@ namespace BabBot.Manager
 
         #region LUA
 
+        /*
+         * This stuff is no longer used. We call the methods from the injected DLL
+         * 
         /// <summary>
         /// Execute a LUA command in the game. This will not return values from LUA functions.
         /// </summary>
@@ -569,16 +573,15 @@ namespace BabBot.Manager
 
             return sResult;
         }
-
+        */
         
 
         public void InjectLua()
         {
             try
             {
-
-                //RemoteHooking.IpcCreateServer<Dante.DanteInterface>(ref ChannelName, WellKnownObjectMode.SingleCall);
-                
+                if (Injected) return;
+               
                 RemoteHooking.Inject(
                     wow.ProcessId,
                     "Dante.dll",
@@ -593,27 +596,11 @@ namespace BabBot.Manager
                    (typeof(Dante.ISharedAssembly),
                     "ipc://localhost:8123/DanteRemoteObj");
 
-                /*
-                IpcChannel ipcCh = new IpcChannel();
-                WellKnownClientTypeEntry remoteType = new WellKnownClientTypeEntry(
-                typeof(Dante.ISharedAssembly),
-                "ipc://localhost:8123/DanteRemoteObj");
-                RemotingConfiguration.RegisterWellKnownClientType(remoteType);
-                //
-                // create a message sink
-                //
-                string objectUri;
-                IMessageSink msgSink = ipcCh.CreateMessageSink("ipc://localhost:8123/DanteRemoteObj", null, out objectUri);
-                if (msgSink != null)
-                {
-                    Console.WriteLine("Type of message sink is {0}", msgSink.ToString());
-                }
+                Thread.Sleep(200);
+                RemoteObject.Patch();
 
-                RemoteObject = new Dante.DanteInterface();
-                */
-
-
-
+                Injected = true;
+                Console.WriteLine("Dante injected");
 
             }
             catch (Exception ExtInfo)
@@ -623,19 +610,13 @@ namespace BabBot.Manager
 
         }
 
-        public void PatchCode(IntPtr pointer)
+        /// <summary>
+        /// Wrapper for the RemoteDoString function.
+        /// </summary>
+        /// <param name="command"></param>
+        public void Lua_DoString(string command)
         {
-            try
-            {
-                wow.WriteByte(0x00401643, 0xE9); // jmp near (5 bytes)
-                wow.WriteUInt(0x00401644, (uint)pointer - 0x00401643 - 5);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
-
+            RemoteDoString(command);
         }
 
         public void RemoteDoString(string command)
@@ -648,6 +629,16 @@ namespace BabBot.Manager
             {
                 throw (e);
             }
+        }
+
+        public string Lua_GetLocalizedText(int position)
+        {
+            List<string> values = RemoteGetValues();
+            if (values.Count > position)
+            {
+                return values[position];
+            }
+            return "";
         }
 
         public List<string> RemoteGetValues()

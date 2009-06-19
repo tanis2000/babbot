@@ -412,6 +412,7 @@ namespace BabBot.Manager
                 }
                 FindTLS();
                 InitializeObjectManager();
+                Injector.InjectLua();
                 InitializeCaronte();
                 ScriptHost.Start();
                 StateManager.Instance.Stop();

@@ -11,9 +11,16 @@ namespace Dante
 
         public static void Debug(string msg)
         {
-            using (TextWriter streamWriter = new StreamWriter(@"c:\tmp\DanteLog.txt", true))
+            try
             {
-                streamWriter.WriteLine(string.Format("[{0}] {1}", DateTime.Now.TimeOfDay, msg));
+                using (TextWriter streamWriter = new StreamWriter(@"c:\tmp\DanteLog.txt", true))
+                {
+                    streamWriter.WriteLine(string.Format("[{0}] {1}", DateTime.Now.TimeOfDay, msg));
+                }
+            }
+            catch
+            {
+                // someone could be writing to our file.. we just discard this log line for now
             }
         }
     }

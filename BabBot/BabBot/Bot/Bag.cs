@@ -62,7 +62,7 @@ namespace BabBot.Bot
         private string GetContainerItemLink(int slot)
         {
             ProcessManager.Injector.Lua_DoString(string.Format("ItemLink = GetContainerItemLink({0}, {1});", BagID, slot));
-            string local = ProcessManager.Injector.Lua_GetLocalizedText("ItemLink");
+            string local = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
             // |cff9d9d9d|Hitem:7073:0:0:0:0:0:0:0|h[Broken Fang]|h|r
             if (local != "")
@@ -94,7 +94,7 @@ namespace BabBot.Bot
             get
             {
                 ProcessManager.Injector.Lua_DoString(string.Format("bagName = GetBagName({0});", BagID));
-                return ProcessManager.Injector.Lua_GetLocalizedText("bagName");
+                return ProcessManager.Injector.Lua_GetLocalizedText(0);
             }
         }
 
@@ -106,7 +106,7 @@ namespace BabBot.Bot
             get
             {
                 ProcessManager.Injector.Lua_DoString(string.Format("numberOfSlots = GetContainerNumSlots({0});", BagID));
-                string local = ProcessManager.Injector.Lua_GetLocalizedText("numberOfSlots");
+                string local = ProcessManager.Injector.Lua_GetLocalizedText(0);
                 return Convert.ToInt32(local);
             }
         }
@@ -119,7 +119,7 @@ namespace BabBot.Bot
             get
             {
                 ProcessManager.Injector.Lua_DoString(string.Format("numberOfFreeSlots, BagType = GetContainerNumFreeSlots({0});", BagID));
-                string local = ProcessManager.Injector.Lua_GetLocalizedText("numberOfFreeSlots");
+                string local = ProcessManager.Injector.Lua_GetLocalizedText(0);
                 return Convert.ToInt32(local);
             }
         }

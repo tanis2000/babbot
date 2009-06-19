@@ -42,7 +42,7 @@ namespace BabBot.Bot
             get
             {
                 ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", Name));
-                string cost = ProcessManager.Injector.Lua_GetLocalizedText("cost");
+                string cost = ProcessManager.Injector.Lua_GetLocalizedText(3);
 
                 return Convert.ToInt32(cost);
             }
@@ -53,7 +53,7 @@ namespace BabBot.Bot
             get
             {
                 ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", Name));
-                string castTime = ProcessManager.Injector.Lua_GetLocalizedText("castTime");
+                string castTime = ProcessManager.Injector.Lua_GetLocalizedText(6);
 
                 return Convert.ToInt32(castTime); // milliseconds
             }
@@ -62,7 +62,7 @@ namespace BabBot.Bot
         public bool IsOnCooldown()
         {
             ProcessManager.Injector.Lua_DoString(string.Format("start, duration, enabled = GetSpellCooldown(\"{0}\");", Name));
-            string duration = ProcessManager.Injector.Lua_GetLocalizedText("duration");
+            string duration = ProcessManager.Injector.Lua_GetLocalizedText(1);
 
             return duration == "0" ? false : true;
         }

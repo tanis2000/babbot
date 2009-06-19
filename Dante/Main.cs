@@ -24,7 +24,8 @@ namespace Dante
                 Lua_Register = 0x004998E0, // 3.1.3
                 Lua_GetTop = 0x0091A8B0, // 3.1.3
                 Lua_ToString = 0x0091ADC0, // 3.1.3
-                Lua_GetState = 0x00499700; // 3.1.3
+                Lua_GetState = 0x00499700, // 3.1.3
+                Patch_Offset = 0x00401643; // 3.1.3 this is our codecave
         }
         
         // Common IPC interface
@@ -112,7 +113,7 @@ namespace Dante
         private static Lua_GetStateDelegate Lua_GetState;
         private static Lua_DoStringDelegate Lua_DoString;
         private static CommandHandlerDelegate CommandHandler = InputHandler;
-
+        public static IntPtr CommandHandlerPtr = Marshal.GetFunctionPointerForDelegate(CommandHandler);
 
         public static List<string> Values = new List<string>();
 
@@ -185,15 +186,15 @@ namespace Dante
                 // Init the lua_State
                 L = Lua_GetState();
                 Log.Debug(string.Format("GetState returned {0:X}", L));
-                IntPtr CommandHandlerPtr = Marshal.GetFunctionPointerForDelegate(CommandHandler);
+                
 
-                Log.Debug(string.Format("Patching WoW.. CommandHandler: {0:X}", (uint)CommandHandlerPtr));
-                int bw = SetFunctionPtr(CommandHandlerPtr);
-                Log.Debug(string.Format("Bytes written: {0}", bw));
+                //Log.Debug(string.Format("Patching WoW.. CommandHandler: {0:X}", (uint)CommandHandlerPtr));
+                //int bw = SetFunctionPtr(CommandHandlerPtr);
+                //Log.Debug(string.Format("Bytes written: {0}", bw));
 
 
                 Log.Debug(string.Format("Registering our InputHandler.."));
-                Lua_Register("InputHandler", (IntPtr)0x00401643); // This is the code hole we want to use
+                Lua_Register("InputHandler", (IntPtr)Functions.Patch_Offset); // This is the code hole we want to use
 
                 while (true)
                 {
@@ -227,30 +228,26 @@ namespace Dante
             return (T)tmp;
         }
 
-        public static void DoString(string command) 
+
+        #region LUA
+
+        public static void DoString(string command)
         {
             Lua_DoString(string.Format("InputHandler({0})", command), "BabBot.lua", 0);
         }
 
-        #region LUA
-
-
         public static int InputHandler(uint luaState)
         {
-            try
-            {
-                msg = "dump!";
+            msg = "dump!";
 
-                Values.Clear();
-                uint n = Lua_GetTop(luaState);
-                for (uint i = 1; i <= n; i++)
-                {
-                    string res = Lua_ToString(luaState, i, 0);
-                    Values.Add(res);
-                }
-            } catch (Exception e)
+            Values.Clear();
+            uint n = Lua_GetTop(luaState);
+            //Log.Debug(string.Format("LUA_State: {0:X}", luaState));
+            //Log.Debug(string.Format("Vars num: {0}", n));
+            for (uint i = 1; i <= n; i++)
             {
-                Log.Debug(e.ToString());
+                string res = Lua_ToString(luaState, i, 0);
+                Values.Add(res);
             }
             return 0;
         }
@@ -258,7 +255,7 @@ namespace Dante
         public static int SetFunctionPtr(IntPtr pointer)
         {
             bool ReturnVal;
-            uint p = (uint)pointer - 0x00401643 - 5;
+            uint p = (uint)pointer - Functions.Patch_Offset - 5;
             byte[] buf = new byte[4];
             byte[] buf2 = new byte[1];
             buf2[0] = 0xE9;
@@ -271,8 +268,22 @@ namespace Dante
 
             Log.Debug(string.Format("SetFunctionPtr -> hProcess = {0:X}", (uint)hProcess));
 
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)0x00401643, buf2, 1, out BytesWritten);
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)0x00401644, buf, 4, out BytesWritten);
+            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)Functions.Patch_Offset, buf2, 1, out BytesWritten);
+            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)(Functions.Patch_Offset+1), buf, 4, out BytesWritten);
+            return BytesWritten;
+        }
+
+        public static int RestoreFunctionPtr()
+        {
+            bool ReturnVal;
+            byte[] buf = new byte[5];
+            buf[0] = buf[1] = buf[2] = buf[3] = buf[4] = 0xCC;
+
+            IntPtr hProcess = GetCurrentProcess(); // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
+
+            Log.Debug(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", (uint)hProcess));
+
+            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)Functions.Patch_Offset, buf, 5, out BytesWritten);
             return BytesWritten;
         }
 

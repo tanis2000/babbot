@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -101,7 +101,6 @@
     <Compile Include="Common\WindowSize.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ISharedAssembly.cs" />
-    <Compile Include="OldDanteInterface.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>

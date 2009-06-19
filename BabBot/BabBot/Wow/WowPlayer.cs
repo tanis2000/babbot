@@ -320,7 +320,7 @@ namespace BabBot.Wow
         public bool IsInCombat()
         {
             ProcessManager.Injector.Lua_DoString("incombat = InCombatLockdown();");
-            string incombat = ProcessManager.Injector.Lua_GetLocalizedText("incombat");
+            string incombat = ProcessManager.Injector.Lua_GetLocalizedText(0);
             if (incombat == "1") return true; else return false;
         }
 
@@ -1074,8 +1074,8 @@ namespace BabBot.Wow
         /// <returns>id of the continent</returns>
         public int GetCurrentMapContinentId()
         {
-            ProcessManager.Injector.Lua_DoString("SetMapToCurrentZone(); continent = GetCurrentMapContinent();");
-            string sId = ProcessManager.Injector.Lua_GetLocalizedText("continent");
+            ProcessManager.Injector.Lua_DoString("SetMapToCurrentZone(); local continent = GetCurrentMapContinent();"); // 
+            string sId = ProcessManager.Injector.Lua_GetLocalizedText(0);
             return Convert.ToInt32(sId);
         }
 
@@ -1136,14 +1136,14 @@ namespace BabBot.Wow
         {
             // TODO: find a way to read if we are attacking without checking the action bar
             ProcessManager.Injector.Lua_DoString("action = IsCurrentAction(1);");
-            string action = ProcessManager.Injector.Lua_GetLocalizedText("action");
+            string action = ProcessManager.Injector.Lua_GetLocalizedText(0);
             if (action == "1") return true; else return false;
         }
 
         public bool CanCast(string iName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", iName));
-            string cost = ProcessManager.Injector.Lua_GetLocalizedText("cost");
+            string cost = ProcessManager.Injector.Lua_GetLocalizedText(3);
 
             // If we cannot get the info it means we don't know this spell
             if (cost == "") return false;
@@ -1194,7 +1194,7 @@ namespace BabBot.Wow
             ";
 
             ProcessManager.Injector.Lua_DoString(string.Format(luaScript, item));
-            string found = ProcessManager.Injector.Lua_GetLocalizedText("babbot_found");
+            string found = ProcessManager.Injector.Lua_GetLocalizedText(0);
             if (found == "")
             {
                 return false;
@@ -1256,14 +1256,14 @@ namespace BabBot.Wow
         public bool HasBuff(string iName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitBuff(\"player\", \"{0}\")", iName));
-            string name = ProcessManager.Injector.Lua_GetLocalizedText("name");
+            string name = ProcessManager.Injector.Lua_GetLocalizedText(0);
             if (name == "") return false; else return true;
         }
 
         public bool HasDebuff(string iName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitDebuff(\"player\", \"{0}\")", iName));
-            string name = ProcessManager.Injector.Lua_GetLocalizedText("name");
+            string name = ProcessManager.Injector.Lua_GetLocalizedText(0);
             if (name == "") return false; else return true;
         }
 
@@ -1300,10 +1300,10 @@ namespace BabBot.Wow
         public bool IsCasting()
         {
             ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(\"player\")"));
-            string spell = ProcessManager.Injector.Lua_GetLocalizedText("spell");
+            string spell = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
             ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitChannelInfo(\"player\")"));
-            string channel = ProcessManager.Injector.Lua_GetLocalizedText("spell");
+            string channel = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
             if (channel == "" && spell == "") return false; else return true;
         }
@@ -1311,10 +1311,10 @@ namespace BabBot.Wow
         public bool IsCasting(string spellName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(\"player\")"));
-            string spell = ProcessManager.Injector.Lua_GetLocalizedText("spell");
+            string spell = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
             ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitChannelInfo(\"player\")"));
-            string channel = ProcessManager.Injector.Lua_GetLocalizedText("spell");
+            string channel = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
             if (channel == spellName ||  spell == spellName) return true; else return false;
         }
@@ -1322,9 +1322,9 @@ namespace BabBot.Wow
         public Item GetMerchantItemInfo(int idx)
         {
             ProcessManager.Injector.Lua_DoString(string.Format("name, texture, price, quantity, numAvailable, isUsable, extendedCost = GetMerchantItemInfo({0})", idx));
-            string name = ProcessManager.Injector.Lua_GetLocalizedText("name");
-            string price = ProcessManager.Injector.Lua_GetLocalizedText("price");
-            string quantity = ProcessManager.Injector.Lua_GetLocalizedText("quantity");
+            string name = ProcessManager.Injector.Lua_GetLocalizedText(0);
+            string price = ProcessManager.Injector.Lua_GetLocalizedText(2);
+            string quantity = ProcessManager.Injector.Lua_GetLocalizedText(3);
             Item item = new Item(name, 0, 0);
             item.Price = Convert.ToInt32(price);
             item.Quantity = Convert.ToInt32(quantity);

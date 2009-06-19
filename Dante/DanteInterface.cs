@@ -24,6 +24,10 @@ namespace Dante
         {
             try {
                 Log.Debug(string.Format("Calling GetValues"));
+                foreach (string s in Main.Values)
+                {
+                    Log.Debug("[" + s + "]");
+                }
                 return Main.Values;
             }
             catch (Exception e)
@@ -33,6 +37,18 @@ namespace Dante
             return new List<string>();
         }
 
+        public void Patch()
+        {
+            Log.Debug(string.Format("Patching WoW.. CommandHandler: {0:X}", (uint)Main.CommandHandlerPtr));
+            int bw = Main.SetFunctionPtr(Main.CommandHandlerPtr);
+            Log.Debug(string.Format("Bytes written: {0}", bw));
+        }
 
+        public void RestorePatch()
+        {
+            Log.Debug(string.Format("Patching WoW.. restoring patched CommandHandler"));
+            int bw = Main.RestoreFunctionPtr();
+            Log.Debug(string.Format("Bytes written: {0}", bw));
+        }
     }
 }

@@ -6,5 +6,7 @@ namespace Dante
     {
         void DoString(string command);
         List<string> GetValues();
+        void Patch();
+        void RestorePatch();
     }
 }
