@@ -17,6 +17,7 @@
     Copyright 2009 BabBot Team -
 */
 using System;
+using System.IO;
 using System.Windows.Forms;
 using BabBot.Common;
 using BabBot.Forms;
@@ -33,6 +34,7 @@ namespace BabBot
         {
             try
             {
+                // string exePath = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
                 EasyHook.Config.Register(
                     "Dante.",
                     "Dante.dll");
