@@ -152,6 +152,7 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnInputHandler = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -1210,6 +1211,7 @@
             // 
             // tabPageDebug2
             // 
+            this.tabPageDebug2.Controls.Add(this.btnInputHandler);
             this.tabPageDebug2.Controls.Add(this.btnInjectDll);
             this.tabPageDebug2.Controls.Add(this.btnGetLuaText);
             this.tabPageDebug2.Controls.Add(this.tbLuaVariable);
@@ -1242,7 +1244,7 @@
             // 
             // btnGetLuaText
             // 
-            this.btnGetLuaText.Location = new System.Drawing.Point(227, 188);
+            this.btnGetLuaText.Location = new System.Drawing.Point(360, 188);
             this.btnGetLuaText.Name = "btnGetLuaText";
             this.btnGetLuaText.Size = new System.Drawing.Size(75, 23);
             this.btnGetLuaText.TabIndex = 16;
@@ -1252,7 +1254,7 @@
             // 
             // tbLuaVariable
             // 
-            this.tbLuaVariable.Location = new System.Drawing.Point(121, 190);
+            this.tbLuaVariable.Location = new System.Drawing.Point(254, 190);
             this.tbLuaVariable.Name = "tbLuaVariable";
             this.tbLuaVariable.Size = new System.Drawing.Size(100, 20);
             this.tbLuaVariable.TabIndex = 15;
@@ -1272,7 +1274,7 @@
             this.btnDoString.Name = "btnDoString";
             this.btnDoString.Size = new System.Drawing.Size(100, 23);
             this.btnDoString.TabIndex = 13;
-            this.btnDoString.Text = "Execute LUA";
+            this.btnDoString.Text = "DoString";
             this.btnDoString.UseVisualStyleBackColor = true;
             this.btnDoString.Click += new System.EventHandler(this.btnDoString_Click);
             // 
@@ -1351,6 +1353,16 @@
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(62, 17);
             this.statusLabel.Text = "statusLabel";
+            // 
+            // btnInputHandler
+            // 
+            this.btnInputHandler.Location = new System.Drawing.Point(121, 188);
+            this.btnInputHandler.Name = "btnInputHandler";
+            this.btnInputHandler.Size = new System.Drawing.Size(100, 23);
+            this.btnInputHandler.TabIndex = 18;
+            this.btnInputHandler.Text = "InputHandler";
+            this.btnInputHandler.UseVisualStyleBackColor = true;
+            this.btnInputHandler.Click += new System.EventHandler(this.btnInputHandler_Click);
             // 
             // MainForm
             // 
@@ -1522,6 +1534,7 @@
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.Button btnInjectDll;
         private System.Windows.Forms.RichTextBox txtConsole;
+        private System.Windows.Forms.Button btnInputHandler;
     }
 }
 

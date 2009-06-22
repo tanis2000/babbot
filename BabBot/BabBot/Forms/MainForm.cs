@@ -483,8 +483,12 @@ namespace BabBot.Forms
 
         private void btnDoString_Click(object sender, EventArgs e)
         {
-            //ProcessManager.Injector.Lua_DoString(tbLuaScript.Text);
             ProcessManager.Injector.RemoteDoString(tbLuaScript.Text);
+        }
+
+        private void btnInputHandler_Click(object sender, EventArgs e)
+        {
+            ProcessManager.Injector.RemoteInputHandler(tbLuaScript.Text);
         }
 
         private void btnGetLuaText_Click(object sender, EventArgs e)
@@ -609,6 +613,7 @@ namespace BabBot.Forms
             }
         }
         #endregion
+
 
 
     }

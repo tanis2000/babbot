@@ -631,6 +631,19 @@ namespace BabBot.Manager
             }
         }
 
+        public void RemoteInputHandler(string command)
+        {
+            try
+            {
+                RemoteObject.DoStringInputHandler(command);
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
+        }
+
+        
         public string Lua_GetLocalizedText(int position)
         {
             List<string> values = RemoteGetValues();
