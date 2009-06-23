@@ -275,8 +275,12 @@ namespace Dante
             // Since this function is static we need to get a reference to "this".
             Main This = (Main)HookRuntimeInfo.Callback;
 
+            Log.Debug("MyDirect3DCreate9 Start...");
+
             // Create one of our custom IDirect3D9 objects (which insantiates a real one and passes most calls through to it).
             This.IDirect3D9 = new IDirect3D9(SdkVersion);
+
+            Log.Debug("MyDirect3DCreate9 Created...");
 
             // Return the IDirect3D9 pointer.
             return This.IDirect3D9.NativeIDirect3D9;

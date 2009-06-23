@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Dante
 {
-    public unsafe class IDirect3DDevice9: IDisposable 
+    public unsafe class IDirect3DDevice9 : IDisposable
     {
         private IntPtr* OriginalVFTable = null;
 
@@ -19,7 +19,7 @@ namespace Dante
             // Override the functions in NativeIDirect3DDevice9 with our own.
             OverrideFunctions();
         }
-        
+
         private void OverrideFunctions()
         {
             InitializeVFTable();
@@ -67,6 +67,10 @@ namespace Dante
             //     STDMETHOD(GetDepthStencilSurface)(THIS_ IDirect3DSurface9** ppZStencilSurface) PURE;
             //     STDMETHOD(BeginScene)(THIS) PURE;
             //     STDMETHOD(EndScene)(THIS) PURE;
+            DelegateEndScene MyEndScene = EndScene;
+            IntPtr PointerToMyEndScene = Marshal.GetFunctionPointerForDelegate(MyEndScene);
+            NativeIDirect3DDevice9->VFTable[42] = PointerToMyEndScene;
+
             //     STDMETHOD(Clear)(THIS_ DWORD Count,CONST D3DRECT* pRects,DWORD Flags,D3DCOLOR Color,float Z,DWORD Stencil) PURE;
             //     STDMETHOD(SetTransform)(THIS_ D3DTRANSFORMSTATETYPE State,CONST D3DMATRIX* pMatrix) PURE;
             //     STDMETHOD(GetTransform)(THIS_ D3DTRANSFORMSTATETYPE State,D3DMATRIX* pMatrix) PURE;
@@ -161,7 +165,7 @@ namespace Dante
             const uint VFTableLength = 119;
             // Allocate space for our new VFTable.
             IntPtr* NewVFTable =
-                (IntPtr*)Kernel32.HeapAlloc(Kernel32.GetProcessHeap(), 0, (UIntPtr)(VFTableLength * sizeof(IntPtr)));
+                (IntPtr*) Kernel32.HeapAlloc(Kernel32.GetProcessHeap(), 0, (UIntPtr) (VFTableLength*sizeof (IntPtr)));
 
             // Copy all of the original function pointers into our new VFTable.
             for (int i = 0; i < VFTableLength; i++)
@@ -212,6 +216,21 @@ namespace Dante
                 Kernel32.HeapFree(Kernel32.GetProcessHeap(), 0, *OriginalVFTable);
                 OriginalVFTable = null;
             }
+        }
+
+        #region Delegates
+
+        public delegate uint DelegateEndScene(D3D9.IDirect3DDevice9 Device);
+
+        #endregion
+
+        public uint EndScene(D3D9.IDirect3DDevice9 Device)
+        {
+            // to do
+            // [...]
+            DelegateEndScene RealEndScene =
+                (DelegateEndScene) Marshal.GetDelegateForFunctionPointer(OriginalVFTable[42], typeof (DelegateEndScene));
+            return RealEndScene(Device);
         }
     }
 
@@ -284,7 +303,7 @@ namespace Dante
             {
                 OriginalVFTable = NativeIDirect3D9->VFTable;
             }
-            
+
 
             // IDirect3D9 has 17 members.
             const uint VFTableLength = 17;
@@ -333,7 +352,7 @@ namespace Dante
             // TODO: Override this and Dispose this object if it is going to return 0.
             // #3: STDMETHOD(RegisterSoftwareDevice)(THIS_ void* pInitializeFunction) PURE;
             // #4: STDMETHOD_(UINT, GetAdapterCount)(THIS) PURE;
-            
+
             DelegateGetAdapterCount MyAdapterCount = GetAdapterCount;
             IntPtr PointerToMyAdapterCount = Marshal.GetFunctionPointerForDelegate(MyAdapterCount);
             NativeIDirect3D9->VFTable[4] = PointerToMyAdapterCount;
@@ -370,8 +389,11 @@ namespace Dante
 
         #endregion
 
-        public uint CreateDevice(D3D9.IDirect3D9* This, uint adapter, uint deviceType, IntPtr focusWindow, uint behaviorFlags, IntPtr presentationParameters, D3D9.IDirect3DDevice9* deviceInterface)
+        public uint CreateDevice(D3D9.IDirect3D9* This, uint adapter, uint deviceType, IntPtr focusWindow,
+                                 uint behaviorFlags, IntPtr presentationParameters,
+                                 D3D9.IDirect3DDevice9* deviceInterface)
         {
+            Log.Debug("CreateDevice Start...");
             DelegateCreateDevice RealCreateDevice =
                 (DelegateCreateDevice)
                 Marshal.GetDelegateForFunctionPointer(OriginalVFTable[16], typeof (DelegateCreateDevice));
@@ -382,6 +404,7 @@ namespace Dante
             {
                 // to do
                 // IDirect3DDevice9 device = new IDirect3DDevice9(This, deviceInterface); 
+                IDirect3DDevice9 device = new IDirect3DDevice9(This, deviceInterface);
             }
 
             return CreateDevice;
