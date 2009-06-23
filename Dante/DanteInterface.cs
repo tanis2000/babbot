@@ -20,6 +20,20 @@ namespace Dante
             }
         }
 
+        public void DoStringInputHandler(string command)
+        {
+            try
+            {
+                Log.Debug(string.Format("Calling DoStringInputHandler(\"{0}\")", command));
+                Main.DoStringInputHandler(command);
+                Log.Debug(string.Format("Done with DoStringInputHandler"));
+            }
+            catch (Exception e)
+            {
+                Log.Debug(e.ToString());
+            }
+        }
+
         public List<string> GetValues()
         {
             try {

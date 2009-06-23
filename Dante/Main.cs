@@ -75,7 +75,7 @@ namespace Dante
         #region Nested type: Lua_DoStringDelegate
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void Lua_DoStringDelegate(string command, string filename, uint pState);
+        private delegate void Lua_DoStringDelegate(string command, string fileName, uint luaState);
 
         #endregion
 
@@ -242,6 +242,7 @@ namespace Dante
             }
         }
 
+        /*
         public static T GetReturnVal<T>(string lua, uint retVal)
         {
             Lua_DoString(string.Format("InputHandler({0})", lua), "BabBot.lua", 0);
@@ -263,7 +264,7 @@ namespace Dante
             return (T) tmp;
             
         }
-
+        */
         #region DirectX
 
         private LocalHook Direct3DCreate9Hook;
@@ -297,19 +298,44 @@ namespace Dante
 
         public static void DoString(string command)
         {
-            Lua_DoString(string.Format("InputHandler({0})", command), "BabBot.lua", 0);
+            try
+            {
+                string cmd = string.Format("{0}", command);
+                Log.Debug(string.Format("Calling {0}", cmd));
+                Lua_DoString(cmd, "babbot.lua", 0);
+            } catch (SEHException e)
+            {
+                Log.Debug(e.ToString());
+            }
         }
 
+
+        public static void DoStringInputHandler(string command)
+        {
+            try
+            {
+                string cmd = string.Format("InputHandler({0})", command);
+                Log.Debug(string.Format("Calling {0}", cmd));
+                Lua_DoString(cmd, "babbot.lua", 0);
+            }
+            catch (SEHException e)
+            {
+                Log.Debug(e.ToString());
+            }
+        }
         public static int InputHandler(uint luaState)
         {
-            Values.Clear();
-            uint n = Lua_GetTop(luaState);
-            //Log.Debug(string.Format("LUA_State: {0:X}", luaState));
-            //Log.Debug(string.Format("Vars num: {0}", n));
-            for (uint i = 1; i <= n; i++)
+            lock (Values)
             {
-                string res = Lua_ToString(luaState, i, 0);
-                Values.Add(res);
+                Values.Clear();
+                uint n = Lua_GetTop(luaState);
+                //Log.Debug(string.Format("LUA_State: {0:X}", luaState));
+                //Log.Debug(string.Format("Vars num: {0}", n));
+                for (uint i = 1; i <= n; i++)
+                {
+                    string res = Lua_ToString(luaState, i, 0);
+                    Values.Add(res);
+                }
             }
             return 0;
         }
@@ -356,28 +382,27 @@ namespace Dante
         private static class Functions
         {
             public const uint
-                Lua_DoString = 0x0049AAB0,
                 // 3.1.3
-                Lua_GetLocalizedText = 0x005A82F0; // 3.1.3 this is our codecave
+                Lua_DoString = 0x0049AAB0;
 
             public const uint
                 // 3.1.3
-                Lua_GetState = 0x00499700; // 3.1.3 this is our codecave
+                Lua_GetState = 0x00499700; 
 
             public const uint
                 // 3.1.3
-                Lua_GetTop = 0x0091A8B0; // 3.1.3 this is our codecave
+                Lua_GetTop = 0x0091A8B0; 
 
             public const uint
-                Lua_Register = 0x004998E0; // 3.1.3 this is our codecave
-
-            public const uint
-                // 3.1.3
-                Lua_ToString = 0x0091ADC0; // 3.1.3 this is our codecave
+                Lua_Register = 0x004998E0; 
 
             public const uint
                 // 3.1.3
-                Patch_Offset = 0x00401643; // 3.1.3 this is our codecave
+                Lua_ToString = 0x0091ADC0; 
+
+            public const uint
+                // 3.1.3
+                Patch_Offset = 0x00401643; // this is our codecave
         }
 
         #endregion
