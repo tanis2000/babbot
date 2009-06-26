@@ -107,9 +107,12 @@ namespace BabBot.Manager
             if (ProcessManager.ProcessRunning)
             {
                 ProcessManager.CheckInGame();
-                ProcessManager.UpdatePlayer();
-                stateManager.UpdateState();
-                ProcessManager.ScriptHost.Update();
+                if (ProcessManager.InGame)
+                {
+                    ProcessManager.UpdatePlayer();
+                    stateManager.UpdateState();
+                    ProcessManager.ScriptHost.Update();
+                }
             }
             Thread.Sleep(250);
         }
