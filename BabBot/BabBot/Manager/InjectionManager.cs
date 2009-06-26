@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
@@ -581,12 +582,16 @@ namespace BabBot.Manager
             try
             {
                 if (Injected) return;
-               
+
+                ProcessThread wowMainThread = SThread.GetMainThread(ProcessManager.WowProcess.ProcessId);
+                IntPtr hThread = SThread.OpenThread(wowMainThread.Id);
+
                 RemoteHooking.Inject(
                     wow.ProcessId,
                     "Dante.dll",
                     "Dante.dll",
-                    ProcessManager.WowProcess.ProcessHandle);
+                    ProcessManager.WowProcess.ProcessHandle,
+                    hThread);
 
                 IpcChannel ipcCh = new IpcChannel("ClientChannel");
                 ChannelServices.RegisterChannel(ipcCh, false);

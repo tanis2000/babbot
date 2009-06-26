@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -62,6 +63,7 @@ namespace Dante
 
         public static List<string> Values = new List<string>();
         public static IntPtr WowProcessHandle;
+        public static IntPtr WowThreadHandle;
 
         #region delegates
 
@@ -111,11 +113,14 @@ namespace Dante
 
         public Main(
             RemoteHooking.IContext InContext,
-            IntPtr processHandle)
+            IntPtr processHandle,
+            IntPtr threadHandle)
         {
             Log.Debug("Main()");
             WowProcessHandle = processHandle;
             Log.Debug(string.Format("ProcessHandle: {0}", WowProcessHandle));
+            WowThreadHandle = threadHandle;
+            Log.Debug(string.Format("ThreadHandle: {0}", WowThreadHandle));
         }
 
         [DllImport("kernel32.dll")]
@@ -130,9 +135,17 @@ namespace Dante
                                                  [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
                                                  uint dwProcessId);
 
+        [DllImport("kernel32.dll")]
+        static extern uint SuspendThread(IntPtr hThread);
+
+        [DllImport("kernel32.dll")]
+        static extern uint ResumeThread(IntPtr hThread);
+
+
         public unsafe void Run(
             RemoteHooking.IContext InContext,
-            IntPtr processHandle)
+            IntPtr processHandle,
+            IntPtr threadHandle)
         {
             Log.Debug("Run()");
             // wait for host process termination...
@@ -155,6 +168,7 @@ namespace Dante
                     Log.Debug(string.Format("Exception on Direct3DCreate9Hook: " + e.Message));
                 }
 
+                Log.Debug("Setting up process stuff");
                 // Start the server stuff
                 Log.Debug(string.Format("Waking up process.."));
                 RemoteHooking.WakeUpProcess();
@@ -265,6 +279,8 @@ namespace Dante
             
         }
         */
+
+
         #region DirectX
 
         private LocalHook Direct3DCreate9Hook;
@@ -302,7 +318,9 @@ namespace Dante
             {
                 string cmd = string.Format("{0}", command);
                 Log.Debug(string.Format("Calling {0}", cmd));
+                SuspendThread(WowThreadHandle);
                 Lua_DoString(cmd, "babbot.lua", 0);
+                ResumeThread(WowThreadHandle);
             } catch (SEHException e)
             {
                 Log.Debug(e.ToString());
