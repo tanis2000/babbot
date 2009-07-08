@@ -228,6 +228,7 @@ namespace Dante
         {
             // to do
             // [...]
+            Log.Debug("EndScene()");
             DelegateEndScene RealEndScene =
                 (DelegateEndScene) Marshal.GetDelegateForFunctionPointer(OriginalVFTable[42], typeof (DelegateEndScene));
             return RealEndScene(Device);

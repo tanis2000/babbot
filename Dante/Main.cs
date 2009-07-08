@@ -334,7 +334,7 @@ namespace Dante
             {
                 string cmd = string.Format("InputHandler({0})", command);
                 Log.Debug(string.Format("Calling {0}", cmd));
-                Lua_DoString(cmd, "babbot.lua", 0);
+                Lua_DoString(cmd, "babbot.lua", L);
             }
             catch (SEHException e)
             {

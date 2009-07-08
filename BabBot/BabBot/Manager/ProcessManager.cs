@@ -232,6 +232,11 @@ namespace BabBot.Manager
                 if (!string.IsNullOrEmpty(wowPath))
                 {
                     process = AppHelper.RunAs(Config.GuestUsername, Config.GuestPassword, null, wowPath);
+                    // The process is now being started as suspended. We should actually
+                    // create our own IDirect3DDevice and get the pointer to the EndScene function
+                    // and then save it, resume wow, do all our stuff and use that pointer when we 
+                    // inject the LUA DLL
+                    ResumeMainWowThread();
                     afterProcessStart();
                 }
                 else

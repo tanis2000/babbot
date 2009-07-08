@@ -701,11 +701,11 @@ namespace BabBot.Common
             var startupInfo = new StartUpInfo();
             startupInfo.cb = Marshal.SizeOf(startupInfo);
             startupInfo.lpTitle = null;
-            startupInfo.dwFlags = (int) StartUpInfoFlags.UseCountChars;
+            startupInfo.dwFlags = (int)StartUpInfoFlags.UseCountChars;
             startupInfo.dwYCountChars = 50;
 
             return StartProcess(userName, domain, password, LogonFlags.WithProfile,
-                                null, commandLine, CreationFlags.NewConsole, IntPtr.Zero,
+                                null, commandLine, CreationFlags.NewConsole | CreationFlags.Suspended, IntPtr.Zero,
                                 null, ref startupInfo, out processInfo);
         }
 
