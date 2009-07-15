@@ -28,7 +28,7 @@ namespace BabBot.Scripting
         bool IsSitting();
         bool IsDead();
         bool IsGhost();
-        PlayerState State();
+        //PlayerState State();
         bool IsBeingAttacked();
         bool SelectWhoIsAttackingUs();
         void FaceTarget();
@@ -111,23 +111,23 @@ namespace BabBot.Scripting
 
         public bool IsSitting()
         {
-            return player.IsSitting();
+            return player.IsSitting;
         }
 
         public bool IsDead()
         {
-            return player.IsDead();
+            return player.IsDead;
         }
 
         public bool IsGhost()
         {
-            return player.IsGhost();
+            return player.IsGhost;
         }
 
-        public PlayerState State()
-        {
-            return player.State;
-        }
+        //public PlayerState State()
+        //{
+        //    return player.State;
+        //}
 
         public bool IsBeingAttacked()
         {
@@ -151,7 +151,7 @@ namespace BabBot.Scripting
 
         public float Facing()
         {
-            return player.Facing();
+            return player.Rotation;
         }
 
         public float TargetFacing()
@@ -211,7 +211,7 @@ namespace BabBot.Scripting
 
         public bool HasTarget()
         {
-            return player.HasTarget();
+            return player.HasTarget;
         }
 
         public void MoveForward(int iTime)

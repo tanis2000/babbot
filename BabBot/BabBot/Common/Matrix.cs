@@ -16,6 +16,7 @@
   
     Copyright 2009 BabBot Team
 */
+using BabBot.Wow;
 namespace BabBot.Common
 {
     internal class Matrix
@@ -47,9 +48,9 @@ namespace BabBot.Common
         {
         }
 
-        public Vector getFirstColumn
+        public Vector3D getFirstColumn
         {
-            get { return new Vector(_x1, _y1, _z1); }
+            get { return new Vector3D(_x1, _y1, _z1); }
         }
 
         public Matrix inverse()
@@ -69,9 +70,9 @@ namespace BabBot.Common
             return det;
         }
 
-        public static Vector operator *(Vector v, Matrix m)
+        public static Vector3D operator *(Vector3D v, Matrix m)
         {
-            var res = new Vector(m._x1*v.X + m._y1*v.Y + m._z1*v.Z,
+            var res = new Vector3D(m._x1*v.X + m._y1*v.Y + m._z1*v.Z,
                                  m._x2*v.X + m._y2*v.Y + m._z2*v.Z,
                                  m._x3*v.X + m._y3*v.Y + m._z3*v.Z);
             return res;

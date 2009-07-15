@@ -95,13 +95,13 @@ namespace BabBot.Manager
 
             if (CurrentState == PlayerState.PreCombat)
             {
-                if ((ProcessManager.Player.IsBeingAttacked()) || (ProcessManager.Player.HasTarget()))
+                if ((ProcessManager.Player.IsBeingAttacked()) || (ProcessManager.Player.HasTarget))
                 {
                     CurrentState = PlayerState.InCombat;
                     return;
                 }
 
-                if (!ProcessManager.Player.HasTarget())
+                if (!ProcessManager.Player.HasTarget)
                 {
                     CurrentState = PlayerState.Roaming;
                     return;
@@ -114,7 +114,7 @@ namespace BabBot.Manager
                 /// in that case go to PostCombat, but we lose target once the
                 /// mob dies, so we cannot use that. We've got to come up with
                 /// a better idea. 
-                if (!ProcessManager.Player.HasTarget())
+                if (!ProcessManager.Player.HasTarget)
                 {
                     CurrentState = PlayerState.PostCombat;
                     return;
@@ -156,20 +156,20 @@ namespace BabBot.Manager
             if (CurrentState == PlayerState.Dead)
             {
                 /// Let's see if we are still dead or what
-                if ((!ProcessManager.Player.IsDead()) && (!ProcessManager.Player.IsGhost()))
+                if ((!ProcessManager.Player.IsDead) && (!ProcessManager.Player.IsGhost))
                 {
                     CurrentState = PlayerState.Roaming;
                 }
                 return;
             }
             
-            if (ProcessManager.Player.IsDead())
+            if (ProcessManager.Player.IsDead)
             {
                 CurrentState = PlayerState.Dead;
                 return;
             }
 
-            if (ProcessManager.Player.IsGhost())
+            if (ProcessManager.Player.IsGhost)
             {
                 CurrentState = PlayerState.Dead;
                 return;

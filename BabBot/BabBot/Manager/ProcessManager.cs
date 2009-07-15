@@ -24,6 +24,9 @@ using BabBot.Common;
 using BabBot.Scripting;
 using BabBot.Wow;
 using Magic;
+using System.Collections.Generic;
+using Pather.Graph;
+using System.Linq;
 
 namespace BabBot.Manager
 {
@@ -301,9 +304,7 @@ namespace BabBot.Manager
                 {
                     throw new Exception("Cannot reset waypoints. No Player object found.");
                 }
-                Player.LastLocation.X = 0;
-                Player.LastLocation.Y = 0;
-                Player.LastLocation.Z = 0;
+                Player.LastLocation = new Vector3D(0, 0, 0);
             }
         }
 
@@ -322,21 +323,22 @@ namespace BabBot.Manager
                 PlayerUpdate();
             }
 
-            if (PlayerWayPoint != null)
-            {
-                Vector3D last = Player.LastLocation;
-                if (last.X == 0 && last.Y == 0 && last.Z == 0)
-                {
-                    Player.LastLocation = Player.Location;
-                    last = Player.LastLocation;
-                }
+            //if (PlayerWayPoint != null)
+            //{
+            //    Vector3D last = Player.LastLocation;
+            //    if (last.X == 0 && last.Y == 0 && last.Z == 0)
+            //    {
+            //        Player.LastLocation = last = Player.Location;
+            //    }
 
-                if ((int) Player.HGetDistance(last, false) > 5 && (int) Player.HGetDistance(last, false) < 7)
-                {
-                    Player.LastLocation = Player.Location;
-                    PlayerWayPoint(Player.LastLocation);
-                }
-            }
+            //    if ((int) Player.HGetDistance(last, false) > 5 && (int) Player.HGetDistance(last, false) < 7)
+            //    {
+
+            Player.LastLocation = Player.Location;
+
+            //          PlayerWayPoint(Player.LastLocation);
+            //    }
+            //}
         }
 
         /// <summary>
@@ -397,11 +399,7 @@ namespace BabBot.Manager
             Globals.ClientConnectionOffset = wowProcess.ReadUInt(TLS + 0x1C);
             Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
             ObjectManager = new ObjectManager();
-            var wo = new WowObject();
-            wo.ObjectPointer = ObjectManager.GetLocalPlayerObject();
-            wo.Guid = ObjectManager.GetGUIDByObject(wo.ObjectPointer);
-            wo.Type = ObjectManager.GetTypeByObject(wo.ObjectPointer);
-            Player = new WowPlayer(wo, CommandManager);
+            Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
         }
 
         /// <summary>
@@ -419,8 +417,27 @@ namespace BabBot.Manager
                 InitializeObjectManager();
                 Injector.InjectLua();
                 InitializeCaronte();
-                ScriptHost.Start();
-                StateManager.Instance.Stop();
+                //ScriptHost.Start();
+                //StateManager.Instance.Stop();
+
+                //get location of nearest mob
+                List<WowObject> mobs = Player.GetNearObjects();
+
+                var d = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT select c;
+
+                Vector3D testDestination = d.First<WowObject>().Location;
+
+                //temp initialize states
+                //Path p = new Path();
+                //p.AddLast(new Location(Player.Location.X + 15, Player.Location.Y, Player.Location.Z));
+                //p.AddLast(new Location(Player.Location.X - 15, Player.Location.Y, Player.Location.Z));
+                //p.AddLast(new Location(Player.Location.X, Player.Location.Y +15, Player.Location.Z));
+                //p.AddLast(new Location(Player.Location.X, Player.Location.Y -15, Player.Location.Z));
+                //p.AddLast(new Location(Player.Location.X + 15, Player.Location.Y + 15, Player.Location.Z));
+                //p.AddLast(new Location(Player.Location.X - 15, Player.Location.Y - 15, Player.Location.Z));
+
+                Player.StateMachine.SetGlobalState(new BabBot.States.Standard.MoveToState(testDestination));
+                
                 Initialized = true;
             }
             catch (Exception ex)

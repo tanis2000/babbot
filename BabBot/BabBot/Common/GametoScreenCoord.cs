@@ -34,7 +34,7 @@ namespace BabBot.Common
 
         public static bool MoveMouseToWoWCoords(float x, float y, float z)
         {
-            var pseudoVec = new Vector(x, y, z); //not really a vector. its the location we want to click
+            var pseudoVec = new Vector3D(x, y, z); //not really a vector. its the location we want to click
             IntPtr hwnd = ProcessManager.WowProcess.WindowHandle; //windowhandle for getting size
             var camera = new CameraInfo();
             //Read information
@@ -45,7 +45,7 @@ namespace BabBot.Common
             bCamera = ProcessManager.WowProcess.ReadBytes(pAddr2, 68);
 
             //Convert bytes to usable data
-            camera.Pos = new Vector(BitConverter.ToSingle(bCamera, 8), BitConverter.ToSingle(bCamera, 12),
+            camera.Pos = new Vector3D(BitConverter.ToSingle(bCamera, 8), BitConverter.ToSingle(bCamera, 12),
                                     BitConverter.ToSingle(bCamera, 16));
             camera.ViewMat = new Matrix(BitConverter.ToSingle(bCamera, 20), BitConverter.ToSingle(bCamera, 24),
                                         BitConverter.ToSingle(bCamera, 28),
@@ -59,15 +59,15 @@ namespace BabBot.Common
             GetClientRect(hwnd, ref rc);
 
             //Vector camera -> object
-            Vector Diff = pseudoVec - camera.Pos;
+            Vector3D Diff = pseudoVec - camera.Pos;
 
             if ((Diff*camera.ViewMat.getFirstColumn) < 0)
             {
                 return false;
             }
 
-            Vector View = Diff*camera.ViewMat.inverse();
-            var Cam = new Vector(-View.Y, -View.Z, View.X);
+            Vector3D View = Diff * camera.ViewMat.inverse();
+            var Cam = new Vector3D(-View.Y, -View.Z, View.X);
 
             float fScreenX = (rc.right - rc.left)/2.0f;
             float fScreenY = (rc.bottom - rc.top)/2.0f;
@@ -93,7 +93,7 @@ namespace BabBot.Common
         private struct CameraInfo
         {
             public float Foc;
-            public Vector Pos;
+            public Vector3D Pos;
             public Matrix ViewMat;
         } ;
 

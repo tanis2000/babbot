@@ -13,16 +13,28 @@
 
     You should have received a copy of the GNU General Public License
     along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
-  
+
     Copyright 2009 BabBot Team
 */
-namespace BabBot.Wow
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using BabBot.Wow;
+using Pather.Graph;
+
+namespace BabBot.Common
 {
-    public class WowCorpse : WowUnit
+    public static class WaypointVector3DHelper
     {
-        public WowCorpse(uint ObjectPointer)
-            : base(ObjectPointer)
+        public static Vector3D LocationToVector3D(Location Location)
         {
+            return new Vector3D(Location.X, Location.Y, Location.Z);
+        }
+
+        public static Location Vector3DToLocation(Vector3D Vector)
+        {
+            return new Location(Vector.X, Vector.Y, Vector.Z);
         }
     }
 }

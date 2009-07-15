@@ -20,138 +20,185 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
+using System.Linq;
 using BabBot.Bot;
 using BabBot.Common;
 using BabBot.Manager;
 using Pather.Graph;
+using BabBot.States;
 
 namespace BabBot.Wow
 {
-    public class WowPlayer : WowObject
+    public class WowPlayer : WowUnit
     {
+        public StateMachine<WowPlayer> StateMachine { get; protected set; }
+
         private const int MAX_REACHTIME = 5000; // Milliseconds to reach the waypoint
         private readonly List<WowUnit> LootableList;
-        private readonly CommandManager PlayerCM;
-        private readonly Unit unit; // The corresponding Unit in Wow's ObjectManager
+        public CommandManager PlayerCM { get; private set; }
         public float LastDistance;
         public float LastFaceRadian;
         public Vector3D LastLocation;
         private WowUnit LastTargetedMob;
         private bool StopMovement;
         public int TravelTime;
-        private bool isMoving;
+        //private bool isMoving;
+        private static Random _Random = new Random();
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public WowPlayer(WowObject wo, CommandManager cm)
+        public WowPlayer(uint ObjectPointer) : base(ObjectPointer)
         {
-            Guid = wo.Guid;
-            ObjectPointer = wo.ObjectPointer;
-            Type = wo.Type;
-            unit = new Unit(ObjectPointer);
-
             LastLocation = new Vector3D();
 
             //State = PlayerState.Start;
-            PlayerCM = cm;
+            PlayerCM = ProcessManager.CommandManager;
             LastDistance = 0.0f;
             LastFaceRadian = 0.0f;
             StopMovement = false;
             TravelTime = 0;
             LootableList = new List<WowUnit>();
-            isMoving = false;
+            //isMoving = false;
+
+            //create state machine for player
+            StateMachine = new StateMachine<WowPlayer>(this);
         }
 
-        #region Stats
-
-        public uint Hp
+        public override string Name
         {
-            get { return unit.GetHp(); }
+            get
+            {
+                return ProcessManager.ObjectManager.GetName(ObjectPointer, Guid);
+            }
         }
 
-        public uint MaxHp
+        public int Xp
         {
-            get { return unit.GetMaxHp(); }
+            get
+            {
+                return ReadDescriptor<int>(Descriptor.ePlayerFields.PLAYER_XP);
+            }
         }
 
-        public uint MaxMp
+        public int XpToNextLevel
         {
-            get { return unit.GetMaxHp(); }
+            get
+            {
+                return ReadDescriptor<int>(Descriptor.ePlayerFields.PLAYER_NEXT_LEVEL_XP);
+            }
         }
-
-        public uint Mp
-        {
-            get { return unit.GetMp(); }
-        }
-
-        public uint Xp
-        {
-            get { return unit.GetXp(); }
-        }
-
-        public uint Level
-        {
-            get { return unit.GetLevel(); }
-        }
-
-        #endregion
 
         #region Target stats
         public uint TargetHp
         {
-            get { return CurTarget.Hp; }
+            get { return (CurTarget == null) ? 0 : CurTarget.Hp; }
         }
 
         public uint TargetMaxHp
         {
-            get { return CurTarget.MaxHp; }
+            get { return (CurTarget == null) ? 0 : CurTarget.MaxHp; }
         }
 
         public uint TargetMaxMp
         {
-            get { return CurTarget.MaxHp; }
+            get { return (CurTarget == null) ? 0 : CurTarget.MaxHp; }
         }
 
         public uint TargetMp
         {
-            get { return CurTarget.Mp; }
+            get { return (CurTarget == null) ? 0 : CurTarget.Mp; }
         }
 
-        public uint TargetLevel
+        public int TargetLevel
         {
-            get { return CurTarget.Level; }
-        }
-        #endregion
-
-        public Vector3D Location
-        {
-            get { return unit.GetPosition(); }
-        }
-
-        public Vector3D CorpseLocation
-        {
-            get { return unit.GetPlayerCorpsePosition(); }
-        }
-
-        public float Orientation
-        {
-            get { return unit.GetFacing(); }
-        }
-
-        public UInt64 CurTargetGuid
-        {
-            get { return unit.GetCurTargetGuid(); }
+            get { return (CurTarget == null) ? 0 : CurTarget.Level; }
         }
 
         public string CurTargetName
         {
-            get { return unit.GetCurTargetName(); }
+            get { return (CurTarget == null) ? string.Empty : CurTarget.Name; }
+        }
+        #endregion
+
+        public List<WowObject> GetNearObjects()
+        {
+            List<WowObject> l = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
+            return l;
         }
 
-        public WowUnit CurTarget
+        public List<WowUnit> GetNearMobs()
         {
-            get { return unit.GetCurTarget(); }
+            var Mobs = new List<WowUnit>();
+            List<WowObject> l = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
+
+            var d = from c in l where c.Type == Descriptor.eObjType.OT_UNIT select c;
+
+            foreach (WowUnit wo in d)
+            {
+                Mobs.Add(wo);
+            }
+                        
+            return Mobs;
+        }
+
+        public List<WowCorpse> GetNearCorpses()
+        {
+            var Corpses = new List<WowCorpse>();
+            List<WowObject> l = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
+
+            var d = from c in l where c.Type == Descriptor.eObjType.OT_CORPSE select c;
+
+            foreach (WowCorpse wo in d)
+            {
+                Corpses.Add(wo);
+            }
+
+            return Corpses;
+        }
+
+        public List<WowContainer> GetBags()
+        {
+            var Bags = new List<WowContainer>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                uint BagsPointer =
+                    ProcessManager.WowProcess.ReadUInt(ObjectPointer + (uint)
+                                                                       ((uint)
+                                                                        Descriptor.ePlayerFields.
+                                                                            PLAYER_FIELD_PACK_SLOT_1 + i * 2) *
+                                                                       0x04);
+                Descriptor.eObjType type = ProcessManager.ObjectManager.GetTypeByObject(BagsPointer);
+                if (type == Descriptor.eObjType.OT_CONTAINER)
+                {
+                    var c = new WowContainer(BagsPointer);
+                    Bags.Add(c);
+                }
+            }
+            /*
+            List<WowObject> l = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
+            foreach (WowObject o in l)
+            {
+                Descriptor.eObjType type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
+                if (type == Descriptor.eObjType.OT_UNIT)
+                {
+                    WowUnit u = new WowUnit(o);
+                    u.Name = ProcessManager.ObjectManager.GetName(u.ObjectPointer, u.Guid);
+                    Mobs.Add(u);
+                }
+            }*/
+            return Bags;
+        }
+
+        public Vector3D CorpseLocation
+        {
+            get
+            {
+                return new Vector3D(ProcessManager.WowProcess.ReadFloat(Globals.LocalPlayerCorpseOffset),
+                                    ProcessManager.WowProcess.ReadFloat(Globals.LocalPlayerCorpseOffset + 0x04),
+                                    ProcessManager.WowProcess.ReadFloat(Globals.LocalPlayerCorpseOffset + 0x08));
+            }
         }
 
         public string NearObjectsAsTextList
@@ -160,7 +207,7 @@ namespace BabBot.Wow
             {
                 string s = string.Empty;
 
-                List<WowObject> l = unit.GetNearObjects();
+                List<WowObject> l = GetNearObjects();
                 foreach (WowObject obj in l)
                 {
                     s += string.Format("GUID:{0:X}|Type:{1:X}\r" + Environment.NewLine, obj.Guid, obj.Type);
@@ -175,11 +222,11 @@ namespace BabBot.Wow
             {
                 string s = string.Empty;
 
-                List<WowUnit> l = unit.GetNearMobs();
+                List<WowUnit> l = GetNearMobs();
                 foreach (WowUnit obj in l)
                 {
                     s += string.Format("{0:X}|{1}|Lootable:{2}" + Environment.NewLine, obj.Guid, obj.Name,
-                                       obj.IsLootable());
+                                       obj.IsLootable);
                 }
                 return s;
             }
@@ -192,7 +239,7 @@ namespace BabBot.Wow
                 string s = string.Empty;
                 try
                 {
-                    List<WowContainer> l = unit.GetBags();
+                    List<WowContainer> l = GetBags();
                     foreach (WowContainer obj in l)
                     {
                         s += string.Format("{0:X}|Slots:{1}|Empty:{2}" + Environment.NewLine, obj.Guid, obj.GetSlots(),
@@ -207,47 +254,19 @@ namespace BabBot.Wow
             }
         }
 
-        public PlayerState State
-        {
-            get { return ProcessManager.BotManager.State; }
-        }
-
-
+        //public PlayerState State
+        //{
+        //    get { return ProcessManager.BotManager.State; }
+        //}
+        
         public bool IsAtGraveyard()
         {
-            List<WowUnit> l = unit.GetNearMobs();
-            foreach (WowUnit u in l)
-            {
-                if (u.Name == "Spirit Healer")
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+            List<WowUnit> l = GetNearMobs();
 
-        public bool IsDead()
-        {
-            if (Hp <= 0)
-            {
-                return true;
-            }
-            return false;
-        }
+            var d = from c in l where c.Name == "Spirit Healer" select c;
 
-        public bool IsGhost()
-        {
-            return unit.IsGhost();
-        }
-
-        public bool IsAggro()
-        {
-            return unit.IsAggro();
-        }
-
-        public bool IsSitting()
-        {
-            return unit.IsSitting();
+            if (d.Count<WowUnit>() > 0) return true;
+            else return false;
         }
 
         public bool IsBeingAttacked()
@@ -255,50 +274,24 @@ namespace BabBot.Wow
             /// We check the list of mobs around us and if any of them has us as target and has aggro
             /// it means that we are being attacked by that mob. It can be more than one mob
             /// but we don't care. As long as one is attacking us, this will return true.
-            List<WowUnit> l = unit.GetNearMobs();
-            foreach (WowUnit obj in l)
-            {
-                if (obj.HasTarget())
-                {
-                    if (obj.CurTargetGuid == Guid)
-                    {
-                        if (obj.IsAggro())
-                        {
-                            // Ok this really means that this mob is attacking us
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
+            if (GetCurTarget() == null) return false;
+            else return true;
         }
 
         public WowUnit GetCurAttacker()
         {
-            List<WowUnit> l = unit.GetNearMobs();
-            foreach (WowUnit obj in l)
-            {
-                if (obj.HasTarget())
-                {
-                    if (obj.CurTargetGuid == Guid)
-                    {
-                        if (obj.IsAggro())
-                        {
-                            // Ok this really means that this mob is attacking us
-                            return obj;
-                        }
-                    }
-                }
-            }
-            return null;
+            List<WowUnit> l = GetNearMobs();
+            var d = from c in l where c.HasTarget && c.CurTargetGuid == Guid && c.IsAggro select c;
+
+            if (d.Count<WowUnit>() > 0) return d.First<WowUnit>();
+            else return null;
         }
 
         public WowUnit GetCurTarget()
         {
-            if (HasTarget())
+            if (HasTarget)
             {
-                WowUnit u = unit.GetCurTarget();
+                WowUnit u = CurTarget;
                 return u;
             }
             return null;
@@ -306,10 +299,10 @@ namespace BabBot.Wow
 
         public bool IsTargetDead()
         {
-            if (HasTarget())
+            if (HasTarget)
             {
-                WowUnit target = unit.GetCurTarget();
-                if (target.IsDead())
+                WowUnit target = GetCurTarget();
+                if (target.IsDead)
                 {
                     return true;
                 }
@@ -324,23 +317,14 @@ namespace BabBot.Wow
             if (incombat == "1") return true; else return false;
         }
 
-        public bool HasTarget()
-        {
-            if (CurTargetGuid != 0)
-            {
-                return true;
-            }
-            return false;
-        }
-
         public void AddLastTargetToLootList()
         {
             Thread.Sleep(2000);
             ProcessManager.Injector.Lua_DoString("TargetLastTarget();");
             Thread.Sleep(2000);
-            if (HasTarget())
+            if (HasTarget)
             {
-                if (CurTarget.IsLootable())
+                if (CurTarget.IsLootable)
                 {
                     LootableList.Add(LastTargetedMob);
                 }
@@ -349,9 +333,9 @@ namespace BabBot.Wow
 
         public Vector3D GetTargetLocation()
         {
-            if (HasTarget())
+            if (HasTarget)
             {
-                WowUnit target = unit.GetCurTarget();
+                WowUnit target = GetCurTarget();
                 return target.Location;
             }
 
@@ -365,7 +349,7 @@ namespace BabBot.Wow
             {
                 // if we already have a target we'd better check if it's the one we want so
                 // we avoid tabbing around uselessly
-                if (HasTarget())
+                if (HasTarget)
                 {
                     if (CurTargetGuid == u.Guid)
                     {
@@ -416,18 +400,18 @@ namespace BabBot.Wow
 
         public void FaceTarget()
         {
-            if (HasTarget())
+            if (HasTarget)
             {
-                WowUnit target = unit.GetCurTarget();
+                WowUnit target = GetCurTarget();
                 Face(target.Location);
             }
         }
 
         public float DistanceFromTarget()
         {
-            if (HasTarget())
+            if (HasTarget)
             {
-                WowUnit target = unit.GetCurTarget();
+                WowUnit target = GetCurTarget();
                 return GetDistance(target.Location);
             }
             return 0.0f;
@@ -435,23 +419,18 @@ namespace BabBot.Wow
 
         public float DistanceFromCorpse()
         {
-            if (IsDead() || IsGhost())
+            if (IsDead || IsGhost)
             {
                 return GetDistance(CorpseLocation);
             }
             return 0.0f;
         }
 
-        public float Facing()
-        {
-            return Orientation;
-        }
-
         public float TargetFacing()
         {
-            if (HasTarget())
+            if (HasTarget)
             {
-                WowUnit target = unit.GetCurTarget();
+                WowUnit target = GetCurTarget();
                 return target.Orientation;
             }
             return 0.0f;
@@ -459,9 +438,9 @@ namespace BabBot.Wow
 
         public float AngleToTarget()
         {
-            if (HasTarget())
+            if (HasTarget)
             {
-                WowUnit target = unit.GetCurTarget();
+                WowUnit target = GetCurTarget();
                 return GetFaceRadian(target.Location);
             }
             return 0.0f;
@@ -475,11 +454,10 @@ namespace BabBot.Wow
         {
             throw new NotImplementedException("SelectMobByName");
         }
-
-
+        
         public bool EnemyInSight()
         {
-            List<WowUnit> l = unit.GetNearMobs();
+            List<WowUnit> l = GetNearMobs();
 
             foreach (Enemy enemy in ProcessManager.Profile.Enemies)
             {
@@ -501,7 +479,7 @@ namespace BabBot.Wow
 
         public void FaceClosestEnemy()
         {
-            List<WowUnit> l = unit.GetNearMobs();
+            List<WowUnit> l = GetNearMobs();
             WowUnit closest = null;
 
             foreach (Enemy enemy in ProcessManager.Profile.Enemies)
@@ -591,7 +569,7 @@ namespace BabBot.Wow
             Console.WriteLine("===Lootable List===");
             foreach (WowUnit wowUnit in LootableList)
             {
-                Console.WriteLine(wowUnit.Guid + " - " + wowUnit.Name);
+                Console.WriteLine(Guid + " - " + Name);
             }
             WowUnit mob = FindClosestLootableMob();
             if (mob != null)
@@ -604,8 +582,7 @@ namespace BabBot.Wow
                 Loot(mob);
             }
         }
-
-        
+                
         /// <summary>
         /// Loots a mob and remove it from the lootable list. We must already be near the corpse
         /// </summary>
@@ -619,17 +596,16 @@ namespace BabBot.Wow
         
         public void MoveToTarget(float tolerance)
         {
-            if (HasTarget())
+            if (HasTarget)
             {
-                WowUnit target = unit.GetCurTarget();
+                WowUnit target = GetCurTarget();
                 MoveTo(target, tolerance);
             }
         }
 
         private static int RandomNumber(int min, int max)
         {
-            var random = new Random();
-            return random.Next(min, max);
+            return _Random.Next(min, max);
         }
 
         /// <summary>
@@ -657,11 +633,11 @@ namespace BabBot.Wow
             // TODO: add PPather usage here as well
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
 
-            isMoving = true;
+            //isMoving = true;
 
             if (!dest.IsValid())
             {
-                isMoving = false;
+                //isMoving = false;
                 return NavigationState.Ready;
             }
 
@@ -732,7 +708,7 @@ namespace BabBot.Wow
             }
 
             PlayerCM.ArrowKeyUp(key);
-            isMoving = false;
+            //isMoving = false;
             return res;
         }
 
@@ -751,11 +727,11 @@ namespace BabBot.Wow
             int currentStep = 0;
             float distanceFromStep = 0;
 
-            isMoving = true;
+            //isMoving = true;
 
             if (!target.Location.IsValid())
             {
-                isMoving = false;
+                //isMoving = false;
                 return NavigationState.Ready;
             }
 
@@ -881,7 +857,7 @@ namespace BabBot.Wow
             }
 
             PlayerCM.ArrowKeyUp(key);
-            isMoving = false;
+            //isMoving = false;
             return res;
         }
 
@@ -929,6 +905,20 @@ namespace BabBot.Wow
             PlayerCM.ArrowKeyDown(key);
             Thread.Sleep(iTime);
             PlayerCM.ArrowKeyUp(key);
+        }
+
+        public void MoveForward()
+        {
+            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+            PlayerCM.ArrowKeyDown(key);
+            //isMoving = true;
+        }
+
+        public void StopMoveForward()
+        {
+            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+            PlayerCM.ArrowKeyUp(key);
+            //isMoving = false;
         }
 
         /// <summary>
@@ -982,8 +972,18 @@ namespace BabBot.Wow
             }
         }
 
+        private void FaceUsingMemoryWrite(float radius)
+        {
+            //write the new location memory
+            ProcessManager.WowProcess.WriteFloat(ObjectPointer + Globals.PlayerRotationOffset, radius);
+        }
+
         private void FaceWithTimer(float radius, CommandManager.ArrowKey key)
         {
+            //if radius is smaller then error margin then don't bother to fix
+            if (radius < 0.04f)
+                return;
+
             var tm = new GTimer(radius*1000*Math.PI);
             PlayerCM.ArrowKeyDown(key);
             tm.Reset();
@@ -995,27 +995,47 @@ namespace BabBot.Wow
         }
 
         public void Face(float angle)
-        {
+        {            
             float face;
-            if (negativeAngle(angle - Orientation) < Math.PI)
+
+            if (MathFuncs.negativeAngle(angle - Orientation) < Math.PI)
             {
-                face = negativeAngle(angle - Orientation);
+                face = MathFuncs.negativeAngle(angle - Orientation);
                 FaceWithTimer(face, CommandManager.ArrowKey.Left);
+                //FaceUsingMemoryWrite(face);
             }
             else
             {
-                face = negativeAngle(Orientation - angle);
+                face = MathFuncs.negativeAngle(Orientation - angle);
                 FaceWithTimer(face, CommandManager.ArrowKey.Right);
+                //FaceUsingMemoryWrite(face);
             }
             Thread.Sleep(500);
         }
 
         public void Face(Vector3D dest)
         {
-            float angle = GetFaceRadian(dest);
-            Face(angle);
+            float angle = GetFaceAngle(dest);
+
+            FaceUsingMemoryWrite(-angle);
         }
 
+        protected float GetFaceAngle(Vector3D dest)
+        {
+            float angle = MathFuncs.GetFaceRadian(dest, Location);
+            float face;
+
+            if (MathFuncs.negativeAngle(angle - Orientation) < Math.PI)
+            {
+                face = MathFuncs.negativeAngle(angle - Orientation);
+            }
+            else
+            {
+                face = MathFuncs.negativeAngle(Orientation - angle);
+            }
+
+            return face;
+        }
 
         public void PlayAction(PlayerAction act, bool? toggle)
         {
@@ -1091,22 +1111,21 @@ namespace BabBot.Wow
                 default:
                 case -1:
                     return "Unknown"; //if showing the cosmic map or a Battleground map. Also when showing The Scarlet Enclave, the Death Knights' starting area. 
-                    break;
+                    
                 case 0:
                     return "All"; // if showing the entire world (both continents) 
-                    break;
+                    
                 case 1:
                     return "Kalimdor"; //if showing the first continent (currently Kalimdor), or a zone map within it. 
-                    break;
+                    
                 case 2:
                     return "Azeroth"; //if showing the second continent (currently Eastern Kingdoms), or a zone map within it. 
-                    break;
+                    
                 case 3:
                     return "Expansion01"; //if showing the Outland, or a zone map within it. 
-                    break;
+                    
                 case 4:
-                    return "Northrend"; //if showing Northrend, or a zone map within it. 
-                    break;
+                    return "Northrend"; //if showing Northrend, or a zone map within it.                    
 
             }
         }
@@ -1123,7 +1142,7 @@ namespace BabBot.Wow
 
         public bool IsMoving()
         {
-            return isMoving;
+            return (MathFuncs.GetDistance(Location, LastLocation, false) > .1f) ? true : false;
         }
 
         /// <summary>
@@ -1289,12 +1308,12 @@ namespace BabBot.Wow
 
         public float TargetBoundingRadius()
         {
-            if (!HasTarget())
+            if (!HasTarget)
             {
                 return 0.0f;
             }
 
-            return CurTarget.BoundingRadius();
+            return CurTarget.BoundingRadius;
         }
 
         public bool IsCasting()
@@ -1369,7 +1388,7 @@ namespace BabBot.Wow
 
         public float FacingDegrees()
         {
-            return (float) (Facing()*(180.0f/Math.PI));
+            return (float) (Rotation*(180.0f/Math.PI));
         }
 
         public float TargetFacingDegrees()

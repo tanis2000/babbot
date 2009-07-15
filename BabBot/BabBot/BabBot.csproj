@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -27,6 +27,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>3001; 3003; 3002; 3009</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,7 +59,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BlackMagic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="Caronte, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="CSScriptLibrary, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\CSScriptLibrary.dll</HintPath>
@@ -73,6 +73,9 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -93,11 +96,12 @@
     <Compile Include="Common\GametoScreenCoord.cs" />
     <Compile Include="Common\GThread.cs" />
     <Compile Include="Common\GTimer.cs" />
+    <Compile Include="Common\MathFuncs.cs" />
     <Compile Include="Common\Matrix.cs" />
     <Compile Include="Common\Output.cs" />
     <Compile Include="Common\RunAs.cs" />
     <Compile Include="Common\Serializer.cs" />
-    <Compile Include="Common\Vector.cs" />
+    <Compile Include="Common\WaypointVector3DHelper.cs" />
     <Compile Include="Common\WindowSize.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ISharedAssembly.cs" />
@@ -180,15 +184,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Scripts\ZFClassScript.cs" />
+    <Compile Include="States\ChangeStateEventArgs.cs" />
+    <Compile Include="States\Samples\HangingAroundState.cs" />
+    <Compile Include="States\Standard\MoveToState.cs" />
+    <Compile Include="States\StateEventArgs.cs" />
+    <Compile Include="States\StateMachine.cs" />
+    <Compile Include="States\State.cs" />
     <Compile Include="Wow\PlayerState.cs" />
     <Compile Include="Wow\Descriptor.cs" />
     <Compile Include="Wow\Globals.cs" />
     <Compile Include="Wow\ObjectManager.cs" />
-    <Compile Include="Wow\Unit.cs" />
     <Compile Include="Wow\Vector3D.cs" />
     <Compile Include="Wow\WowContainer.cs" />
     <Compile Include="Wow\WowCorpse.cs" />
     <Compile Include="Wow\WowDynamicObject.cs" />
+    <Compile Include="Wow\WowGameObject.cs" />
     <Compile Include="Wow\WowItem.cs" />
     <Compile Include="Wow\WowObject.cs" />
     <Compile Include="Wow\WowPlayer.cs" />
@@ -213,17 +223,23 @@
     <Content Include="Doc\README.TXT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Lib\BlackMagic.dll" />
-    <Content Include="Lib\BlackMagic.XML" />
-    <Content Include="Lib\Caronte.dll" />
-    <Content Include="Lib\EasyHook.dll" />
-    <Content Include="Lib\EasyHook.XML" />
-    <Content Include="Lib\EasyHook32.dll" />
-    <Content Include="Lib\EasyHook32Svc.exe" />
-    <Content Include="Lib\EasyHook64.dll" />
-    <Content Include="Lib\EasyHook64Svc.exe" />
-    <Content Include="Lib\fasmdll_managed.dll" />
-    <Content Include="Lib\Hider.dll" />
+    <None Include="Lib\BlackMagic.dll" />
+    <None Include="Lib\BlackMagic.XML" />
+    <None Include="Lib\CSScriptLibrary.dll" />
+    <None Include="Lib\EasyHook.dll" />
+    <None Include="Lib\EasyHook.XML" />
+    <None Include="Lib\EasyHook32.dll" />
+    <None Include="Lib\EasyHook32Svc.exe" />
+    <None Include="Lib\EasyHook64.dll" />
+    <None Include="Lib\EasyHook64Svc.exe" />
+    <None Include="Lib\fasmdll_managed.dll" />
+    <None Include="Lib\Hider.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Caronte\Caronte.csproj">
+      <Project>{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}</Project>
+      <Name>Caronte</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -234,6 +250,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>copy $(ProjectDir)Lib\Hider.dll $(ProjectDir)$(OutDir)</PreBuildEvent>
+    <PreBuildEvent>copy "$(ProjectDir)Lib\*" "$(TargetDir)"</PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

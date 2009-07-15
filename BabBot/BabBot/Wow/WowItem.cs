@@ -23,11 +23,18 @@ namespace BabBot.Wow
 {
     public class WowItem : WowObject
     {
-        public WowItem(WowObject o)
+
+        public WowItem(uint ObjectPointer)
+            : base(ObjectPointer)
         {
-            Guid = o.Guid;
-            ObjectPointer = o.ObjectPointer;
-            Type = o.Type;
+        }
+
+        public override string Name
+        {
+            get
+            {
+                return string.Empty;
+            }
         }
 
         public uint GetDurability()

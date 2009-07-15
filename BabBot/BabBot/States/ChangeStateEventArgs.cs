@@ -13,16 +13,30 @@
 
     You should have received a copy of the GNU General Public License
     along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
-  
+
     Copyright 2009 BabBot Team
 */
-namespace BabBot.Wow
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace BabBot.States
 {
-    public class WowCorpse : WowUnit
+    public class ChangeStateEventArgs<T> : StateEventArgs<T>
     {
-        public WowCorpse(uint ObjectPointer)
-            : base(ObjectPointer)
+        public State<T> NewState { get; private set; }
+
+        public ChangeStateEventArgs(T Entity, State<T> NewState) : base(Entity)
         {
+            this.NewState = NewState;
+        }
+
+        public static ChangeStateEventArgs<T> GetArgs(T Entity, State<T> NewState)
+        {
+            ChangeStateEventArgs<T> args = new ChangeStateEventArgs<T>(Entity, NewState);
+
+            return args;
         }
     }
 }

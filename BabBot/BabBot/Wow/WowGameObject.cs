@@ -13,16 +13,33 @@
 
     You should have received a copy of the GNU General Public License
     along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
-  
+
     Copyright 2009 BabBot Team
 */
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using BabBot.Manager;
+
 namespace BabBot.Wow
 {
-    public class WowCorpse : WowUnit
+    public class WowGameObject : WowObject
     {
-        public WowCorpse(uint ObjectPointer)
+        public WowGameObject(uint ObjectPointer)
             : base(ObjectPointer)
         {
+
+        }
+
+        public override string Name
+        {
+            get
+            {
+                return ProcessManager.WowProcess.ReadASCIIString(
+                    ProcessManager.WowProcess.ReadUInt(
+                    ProcessManager.WowProcess.ReadUInt(ObjectPointer + 420) + 0x88), 0x30);
+            }
         }
     }
 }

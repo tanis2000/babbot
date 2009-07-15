@@ -20,5 +20,9 @@ namespace BabBot.Wow
 {
     internal class WowDynamicObject : WowObject
     {
+        public WowDynamicObject(uint ObjectPointer)
+            : base(ObjectPointer)
+        {
+        }
     }
 }

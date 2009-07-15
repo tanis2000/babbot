@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fasmdll_managed", "..\fasmd
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dante", "..\Dante\Dante.csproj", "{57ADA462-12C3-4788-BFE1-498A9F41C30C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caronte", "..\Caronte\Caronte.csproj", "{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,18 @@ Global
 		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Release|Win32.ActiveCfg = Release|Any CPU
 		{57ADA462-12C3-4788-BFE1-498A9F41C30C}.Release|x64.ActiveCfg = Release|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Release|Win32.ActiveCfg = Release|Any CPU
+		{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

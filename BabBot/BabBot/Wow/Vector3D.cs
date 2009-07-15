@@ -75,9 +75,22 @@ namespace BabBot.Wow
             return new Vector3D(v.X*n, v.Y*n, v.Z*n);
         }
 
+        public static float operator *(Vector3D v1, Vector3D v2)
+        {
+            float f;
+            f = v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+            return f;
+        }
+
         public static Vector3D operator +(Vector3D v1, Vector3D v2)
         {
             return new Vector3D(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
+        }
+
+        public static Vector3D operator -(Vector3D v1, Vector3D v2)
+        {
+            var v3 = new Vector3D((v1.X - v2.X), (v1.Y - v2.Y), (v1.Z - v2.Z));
+            return v3;
         }
 
         public bool Equals(Vector3D obj)

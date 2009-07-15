@@ -192,7 +192,7 @@ namespace BabBot.Forms
                 var facing = (float) ((ProcessManager.Player.LastFaceRadian*180)/Math.PI);
                 txtComputedFacing.Text = string.Format("{0}°", facing);
 
-                tbPlayerIsSitting.Text = ProcessManager.Player.IsSitting().ToString();
+                tbPlayerIsSitting.Text = ProcessManager.Player.IsSitting.ToString();
                 txtTravelTime.Text = string.Format("{0} ms", ProcessManager.Player.TravelTime);
 
                 tbCountNormal.Text = WayPointManager.Instance.NormalNodeCount.ToString();
@@ -422,12 +422,14 @@ namespace BabBot.Forms
 
         private void btnStartBot_Click(object sender, EventArgs e)
         {
-            StateManager.Instance.Start();
+            ProcessManager.Player.StateMachine.IsRunning = true;
+            //StateManager.Instance.Start();
         }
 
         private void btnStopBot_Click(object sender, EventArgs e)
         {
-            StateManager.Instance.Stop();
+            ProcessManager.Player.StateMachine.IsRunning = false;
+            //StateManager.Instance.Stop();
         }
 
         private void btnAddEnemyToList_Click(object sender, EventArgs e)

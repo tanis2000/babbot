@@ -95,59 +95,59 @@ namespace BabBot.Scripts
         void IScript.Update()
         {
             Console.WriteLine("Update() -- Begin");
-            Console.WriteLine("Current State: " + player.State());
-            switch (player.State())
-            {
-                case PlayerState.PreMobSelection:
-                    break;
-                case PlayerState.PostMobSelection:
-                    break;
-                case PlayerState.Start:
-                    OnStart();
-                    break;
-                case PlayerState.WayPointTimeout:
-                    break;
-                case PlayerState.PreRest:
-                    break;
-                case PlayerState.Rest:
-                    OnRest();
-                    break;
-                case PlayerState.PostRest:
-                    break;
-                case PlayerState.Dead:
-                    OnDead();
-                    break;
-                case PlayerState.Graveyard:
-                    OnGraveyard();
-                    break;
-                case PlayerState.PreResurrection:
-                    break;
-                case PlayerState.PostResurrection:
-                    break;
-                case PlayerState.PreLoot:
-                    break;
-                case PlayerState.PostLoot:
-                    break;
-                case PlayerState.PreCombat:
-                    OnPreCombat();
-                    break;
-                case PlayerState.InCombat:
-                    OnInCombat();
-                    break;
-                case PlayerState.PostCombat:
-                    OnPostCombat();
-                    break;
-                case PlayerState.Sale:
-                    break;
-                case PlayerState.Roaming:
-                    OnRoaming();
-                    break;
-                case PlayerState.Stop:
-                    OnStop();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            //Console.WriteLine("Current State: " + player.State());
+            //switch (player.State())
+            //{
+            //    case PlayerState.PreMobSelection:
+            //        break;
+            //    case PlayerState.PostMobSelection:
+            //        break;
+            //    case PlayerState.Start:
+            //        OnStart();
+            //        break;
+            //    case PlayerState.WayPointTimeout:
+            //        break;
+            //    case PlayerState.PreRest:
+            //        break;
+            //    case PlayerState.Rest:
+            //        OnRest();
+            //        break;
+            //    case PlayerState.PostRest:
+            //        break;
+            //    case PlayerState.Dead:
+            //        OnDead();
+            //        break;
+            //    case PlayerState.Graveyard:
+            //        OnGraveyard();
+            //        break;
+            //    case PlayerState.PreResurrection:
+            //        break;
+            //    case PlayerState.PostResurrection:
+            //        break;
+            //    case PlayerState.PreLoot:
+            //        break;
+            //    case PlayerState.PostLoot:
+            //        break;
+            //    case PlayerState.PreCombat:
+            //        OnPreCombat();
+            //        break;
+            //    case PlayerState.InCombat:
+            //        OnInCombat();
+            //        break;
+            //    case PlayerState.PostCombat:
+            //        OnPostCombat();
+            //        break;
+            //    case PlayerState.Sale:
+            //        break;
+            //    case PlayerState.Roaming:
+            //        OnRoaming();
+            //        break;
+            //    case PlayerState.Stop:
+            //        OnStop();
+            //        break;
+            //    default:
+            //        throw new ArgumentOutOfRangeException();
+            //}
             Console.WriteLine("Update() -- End");
         }
 

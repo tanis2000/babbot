@@ -23,11 +23,10 @@ namespace BabBot.Wow
 {
     public class WowContainer : WowItem
     {
-        public WowContainer(WowObject o) : base(o)
+        public WowContainer(uint ObjectPointer)
+            : base(ObjectPointer)
         {
-            Guid = o.Guid;
-            ObjectPointer = o.ObjectPointer;
-            Type = o.Type;
+
         }
 
         public uint GetSlots()
@@ -49,11 +48,10 @@ namespace BabBot.Wow
                 ProcessManager.WowProcess.ReadUInt64(ObjectPointer +
                                                      (uint) Descriptor.eContainerFields.CONTAINER_FIELD_SLOT_1 +
                                                      (2*n)*0x04);
-            var o = new WowObject();
-            o.Guid = guid;
-            o.ObjectPointer = ProcessManager.ObjectManager.GetObjectByGUID(o.Guid);
-            o.Type = ProcessManager.ObjectManager.GetTypeByObject(o.ObjectPointer);
-            var item = new WowItem(o);
+
+            uint iObjectPointer= ProcessManager.ObjectManager.GetObjectByGUID(guid);
+
+            var item = new WowItem(iObjectPointer);
             return item;
         }
 

@@ -17,100 +17,172 @@
     Copyright 2009 BabBot Team
 */
 using System;
+using BabBot.Manager;
+using System.Collections.Generic;
 
 namespace BabBot.Wow
 {
     public class WowUnit : WowObject
     {
-        private readonly Unit unit;
-        public string Name;
-
-        public WowUnit(WowObject o)
+        public WowUnit(uint ObjectPointer)
+            : base(ObjectPointer)
         {
-            Guid = o.Guid;
-            ObjectPointer = o.ObjectPointer;
-            Type = o.Type;
-            unit = new Unit(ObjectPointer);
+
         }
 
         public UInt64 CurTargetGuid
         {
-            get { return unit.GetCurTargetGuid(); }
-        }
-
-        public Vector3D Location
-        {
-            get { return unit.GetPosition(); }
+            get { return ReadDescriptor<uint>(Descriptor.eUnitFields.UNIT_FIELD_TARGET); }
         }
 
         public float Orientation
         {
-            get { return unit.GetFacing(); }
+            get { return ReadOffset<float>(Globals.PlayerRotationOffset); }
         }
-
-
+        
         public uint Hp
         {
-            get { return unit.GetHp(); }
+            get { return ReadDescriptor<uint>(Descriptor.eUnitFields.UNIT_FIELD_HEALTH); }
         }
 
         public uint MaxHp
         {
-            get { return unit.GetMaxHp(); }
+            get { return ReadDescriptor<uint>(Descriptor.eUnitFields.UNIT_FIELD_MAXHEALTH); }
         }
 
         public uint MaxMp
         {
-            get { return unit.GetMaxHp(); }
+            get { return ReadDescriptor<uint>(Descriptor.eUnitFields.UNIT_FIELD_MAXPOWER1); }
         }
 
         public uint Mp
         {
-            get { return unit.GetMp(); }
+            get { return ReadDescriptor<uint>(Descriptor.eUnitFields.UNIT_FIELD_POWER1); }
         }
 
-        public uint Level
+        public int Level
         {
-            get { return unit.GetLevel(); }
+            get { return ReadDescriptor<int>(Descriptor.eUnitFields.UNIT_FIELD_LEVEL); }
         }
 
-
-        public bool HasTarget()
+        public bool HasTarget
         {
-            if (CurTargetGuid != 0)
+            get
             {
-                return true;
+                if (CurTargetGuid != 0)
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
 
-        public bool IsAggro()
+        public bool IsAggro
         {
-            return unit.IsAggro();
+            get { return Convert.ToBoolean((ReadDescriptor<uint>(Descriptor.eUnitFields.UNIT_FIELD_FLAGS) >> 0x13) & 1); }
         }
 
-        public bool IsDead()
+        public bool IsDead
         {
-            if (unit.GetHp() <= 0)
+            get
             {
-                return true;
+                if (Hp <= 0) return true;
+                else return false;
             }
-            return false;
         }
 
-        public bool IsLootable()
+        public bool IsLootable
         {
-            return unit.IsLootable();
+            get
+            {
+                return (ReadDescriptor<int>(Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS) & 0x0D) != 0;
+            }
         }
 
-        public float BoundingRadius()
+        public bool IsNpc
         {
-            return unit.BoundingRadius();
+            get
+            {
+                return ReadDescriptor<bool>(Descriptor.eUnitFields.UNIT_NPC_FLAGS);
+            }
         }
 
+        public WowObject SummonedBy
+        {
+            get
+            {
+                uint summonGuid = ReadDescriptor<uint>(Descriptor.eUnitFields.UNIT_FIELD_SUMMONEDBY);
+
+                if (summonGuid == 0) return null;
+
+                uint sObjectPointer = ProcessManager.ObjectManager.GetObjectByGUID(summonGuid);
+
+                return WowObject.GetCorrentWowObjectFromPointer(sObjectPointer);
+            }
+        }
+
+        public float BoundingRadius
+        {
+            get { return ReadDescriptor<float>(Descriptor.eUnitFields.UNIT_FIELD_BOUNDINGRADIUS); }
+        }
+
+        public WowUnit CurTarget
+        {
+            get
+            {
+                if (CurTargetGuid == 0) return null;
+
+                uint oPointer = ProcessManager.ObjectManager.GetObjectByGUID(CurTargetGuid);
+
+                WowUnit o = new WowUnit(oPointer);
+
+                return o;
+            }
+        }
+
+        public bool IsSitting
+        {
+            get
+            {
+                return
+                    Convert.ToBoolean(ReadDescriptor<uint>((uint)Descriptor.eUnitFields.UNIT_FIELD_BYTES_1) &
+                        (int)Descriptor.eUnitFlags.UF_SITTING);
+            }
+        }
+
+        public bool IsTapped
+        {
+            get
+            {
+                return (ReadDescriptor<int>((uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS) & 4) != 0;
+            }
+        }
+
+        public bool IsTappedByMe
+        {
+            get
+            {
+                return (ReadDescriptor<int>((uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS) & 8) != 0;
+            }
+        }
+        
+        public bool IsGhost
+        {
+            get
+            {
+                return (ReadDescriptor<int>((uint)Descriptor.ePlayerFields.PLAYER_FLAGS) & 0x10) != 0;
+            }
+        }
+
+
+
+        /// <summary>Interacts with the object, loot, target etc.</summary>
         public void Interact()
         {
-            unit.Interact();
+            if (ObjectPointer != 0)
+            {
+                ProcessManager.Injector.Interact(ObjectPointer);
+            }
         }
 
         public bool Equals(WowUnit obj)

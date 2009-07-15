@@ -87,18 +87,15 @@ namespace BabBot.Wow
 
         public List<WowObject> GetAllObjectsAroundLocalPlayer()
         {
-            var list = new List<WowObject>();
-            var wo = new WowObject();
+            List<WowObject> list = new List<WowObject>();
+            WowObject wo = null;
             curObject = GetFirstObject();
             tempHolder = curObject;
             try
             {
                 while ((curObject != 0) && ((curObject & 1) == 0))
                 {
-                    wo = new WowObject();
-                    wo.ObjectPointer = curObject;
-                    wo.Guid = GetGUIDByObject(curObject);
-                    wo.Type = GetTypeByObject(curObject);
+                    wo = WowObject.GetCorrentWowObjectFromPointer(curObject);
                     list.Add(wo);
 
                     tempHolder = GetNextObject(curObject);
@@ -145,7 +142,8 @@ namespace BabBot.Wow
                     return GetUnitName(obj);
 
                 default:
-                    return "Unknown Object with type " + type;
+                    return ProcessManager.WowProcess.ReadASCIIString(ProcessManager.WowProcess.ReadUInt(ProcessManager.WowProcess.ReadUInt(obj + 0x968) + 0x54), 0x40);
+
             }
         }
 

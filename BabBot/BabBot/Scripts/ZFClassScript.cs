@@ -340,7 +340,7 @@
 //            //  for action in combatactions
 //            //    if action.shouldBeExecuted(player) && action.isReady()
 //            //      playaction
-//            while (player.HasTarget() /*&& !target.isDead() && bot.isRunning()*/)
+//            while (player.HasTarget /*&& !target.isDead() && bot.isRunning()*/)
 //            {
 //                foreach (string action in combatList)
 //                {
