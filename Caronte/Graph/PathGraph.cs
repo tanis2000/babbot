@@ -572,7 +572,7 @@ namespace Pather.Graph
 				}
 				{
 					System.TimeSpan ts = System.DateTime.Now.Subtract(pre);
-					if (ts.Seconds > 15)
+					if (ts.Seconds > 120)
 					{
 						Log("too long search, aborting");
 						break;

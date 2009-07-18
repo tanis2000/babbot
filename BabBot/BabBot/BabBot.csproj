@@ -134,7 +134,7 @@
     <Compile Include="Manager\InjectionManager.cs" />
     <Compile Include="Manager\ProcessManager.cs" />
     <Compile Include="Bot\WayPoint.cs" />
-    <Compile Include="Manager\StateManager.cs" />
+    <None Include="Manager\StateManager.cs" />
     <Compile Include="Manager\WayPointManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -174,19 +174,26 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Scripting\SConsumable.cs" />
     <Compile Include="Scripting\UnitWrapper.cs" />
     <Compile Include="Scripting\Host.cs" />
     <Compile Include="Scripting\PlayerWrapper.cs" />
-    <Compile Include="Scripts\Paladin.cs">
+    <None Include="Scripts\Paladin.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="Scripts\Script.cs">
+    </None>
+    <None Include="Scripts\PatTestScript.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Scripts\Script.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="Scripts\ZFClassScript.cs" />
+    </None>
+    <None Include="Scripts\ZFClassScript.cs" />
     <Compile Include="States\ChangeStateEventArgs.cs" />
+    <Compile Include="States\Common\AttackNearMobState.cs" />
+    <Compile Include="States\Common\DeadState.cs" />
+    <Compile Include="States\Common\GlobalBaseBotState.cs" />
     <Compile Include="States\Samples\HangingAroundState.cs" />
-    <Compile Include="States\Standard\MoveToState.cs" />
+    <Compile Include="States\Common\MoveToState.cs" />
     <Compile Include="States\StateEventArgs.cs" />
     <Compile Include="States\StateMachine.cs" />
     <Compile Include="States\State.cs" />

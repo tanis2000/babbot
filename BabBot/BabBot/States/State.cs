@@ -59,6 +59,11 @@ namespace BabBot.States
         /// <summary>Enter this State</summary>
         public void Enter(T Entity)
         {
+            //on enter, clear out last execute time, exit time, finish time
+            LastExecuteTime = DateTime.MinValue;
+            ExitTime = DateTime.MinValue;
+            FinishTime = DateTime.MinValue;
+
             //Raise Entering event
             if (Entering != null) Entering(this, StateEventArgs<T>.GetArgs(Entity));
 
@@ -127,5 +132,22 @@ namespace BabBot.States
         }
 
         protected abstract void DoFinish(T Entity);
+
+        public bool HasChangeStateEventHookup
+        {
+            get { return (ChangeStateRequest == null) ? false : true; }
+        }
+
+        protected bool CallChangeStateEvent(T Entity, State<T> NewState, bool TrackPrevious, bool ExitPrevious)
+        {
+            if (HasChangeStateEventHookup)
+            {
+                ChangeStateRequest(this, ChangeStateEventArgs<T>.GetArgs(Entity, NewState, TrackPrevious, ExitPrevious));
+
+                return true;
+            }
+            
+            return false;
+        }
     }
 }

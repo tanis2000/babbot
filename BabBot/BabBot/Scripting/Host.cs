@@ -20,61 +20,50 @@ using System;
 using System.IO;
 using BabBot.Manager;
 using CSScriptLibrary;
+using System.Reflection;
+using BabBot.Wow;
+using BabBot.States;
 
 namespace BabBot.Scripting
 {
-    public interface IHost
+    public class Host
     {
-        void Test();
-    }
-
-    public interface IScript
-    {
-        IHost Parent { set; }
-        IPlayerWrapper Player { set; }
-        void Init();
-        void Update();
-        bool NeedRest();
-    }
-
-    public class Host : IHost
-    {
-        private IScript script;
-
-        #region IHost Members
-
-        public void Test()
-        {
-            Console.WriteLine("test");
-        }
+        private States.State<Wow.WowPlayer> script;
 
         public void Start()
         {
-            //script = Load("Scripts/script.cs");
-            script = Load("Scripts/paladin.cs");
-            script.Parent = this;
-            script.Player = new PlayerWrapper(ProcessManager.Player);
-            script.Init();
-            StateManager.Instance.Script = script;
+            script = Load("Scripts/PatTestScript.cs");
+
+            ProcessManager.Player.StateMachine.SetGlobalState(script);
         }
 
-        private IScript Load(string iScript)
+        private States.State<Wow.WowPlayer> Load(string iScript)
         {
+            //variable to hold output
+            State<WowPlayer> state = null;
+
+            //true to share host assemblies
             CSScript.ShareHostRefAssemblies = true;
 
-            var helper = new AsmHelper(CSScript.Load(Path.GetFullPath(iScript), null, true));
-            return (IScript) helper.CreateObject("BabBot.Scripts.Toon");
-        }
+            Assembly asm = CSScript.Load(Path.GetFullPath(iScript), null, true);
 
-        public void Update()
-        {
-            script.Update();
-        }
+            //get all types in assembly
+            Type[] types = asm.GetTypes();
 
-        public IScript Script
-        {
-            get { return script; }
+            //search through the included types
+            foreach (Type type in types)
+            {
+                // and try and find a state<wowplayer> type
+                if (type.IsClass && type.IsSubclassOf(typeof(State<WowPlayer>)))
+                {
+                    // Create the State using the Activator class.
+                    state = (State<WowPlayer>)Activator.CreateInstance(type);
+
+                    break;
+                }
+            }
+
+            return state;
         }
-        #endregion
     }
 }

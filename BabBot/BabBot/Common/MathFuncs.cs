@@ -23,6 +23,8 @@ namespace BabBot.Common
 {
     public static class MathFuncs
     {
+        private static Random _Random = new Random();
+
         public static float GetDistance(Vector3D dest, Vector3D currentPos, bool UseZ)
         {
             float num = currentPos.X - dest.X;
@@ -52,6 +54,11 @@ namespace BabBot.Common
         public static float RadianToDegree(float value)
         {
             return (float) Math.Round((double) (value * 57.295779513082323));
+        }
+
+        public static int RandomNumber(int min, int max)
+        {
+            return _Random.Next(min, max + 1);
         }
     }
 }

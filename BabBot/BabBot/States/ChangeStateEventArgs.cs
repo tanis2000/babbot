@@ -26,15 +26,19 @@ namespace BabBot.States
     public class ChangeStateEventArgs<T> : StateEventArgs<T>
     {
         public State<T> NewState { get; private set; }
+        public bool TrackPrevious { get; private set; }
+        public bool ExitPrevious { get; private set; }
 
-        public ChangeStateEventArgs(T Entity, State<T> NewState) : base(Entity)
+        public ChangeStateEventArgs(T Entity, State<T> NewState, bool TrackPrevious, bool ExitPrevious) : base(Entity)
         {
             this.NewState = NewState;
+            this.TrackPrevious = TrackPrevious;
+            this.ExitPrevious = ExitPrevious;
         }
 
-        public static ChangeStateEventArgs<T> GetArgs(T Entity, State<T> NewState)
+        public static ChangeStateEventArgs<T> GetArgs(T Entity, State<T> NewState, bool TrackPrevious, bool ExitPrevious)
         {
-            ChangeStateEventArgs<T> args = new ChangeStateEventArgs<T>(Entity, NewState);
+            ChangeStateEventArgs<T> args = new ChangeStateEventArgs<T>(Entity, NewState, TrackPrevious, ExitPrevious);
 
             return args;
         }

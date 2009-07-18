@@ -24,5 +24,15 @@ namespace BabBot.Wow
             : base(ObjectPointer)
         {
         }
+
+        public override Vector3D Location
+        {
+            get
+            {
+                return new Vector3D(ReadOffset<float>(Descriptor.eDynamicObjectFields.DYNAMICOBJECT_POS_X),
+                    ReadOffset<float>(Descriptor.eDynamicObjectFields.DYNAMICOBJECT_POS_Y),
+                    ReadOffset<float>(Descriptor.eDynamicObjectFields.DYNAMICOBJECT_POS_Z));
+            }
+        }
     }
 }

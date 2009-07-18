@@ -28,6 +28,7 @@ using BabBot.Common;
 using BabBot.Manager;
 using BabBot.Wow;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BabBot.Forms
 {
@@ -143,6 +144,23 @@ namespace BabBot.Forms
                 }
             }
         }
+
+        //private WayPoint GetLatestPlayerWayPoint()
+        //{
+        //    switch (comboWayPointTypes.SelectedItem.ToString())
+        //    {
+        //        case "Vendor":
+        //            return WayPointManager.Instance.VendorPath.Last();
+        //        case "Repair":
+        //            return WayPointManager.Instance.RepairPath.Last();
+        //        case "Ghost":
+        //            return WayPointManager.Instance.GhostPath.Last();
+        //        case "Normal":
+        //            return WayPointManager.Instance.NormalPath.Last();
+        //    }
+
+        //    throw new Exception("Unrecognized WayPoint type " + comboWayPointTypes.SelectedItem.ToString());
+        //}
 
         private void PlayerUpdate()
         {
@@ -422,6 +440,48 @@ namespace BabBot.Forms
 
         private void btnStartBot_Click(object sender, EventArgs e)
         {
+            ////get location of nearest mobs and then create a circle path between some MPC's
+            //List<WowObject> mobs = Player.GetNearObjects();
+
+            //Path p = new Path();
+
+            ////first waypoint
+            //var d1 = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT && c.Name == "Balir Frosthammer" select c;
+            //p.AddLast(WaypointVector3DHelper.Vector3DToLocation(d1.First<WowObject>().Location));
+
+            ////second waypoint
+            //var d2 = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT && c.Name == "Sten Stoutarm" select c;
+            //p.AddLast(WaypointVector3DHelper.Vector3DToLocation(d2.First<WowObject>().Location));
+
+            ////third waypoint
+            //var d3 = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT && c.Name == "Adlin Pridedrift" select c;
+            //p.AddLast(WaypointVector3DHelper.Vector3DToLocation(d3.First<WowObject>().Location));
+
+            ////back to first
+            //p.AddLast(WaypointVector3DHelper.Vector3DToLocation(d1.First<WowObject>().Location));
+
+
+            //lets try and calculate a path from the dwarf starting area to IronForge and then walk it
+            //Path p =
+            //    Caronte.CalculatePath(
+            //        WaypointVector3DHelper.Vector3DToLocation(Player.Location),
+            //        new Location(-6003.86f, -232.1742f, 410.5543f));
+
+            //if a normal path exists, use it, else exit and don't start
+            if (WayPointManager.Instance.RepairNodeCount <= 0)
+                return;
+
+            Pather.Graph.Path p = new Pather.Graph.Path();
+
+            //add each waypoint in the waypoint list
+            foreach (WayPoint wp in WayPointManager.Instance.NormalPath)
+            {
+                p.AddLast(WaypointVector3DHelper.Vector3DToLocation(wp.Location));
+            }
+
+            ProcessManager.Player.StateMachine.SetGlobalState(new BabBot.States.Common.MoveToState(p));
+
+
             ProcessManager.Player.StateMachine.IsRunning = true;
             //StateManager.Instance.Start();
         }
@@ -615,6 +675,9 @@ namespace BabBot.Forms
             }
         }
         #endregion
+
+
+
 
 
 

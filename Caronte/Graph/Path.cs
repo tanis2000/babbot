@@ -59,7 +59,11 @@ namespace Pather.Graph
 
 		public Location Get(int index)
 		{
-			return locations[index];
+            //bug fix for if we request an index that does not exist
+            if (locations.Count > index)
+                return locations[index];
+            else
+                return null;
 		}
 
 		public void AddFirst(Location l)

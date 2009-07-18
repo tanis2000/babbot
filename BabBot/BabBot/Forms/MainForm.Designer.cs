@@ -138,6 +138,7 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
+            this.btnInputHandler = new System.Windows.Forms.Button();
             this.btnInjectDll = new System.Windows.Forms.Button();
             this.btnGetLuaText = new System.Windows.Forms.Button();
             this.tbLuaVariable = new System.Windows.Forms.TextBox();
@@ -152,7 +153,6 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.btnInputHandler = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -191,7 +191,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -206,7 +206,7 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.optionsToolStripMenuItem.Text = "&Options..";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -221,7 +221,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -1232,6 +1232,16 @@
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
             // 
+            // btnInputHandler
+            // 
+            this.btnInputHandler.Location = new System.Drawing.Point(121, 188);
+            this.btnInputHandler.Name = "btnInputHandler";
+            this.btnInputHandler.Size = new System.Drawing.Size(100, 23);
+            this.btnInputHandler.TabIndex = 18;
+            this.btnInputHandler.Text = "InputHandler";
+            this.btnInputHandler.UseVisualStyleBackColor = true;
+            this.btnInputHandler.Click += new System.EventHandler(this.btnInputHandler_Click);
+            // 
             // btnInjectDll
             // 
             this.btnInjectDll.Location = new System.Drawing.Point(235, 64);
@@ -1342,7 +1352,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 421);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 414);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(580, 22);
             this.statusStrip1.TabIndex = 2;
@@ -1354,21 +1364,11 @@
             this.statusLabel.Size = new System.Drawing.Size(62, 17);
             this.statusLabel.Text = "statusLabel";
             // 
-            // btnInputHandler
-            // 
-            this.btnInputHandler.Location = new System.Drawing.Point(121, 188);
-            this.btnInputHandler.Name = "btnInputHandler";
-            this.btnInputHandler.Size = new System.Drawing.Size(100, 23);
-            this.btnInputHandler.TabIndex = 18;
-            this.btnInputHandler.Text = "InputHandler";
-            this.btnInputHandler.UseVisualStyleBackColor = true;
-            this.btnInputHandler.Click += new System.EventHandler(this.btnInputHandler_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(580, 443);
+            this.ClientSize = new System.Drawing.Size(580, 436);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControlMain);
             this.Controls.Add(this.msMain);

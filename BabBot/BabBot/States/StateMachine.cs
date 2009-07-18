@@ -64,11 +64,19 @@ namespace BabBot.States
         public void SetGlobalState(State<T> NewGlobalState)
         {
             //if a global state currently exists then exit i
-            if (GlobalState != null) GlobalState.Exit(Entity);
+            if (GlobalState != null)
+            {
+                GlobalState.Exit(Entity);
+                //remove change state request from old global
+                GlobalState.ChangeStateRequest -= CurrentState_ChangeStateRequest;
+            }
 
             //set new global state
             GlobalState = NewGlobalState;
 
+            //connect up to the global states change state request
+            GlobalState.ChangeStateRequest += new EventHandler<ChangeStateEventArgs<T>>(CurrentState_ChangeStateRequest);
+            
             //enter new global state
             GlobalState.Enter(Entity);
         }
@@ -92,34 +100,71 @@ namespace BabBot.States
         }
 
         /// <summary>Change the current state to the new specified state.</summary>
-        public void ChangeState(State<T> NewState)
+        public void ChangeState(State<T> NewState, bool TrackPrevious, bool ExitPrevious)
         {
-            //if new state is null ignore change request
-            if (NewState == null) return;
+            //if a current state exists, and we need to keep track
+            // of the current state so we can go back to it later
+            if (CurrentState != null && TrackPrevious)
+            {
+                //Capture current state as previous state
+                NewState.PreviousState = CurrentState;
+            }
+            else
+            {
+                //if we aren't going to track this one anymore
+                // then remove the state change request event
+                if(CurrentState != null)
+                    CurrentState.ChangeStateRequest -= CurrentState_ChangeStateRequest;
+            }
 
-            //Capture current state as previous state
-            NewState.PreviousState = CurrentState;
+            //if we need to exit the previous state 
+            // then do so.
+            if (ExitPrevious && CurrentState != null)
+            {
+                //Exit Current State
+                CurrentState.Exit(Entity);
+            }
 
-            //Exit Current State
-            CurrentState.Exit(Entity);
 
             //capture new current state
             CurrentState = NewState;
 
-            //Enter new state
-            CurrentState.Enter(Entity);
+            //hook up to the new states "State Change Request" event
+            // if it is not already hooked up
+            if (!CurrentState.HasChangeStateEventHookup)
+            {
+                CurrentState.ChangeStateRequest += new EventHandler<ChangeStateEventArgs<T>>(CurrentState_ChangeStateRequest);
+            }
+
+            //Enter new state if enter date/time is min date
+            // otherwise we entered before and we don't need to enter again
+            // OR re-enter if the exit time is not min value
+            if (CurrentState.EnterTime == DateTime.MinValue || CurrentState.ExitTime != DateTime.MinValue)
+            {
+                CurrentState.Enter(Entity);
+            }
         }
 
         /// <summary>Change back to the previous state</summary>
         public void RevertToPreviousState()
         {
-            ChangeState(CurrentState.PreviousState);
+            //when going back to a previous state we want to 
+            // not track the current state and we want to exit the current state.
+            ChangeState(CurrentState.PreviousState, false, true);
+        }
+
+        void CurrentState_ChangeStateRequest(object sender, ChangeStateEventArgs<T> e)
+        {
+            //when the currently running state requests a change request (either the global or CurrentState).
+            // then pause currently running state and switch to the new one.
+
+            ChangeState(e.NewState, e.TrackPrevious, e.ExitPrevious);
         }
 
         /// <summary>Is state machine in the specified state?</summary>
         public bool IsInState(Type State)
         {
-            if (CurrentState.GetType() == State) return true;
+            if (CurrentState !=null && CurrentState.GetType() == State && CurrentState.ExitTime != DateTime.MinValue) return true;
             else return false;
         }
     }

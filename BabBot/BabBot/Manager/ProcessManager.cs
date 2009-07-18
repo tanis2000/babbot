@@ -323,22 +323,20 @@ namespace BabBot.Manager
                 PlayerUpdate();
             }
 
-            //if (PlayerWayPoint != null)
-            //{
-            //    Vector3D last = Player.LastLocation;
-            //    if (last.X == 0 && last.Y == 0 && last.Z == 0)
-            //    {
-            //        Player.LastLocation = last = Player.Location;
-            //    }
-
-            //    if ((int) Player.HGetDistance(last, false) > 5 && (int) Player.HGetDistance(last, false) < 7)
-            //    {
-
+            //update last player location
             Player.LastLocation = Player.Location;
 
-            //          PlayerWayPoint(Player.LastLocation);
-            //    }
-            //}
+            if (PlayerWayPoint != null)
+            {
+                Vector3D current = Player.Location;
+                WayPoint wpLast = (WayPointManager.Instance.NormalNodeCount > 0) ? WayPointManager.Instance.NormalPath.Last() : null;
+
+                if (wpLast != null && MathFuncs.GetDistance(current, wpLast.Location, false) > 5 || wpLast == null)
+                {
+                    PlayerWayPoint(current);
+                }
+            }
+
         }
 
         /// <summary>
@@ -419,30 +417,12 @@ namespace BabBot.Manager
                 InitializeCaronte();
                 //ScriptHost.Start();
                 //StateManager.Instance.Stop();
-
-                //get location of nearest mob
-                List<WowObject> mobs = Player.GetNearObjects();
-
-                var d = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT select c;
-
-                Vector3D testDestination = d.First<WowObject>().Location;
-
-                //temp initialize states
-                //Path p = new Path();
-                //p.AddLast(new Location(Player.Location.X + 15, Player.Location.Y, Player.Location.Z));
-                //p.AddLast(new Location(Player.Location.X - 15, Player.Location.Y, Player.Location.Z));
-                //p.AddLast(new Location(Player.Location.X, Player.Location.Y +15, Player.Location.Z));
-                //p.AddLast(new Location(Player.Location.X, Player.Location.Y -15, Player.Location.Z));
-                //p.AddLast(new Location(Player.Location.X + 15, Player.Location.Y + 15, Player.Location.Z));
-                //p.AddLast(new Location(Player.Location.X - 15, Player.Location.Y - 15, Player.Location.Z));
-
-                Player.StateMachine.SetGlobalState(new BabBot.States.Standard.MoveToState(testDestination));
                 
                 Initialized = true;
             }
             catch (Exception ex)
             {
-                throw new Exception("Initialize failed!");
+                throw new Exception("Initialize failed! - " + ex.ToString());
             }
         }
 

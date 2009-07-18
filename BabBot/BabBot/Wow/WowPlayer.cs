@@ -43,7 +43,6 @@ namespace BabBot.Wow
         private bool StopMovement;
         public int TravelTime;
         //private bool isMoving;
-        private static Random _Random = new Random();
 
         /// <summary>
         /// Constructor
@@ -366,7 +365,7 @@ namespace BabBot.Wow
         public bool SelectMob(WowUnit u)
         {
             // We face the target otherwise the tabbing won't work as it might be out of our scope
-            Face(u.Location);
+            FaceUsingMemoryWrite(GetFaceAngle(u.Location), true);
 
             // We tab till we have found our target or till we come back to the first GUID we met
             return FindMob(u);
@@ -412,7 +411,7 @@ namespace BabBot.Wow
             if (HasTarget)
             {
                 WowUnit target = GetCurTarget();
-                return GetDistance(target.Location);
+                return MathFuncs.GetDistance(target.Location, Location, false);
             }
             return 0.0f;
         }
@@ -421,7 +420,7 @@ namespace BabBot.Wow
         {
             if (IsDead || IsGhost)
             {
-                return GetDistance(CorpseLocation);
+                return MathFuncs.GetDistance(CorpseLocation, Location, false);
             }
             return 0.0f;
         }
@@ -441,7 +440,7 @@ namespace BabBot.Wow
             if (HasTarget)
             {
                 WowUnit target = GetCurTarget();
-                return GetFaceRadian(target.Location);
+                return MathFuncs.GetFaceRadian(target.Location, Location);
             }
             return 0.0f;
         }
@@ -466,7 +465,7 @@ namespace BabBot.Wow
                     if (obj.Name == enemy.Name)
                     {
                         // We have something. But if it's too far away we ignore it
-                        if (GetDistance(obj.Location, false) < 20.0f)
+                        if (MathFuncs.GetDistance(obj.Location, Location, false) < 20.0f)
                         {
                             // We have him in sight
                             return true;
@@ -494,7 +493,7 @@ namespace BabBot.Wow
                         }
                         else
                         {
-                            if (GetDistance(closest.Location, false) > GetDistance(obj.Location, false))
+                            if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(obj.Location, Location, false))
                             {
                                 closest = obj;
                             }
@@ -527,7 +526,7 @@ namespace BabBot.Wow
                 }
                 else
                 {
-                    if (GetDistance(closest.Location, false) > GetDistance(lootable.Location, false))
+                    if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(lootable.Location, Location, false))
                     {
                         closest = lootable;
                     }
@@ -575,7 +574,7 @@ namespace BabBot.Wow
             if (mob != null)
             {
                 Face(mob.Location);
-                if (GetDistance(mob.Location) > 5.0f)
+                if (MathFuncs.GetDistance(mob.Location, Location, false) > 5.0f)
                 {
                     MoveTo(mob.Location, 5.0f);
                 }
@@ -601,11 +600,6 @@ namespace BabBot.Wow
                 WowUnit target = GetCurTarget();
                 MoveTo(target, tolerance);
             }
-        }
-
-        private static int RandomNumber(int min, int max)
-        {
-            return _Random.Next(min, max);
         }
 
         /// <summary>
@@ -643,7 +637,7 @@ namespace BabBot.Wow
 
             // Random jump
             // TODO: make this configurable
-            int rndJmp = RandomNumber(1, 8);
+            int rndJmp = MathFuncs.RandomNumber(1, 8);
             bool doJmp = false;
             if (rndJmp == 1 || rndJmp == 3)
             {
@@ -651,12 +645,12 @@ namespace BabBot.Wow
             }
 
             // Move on...
-            float distance = HGetDistance(dest, false);
+            float distance = MathFuncs.GetDistance(dest, Location, false);
             PlayerCM.ArrowKeyDown(key);
 
             /// We face our destination waypoint while we are already moving, so that it looks 
             /// more human-like
-            float angle = GetFaceRadian(dest);
+            float angle = MathFuncs.GetFaceRadian(dest, Location);
             Face(angle);
 
             // Start profiler for WayPointTimeOut
@@ -681,7 +675,7 @@ namespace BabBot.Wow
                     break;
                 }
 
-                distance = HGetDistance(dest, false);
+                distance = MathFuncs.GetDistance(dest, Location, false);
 
                 Thread.Sleep(50);
                 Application.DoEvents();
@@ -735,7 +729,7 @@ namespace BabBot.Wow
                 return NavigationState.Ready;
             }
 
-            distance = HGetDistance(target.Location, false);
+            distance = MathFuncs.GetDistance(target.Location, Location, false);
 
             Path path =
                 ProcessManager.Caronte.CalculatePath(
@@ -753,18 +747,18 @@ namespace BabBot.Wow
             {
                 currentStep = 1;
                 angle =
-                    GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y,
-                                               path.locations[currentStep].Z));
+                    MathFuncs.GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y,
+                                               path.locations[currentStep].Z), Location);
             }
             else
             {
-                angle = GetFaceRadian(target.Location);
+                angle = MathFuncs.GetFaceRadian(target.Location, Location);
             }
 
             Face(angle);
 
             // Random jump
-            int rndJmp = RandomNumber(1, 8);
+            int rndJmp = MathFuncs.RandomNumber(1, 8);
             bool doJmp = false;
             if (rndJmp == 1 || rndJmp == 3)
             {
@@ -799,14 +793,14 @@ namespace BabBot.Wow
                 }
 
 
-                distance = HGetDistance(target.Location, false);
+                distance = MathFuncs.GetDistance(target.Location, Location, false);
 
                 if (steps > 0)
                 {
                     distanceFromStep =
-                        HGetDistance(
+                        MathFuncs.GetDistance(
                             new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y,
-                                         path.locations[currentStep].Z), false);
+                                         path.locations[currentStep].Z), Location, false);
                     Console.WriteLine("Step: " + currentStep);
                     Console.WriteLine("Location: " + Location);
                     Console.WriteLine("Distance from step: " + distanceFromStep);
@@ -820,13 +814,13 @@ namespace BabBot.Wow
                             if ((steps > 0) && (currentStep < steps - 1))
                             {
                                 angle =
-                                    GetFaceRadian(new Vector3D(path.locations[currentStep].X,
+                                    MathFuncs.GetFaceRadian(new Vector3D(path.locations[currentStep].X,
                                                                path.locations[currentStep].Y,
-                                                               path.locations[currentStep].Z));
+                                                               path.locations[currentStep].Z), Location);
                             }
                             else
                             {
-                                angle = GetFaceRadian(target.Location);
+                                angle = MathFuncs.GetFaceRadian(target.Location, Location);
                             }
                             Face(angle);
                         }
@@ -972,10 +966,71 @@ namespace BabBot.Wow
             }
         }
 
-        private void FaceUsingMemoryWrite(float radius)
+        public void FaceUsingMemoryWrite(float angle, bool Timed)
         {
+            //if timed is false then do memory write immediately and exit
+            if (!Timed)
+            {
+                ProcessManager.WowProcess.SuspendThread();
+                ProcessManager.WowProcess.WriteFloat(ObjectPointer + Globals.PlayerRotationOffset, angle);
+                ProcessManager.WowProcess.ResumeThread();
+
+                Thread.Sleep(50);
+
+                PlayerCM.ArrowKeyDown(CommandManager.ArrowKey.Left);
+                PlayerCM.ArrowKeyUp(CommandManager.ArrowKey.Left);
+
+                Thread.Sleep(50);
+                
+                return;
+            }
+
+            //the max distance we need to turn is Pi.  To turn that distance in 1 second we need to turn Pi/10 every 100 miliseconds
+            float dPerCycle = (float)Math.PI / 10f;
+
+            //determine which direction to turn
+            if (MathFuncs.negativeAngle(angle - Orientation) > Math.PI)
+            {
+                dPerCycle *= -1;
+            }
+
+            CommandManager.ArrowKey nextKey = CommandManager.ArrowKey.Left;
+
+            //while the distance left to turn is greater then that covered in a single cycle
+            while (Math.Abs(angle - (Orientation % (2 * System.Math.PI))) > Math.Abs(dPerCycle))
+            {
+                //get new angle by adding the positive or negative dpercycle value to our current orientation and setting it as our players angle
+                float newOrientation = (float)(Orientation % (2 * System.Math.PI)) + dPerCycle;
+
+                if (newOrientation < 0f)
+                {
+                    newOrientation += (float)((double)2 * Math.PI);
+                }
+
+                ProcessManager.WowProcess.SuspendThread();
+                ProcessManager.WowProcess.WriteFloat(ObjectPointer + Globals.PlayerRotationOffset, newOrientation);
+                ProcessManager.WowProcess.ResumeThread();
+
+                PlayerCM.ArrowKeyDown(nextKey);
+                PlayerCM.ArrowKeyUp(nextKey);
+
+                if (nextKey == CommandManager.ArrowKey.Left)
+                    nextKey = CommandManager.ArrowKey.Right;
+                else
+                    nextKey = CommandManager.ArrowKey.Left;
+
+                //then wait 100 miliseconds
+                Thread.Sleep(50);
+            }
+
             //write the new location memory
-            ProcessManager.WowProcess.WriteFloat(ObjectPointer + Globals.PlayerRotationOffset, radius);
+            ProcessManager.WowProcess.SuspendThread();
+            ProcessManager.WowProcess.WriteFloat(ObjectPointer + Globals.PlayerRotationOffset, angle);
+            ProcessManager.WowProcess.ResumeThread();
+            Thread.Sleep(50);
+
+            PlayerCM.ArrowKeyDown(nextKey);
+            PlayerCM.ArrowKeyUp(nextKey);            
         }
 
         private void FaceWithTimer(float radius, CommandManager.ArrowKey key)
@@ -1002,13 +1057,11 @@ namespace BabBot.Wow
             {
                 face = MathFuncs.negativeAngle(angle - Orientation);
                 FaceWithTimer(face, CommandManager.ArrowKey.Left);
-                //FaceUsingMemoryWrite(face);
             }
             else
             {
                 face = MathFuncs.negativeAngle(Orientation - angle);
                 FaceWithTimer(face, CommandManager.ArrowKey.Right);
-                //FaceUsingMemoryWrite(face);
             }
             Thread.Sleep(500);
         }
@@ -1017,12 +1070,18 @@ namespace BabBot.Wow
         {
             float angle = GetFaceAngle(dest);
 
-            FaceUsingMemoryWrite(-angle);
+            Face(angle);
         }
 
         protected float GetFaceAngle(Vector3D dest)
         {
             float angle = MathFuncs.GetFaceRadian(dest, Location);
+
+            return GetFaceAngle(angle);
+        }
+
+        protected float GetFaceAngle(float angle)
+        {
             float face;
 
             if (MathFuncs.negativeAngle(angle - Orientation) < Math.PI)
@@ -1399,83 +1458,6 @@ namespace BabBot.Wow
         public float AngleToTargetDegrees()
         {
             return (float) (AngleToTarget()*(180.0f/Math.PI));
-        }
-
-        /// <summary>
-        /// Returns the angle that would face the x,y specified
-        /// </summary>
-        /// <param name="dest">Vector3D current destination points</param>
-        /// <returns>radian to face on</returns>
-        private float GetFaceRadian(Vector3D dest)
-        {
-            Vector3D currentPos = Location;
-            float wowFacing = negativeAngle((float) Math.Atan2((dest.Y - currentPos.Y), (dest.X - currentPos.X)));
-            LastFaceRadian = wowFacing;
-            return wowFacing;
-        }
-
-        private static float negativeAngle(float angle)
-        {
-            if (angle < 0)
-            {
-                angle += (float) (Math.PI*2);
-            }
-            return angle;
-        }
-
-        public float HGetDistance(Vector3D dest, bool UseZ)
-        {
-            Vector3D currentPos = Location;
-
-            float dX = currentPos.X - dest.X;
-            float dY = currentPos.Y - dest.Y;
-            float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
-
-            float res;
-            if (UseZ)
-            {
-                res = (float) Math.Sqrt(dX*dX + dY*dY + dZ*dZ);
-            }
-            else
-            {
-                res = (float) Math.Sqrt(dX*dX + dY*dY);
-            }
-
-            LastDistance = res;
-
-            return res;
-        }
-
-        /// <summary>
-        /// Generic distance calculation. It does not update the LastDistance property
-        /// </summary>
-        /// <param name="dest"></param>
-        /// <param name="UseZ"></param>
-        /// <returns></returns>
-        private float GetDistance(Vector3D dest, bool UseZ)
-        {
-            Vector3D currentPos = Location;
-
-            float dX = currentPos.X - dest.X;
-            float dY = currentPos.Y - dest.Y;
-
-            float res;
-            if (UseZ)
-            {
-                float dZ = (dest.Z != 0 ? currentPos.Z - dest.Z : 0);
-                res = (float) Math.Sqrt(dX*dX + dY*dY + dZ*dZ);
-            }
-            else
-            {
-                res = (float) Math.Sqrt(dX*dX + dY*dY);
-            }
-
-            return res;
-        }
-
-        private float GetDistance(Vector3D dest)
-        {
-            return GetDistance(dest, false);
         }
 
         #endregion

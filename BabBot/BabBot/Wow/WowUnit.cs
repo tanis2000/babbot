@@ -30,9 +30,9 @@ namespace BabBot.Wow
 
         }
 
-        public UInt64 CurTargetGuid
+        public ulong CurTargetGuid
         {
-            get { return ReadDescriptor<uint>(Descriptor.eUnitFields.UNIT_FIELD_TARGET); }
+            get { return ReadDescriptor<ulong>(Descriptor.eUnitFields.UNIT_FIELD_TARGET); }
         }
 
         public float Orientation
@@ -86,7 +86,7 @@ namespace BabBot.Wow
         {
             get
             {
-                if (Hp <= 0) return true;
+                if (Hp <= 0 || IsGhost) return true;
                 else return false;
             }
         }
