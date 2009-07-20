@@ -49,5 +49,10 @@ namespace BabBot.Forms
                 MessageBox.Show("Cannot find WoW's installation path.");
             }
         }
+
+        private void lstAll_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
