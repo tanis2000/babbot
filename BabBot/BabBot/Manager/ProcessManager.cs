@@ -317,7 +317,7 @@ namespace BabBot.Manager
             {
                 return;
             }
-
+            
             if (PlayerUpdate != null)
             {
                 PlayerUpdate();
@@ -354,7 +354,7 @@ namespace BabBot.Manager
                     Initialize();
                 }
             }
-            catch
+            catch(Exception ex)
             {
                 InGame = false;
                 Initialized = false;

@@ -791,7 +791,7 @@ namespace BabBot.Wow
         // Credit ISXWoW
 
         #region eUnitFlags enum
-
+        //eUnitFields.UNIT_FIELD_BYTES_1
         public enum eUnitFlags : uint
         {
             UF_SITTING = 0x01,

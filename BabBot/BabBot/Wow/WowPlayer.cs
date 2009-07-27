@@ -26,6 +26,8 @@ using BabBot.Common;
 using BabBot.Manager;
 using Pather.Graph;
 using BabBot.States;
+using System.Collections.Specialized;
+using System.Collections;
 
 namespace BabBot.Wow
 {
@@ -965,6 +967,19 @@ namespace BabBot.Wow
                 MoveTo(wp.Location);
             }
         }
+        
+        public void ClickToMove(Vector3D Destination)
+        {
+            ClickToMove(Destination, Globals.CTMActions.WalkTo);
+        }
+
+        public void ClickToMove(Vector3D Destination, Globals.CTMActions Action)
+        {
+            ProcessManager.WowProcess.WriteFloat(Globals.CTM_BASE + Globals.CTM_X, Destination.X);
+            ProcessManager.WowProcess.WriteFloat(Globals.CTM_BASE + Globals.CTM_Y, Destination.Y);
+            ProcessManager.WowProcess.WriteFloat(Globals.CTM_BASE + Globals.CTM_Z, Destination.Z);
+            ProcessManager.WowProcess.WriteInt(Globals.CTM_BASE + Globals.CTM_STATUS, (int)Action);
+        }
 
         public void FaceUsingMemoryWrite(float angle, bool Timed)
         {
@@ -1429,6 +1444,19 @@ namespace BabBot.Wow
         public void TargetMe()
         {
             ProcessManager.Injector.Lua_DoString(string.Format("TargetUnit(\"player\");"));
+        }
+
+        public BitArray ExploredAreas
+        {
+            get
+            {
+                
+                byte[] _data = ProcessManager.WowProcess.ReadBytes(Descriptors + ((uint)Descriptor.ePlayerFields.PLAYER_EXPLORED_ZONES_1 * 4), 512);
+
+                BitArray ba = new BitArray(_data);
+
+                return ba;
+            }
         }
 
         // Actions

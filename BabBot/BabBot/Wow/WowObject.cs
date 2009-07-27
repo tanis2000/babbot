@@ -87,12 +87,12 @@ namespace BabBot.Wow
             get { return ProcessManager.WowProcess.ReadUInt(ObjectPointer + Globals.DescriptorOffset); }
         }
 
-        protected T ReadOffset<T>(object offset) where T : struct
+        public T ReadOffset<T>(object offset) where T : struct
         {
             return (T)ProcessManager.WowProcess.ReadObject(ObjectPointer + Convert.ToUInt32(offset), typeof(T));
         }
 
-        protected T ReadDescriptor<T>(object field) where T : struct
+        public T ReadDescriptor<T>(object field) where T : struct
         {
             return (T)ProcessManager.WowProcess.ReadObject(Descriptors + (Convert.ToUInt32(field) * 4), typeof(T));
         }

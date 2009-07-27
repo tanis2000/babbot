@@ -53,7 +53,7 @@ namespace BabBot.States.Common
         protected void SetDefaults(Vector3D Destination)
         {
             this.Destination = Destination;
-            Tolerance = 1.0f;
+            Tolerance = 3.0f;
         }
 
         protected override void DoEnter(WowPlayer Entity)
@@ -97,13 +97,16 @@ namespace BabBot.States.Common
 
             // Move on...
             float distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint), Entity.Location, false);
-            Entity.PlayerCM.ArrowKeyDown(key);
+            //Entity.PlayerCM.ArrowKeyDown(key);
 
-            /// We face our destination waypoint while we are already moving, so that it looks 
-            /// more human-like
-            float angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint), Entity.Location);
+            ///// We face our destination waypoint while we are already moving, so that it looks 
+            ///// more human-like
+            //float angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint), Entity.Location);
 
-            Entity.FaceUsingMemoryWrite(angle, false);
+            //Entity.FaceUsingMemoryWrite(angle, false);
+
+            //use click to move to head towards waypoint
+            Entity.ClickToMove(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint));
 
             // Start profiler for WayPointTimeOut
             DateTime start = DateTime.Now;
@@ -144,8 +147,8 @@ namespace BabBot.States.Common
             {
                 Finish(Entity);
                 Exit(Entity);
-                //stop going forward
-                Entity.PlayerCM.ArrowKeyUp(key);
+                ////stop going forward
+                //Entity.PlayerCM.ArrowKeyUp(key);
             }
         }
 

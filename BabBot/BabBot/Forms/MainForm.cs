@@ -440,24 +440,34 @@ namespace BabBot.Forms
 
         private void btnStartBot_Click(object sender, EventArgs e)
         {
-            ////get location of nearest mobs and then create a circle path between some MPC's
-            //List<WowObject> mobs = Player.GetNearObjects();
+            //get location of nearest mobs and then create a circle path between some MPC's
+            List<WowObject> mobs = ProcessManager.Player.GetNearObjects();
 
-            //Path p = new Path();
+            Pather.Graph.Path p = new Pather.Graph.Path();
 
-            ////first waypoint
-            //var d1 = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT && c.Name == "Balir Frosthammer" select c;
+            WowUnit wu;
+
+            //first waypoint
+            var d1 = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT && c.Name == "Balir Frosthammer" select c;
             //p.AddLast(WaypointVector3DHelper.Vector3DToLocation(d1.First<WowObject>().Location));
+            wu = (WowUnit)d1.First();
 
-            ////second waypoint
-            //var d2 = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT && c.Name == "Sten Stoutarm" select c;
+            //second waypoint
+            var d2 = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT && c.Name == "Sten Stoutarm" select c;
             //p.AddLast(WaypointVector3DHelper.Vector3DToLocation(d2.First<WowObject>().Location));
+            wu = (WowUnit)d2.First();
+            bool test = wu.IsMerchant;
 
-            ////third waypoint
-            //var d3 = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT && c.Name == "Adlin Pridedrift" select c;
+            //third waypoint
+            var d3 = from c in mobs where c.Type == Descriptor.eObjType.OT_UNIT && c.Name == "Adlin Pridedrift" select c;
             //p.AddLast(WaypointVector3DHelper.Vector3DToLocation(d3.First<WowObject>().Location));
+            wu = (WowUnit)d3.First();
+            bool test2 = wu.IsMerchant;
 
-            ////back to first
+            bool testPlayer = ProcessManager.Player.IsMerchant;
+
+
+            //back to first
             //p.AddLast(WaypointVector3DHelper.Vector3DToLocation(d1.First<WowObject>().Location));
 
 
@@ -468,10 +478,10 @@ namespace BabBot.Forms
             //        new Location(-6003.86f, -232.1742f, 410.5543f));
 
             //if a normal path exists, use it, else exit and don't start
-            if (WayPointManager.Instance.RepairNodeCount <= 0)
+            if (WayPointManager.Instance.NormalNodeCount <= 0)
                 return;
 
-            Pather.Graph.Path p = new Pather.Graph.Path();
+            //Pather.Graph.Path p = new Pather.Graph.Path();
 
             //add each waypoint in the waypoint list
             foreach (WayPoint wp in WayPointManager.Instance.NormalPath)

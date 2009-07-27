@@ -54,6 +54,31 @@ namespace BabBot.Wow
         public static uint FirstBuff = 0xEBC; // Offset of the first buff from unit base
         public static uint NextBuff = 0x4;  // Offset of next buff from a given buff
 
+        //Click To Move values
+        //http://www.mmowned.com/forums/wow-memory-editing/230227-3-1-1-movement-simple-memory-writes.html
+        public static uint CTM_BASE = 0x011180A0;
+        public static uint CTM_X = 0x8C;
+        public static uint CTM_Y = 0x90;
+        public static uint CTM_Z = 0x94;
+        public static uint CTM_STATUS = 0x1C;
+
+        public enum CTMActions : uint
+        {
+            FaceTarget = 0x1,
+            Stop = 0x3,
+            WalkTo = 0x4,
+            InteractNpc = 0x5,
+            Loot = 0x6,
+            InteractObject = 0x7,
+            Unknown1 = 0x8,
+            Unknown2 = 0x9,
+            AttackPos = 0xA,
+            AttackGuid = 0xB,
+            WalkAndRotate = 0xC
+        }
+
+
+
 
         public static uint PlayerBaseOffset
         {
@@ -132,6 +157,8 @@ namespace BabBot.Wow
             Autorun = 0x1000,
             All = 0x1FF0
         }
+
+        
 
     }
 }

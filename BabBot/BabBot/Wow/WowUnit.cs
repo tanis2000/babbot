@@ -150,6 +150,26 @@ namespace BabBot.Wow
             }
         }
 
+        public bool IsFlying
+        {
+            get
+            {
+                return
+                    Convert.ToBoolean(ReadDescriptor<uint>((uint)Descriptor.eUnitFields.UNIT_FIELD_BYTES_1) &
+                        (int)Descriptor.eUnitFlags.UF_FLYING);
+            }
+        }
+
+        public bool IsElite
+        {
+            get
+            {
+                return
+                    Convert.ToBoolean(ReadDescriptor<uint>((uint)Descriptor.eUnitFields.UNIT_FIELD_BYTES_1) &
+                        (int)Descriptor.eUnitFlags.UF_ELITE);
+            }
+        }
+
         public bool IsTapped
         {
             get
@@ -165,6 +185,14 @@ namespace BabBot.Wow
                 return (ReadDescriptor<int>((uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS) & 8) != 0;
             }
         }
+
+        public bool IsMerchant
+        {
+            get
+            {
+                return (ReadDescriptor<int>((uint)Descriptor.eUnitFields.UNIT_NPC_FLAGS) & (int)Descriptor.eUnitNPCFlags.NPC_FLAG_MERCHANT) != 0;
+            }
+        }
         
         public bool IsGhost
         {
@@ -173,9 +201,7 @@ namespace BabBot.Wow
                 return (ReadDescriptor<int>((uint)Descriptor.ePlayerFields.PLAYER_FLAGS) & 0x10) != 0;
             }
         }
-
-
-
+        
         /// <summary>Interacts with the object, loot, target etc.</summary>
         public void Interact()
         {
