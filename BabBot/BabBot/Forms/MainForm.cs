@@ -645,7 +645,7 @@ namespace BabBot.Forms
         {
             //uint res = ProcessManager.WowProcess.InjectDllCreateThread(@"C:\lavori\cvs\babbot\Dante\Debug\bootstrapper.dll");
             //Console.WriteLine(string.Format("Injection res = {0}", res));
-            ProcessManager.Injector.InjectLua();
+            //ProcessManager.Injector.InjectLua();
         }
 
         #region Logging

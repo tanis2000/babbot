@@ -1,0 +1,17 @@
+﻿<Application
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="BabBotUI.App"
+    StartupUri="Window1.xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+    <Application.Resources>
+    	<ResourceDictionary>
+    		<ResourceDictionary.MergedDictionaries>
+    			<ResourceDictionary Source="DialogButton.xaml"/>
+    			<ResourceDictionary Source="DialogWindow.xaml"/>
+    			<ResourceDictionary Source="WoWMenuStyle.xaml"/>
+    			<ResourceDictionary Source="WoWMenuItem.xaml"/>
+    			<ResourceDictionary Source="Simple Styles.xaml"/>
+    		</ResourceDictionary.MergedDictionaries>
+    	</ResourceDictionary>
+    </Application.Resources>
+</Application>

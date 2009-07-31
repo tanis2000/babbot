@@ -1,0 +1,14 @@
+﻿<Window
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	x:Class="BabBotUI.QuickDialogNoTitle"
+	x:Name="Window"
+	Title=""
+	Width="346" Height="153" WindowStyle="None" 
+    AllowsTransparency="True" ResizeMode="CanResizeWithGrip" Template="{DynamicResource WoWWindow}" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+
+	<Grid x:Name="LayoutRoot">
+		<TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Width="304.867" Height="51.277" FontSize="18" Foreground="#FFC4D813" Text="You are a hacking bot worthy only of destruction..." TextWrapping="Wrap"/>
+		<Button d:LayoutOverrides="Width, Height" Template="{DynamicResource ButtonControlTemplate1}" Margin="-2,0,2,-49.361" VerticalAlignment="Bottom" Content="OK"/>
+	</Grid>
+</Window>

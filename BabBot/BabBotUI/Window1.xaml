@@ -1,0 +1,22 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="BabBotUI.Window1"
+    Title="Test Main BabBot" Height="345" Width="651" WindowStyle="None" 
+        AllowsTransparency="True" ResizeMode="CanResizeWithGrip"
+        Template="{StaticResource WoWWindow}" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+    <Grid>
+    	<Button IsEnabled="True" d:LayoutOverrides="HorizontalAlignment, VerticalAlignment" HorizontalAlignment="Right" Margin="0,93,-275.671,0" VerticalAlignment="Top" Width="120.323" Height="32.277" Content="Test Button" Click="Button_Click" Style="{DynamicResource SimpleButton}" OverridesDefaultStyle="False"/>
+        <Menu Height="Auto" Width="Auto" x:Name="menu1" d:LayoutOverrides="Width, Height" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Style="{DynamicResource SimpleMenu}">
+            <MenuItem Header="File" x:Name="miFile" Style="{DynamicResource SimpleMenuItem}">
+                <MenuItem Header="Exit" x:Name="miExit" Click="miExit_Click" Style="{DynamicResource SimpleMenuItem}" />
+            </MenuItem>
+            <MenuItem Header="Edit" x:Name="miEdit" Style="{DynamicResource SimpleMenuItem}" />
+            <MenuItem Header="Help" x:Name="miHelp" Style="{DynamicResource SimpleMenuItem}">
+                <MenuItem Header="About" x:Name="miAbout" Click="miAbout_Click" Style="{DynamicResource SimpleMenuItem}" />
+            </MenuItem>
+        </Menu>
+        <TextBox Margin="0,0,-120.893,-5.578" VerticalAlignment="Bottom" Text="Test" TextWrapping="Wrap" Height="Auto" Width="128" HorizontalAlignment="Right" Style="{DynamicResource WoWLoginTextBox}"/>
+        <TextBox Margin="0,0,-121.893,-36.578" VerticalAlignment="Bottom" Text="Disabled Text Box" TextWrapping="Wrap" Height="Auto" Width="128" HorizontalAlignment="Right" Style="{DynamicResource WoWLoginTextBox}" IsEnabled="False"/>
+    </Grid>
+</Window>

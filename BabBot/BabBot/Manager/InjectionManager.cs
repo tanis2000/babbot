@@ -30,6 +30,9 @@ using EasyHook;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Remoting.Channels;
+using Dante;
+using System.Windows.Forms;
+using System.IO;
 
 namespace BabBot.Manager
 {
@@ -50,9 +53,9 @@ namespace BabBot.Manager
         private uint state;
 
         static String ChannelName = null;
-        static Dante.ISharedAssembly RemoteObject;
+        static DanteInterface RemoteObject;
         public bool Injected = false;
-
+        
         #region External function calls
         [DllImport("kernel32", CharSet = CharSet.Ansi)]
         private extern static IntPtr LoadLibrary(string libFileName);
@@ -575,34 +578,41 @@ namespace BabBot.Manager
             return sResult;
         }
         */
-        
-
         public void InjectLua()
+        {
+            InjectLua(wow.ProcessId);
+        }
+
+        public void InjectLua(int ProcessID)
         {
             try
             {
                 if (Injected) return;
 
-                ProcessThread wowMainThread = SThread.GetMainThread(ProcessManager.WowProcess.ProcessId);
-                IntPtr hThread = SThread.OpenThread(wowMainThread.Id);
+                //get pointers
+                //ProcessThread wowMainThread = SThread.GetMainThread(ProcessManager.WowProcess.ProcessId);
+                //IntPtr hThread = SThread.OpenThread(wowMainThread.Id);
 
+                //create IPC log channell for injected dll, so it can log to the console
+                string logChannelName=null;
+                IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<Logger>(ref logChannelName, WellKnownObjectMode.Singleton);
+                Logger remoteLog = RemoteHooking.IpcConnectClient<Logger>(logChannelName);
+
+                //inject dante.dll, pass in the log channel name
                 RemoteHooking.Inject(
-                    wow.ProcessId,
+                    ProcessID,
                     "Dante.dll",
                     "Dante.dll",
-                    ProcessManager.WowProcess.ProcessHandle,
-                    hThread);
+                    logChannelName);
 
-                IpcChannel ipcCh = new IpcChannel("ClientChannel");
-                ChannelServices.RegisterChannel(ipcCh, false);
-
-                RemoteObject =
-                   (Dante.ISharedAssembly)Activator.GetObject
-                   (typeof(Dante.ISharedAssembly),
-                    "ipc://localhost:8123/DanteRemoteObj");
-
+                //wait for the remote object channel to be created
                 Thread.Sleep(200);
-                RemoteObject.Patch();
+
+                //get remote object from channel name
+                RemoteObject = RemoteHooking.IpcConnectClient<DanteInterface>(remoteLog.InjectedDLLChannelName);
+
+                //RemoteObject.RegisterLuaHandler();
+                //RemoteObject.Patch();
 
                 Injected = true;
                 Console.WriteLine("Dante injected");
@@ -613,6 +623,11 @@ namespace BabBot.Manager
                 Console.WriteLine("There was an error while connecting to target:\r\n{0}", ExtInfo.ToString());
             }
 
+        }
+
+        public void Lua_RegisterInputHandler()
+        {
+            RemoteObject.RegisterLuaHandler();
         }
 
         /// <summary>

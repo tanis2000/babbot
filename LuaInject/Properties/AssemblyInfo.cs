@@ -1,17 +1,16 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Dante")]
+[assembly: AssemblyTitle("LuaInject")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany(".")]
-[assembly: AssemblyProduct("Dante")]
-[assembly: AssemblyCopyright("Copyright © . 2009")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("LuaInject")]
+[assembly: AssemblyCopyright("Copyright ©  2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -21,7 +20,7 @@ using System.Security;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("cac08860-c640-49cd-acbc-d46a52e02296")]
+[assembly: Guid("d0ead3d7-f790-4aab-aedc-6ad10c28d36b")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,5 +33,4 @@ using System.Security;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("1.0.*")]
-[assembly: AllowPartiallyTrustedCallers]
+[assembly: AssemblyFileVersion("1.0.0.0")]

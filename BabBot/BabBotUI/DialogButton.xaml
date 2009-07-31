@@ -1,0 +1,40 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+	<!-- Resource dictionary entries should be defined here. -->
+	<ControlTemplate x:Key="ButtonControlTemplate1" TargetType="{x:Type Button}">
+		<ControlTemplate.Resources>
+		</ControlTemplate.Resources>
+		<Grid Width="144" Height="46" Visibility="Visible">
+			<Image Source="Resources\Buttons\RedButtonUp.png" Stretch="Fill" x:Name="imgUp"/>
+			<Image Source="Resources\Buttons\RedButtonDown.png" Stretch="Fill" x:Name="imgDown" Opacity="1" Visibility="Hidden" />
+			<Image Source="Resources\Buttons\RedButtonDisabled.png" Stretch="Fill" x:Name="imgDisabled" Visibility="Hidden" />
+			<TextBlock x:Name="ButtonText" Text="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFF1CF16" FontWeight="Bold" FontFamily="Microsoft Sans Serif" FontSize="12" d:IsStaticText="True" />
+			<Image Source="Resources\Buttons\RedButtonMouseOver.png" Stretch="Fill" x:Name="imgMouseOver" Opacity="0" />
+
+		</Grid>
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsMouseOver" Value="True">
+				<Trigger.ExitActions>
+				</Trigger.ExitActions>
+				<Trigger.EnterActions>
+				</Trigger.EnterActions>
+				<Setter Property="Opacity" TargetName="imgMouseOver" Value="0.35"/>
+			</Trigger>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter Property="Visibility" TargetName="imgUp" Value="Hidden"/>
+				<Setter Property="Visibility" TargetName="imgDisabled" Value="Visible"/>
+				<Setter Property="Foreground" TargetName="ButtonText">
+					<Setter.Value>
+						<SolidColorBrush Color="#FF64625B"/>
+					</Setter.Value>
+				</Setter>
+			</Trigger>
+			<Trigger Property="IsPressed" Value="True">
+				<Setter Property="Visibility" TargetName="imgUp" Value="Hidden"/>
+				<Setter Property="Visibility" TargetName="imgDown" Value="Visible"/>
+				<Setter Property="Margin" TargetName="ButtonText" Value="0,0,3,3"/>
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+</ResourceDictionary>

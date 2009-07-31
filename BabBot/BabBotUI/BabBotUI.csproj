@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{105CEE83-EB69-48F4-BB51-E81AF6AEC911}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BabBotUI</RootNamespace>
+    <AssemblyName>BabBotUI</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Page Include="DialogButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DialogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="QuickDialogNoTitle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Simple Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WoWMenuItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WoWMenuStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Resource Include="Resources\Buttons\FlexButtonDisabledCenter.png" />
+    <Resource Include="Resources\Buttons\FlexButtonDisabledLeft.png" />
+    <Resource Include="Resources\Buttons\FlexButtonDisabledRight.png" />
+    <Resource Include="Resources\Buttons\FlexButtonDownCenter.png" />
+    <Resource Include="Resources\Buttons\FlexButtonDownLeft.png" />
+    <Resource Include="Resources\Buttons\FlexButtonDownRight.png" />
+    <Resource Include="Resources\Buttons\FlexButtonUpCenter.png" />
+    <Resource Include="Resources\Buttons\FlexButtonUpLeft.png" />
+    <Resource Include="Resources\Buttons\FlexButtonUpRight.png" />
+    <Resource Include="Resources\Buttons\RedButtonDisabled.png" />
+    <Resource Include="Resources\Buttons\RedButtonDown.png" />
+    <Resource Include="Resources\Buttons\RedButtonMouseOver.png" />
+    <Resource Include="Resources\Buttons\RedButtonUp.png" />
+    <Resource Include="Resources\TextBox\TextBoxBack.png" />
+    <Compile Include="QuickDialogNoTitle.xaml.cs">
+      <DependentUpon>QuickDialogNoTitle.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Window1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Window1.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>Window1.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DialogButton.xaml.cs">
+      <DependentUpon>DialogButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DialogWindow.xaml.cs">
+      <DependentUpon>DialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Dialog\DialogBottom.png" />
+    <Resource Include="Resources\Dialog\DialogBottomLeft.png" />
+    <Resource Include="Resources\Dialog\DialogBottomRight.png" />
+    <Resource Include="Resources\Dialog\DialogHeader.png" />
+    <Resource Include="Resources\Dialog\DialogLeft.png" />
+    <Resource Include="Resources\Dialog\DialogRight.png" />
+    <Resource Include="Resources\Dialog\DialogTop.png" />
+    <Resource Include="Resources\Dialog\dialogTopLeft.png" />
+    <Resource Include="Resources\Dialog\DialogTopRight.png" />
+    <Resource Include="Resources\Dialog\UI-DialogBox-Corner.png" />
+    <Resource Include="Resources\Dialog\UI-DialogBox-Gold-Corner.png" />
+    <Resource Include="Resources\Dialog\UI-DialogBox-Header.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Window\TabardFrameBackground.png" />
+    <Resource Include="Resources\Window\WindowBorderBottom.png" />
+    <Resource Include="Resources\Window\WindowBorderBottomLeft.png" />
+    <Resource Include="Resources\Window\WindowBorderBottomRight.png" />
+    <Resource Include="Resources\Window\WindowBorderLeft.png" />
+    <Resource Include="Resources\Window\WindowBorderRight.png" />
+    <Resource Include="Resources\Window\WindowBorderTop.png" />
+    <Resource Include="Resources\Window\WindowBorderTopLeft.png" />
+    <Resource Include="Resources\Window\WindowBorderTopRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\splash.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

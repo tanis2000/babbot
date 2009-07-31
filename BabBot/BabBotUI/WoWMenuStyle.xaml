@@ -1,0 +1,8 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<ControlTemplate x:Key="MenuWowStle" TargetType="{x:Type Menu}">
+		<StackPanel IsItemsHost="True" Orientation="Horizontal" />
+	</ControlTemplate>
+	<!-- Resource dictionary entries should be defined here. -->
+</ResourceDictionary>

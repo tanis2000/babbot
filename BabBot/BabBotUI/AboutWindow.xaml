@@ -1,0 +1,17 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="BabBotUI.AboutWindow"
+    Title="About BabBot" Height="279" Width="795" WindowStyle="None" 
+        AllowsTransparency="True" ResizeMode="CanResizeWithGrip"
+        Template="{StaticResource WoWWindow}" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+	<Window.Triggers>
+		<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
+	</Window.Triggers>
+    <Grid>
+        
+    	<Image Margin="0,5,145,8" Source="Resources\splash.jpg" Stretch="Fill"/>
+    	<Button d:LayoutOverrides="Height" HorizontalAlignment="Right" Margin="0,0,38.917,18.723" VerticalAlignment="Bottom" Width="77.25" Content="OK"/>
+        
+    </Grid>
+</Window>

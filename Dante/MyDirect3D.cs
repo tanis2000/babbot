@@ -6,6 +6,7 @@ namespace Dante
     public unsafe class IDirect3DDevice9 : IDisposable
     {
         private IntPtr* OriginalVFTable = null;
+        private IntPtr OriginalEndScene;
 
         public D3D9.IDirect3D9* NativeIDirect3D9 { get; private set; }
         public D3D9.IDirect3DDevice9* NativeIDirect3DDevice9 { get; private set; }
@@ -22,131 +23,39 @@ namespace Dante
 
         private void OverrideFunctions()
         {
-            InitializeVFTable();
+            //InitializeVFTable();
 
-            //     STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppvObj) PURE;
-            //     STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-            //     STDMETHOD_(ULONG,Release)(THIS) PURE;
-            //     STDMETHOD(TestCooperativeLevel)(THIS) PURE;
-            //     STDMETHOD_(UINT, GetAvailableTextureMem)(THIS) PURE;
-            //     STDMETHOD(EvictManagedResources)(THIS) PURE;
-            //     STDMETHOD(GetDirect3D)(THIS_ IDirect3D9** ppD3D9) PURE;
-            //     STDMETHOD(GetDeviceCaps)(THIS_ D3DCAPS9* pCaps) PURE;
-            //     STDMETHOD(GetDisplayMode)(THIS_ UINT iSwapChain,D3DDISPLAYMODE* pMode) PURE;
-            //     STDMETHOD(GetCreationParameters)(THIS_ D3DDEVICE_CREATION_PARAMETERS *pParameters) PURE;
-            //     STDMETHOD(SetCursorProperties)(THIS_ UINT XHotSpot,UINT YHotSpot,IDirect3DSurface9* pCursorBitmap) PURE;
-            //     STDMETHOD_(void, SetCursorPosition)(THIS_ int X,int Y,DWORD Flags) PURE;
-            //     STDMETHOD_(BOOL, ShowCursor)(THIS_ BOOL bShow) PURE;
-            //     STDMETHOD(CreateAdditionalSwapChain)(THIS_ D3DPRESENT_PARAMETERS* pPresentationParameters,IDirect3DSwapChain9** pSwapChain) PURE;
-            //     STDMETHOD(GetSwapChain)(THIS_ UINT iSwapChain,IDirect3DSwapChain9** pSwapChain) PURE;
-            //     STDMETHOD_(UINT, GetNumberOfSwapChains)(THIS) PURE;
-            //     STDMETHOD(Reset)(THIS_ D3DPRESENT_PARAMETERS* pPresentationParameters) PURE;
-            //     STDMETHOD(Present)(THIS_ CONST RECT* pSourceRect,CONST RECT* pDestRect,HWND hDestWindowOverride,CONST RGNDATA* pDirtyRegion) PURE;
-            //     STDMETHOD(GetBackBuffer)(THIS_ UINT iSwapChain,UINT iBackBuffer,D3DBACKBUFFER_TYPE Type,IDirect3DSurface9** ppBackBuffer) PURE;
-            //     STDMETHOD(GetRasterStatus)(THIS_ UINT iSwapChain,D3DRASTER_STATUS* pRasterStatus) PURE;
-            //     STDMETHOD(SetDialogBoxMode)(THIS_ BOOL bEnableDialogs) PURE;
-            //     STDMETHOD_(void, SetGammaRamp)(THIS_ UINT iSwapChain,DWORD Flags,CONST D3DGAMMARAMP* pRamp) PURE;
-            //     STDMETHOD_(void, GetGammaRamp)(THIS_ UINT iSwapChain,D3DGAMMARAMP* pRamp) PURE;
-            //     STDMETHOD(CreateTexture)(THIS_ UINT Width,UINT Height,UINT Levels,DWORD Usage,D3DFORMAT Format,D3DPOOL Pool,IDirect3DTexture9** ppTexture,HANDLE* pSharedHandle) PURE;
-            //     STDMETHOD(CreateVolumeTexture)(THIS_ UINT Width,UINT Height,UINT Depth,UINT Levels,DWORD Usage,D3DFORMAT Format,D3DPOOL Pool,IDirect3DVolumeTexture9** ppVolumeTexture,HANDLE* pSharedHandle) PURE;
-            //     STDMETHOD(CreateCubeTexture)(THIS_ UINT EdgeLength,UINT Levels,DWORD Usage,D3DFORMAT Format,D3DPOOL Pool,IDirect3DCubeTexture9** ppCubeTexture,HANDLE* pSharedHandle) PURE;
-            //     STDMETHOD(CreateVertexBuffer)(THIS_ UINT Length,DWORD Usage,DWORD FVF,D3DPOOL Pool,IDirect3DVertexBuffer9** ppVertexBuffer,HANDLE* pSharedHandle) PURE;
-            //     STDMETHOD(CreateIndexBuffer)(THIS_ UINT Length,DWORD Usage,D3DFORMAT Format,D3DPOOL Pool,IDirect3DIndexBuffer9** ppIndexBuffer,HANDLE* pSharedHandle) PURE;
-            //     STDMETHOD(CreateRenderTarget)(THIS_ UINT Width,UINT Height,D3DFORMAT Format,D3DMULTISAMPLE_TYPE MultiSample,DWORD MultisampleQuality,BOOL Lockable,IDirect3DSurface9** ppSurface,HANDLE* pSharedHandle) PURE;
-            //     STDMETHOD(CreateDepthStencilSurface)(THIS_ UINT Width,UINT Height,D3DFORMAT Format,D3DMULTISAMPLE_TYPE MultiSample,DWORD MultisampleQuality,BOOL Discard,IDirect3DSurface9** ppSurface,HANDLE* pSharedHandle) PURE;
-            //     STDMETHOD(UpdateSurface)(THIS_ IDirect3DSurface9* pSourceSurface,CONST RECT* pSourceRect,IDirect3DSurface9* pDestinationSurface,CONST POINT* pDestPoint) PURE;
-            //     STDMETHOD(UpdateTexture)(THIS_ IDirect3DBaseTexture9* pSourceTexture,IDirect3DBaseTexture9* pDestinationTexture) PURE;
-            //     STDMETHOD(GetRenderTargetData)(THIS_ IDirect3DSurface9* pRenderTarget,IDirect3DSurface9* pDestSurface) PURE;
-            //     STDMETHOD(GetFrontBufferData)(THIS_ UINT iSwapChain,IDirect3DSurface9* pDestSurface) PURE;
-            //     STDMETHOD(StretchRect)(THIS_ IDirect3DSurface9* pSourceSurface,CONST RECT* pSourceRect,IDirect3DSurface9* pDestSurface,CONST RECT* pDestRect,D3DTEXTUREFILTERTYPE Filter) PURE;
-            //     STDMETHOD(ColorFill)(THIS_ IDirect3DSurface9* pSurface,CONST RECT* pRect,D3DCOLOR color) PURE;
-            //     STDMETHOD(CreateOffscreenPlainSurface)(THIS_ UINT Width,UINT Height,D3DFORMAT Format,D3DPOOL Pool,IDirect3DSurface9** ppSurface,HANDLE* pSharedHandle) PURE;
-            //     STDMETHOD(SetRenderTarget)(THIS_ DWORD RenderTargetIndex,IDirect3DSurface9* pRenderTarget) PURE;
-            //     STDMETHOD(GetRenderTarget)(THIS_ DWORD RenderTargetIndex,IDirect3DSurface9** ppRenderTarget) PURE;
-            //     STDMETHOD(SetDepthStencilSurface)(THIS_ IDirect3DSurface9* pNewZStencil) PURE;
-            //     STDMETHOD(GetDepthStencilSurface)(THIS_ IDirect3DSurface9** ppZStencilSurface) PURE;
-            //     STDMETHOD(BeginScene)(THIS) PURE;
-            //     STDMETHOD(EndScene)(THIS) PURE;
+            LuaInterface.LoggingInterface.Log(string.Format("Address of Native EndScene (VFTable**) is {0}", NativeIDirect3DDevice9->VFTable[0][42]));
+
+            LuaInterface.LoggingInterface.Log("Backing up original end scene hook");
+            OriginalEndScene = NativeIDirect3DDevice9->VFTable[0][42];
+
+            LuaInterface.LoggingInterface.Log(string.Format("Address of Original EndScene Backup is {0}", OriginalEndScene));
+
+
+            //get delegate and pointer to delegate for custon end scene
             DelegateEndScene MyEndScene = EndScene;
             IntPtr PointerToMyEndScene = Marshal.GetFunctionPointerForDelegate(MyEndScene);
-            NativeIDirect3DDevice9->VFTable[42] = PointerToMyEndScene;
 
-            //     STDMETHOD(Clear)(THIS_ DWORD Count,CONST D3DRECT* pRects,DWORD Flags,D3DCOLOR Color,float Z,DWORD Stencil) PURE;
-            //     STDMETHOD(SetTransform)(THIS_ D3DTRANSFORMSTATETYPE State,CONST D3DMATRIX* pMatrix) PURE;
-            //     STDMETHOD(GetTransform)(THIS_ D3DTRANSFORMSTATETYPE State,D3DMATRIX* pMatrix) PURE;
-            //     STDMETHOD(MultiplyTransform)(THIS_ D3DTRANSFORMSTATETYPE,CONST D3DMATRIX*) PURE;
-            //     STDMETHOD(SetViewport)(THIS_ CONST D3DVIEWPORT9* pViewport) PURE;
-            //     STDMETHOD(GetViewport)(THIS_ D3DVIEWPORT9* pViewport) PURE;
-            //     STDMETHOD(SetMaterial)(THIS_ CONST D3DMATERIAL9* pMaterial) PURE;
-            //     STDMETHOD(GetMaterial)(THIS_ D3DMATERIAL9* pMaterial) PURE;
-            //     STDMETHOD(SetLight)(THIS_ DWORD Index,CONST D3DLIGHT9*) PURE;
-            //     STDMETHOD(GetLight)(THIS_ DWORD Index,D3DLIGHT9*) PURE;
-            //     STDMETHOD(LightEnable)(THIS_ DWORD Index,BOOL Enable) PURE;
-            //     STDMETHOD(GetLightEnable)(THIS_ DWORD Index,BOOL* pEnable) PURE;
-            //     STDMETHOD(SetClipPlane)(THIS_ DWORD Index,CONST float* pPlane) PURE;
-            //     STDMETHOD(GetClipPlane)(THIS_ DWORD Index,float* pPlane) PURE;
-            //     STDMETHOD(SetRenderState)(THIS_ D3DRENDERSTATETYPE State,DWORD Value) PURE;
-            //     STDMETHOD(GetRenderState)(THIS_ D3DRENDERSTATETYPE State,DWORD* pValue) PURE;
-            //     STDMETHOD(CreateStateBlock)(THIS_ D3DSTATEBLOCKTYPE Type,IDirect3DStateBlock9** ppSB) PURE;
-            //     STDMETHOD(BeginStateBlock)(THIS) PURE;
-            //     STDMETHOD(EndStateBlock)(THIS_ IDirect3DStateBlock9** ppSB) PURE;
-            //     STDMETHOD(SetClipStatus)(THIS_ CONST D3DCLIPSTATUS9* pClipStatus) PURE;
-            //     STDMETHOD(GetClipStatus)(THIS_ D3DCLIPSTATUS9* pClipStatus) PURE;
-            //     STDMETHOD(GetTexture)(THIS_ DWORD Stage,IDirect3DBaseTexture9** ppTexture) PURE;
-            //     STDMETHOD(SetTexture)(THIS_ DWORD Stage,IDirect3DBaseTexture9* pTexture) PURE;
-            //     STDMETHOD(GetTextureStageState)(THIS_ DWORD Stage,D3DTEXTURESTAGESTATETYPE Type,DWORD* pValue) PURE;
-            //     STDMETHOD(SetTextureStageState)(THIS_ DWORD Stage,D3DTEXTURESTAGESTATETYPE Type,DWORD Value) PURE;
-            //     STDMETHOD(GetSamplerState)(THIS_ DWORD Sampler,D3DSAMPLERSTATETYPE Type,DWORD* pValue) PURE;
-            //     STDMETHOD(SetSamplerState)(THIS_ DWORD Sampler,D3DSAMPLERSTATETYPE Type,DWORD Value) PURE;
-            //     STDMETHOD(ValidateDevice)(THIS_ DWORD* pNumPasses) PURE;
-            //     STDMETHOD(SetPaletteEntries)(THIS_ UINT PaletteNumber,CONST PALETTEENTRY* pEntries) PURE;
-            //     STDMETHOD(GetPaletteEntries)(THIS_ UINT PaletteNumber,PALETTEENTRY* pEntries) PURE;
-            //     STDMETHOD(SetCurrentTexturePalette)(THIS_ UINT PaletteNumber) PURE;
-            //     STDMETHOD(GetCurrentTexturePalette)(THIS_ UINT *PaletteNumber) PURE;
-            //     STDMETHOD(SetScissorRect)(THIS_ CONST RECT* pRect) PURE;
-            //     STDMETHOD(GetScissorRect)(THIS_ RECT* pRect) PURE;
-            //     STDMETHOD(SetSoftwareVertexProcessing)(THIS_ BOOL bSoftware) PURE;
-            //     STDMETHOD_(BOOL, GetSoftwareVertexProcessing)(THIS) PURE;
-            //     STDMETHOD(SetNPatchMode)(THIS_ float nSegments) PURE;
-            //     STDMETHOD_(float, GetNPatchMode)(THIS) PURE;
-            //     STDMETHOD(DrawPrimitive)(THIS_ D3DPRIMITIVETYPE PrimitiveType,UINT StartVertex,UINT PrimitiveCount) PURE;
-            //     STDMETHOD(DrawIndexedPrimitive)(THIS_ D3DPRIMITIVETYPE,INT BaseVertexIndex,UINT MinVertexIndex,UINT NumVertices,UINT startIndex,UINT primCount) PURE;
-            //     STDMETHOD(DrawPrimitiveUP)(THIS_ D3DPRIMITIVETYPE PrimitiveType,UINT PrimitiveCount,CONST void* pVertexStreamZeroData,UINT VertexStreamZeroStride) PURE;
-            //     STDMETHOD(DrawIndexedPrimitiveUP)(THIS_ D3DPRIMITIVETYPE PrimitiveType,UINT MinVertexIndex,UINT NumVertices,UINT PrimitiveCount,CONST void* pIndexData,D3DFORMAT IndexDataFormat,CONST void* pVertexStreamZeroData,UINT VertexStreamZeroStride) PURE;
-            //     STDMETHOD(ProcessVertices)(THIS_ UINT SrcStartIndex,UINT DestIndex,UINT VertexCount,IDirect3DVertexBuffer9* pDestBuffer,IDirect3DVertexDeclaration9* pVertexDecl,DWORD Flags) PURE;
-            //     STDMETHOD(CreateVertexDeclaration)(THIS_ CONST D3DVERTEXELEMENT9* pVertexElements,IDirect3DVertexDeclaration9** ppDecl) PURE;
-            //     STDMETHOD(SetVertexDeclaration)(THIS_ IDirect3DVertexDeclaration9* pDecl) PURE;
-            //     STDMETHOD(GetVertexDeclaration)(THIS_ IDirect3DVertexDeclaration9** ppDecl) PURE;
-            //     STDMETHOD(SetFVF)(THIS_ DWORD FVF) PURE;
-            //     STDMETHOD(GetFVF)(THIS_ DWORD* pFVF) PURE;
-            //     STDMETHOD(CreateVertexShader)(THIS_ CONST DWORD* pFunction,IDirect3DVertexShader9** ppShader) PURE;
-            //     STDMETHOD(SetVertexShader)(THIS_ IDirect3DVertexShader9* pShader) PURE;
-            //     STDMETHOD(GetVertexShader)(THIS_ IDirect3DVertexShader9** ppShader) PURE;
-            //     STDMETHOD(SetVertexShaderConstantF)(THIS_ UINT StartRegister,CONST float* pConstantData,UINT Vector4fCount) PURE;
-            //     STDMETHOD(GetVertexShaderConstantF)(THIS_ UINT StartRegister,float* pConstantData,UINT Vector4fCount) PURE;
-            //     STDMETHOD(SetVertexShaderConstantI)(THIS_ UINT StartRegister,CONST int* pConstantData,UINT Vector4iCount) PURE;
-            //     STDMETHOD(GetVertexShaderConstantI)(THIS_ UINT StartRegister,int* pConstantData,UINT Vector4iCount) PURE;
-            //     STDMETHOD(SetVertexShaderConstantB)(THIS_ UINT StartRegister,CONST BOOL* pConstantData,UINT  BoolCount) PURE;
-            //     STDMETHOD(GetVertexShaderConstantB)(THIS_ UINT StartRegister,BOOL* pConstantData,UINT BoolCount) PURE;
-            //     STDMETHOD(SetStreamSource)(THIS_ UINT StreamNumber,IDirect3DVertexBuffer9* pStreamData,UINT OffsetInBytes,UINT Stride) PURE;
-            //     STDMETHOD(GetStreamSource)(THIS_ UINT StreamNumber,IDirect3DVertexBuffer9** ppStreamData,UINT* pOffsetInBytes,UINT* pStride) PURE;
-            //     STDMETHOD(SetStreamSourceFreq)(THIS_ UINT StreamNumber,UINT Setting) PURE;
-            //     STDMETHOD(GetStreamSourceFreq)(THIS_ UINT StreamNumber,UINT* pSetting) PURE;
-            //     STDMETHOD(SetIndices)(THIS_ IDirect3DIndexBuffer9* pIndexData) PURE;
-            //     STDMETHOD(GetIndices)(THIS_ IDirect3DIndexBuffer9** ppIndexData) PURE;
-            //     STDMETHOD(CreatePixelShader)(THIS_ CONST DWORD* pFunction,IDirect3DPixelShader9** ppShader) PURE;
-            //     STDMETHOD(SetPixelShader)(THIS_ IDirect3DPixelShader9* pShader) PURE;
-            //     STDMETHOD(GetPixelShader)(THIS_ IDirect3DPixelShader9** ppShader) PURE;
-            //     STDMETHOD(SetPixelShaderConstantF)(THIS_ UINT StartRegister,CONST float* pConstantData,UINT Vector4fCount) PURE;
-            //     STDMETHOD(GetPixelShaderConstantF)(THIS_ UINT StartRegister,float* pConstantData,UINT Vector4fCount) PURE;
-            //     STDMETHOD(SetPixelShaderConstantI)(THIS_ UINT StartRegister,CONST int* pConstantData,UINT Vector4iCount) PURE;
-            //     STDMETHOD(GetPixelShaderConstantI)(THIS_ UINT StartRegister,int* pConstantData,UINT Vector4iCount) PURE;
-            //     STDMETHOD(SetPixelShaderConstantB)(THIS_ UINT StartRegister,CONST BOOL* pConstantData,UINT  BoolCount) PURE;
-            //     STDMETHOD(GetPixelShaderConstantB)(THIS_ UINT StartRegister,BOOL* pConstantData,UINT BoolCount) PURE;
-            //     STDMETHOD(DrawRectPatch)(THIS_ UINT Handle,CONST float* pNumSegs,CONST D3DRECTPATCH_INFO* pRectPatchInfo) PURE;
-            //     STDMETHOD(DrawTriPatch)(THIS_ UINT Handle,CONST float* pNumSegs,CONST D3DTRIPATCH_INFO* pTriPatchInfo) PURE;
-            //     STDMETHOD(DeletePatch)(THIS_ UINT Handle) PURE;
-            //     STDMETHOD(CreateQuery)(THIS_ D3DQUERYTYPE Type,IDirect3DQuery9** ppQuery) PURE;
+            LuaInterface.LoggingInterface.Log(string.Format("Address of MyEndScene is {0}", PointerToMyEndScene));
+
+            //LuaInterface.LoggingInterface.Log("Unprotecting EndScene Memory...");
+            //uint newProtection = (uint)Kernel32.Protection.PAGE_EXECUTE_READWRITE;
+            //uint oldProtection;
+            //Kernel32.VirtualProtect(NativeIDirect3DDevice9->VFTable[42], (uint)sizeof(IntPtr), newProtection, out oldProtection);
+
+            //LuaInterface.LoggingInterface.Log(string.Format("Old Protection Method Was: {0}", (Kernel32.Protection)oldProtection));
+
+            //do actual re-routing of the function to run our own custom end scene
+            LuaInterface.LoggingInterface.Log("Redirect EndScene to New Function...");
+            NativeIDirect3DDevice9->VFTable[0][42] = PointerToMyEndScene;
+
+            LuaInterface.LoggingInterface.Log(string.Format("Address of New 'Native' EndScene is {0}", NativeIDirect3DDevice9->VFTable[0][42]));
+
+
+            //LuaInterface.LoggingInterface.Log("Changing Memory protection back to what it was...");
+            //Kernel32.VirtualProtect(NativeIDirect3DDevice9->VFTable[42], (uint)sizeof(IntPtr), oldProtection, out newProtection);
+
         }
 
         private void InitializeVFTable()
@@ -156,47 +65,77 @@ namespace Dante
                 return;
             }
 
+            IntPtr* inner = (IntPtr*)NativeIDirect3DDevice9;
+
             // Save off the original VFTable (only if it really is the original).
             if (OriginalVFTable == null)
             {
-                OriginalVFTable = NativeIDirect3DDevice9->VFTable;
+                LuaInterface.LoggingInterface.Log("Backing up original VFTable....");
+                OriginalVFTable = inner;
             }
 
             const uint VFTableLength = 119;
-            // Allocate space for our new VFTable.
-            IntPtr* NewVFTable =
-                (IntPtr*) Kernel32.HeapAlloc(Kernel32.GetProcessHeap(), 0, (UIntPtr) (VFTableLength*sizeof (IntPtr)));
+
+            //contents of first element of jagged array
+            IntPtr* NewVFTable = (IntPtr*)Kernel32.HeapAlloc(Kernel32.GetProcessHeap(), 0, (UIntPtr)(VFTableLength * sizeof(IntPtr)));
+
+            LuaInterface.LoggingInterface.Log("Copying original values to New table.");
 
             // Copy all of the original function pointers into our new VFTable.
             for (int i = 0; i < VFTableLength; i++)
             {
-                NewVFTable[i] = OriginalVFTable[i];
+                //first copy pointer address
+                NewVFTable[i] = inner[i];
             }
+
+            LuaInterface.LoggingInterface.Log(string.Format("Address of IDirect3DDevice9 is {0}", (int)NativeIDirect3DDevice9));
+            LuaInterface.LoggingInterface.Log(string.Format("Address of NewVFTable is {0}", (int)&NewVFTable));
 
             // Set the Real IDirect3D9 implementation's VFTable to point at our custom one.
-            NativeIDirect3DDevice9->VFTable = NewVFTable;
+            //Marshal.WriteIntPtr((IntPtr)NativeIDirect3DDevice9, (IntPtr)NewVFTable);
+
+            //NativeIDirect3DDevice9 = NewVFTable;
+
+            //LuaInterface.LoggingInterface.Log("Copy Complete...");
         }
 
-        // Reset the native virtual function table to point back at the original.
-        private void ResetVFTable()
-        {
-            // If the original table is not defined do nothing.
-            if (OriginalVFTable == null)
-            {
-                return;
-            }
-            // If the original table points to the same place as the current one do nothing.
-            if (OriginalVFTable == NativeIDirect3DDevice9->VFTable)
-            {
-                return;
-            }
-            // Cleanup memory allocated for our custom VFTable.
-            Kernel32.HeapFree(Kernel32.GetProcessHeap(), 0, *NativeIDirect3DDevice9->VFTable);
-            // Set the VFTable back to the original.
-            NativeIDirect3DDevice9->VFTable = OriginalVFTable;
-            // Set the original VFTable back to null.
-            OriginalVFTable = null;
-        }
+        //public static IntPtr** IntPtrJaggedArrayToPointer(IntPtr[][] array)
+        //{
+        //    fixed (IntPtr* arrayPtr = array[0])
+        //    {
+        //        IntPtr*[] ptrArray = new IntPtr*[array.Length];
+        //        for (int i = 0; i < array.Length; i++)
+        //        {
+        //            fixed (IntPtr* ptr = array[i])
+        //                ptrArray[i] = ptr;
+        //        }
+
+        //        fixed (IntPtr** ptr = ptrArray)
+        //            return ptr;
+        //    }
+        //}
+
+        //// Reset the native virtual function table to point back at the original.
+        //private void ResetVFTable()
+        //{
+        //    // If the original table is not defined do nothing.
+        //    if (OriginalVFTable == null)
+        //    {
+        //        return;
+        //    }
+        //    // If the original table points to the same place as the current one do nothing.
+        //    if (OriginalVFTable == NativeIDirect3DDevice9->VFTable)
+        //    {
+        //        return;
+        //    }
+        //    // Cleanup memory allocated for our custom VFTable. Possible Slight Memory leak here...
+        //    Kernel32.HeapFree(Kernel32.GetProcessHeap(), 0, *NativeIDirect3DDevice9->VFTable);
+        //    //Kernel32.HeapFree(Kernel32.GetProcessHeap(), 0, *NativeIDirect3DDevice9->VFTable[0]);
+        //    // Set the VFTable back to the original.
+        //    NativeIDirect3DDevice9->VFTable = OriginalVFTable;
+        //    // Set the original VFTable back to null.
+        //    OriginalVFTable = null;
+        //}
 
         public void Dispose()
         {
@@ -211,11 +150,11 @@ namespace Dante
         // Cleanup resources.  Destructing == true means we are getting garbage collected so don't reference any managed resources.
         private void Dispose(bool Destructing)
         {
-            if (OriginalVFTable != null)
-            {
-                Kernel32.HeapFree(Kernel32.GetProcessHeap(), 0, *OriginalVFTable);
-                OriginalVFTable = null;
-            }
+            //if (OriginalVFTable != null)
+            //{
+            //    Kernel32.HeapFree(Kernel32.GetProcessHeap(), 0, *OriginalVFTable);
+            //    OriginalVFTable = null;
+            //}
         }
 
         #region Delegates
@@ -223,14 +162,41 @@ namespace Dante
         public delegate uint DelegateEndScene(D3D9.IDirect3DDevice9 Device);
 
         #endregion
+        private int iCounter = 0;
 
         public uint EndScene(D3D9.IDirect3DDevice9 Device)
         {
-            // to do
-            // [...]
-            Log.Debug("EndScene()");
+            lock (LuaInterface.oLocker)
+            {
+                //Check for pending registrations
+                if (LuaInterface.PendingRegistration)
+                {
+                    LuaInterface.LoggingInterface.Log("EndScene() - Lua register");
+
+                    LuaInterface.RegisterLuaInputHandler();
+
+                    LuaInterface.PendingRegistration = false;
+                }
+
+                //check for pending do_string's
+                if (!String.IsNullOrEmpty(LuaInterface.PendingDoString))
+                {
+                    LuaInterface.LoggingInterface.Log(string.Format("EndScene() - Lua DoString {0}", LuaInterface.PendingDoString));
+
+                    LuaInterface.DoString(LuaInterface.PendingDoString);
+
+                    LuaInterface.PendingDoString = string.Empty;
+                }
+            }
+
+            if (iCounter == 0)
+            {
+                LuaInterface.LoggingInterface.Log("EndScene()");
+                iCounter = 1;
+            }
+
             DelegateEndScene RealEndScene =
-                (DelegateEndScene) Marshal.GetDelegateForFunctionPointer(OriginalVFTable[42], typeof (DelegateEndScene));
+                (DelegateEndScene)Marshal.GetDelegateForFunctionPointer(OriginalEndScene, typeof(DelegateEndScene));
             return RealEndScene(Device);
         }
     }
@@ -257,7 +223,7 @@ namespace Dante
         {
             // Create the real IDirect3D9 object.
             NativeIDirect3D9 = D3D9.Direct3DCreate9(SdkVersion);
-
+            
             // Override the functions in NativeIDirect3D9 with our own.
             OverrideFunctions();
         }
@@ -293,19 +259,12 @@ namespace Dante
         // Backup the original native virtual function table and overwrite the pointer to it with our own (which is a copy of the original).
         private void InitializeVFTable()
         {
-            // If we don't have a real IDirect3D9 object yet then do nothing.
-            if (NativeIDirect3D9 == null)
-            {
-                return;
-            }
-
             // Save off the original VFTable (only if it really is the original).
             if (OriginalVFTable == null)
             {
                 OriginalVFTable = NativeIDirect3D9->VFTable;
             }
-
-
+            
             // IDirect3D9 has 17 members.
             const uint VFTableLength = 17;
             // Allocate space for our new VFTable.
@@ -345,32 +304,10 @@ namespace Dante
 
         private void OverrideFunctions()
         {
+            //Backup original table and replace with a copy that we will tweak
             InitializeVFTable();
 
-            // #0: STDMETHOD(QueryInterface)(THIS_ REFIID riid, void** ppvObj) PURE;
-            // #1: STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-            // #2: STDMETHOD_(ULONG,Release)(THIS) PURE;
-            // TODO: Override this and Dispose this object if it is going to return 0.
-            // #3: STDMETHOD(RegisterSoftwareDevice)(THIS_ void* pInitializeFunction) PURE;
-            // #4: STDMETHOD_(UINT, GetAdapterCount)(THIS) PURE;
-
-            DelegateGetAdapterCount MyAdapterCount = GetAdapterCount;
-            IntPtr PointerToMyAdapterCount = Marshal.GetFunctionPointerForDelegate(MyAdapterCount);
-            NativeIDirect3D9->VFTable[4] = PointerToMyAdapterCount;
-
-            // #5: STDMETHOD(GetAdapterIdentifier)(THIS_ UINT Adapter,DWORD Flags,D3DADAPTER_IDENTIFIER9* pIdentifier) PURE;
-            // #6: STDMETHOD_(UINT, GetAdapterModeCount)(THIS_ UINT Adapter,D3DFORMAT Format) PURE;
-            // #7: STDMETHOD(EnumAdapterModes)(THIS_ UINT Adapter,D3DFORMAT Format,UINT Mode,D3DDISPLAYMODE* pMode) PURE;
-            // #8: STDMETHOD(GetAdapterDisplayMode)(THIS_ UINT Adapter,D3DDISPLAYMODE* pMode) PURE;
-            // #9: STDMETHOD(CheckDeviceType)(THIS_ UINT Adapter,D3DDEVTYPE DevType,D3DFORMAT AdapterFormat,D3DFORMAT BackBufferFormat,BOOL bWindowed) PURE;
-            // #10: STDMETHOD(CheckDeviceFormat)(THIS_ UINT Adapter,D3DDEVTYPE DeviceType,D3DFORMAT AdapterFormat,DWORD Usage,D3DRESOURCETYPE RType,D3DFORMAT CheckFormat) PURE;
-            // #11: STDMETHOD(CheckDeviceMultiSampleType)(THIS_ UINT Adapter,D3DDEVTYPE DeviceType,D3DFORMAT SurfaceFormat,BOOL Windowed,D3DMULTISAMPLE_TYPE MultiSampleType,DWORD* pQualityLevels) PURE;
-            // #12: STDMETHOD(CheckDepthStencilMatch)(THIS_ UINT Adapter,D3DDEVTYPE DeviceType,D3DFORMAT AdapterFormat,D3DFORMAT RenderTargetFormat,D3DFORMAT DepthStencilFormat) PURE;
-            // #13: STDMETHOD(CheckDeviceFormatConversion)(THIS_ UINT Adapter,D3DDEVTYPE DeviceType,D3DFORMAT SourceFormat,D3DFORMAT TargetFormat) PURE;
-            // #14: STDMETHOD(GetDeviceCaps)(THIS_ UINT Adapter,D3DDEVTYPE DeviceType,D3DCAPS9* pCaps) PURE;
-            // #15: STDMETHOD_(HMONITOR, GetAdapterMonitor)(THIS_ UINT Adapter) PURE;
-            // #16: STDMETHOD(CreateDevice)(THIS_ UINT Adapter,D3DDEVTYPE DeviceType,HWND hFocusWindow,DWORD BehaviorFlags,D3DPRESENT_PARAMETERS* pPresentationParameters,IDirect3DDevice9** ppReturnedDeviceInterface) PURE;
-
+            //Get and set new delegate for creating the device
             DelegateCreateDevice MyCreateDevice = CreateDevice;
             IntPtr PointerToMyCreateDevice = Marshal.GetFunctionPointerForDelegate(MyCreateDevice);
             NativeIDirect3D9->VFTable[16] = PointerToMyCreateDevice;
@@ -394,30 +331,28 @@ namespace Dante
                                  uint behaviorFlags, IntPtr presentationParameters,
                                  D3D9.IDirect3DDevice9* deviceInterface)
         {
-            Log.Debug("CreateDevice Start...");
-            DelegateCreateDevice RealCreateDevice =
-                (DelegateCreateDevice)
-                Marshal.GetDelegateForFunctionPointer(OriginalVFTable[16], typeof (DelegateCreateDevice));
+            LuaInterface.LoggingInterface.Log("CreateDevice Start...");
+            
+            DelegateCreateDevice RealCreateDevice = 
+                (DelegateCreateDevice)Marshal.GetDelegateForFunctionPointer(OriginalVFTable[16], typeof (DelegateCreateDevice));
+
+            LuaInterface.LoggingInterface.Log("RealCreateDevice Start...");
+            //Call the function to create the device.  The pointer to the device is stored in deviceInterface
+            // The result code is saved to CreateDevice (0 means Good)
             uint CreateDevice = RealCreateDevice(This, adapter, deviceType, focusWindow, behaviorFlags,
                                                  presentationParameters, deviceInterface);
 
+
+            LuaInterface.LoggingInterface.Log(String.Format("CreateDevice = {0}", CreateDevice));
+
+            //if creation was successful, then remap appopriate function pointers for EndScene
             if (CreateDevice == 0)
             {
-                // to do
-                // IDirect3DDevice9 device = new IDirect3DDevice9(This, deviceInterface); 
                 IDirect3DDevice9 device = new IDirect3DDevice9(This, deviceInterface);
             }
 
+            LuaInterface.LoggingInterface.Log("Returning...");
             return CreateDevice;
-        }
-
-        public uint GetAdapterCount(D3D9.IDirect3D9* This)
-        {
-            DelegateGetAdapterCount RealGetAdapterCount =
-                (DelegateGetAdapterCount)
-                Marshal.GetDelegateForFunctionPointer(OriginalVFTable[4], typeof (DelegateGetAdapterCount));
-            uint AdapterCount = RealGetAdapterCount(This);
-            return AdapterCount;
         }
 
         #endregion

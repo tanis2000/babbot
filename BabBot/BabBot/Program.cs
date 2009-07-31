@@ -34,10 +34,11 @@ namespace BabBot
         {
             try
             {
-                // string exePath = Path.GetDirectoryName(Application.ExecutablePath) + "\\";
+                string LuaInjectPath = Path.Combine(Application.StartupPath, "Dante.dll");
+
                 EasyHook.Config.Register(
-                    "Dante.",
-                    "Dante.dll");
+                    "Dante",
+                    LuaInjectPath);
             }
             catch (ApplicationException ex)
             {

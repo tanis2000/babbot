@@ -27,6 +27,7 @@ using Magic;
 using System.Collections.Generic;
 using Pather.Graph;
 using System.Linq;
+using System.Threading;
 
 namespace BabBot.Manager
 {
@@ -190,6 +191,8 @@ namespace BabBot.Manager
                     WowHWND = AppHelper.WaitForWowWindow();
                     CommandManager.WowHWND = WowHWND;
 
+                    //verify we haven't already opened it, like when we do injection
+                    if(!wowProcess.IsProcessOpen)
                     ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
                 }
             }
@@ -239,6 +242,11 @@ namespace BabBot.Manager
                     // create our own IDirect3DDevice and get the pointer to the EndScene function
                     // and then save it, resume wow, do all our stuff and use that pointer when we 
                     // inject the LUA DLL
+
+                    //Inject!!!!
+                    Injector.InjectLua(process.Id);
+
+                    //resume
                     ResumeMainWowThread();
                     afterProcessStart();
                 }
@@ -413,7 +421,7 @@ namespace BabBot.Manager
                 }
                 FindTLS();
                 InitializeObjectManager();
-                Injector.InjectLua();
+                Injector.Lua_RegisterInputHandler();
                 InitializeCaronte();
                 //ScriptHost.Start();
                 //StateManager.Instance.Stop();
