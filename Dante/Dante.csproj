@@ -55,9 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DanteInterface.cs" />
-    <Compile Include="ISharedAssembly.cs" />
-    <Compile Include="Log.cs" />
-    <Compile Include="Main.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="LuaInterface.cs" />
     <Compile Include="MyDirect3D.cs">
       <SubType>Code</SubType>
     </Compile>

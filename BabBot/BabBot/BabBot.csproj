@@ -6,7 +6,7 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BabBot</RootNamespace>
     <AssemblyName>BabBot</AssemblyName>
@@ -15,6 +15,8 @@
     <ApplicationIcon>Img\icon_64x64.ico</ApplicationIcon>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>BabBot.snk</AssemblyOriginatorKeyFile>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -104,7 +106,6 @@
     <Compile Include="Common\WaypointVector3DHelper.cs" />
     <Compile Include="Common\WindowSize.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="ISharedAssembly.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -246,6 +247,10 @@
     <ProjectReference Include="..\..\Caronte\Caronte.csproj">
       <Project>{FEA6B573-E6EB-45A7-8DEB-EC84410BB9C0}</Project>
       <Name>Caronte</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dante\Dante.csproj">
+      <Project>{57ADA462-12C3-4788-BFE1-498A9F41C30C}</Project>
+      <Name>Dante</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
