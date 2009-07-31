@@ -16,33 +16,27 @@
   
     Copyright 2009 BabBot Team
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Pather.Graph;
 using BabBot.Wow;
-using BabBot.Manager;
 
 namespace BabBot.States.Common
 {
-    public class DeadState : State<Wow.WowPlayer>
+    public class DeadState : State<WowPlayer>
     {
         protected Vector3D _CorpseLocation;
 
-        protected override void DoEnter(BabBot.Wow.WowPlayer Entity)
+        protected override void DoEnter(WowPlayer Entity)
         {
             //on enter, get location of corpose
             _CorpseLocation = Entity.CorpseLocation;
         }
 
-        protected override void DoExecute(BabBot.Wow.WowPlayer Entity)
+        protected override void DoExecute(WowPlayer Entity)
         {
             //on execute, if the distance to our corpose is more then 5 yards, we need to get there
             if (Entity.DistanceFromCorpse() > 5f)
             {
                 // so we make a new move to state that will take us to our corpose
-                MoveToState mtsCorpse = new MoveToState(_CorpseLocation);
+                var mtsCorpse = new MoveToState(_CorpseLocation);
 
                 //request that we move to this location
                 CallChangeStateEvent(Entity, mtsCorpse, true, false);
@@ -56,7 +50,7 @@ namespace BabBot.States.Common
             Exit(Entity);
         }
 
-        protected override void DoExit(BabBot.Wow.WowPlayer Entity)
+        protected override void DoExit(WowPlayer Entity)
         {
             //on exit, if there is a previous state, go back to it
             if (PreviousState != null)
@@ -65,7 +59,7 @@ namespace BabBot.States.Common
             }
         }
 
-        protected override void DoFinish(BabBot.Wow.WowPlayer Entity)
+        protected override void DoFinish(WowPlayer Entity)
         {
             //finish
         }

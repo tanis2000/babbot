@@ -16,42 +16,43 @@
   
     Copyright 2009 BabBot Team
 */
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using BabBot.Manager;
 using System.Threading;
+using BabBot.Manager;
+using BabBot.Wow;
 
 namespace BabBot.States.Common
 {
-    public class AttackNearMobState : State<Wow.WowPlayer>
+    public class AttackNearMobState : State<WowPlayer>
     {
-        protected override void DoEnter(BabBot.Wow.WowPlayer Entity)
+        protected override void DoEnter(WowPlayer Entity)
         {
             return;
         }
 
-        protected override void DoExecute(BabBot.Wow.WowPlayer Entity)
+        protected override void DoExecute(WowPlayer Entity)
         {
             //if we don't have a target then get one
             if (!Entity.HasTarget)
             {
-                var d = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
+                List<WowObject> d = ProcessManager.ObjectManager.GetAllObjectsAroundLocalPlayer();
 
-                var m = from c in d where c.Type == BabBot.Wow.Descriptor.eObjType.OT_UNIT && ((Wow.WowUnit)c).IsLootable select c;
+                IEnumerable<WowObject> m = from c in d
+                                           where c.Type == Descriptor.eObjType.OT_UNIT && ((WowUnit) c).IsLootable
+                                           select c;
 
                 //get first unit and select it
                 if (m.Count() > 0)
                 {
-                    Entity.SelectMob((Wow.WowUnit)m.First());
+                    Entity.SelectMob((WowUnit) m.First());
                 }
             }
 
             //if distance to target is to far, then use a move to first
             if (Entity.DistanceFromTarget() > 0.5f)
             {
-                MoveToState mtsTarget = new MoveToState(Entity.CurTarget.Location);
+                var mtsTarget = new MoveToState(Entity.CurTarget.Location);
 
                 //request that we move to this location
                 CallChangeStateEvent(Entity, mtsTarget, true, false);
@@ -68,12 +69,12 @@ namespace BabBot.States.Common
             }
         }
 
-        protected override void DoExit(BabBot.Wow.WowPlayer Entity)
+        protected override void DoExit(WowPlayer Entity)
         {
             return;
         }
 
-        protected override void DoFinish(BabBot.Wow.WowPlayer Entity)
+        protected override void DoFinish(WowPlayer Entity)
         {
             return;
         }

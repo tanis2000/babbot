@@ -17,7 +17,6 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
 
 namespace BabBot.States
 {
@@ -27,27 +26,6 @@ namespace BabBot.States
     /// <typeparam name="T">T is the type of object that this state will interact with</typeparam>
     public abstract class State<T>
     {
-        /// <summary>Event fires before Enter code runs</summary>
-        public event EventHandler<StateEventArgs<T>> Entering;
-        /// <summary>Event fires after Enter code runs</summary>
-        public event EventHandler<StateEventArgs<T>> Entered;
-        /// <summary>Event fires before Execute code runs</summary>
-        public event EventHandler<StateEventArgs<T>> Executing;
-        /// <summary>Event fires after Execute code runs</summary>
-        public event EventHandler<StateEventArgs<T>> Executed;
-        /// <summary>Event fires before Exit code runs</summary>
-        public event EventHandler<StateEventArgs<T>> Exiting;
-        /// <summary>Event fires after Exit code runs</summary>
-        public event EventHandler<StateEventArgs<T>> Exited;
-
-        /// <summary>Event fires before the State finishes</summary>
-        public event EventHandler<StateEventArgs<T>> Finishing;
-        /// <summary>Event fires after the State finishes</summary>
-        public event EventHandler<StateEventArgs<T>> Finished;
-
-        /// <summary>Event fires when this state whants to kick-off another state as part of it's process</summary>
-        public event EventHandler<ChangeStateEventArgs<T>> ChangeStateRequest;
-
         public DateTime EnterTime { get; protected set; }
         public DateTime LastExecuteTime { get; protected set; }
         public DateTime ExitTime { get; protected set; }
@@ -55,6 +33,38 @@ namespace BabBot.States
 
         /// <summary>The state the entity was in previous to this state being started;</summary>
         public State<T> PreviousState { get; set; }
+
+        public bool HasChangeStateEventHookup
+        {
+            get { return (ChangeStateRequest == null) ? false : true; }
+        }
+
+        /// <summary>Event fires before Enter code runs</summary>
+        public event EventHandler<StateEventArgs<T>> Entering;
+
+        /// <summary>Event fires after Enter code runs</summary>
+        public event EventHandler<StateEventArgs<T>> Entered;
+
+        /// <summary>Event fires before Execute code runs</summary>
+        public event EventHandler<StateEventArgs<T>> Executing;
+
+        /// <summary>Event fires after Execute code runs</summary>
+        public event EventHandler<StateEventArgs<T>> Executed;
+
+        /// <summary>Event fires before Exit code runs</summary>
+        public event EventHandler<StateEventArgs<T>> Exiting;
+
+        /// <summary>Event fires after Exit code runs</summary>
+        public event EventHandler<StateEventArgs<T>> Exited;
+
+        /// <summary>Event fires before the State finishes</summary>
+        public event EventHandler<StateEventArgs<T>> Finishing;
+
+        /// <summary>Event fires after the State finishes</summary>
+        public event EventHandler<StateEventArgs<T>> Finished;
+
+        /// <summary>Event fires when this state whants to kick-off another state as part of it's process</summary>
+        public event EventHandler<ChangeStateEventArgs<T>> ChangeStateRequest;
 
         /// <summary>Enter this State</summary>
         public void Enter(T Entity)
@@ -65,7 +75,10 @@ namespace BabBot.States
             FinishTime = DateTime.MinValue;
 
             //Raise Entering event
-            if (Entering != null) Entering(this, StateEventArgs<T>.GetArgs(Entity));
+            if (Entering != null)
+            {
+                Entering(this, StateEventArgs<T>.GetArgs(Entity));
+            }
 
             //Update Enter Date/time
             EnterTime = DateTime.Now;
@@ -74,7 +87,10 @@ namespace BabBot.States
             DoEnter(Entity);
 
             //Raise Entered
-            if (Entered != null) Entered(this, StateEventArgs<T>.GetArgs(Entity));
+            if (Entered != null)
+            {
+                Entered(this, StateEventArgs<T>.GetArgs(Entity));
+            }
         }
 
         protected abstract void DoEnter(T Entity);
@@ -83,7 +99,10 @@ namespace BabBot.States
         public void Execute(T Entity)
         {
             //Raise Executing event
-            if (Executing != null) Executing(this, StateEventArgs<T>.GetArgs(Entity));
+            if (Executing != null)
+            {
+                Executing(this, StateEventArgs<T>.GetArgs(Entity));
+            }
 
             //Update last executed Date/time
             LastExecuteTime = DateTime.Now;
@@ -92,7 +111,10 @@ namespace BabBot.States
             DoExecute(Entity);
 
             //Raise Executed
-            if (Executed != null) Executed(this, StateEventArgs<T>.GetArgs(Entity));
+            if (Executed != null)
+            {
+                Executed(this, StateEventArgs<T>.GetArgs(Entity));
+            }
         }
 
         protected abstract void DoExecute(T Entity);
@@ -101,7 +123,10 @@ namespace BabBot.States
         public void Exit(T Entity)
         {
             //Raise Exiting event
-            if (Exiting != null) Exiting(this, StateEventArgs<T>.GetArgs(Entity));
+            if (Exiting != null)
+            {
+                Exiting(this, StateEventArgs<T>.GetArgs(Entity));
+            }
 
             //Update Exit date/time
             ExitTime = DateTime.Now;
@@ -110,7 +135,10 @@ namespace BabBot.States
             DoExit(Entity);
 
             //Raise Exited
-            if (Exited != null) Exited(this, StateEventArgs<T>.GetArgs(Entity));
+            if (Exited != null)
+            {
+                Exited(this, StateEventArgs<T>.GetArgs(Entity));
+            }
         }
 
         protected abstract void DoExit(T Entity);
@@ -119,7 +147,10 @@ namespace BabBot.States
         public void Finish(T Entity)
         {
             //Raise Finishing event
-            if (Finishing != null) Finishing(this, StateEventArgs<T>.GetArgs(Entity));
+            if (Finishing != null)
+            {
+                Finishing(this, StateEventArgs<T>.GetArgs(Entity));
+            }
 
             //Update Finish date/time
             FinishTime = DateTime.Now;
@@ -128,15 +159,13 @@ namespace BabBot.States
             DoFinish(Entity);
 
             //Raise Finished
-            if (Finished != null) Finished(this, StateEventArgs<T>.GetArgs(Entity));
+            if (Finished != null)
+            {
+                Finished(this, StateEventArgs<T>.GetArgs(Entity));
+            }
         }
 
         protected abstract void DoFinish(T Entity);
-
-        public bool HasChangeStateEventHookup
-        {
-            get { return (ChangeStateRequest == null) ? false : true; }
-        }
 
         protected bool CallChangeStateEvent(T Entity, State<T> NewState, bool TrackPrevious, bool ExitPrevious)
         {
@@ -146,7 +175,7 @@ namespace BabBot.States
 
                 return true;
             }
-            
+
             return false;
         }
     }

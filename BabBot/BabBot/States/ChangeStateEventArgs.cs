@@ -16,19 +16,10 @@
 
     Copyright 2009 BabBot Team
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace BabBot.States
 {
     public class ChangeStateEventArgs<T> : StateEventArgs<T>
     {
-        public State<T> NewState { get; private set; }
-        public bool TrackPrevious { get; private set; }
-        public bool ExitPrevious { get; private set; }
-
         public ChangeStateEventArgs(T Entity, State<T> NewState, bool TrackPrevious, bool ExitPrevious) : base(Entity)
         {
             this.NewState = NewState;
@@ -36,9 +27,13 @@ namespace BabBot.States
             this.ExitPrevious = ExitPrevious;
         }
 
+        public State<T> NewState { get; private set; }
+        public bool TrackPrevious { get; private set; }
+        public bool ExitPrevious { get; private set; }
+
         public static ChangeStateEventArgs<T> GetArgs(T Entity, State<T> NewState, bool TrackPrevious, bool ExitPrevious)
         {
-            ChangeStateEventArgs<T> args = new ChangeStateEventArgs<T>(Entity, NewState, TrackPrevious, ExitPrevious);
+            var args = new ChangeStateEventArgs<T>(Entity, NewState, TrackPrevious, ExitPrevious);
 
             return args;
         }

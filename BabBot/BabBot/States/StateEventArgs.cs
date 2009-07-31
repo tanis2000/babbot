@@ -17,24 +17,21 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BabBot.States
 {
     public class StateEventArgs<T> : EventArgs
     {
-        public T Entity { get; private set; }
-
         public StateEventArgs(T Entity)
         {
             this.Entity = Entity;
         }
 
+        public T Entity { get; private set; }
+
         public static StateEventArgs<T> GetArgs(T Entity)
         {
-            StateEventArgs<T> args = new StateEventArgs<T>(Entity);
+            var args = new StateEventArgs<T>(Entity);
 
             return args;
         }

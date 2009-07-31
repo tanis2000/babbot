@@ -17,13 +17,9 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BabBot.States;
-using BabBot.Wow;
 using BabBot.Bot;
 using BabBot.Scripting;
+using BabBot.Wow;
 
 namespace BabBot.States.Common
 {
@@ -31,22 +27,26 @@ namespace BabBot.States.Common
     /// GlobalBaseBotState is an abstract (inherit only) class for building
     /// bots of all kind and should be used as a global state.
     /// </summary>
-    public class GlobalBaseBotState : State<Wow.WowPlayer>
+    public class GlobalBaseBotState : State<WowPlayer>
     {
         #region Configurable properties
 
-        protected int MinMPPct = 80; // Minimum mana percentage to start drinking
-        protected int MinHPPct = 80; // Minimum health percentage to start eating
-        protected float MinMeleeDistance = 1.0f;
-        protected float MaxMeleeDistance = 5.0f;
-        protected float MinRangedDistance = 15.0f;
-        protected float MaxRangedDistance = 25.0f;
         protected int HpPctEmergency = 25; // Minimum health percentage at which we call the emergency healing routine
         protected int HpPctPotion = 20; // Minimum health percentage at which we look for a health potion
+        protected WowUnit LastTarget;
+        protected float MaxMeleeDistance = 5.0f;
+        protected float MaxRangedDistance = 25.0f;
+
+        protected float MinDistanceFromCorpse = 20.0f;
+                        // Minimum distance from corpse after which we stop pathing looking for it
+
+        protected int MinHPPct = 80; // Minimum health percentage to start eating
+        protected float MinMeleeDistance = 1.0f;
+        protected int MinMPPct = 80; // Minimum mana percentage to start drinking
+        protected float MinRangedDistance = 15.0f;
         protected int MpPctPotion = 15; // Minimum mana percentage at which we look for a mana potion
-        protected float MinDistanceFromCorpse = 20.0f; // Minimum distance from corpse after which we stop pathing looking for it
+
         protected float PullRange = 25.0f; // Distance at which we want to pull mobs
-        protected WowUnit LastTarget = null;
 
         #endregion
 
@@ -58,6 +58,9 @@ namespace BabBot.States.Common
 
         #endregion
 
+        protected bool _IsDeadStateRunning;
+        protected SConsumable Consumable = SConsumable.Instance;
+
         /// <summary>
         /// This is called by the StateManager to check if we need to rest. It should be
         /// implemented by each class
@@ -67,12 +70,8 @@ namespace BabBot.States.Common
         {
             return false;
         }
-          
-        protected SConsumable Consumable = SConsumable.Instance;
 
-        protected bool _IsDeadStateRunning = false;
-
-        protected override void DoEnter(BabBot.Wow.WowPlayer Entity)
+        protected override void DoEnter(WowPlayer Entity)
         {
             Console.WriteLine("DoEnter() -- Begin");
 
@@ -87,7 +86,7 @@ namespace BabBot.States.Common
             Console.WriteLine("DoEnter() -- End");
         }
 
-        protected override void DoExecute(BabBot.Wow.WowPlayer Entity)
+        protected override void DoExecute(WowPlayer Entity)
         {
             //Main update loop.  Basically just do a bunch of checks and then 
             // let another state take over.
@@ -98,9 +97,9 @@ namespace BabBot.States.Common
                 //if the current state is not already dead then don't worry about it
                 if (!_IsDeadStateRunning)
                 {
-                    DeadState ds = new DeadState();
+                    var ds = new DeadState();
 
-                    ds.Exited += new EventHandler<StateEventArgs<WowPlayer>>(deadState_Exited);
+                    ds.Exited += deadState_Exited;
 
                     CallChangeStateEvent(Entity, ds, true, false);
 
@@ -112,29 +111,26 @@ namespace BabBot.States.Common
             }
 
             //auto attack a target
-            if(!Entity.StateMachine.IsInState(typeof(AttackNearMobState)))
+            if (!Entity.StateMachine.IsInState(typeof (AttackNearMobState)))
             {
-                AttackNearMobState anbs = new AttackNearMobState();
+                var anbs = new AttackNearMobState();
                 CallChangeStateEvent(Entity, anbs, true, false);
             }
-
         }
 
-        void deadState_Exited(object sender, StateEventArgs<WowPlayer> e)
+        private void deadState_Exited(object sender, StateEventArgs<WowPlayer> e)
         {
             _IsDeadStateRunning = false;
         }
 
-        protected override void DoExit(BabBot.Wow.WowPlayer Entity)
+        protected override void DoExit(WowPlayer Entity)
         {
             Entity.Stop();
         }
 
-        protected override void DoFinish(BabBot.Wow.WowPlayer Entity)
+        protected override void DoFinish(WowPlayer Entity)
         {
             throw new NotImplementedException();
         }
-    
-        
     }
 }

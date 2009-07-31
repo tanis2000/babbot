@@ -17,11 +17,8 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using BabBot.Wow;
-using BabBot.Manager;
 using BabBot.Common;
+using BabBot.Wow;
 
 namespace BabBot.States.Samples
 {
@@ -47,7 +44,7 @@ namespace BabBot.States.Samples
                 {
                     Entity.PlayerCM.SendKeys(" ");
                 }
-            }           
+            }
         }
 
         protected override void DoExit(WowPlayer Entity)

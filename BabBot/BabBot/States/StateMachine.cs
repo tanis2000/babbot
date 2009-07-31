@@ -17,13 +17,29 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace BabBot.States
 {
     public sealed class StateMachine<T>
     {
+        /// <summary>Create a new state machine for the given entity.</summary>
+        /// <param name="Entity">The entity that this state machine belongs too</param>
+        public StateMachine(T Entity)
+        {
+            //make sure entity is not null, if null then throw an exception
+            if (Entity == null)
+            {
+                throw new NullReferenceException("Entity must not be null.");
+            }
+
+            //Capture Entity
+            this.Entity = Entity;
+
+            //set states to nulls
+            GlobalState = null;
+            CurrentState = null;
+        }
+
         /// <summary>The object that owns this finite state engine</summary>
         public T Entity { get; private set; }
 
@@ -46,21 +62,6 @@ namespace BabBot.States
         /// <summary>True/False whether the state machine is running</summary>
         public bool IsRunning { get; set; }
 
-        /// <summary>Create a new state machine for the given entity.</summary>
-        /// <param name="Entity">The entity that this state machine belongs too</param>
-        public StateMachine(T Entity)
-        {
-            //make sure entity is not null, if null then throw an exception
-            if (Entity == null) throw new NullReferenceException("Entity must not be null.");
-
-            //Capture Entity
-            this.Entity = Entity;
-
-            //set states to nulls
-            GlobalState = null;
-            CurrentState = null;
-        }
-
         public void SetGlobalState(State<T> NewGlobalState)
         {
             //if a global state currently exists then exit i
@@ -75,8 +76,8 @@ namespace BabBot.States
             GlobalState = NewGlobalState;
 
             //connect up to the global states change state request
-            GlobalState.ChangeStateRequest += new EventHandler<ChangeStateEventArgs<T>>(CurrentState_ChangeStateRequest);
-            
+            GlobalState.ChangeStateRequest += CurrentState_ChangeStateRequest;
+
             //enter new global state
             GlobalState.Enter(Entity);
         }
@@ -85,15 +86,24 @@ namespace BabBot.States
         public void Update()
         {
             //if state machine is not active, then skip
-            if (!IsRunning) return;
+            if (!IsRunning)
+            {
+                return;
+            }
 
             //update the global state (if it exists and has not already exited or finished)
-            if (GlobalState != null && GlobalState.ExitTime == DateTime.MinValue && GlobalState.FinishTime == DateTime.MinValue)
+            if (GlobalState != null && GlobalState.ExitTime == DateTime.MinValue &&
+                GlobalState.FinishTime == DateTime.MinValue)
+            {
                 GlobalState.Execute(Entity);
+            }
 
             //update the current state (if it exists and has not already exited or finished)
-            if (CurrentState != null && CurrentState.ExitTime == DateTime.MinValue && CurrentState.FinishTime == DateTime.MinValue) 
+            if (CurrentState != null && CurrentState.ExitTime == DateTime.MinValue &&
+                CurrentState.FinishTime == DateTime.MinValue)
+            {
                 CurrentState.Execute(Entity);
+            }
 
             //update last updated variable
             LastUpdated = DateTime.Now;
@@ -113,8 +123,10 @@ namespace BabBot.States
             {
                 //if we aren't going to track this one anymore
                 // then remove the state change request event
-                if(CurrentState != null)
+                if (CurrentState != null)
+                {
                     CurrentState.ChangeStateRequest -= CurrentState_ChangeStateRequest;
+                }
             }
 
             //if we need to exit the previous state 
@@ -133,7 +145,8 @@ namespace BabBot.States
             // if it is not already hooked up
             if (!CurrentState.HasChangeStateEventHookup)
             {
-                CurrentState.ChangeStateRequest += new EventHandler<ChangeStateEventArgs<T>>(CurrentState_ChangeStateRequest);
+                CurrentState.ChangeStateRequest +=
+                    CurrentState_ChangeStateRequest;
             }
 
             //Enter new state if enter date/time is min date
@@ -153,7 +166,7 @@ namespace BabBot.States
             ChangeState(CurrentState.PreviousState, false, true);
         }
 
-        void CurrentState_ChangeStateRequest(object sender, ChangeStateEventArgs<T> e)
+        private void CurrentState_ChangeStateRequest(object sender, ChangeStateEventArgs<T> e)
         {
             //when the currently running state requests a change request (either the global or CurrentState).
             // then pause currently running state and switch to the new one.
@@ -164,8 +177,11 @@ namespace BabBot.States
         /// <summary>Is state machine in the specified state?</summary>
         public bool IsInState(Type State)
         {
-            if (CurrentState !=null && CurrentState.GetType() == State && CurrentState.ExitTime != DateTime.MinValue) return true;
-            else return false;
+            if (CurrentState != null && CurrentState.GetType() == State && CurrentState.ExitTime != DateTime.MinValue)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

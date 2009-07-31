@@ -17,26 +17,18 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BabBot.Wow;
-using BabBot.Manager;
-using Pather.Graph;
-using BabBot.Common;
 using System.Threading;
 using System.Windows.Forms;
+using BabBot.Common;
+using BabBot.Manager;
+using BabBot.Wow;
+using Pather.Graph;
 
 namespace BabBot.States.Common
 {
     public class MoveToState : State<WowPlayer>
     {
-        public Vector3D Destination { get; protected set; }
-        public Path TravelPath { get; protected set; }
-        public Location CurrentWaypoint { get; protected set; }
-        public float Tolerance { get; protected set; }
-
-        protected float _LastDistance = 0f;
+        protected float _LastDistance;
 
         public MoveToState(Vector3D Destination)
         {
@@ -50,6 +42,11 @@ namespace BabBot.States.Common
             SetDefaults(new Vector3D());
         }
 
+        public Vector3D Destination { get; protected set; }
+        public Path TravelPath { get; protected set; }
+        public Location CurrentWaypoint { get; protected set; }
+        public float Tolerance { get; protected set; }
+
         protected void SetDefaults(Vector3D Destination)
         {
             this.Destination = Destination;
@@ -62,13 +59,13 @@ namespace BabBot.States.Common
             if (TravelPath == null)
             {
                 //get current and destination as ppather locations
-                Location currentLocation = new Location(Entity.Location.X, Entity.Location.Y, Entity.Location.Z);
-                Location destinationLocation = new Location(Destination.X, Destination.Y, Destination.Z);
+                var currentLocation = new Location(Entity.Location.X, Entity.Location.Y, Entity.Location.Z);
+                var destinationLocation = new Location(Destination.X, Destination.Y, Destination.Z);
                 //calculate and store travel path
                 TravelPath = ProcessManager.Caronte.CalculatePath(currentLocation, destinationLocation);
                 //TravelPath.locations = new List<Location>(TravelPath.locations.Distinct<Location>());
             }
-            
+
             //if there are locations then set first waypoint
             if (TravelPath.locations.Count > 0)
             {
@@ -81,8 +78,8 @@ namespace BabBot.States.Common
                 if (_LastDistance < 3f)
                 {
                     CurrentWaypoint = GetNextWayPoint();
-                    _LastDistance = WaypointVector3DHelper.Vector3DToLocation(Entity.Location).GetDistanceTo(CurrentWaypoint);
-
+                    _LastDistance =
+                        WaypointVector3DHelper.Vector3DToLocation(Entity.Location).GetDistanceTo(CurrentWaypoint);
                 }
             }
         }
@@ -90,18 +87,24 @@ namespace BabBot.States.Common
         protected override void DoExecute(WowPlayer Entity)
         {
             //on execute, first verify we have a waypoit to follow, else exit
-            if (CurrentWaypoint == null)  { Exit(Entity); return; }
+            if (CurrentWaypoint == null)
+            {
+                Exit(Entity);
+                return;
+            }
 
             const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
 
 
             // Move on...
-            float distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint), Entity.Location, false);
+            float distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
+                                                   Entity.Location, false);
             Entity.PlayerCM.ArrowKeyDown(key);
 
             /// We face our destination waypoint while we are already moving, so that it looks 
             /// more human-like
-            float angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint), Entity.Location);
+            float angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
+                                                  Entity.Location);
 
             Entity.FaceUsingMemoryWrite(angle, false);
 
@@ -112,7 +115,8 @@ namespace BabBot.States.Common
             {
                 float currentDistance = distance;
 
-                distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint), Entity.Location, false);
+                distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
+                                                 Entity.Location, false);
 
                 Thread.Sleep(50);
                 Application.DoEvents();
@@ -135,7 +139,7 @@ namespace BabBot.States.Common
                 //{
                 //    Entity.FaceUsingMemoryWrite(angle, false);
                 //}
-            }         
+            }
 
             //get next waypoint (may be null)
             CurrentWaypoint = GetNextWayPoint();
