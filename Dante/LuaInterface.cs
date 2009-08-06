@@ -145,10 +145,10 @@ namespace Dante
                                                  uint dwProcessId);
 
         [DllImport("kernel32.dll")]
-        static extern uint SuspendThread(IntPtr hThread);
+        private static extern uint SuspendThread(IntPtr hThread);
 
         [DllImport("kernel32.dll")]
-        static extern uint ResumeThread(IntPtr hThread);
+        private static extern uint ResumeThread(IntPtr hThread);
 
 
         public unsafe void Run(
@@ -160,19 +160,20 @@ namespace Dante
 
             try
             {
-
                 try
                 {
+                    count = 0;
                     LoggingInterface.Log(string.Format("Creating Direct3DCreate9Hook..."));
                     Direct3DCreate9Hook = LocalHook.Create(LocalHook.GetProcAddress("D3D9.DLL", "Direct3DCreate9"),
-                                                new Direct3DCreate9Delegate(MyDirect3DCreate9),
-                                                this);
+                                                           new Direct3DCreate9Delegate(MyDirect3DCreate9),
+                                                           this);
 
                     LoggingInterface.Log(string.Format("SetExclusiveACL on Direct3DCreate9Hook..."));
-                    Direct3DCreate9Hook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
+                    Direct3DCreate9Hook.ThreadACL.SetExclusiveACL(new Int32[] {0});
                 }
                 catch (Exception e)
                 {
+                    count = 0;
                     LoggingInterface.Log(string.Format("Exception on Direct3DCreate9Hook: " + e.Message));
                 }
 
@@ -183,7 +184,9 @@ namespace Dante
 
                 LoggingInterface.Log("setting up channel :)");
                 string outChannelName = null;
-                IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<DanteInterface>(ref outChannelName, WellKnownObjectMode.Singleton);
+                IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<DanteInterface>(ref outChannelName,
+                                                                                               WellKnownObjectMode.
+                                                                                                   Singleton);
 
                 //notify client of channel creation via logger
                 LoggingInterface.InjectedDLLChannelName = outChannelName;
@@ -251,27 +254,30 @@ namespace Dante
         }
         */
 
-
         #region DirectX
 
         private LocalHook Direct3DCreate9Hook;
         private IDirect3D9 IDirect3D9;
+        private int count;
 
         // This is our fake version of Direct3DCreate9.  We call the real one but this let's us grab the IDirect3D pointer.
         private static unsafe D3D9.IDirect3D9* MyDirect3DCreate9(ushort SdkVersion)
         {
             // Since this function is static we need to get a reference to "this".
-            LuaInterface This = (LuaInterface)HookRuntimeInfo.Callback;
-
-            LoggingInterface.Log(string.Format("MyDirect3DCreate9 Start...SDK Version {0}", SdkVersion));
+            LuaInterface This = (LuaInterface) HookRuntimeInfo.Callback;
 
             // Create one of our custom IDirect3D9 objects (which insantiates a real one and passes most calls through to it).
-            This.IDirect3D9 = new IDirect3D9(SdkVersion);
+            if (This.count == 1)
+            {
+                LoggingInterface.Log(string.Format("MyDirect3DCreate9 Start...SDK Version {0}", SdkVersion));
+                This.IDirect3D9 = new IDirect3D9(SdkVersion);
+                This.count++;
+                LoggingInterface.Log("MyDirect3DCreate9 Created...");
+                return This.IDirect3D9.NativeIDirect3D9;
+            }
 
-            LoggingInterface.Log("MyDirect3DCreate9 Created...");
-
-            // Return the IDirect3D9 pointer.
-            return This.IDirect3D9.NativeIDirect3D9;
+            This.count++;
+            return D3D9.Direct3DCreate9(SdkVersion);
         }
 
         // This is the wrapping that let's us give Win32 a delegate instead of a function pointer.
@@ -279,7 +285,6 @@ namespace Dante
         private unsafe delegate D3D9.IDirect3D9* Direct3DCreate9Delegate(ushort SdkVersion);
 
         #endregion
-
 
         #region LUA
 
@@ -292,12 +297,13 @@ namespace Dante
                 //SuspendThread(WowThreadHandle);
                 Lua_DoString(cmd, "babbot.lua", L);
                 //ResumeThread(WowThreadHandle);
-            } catch (SEHException e)
+            }
+            catch (SEHException e)
             {
                 LoggingInterface.Log(e.ToString());
             }
         }
-        
+
         public static void DoStringInputHandler(string command)
         {
             try
@@ -367,7 +373,7 @@ namespace Dante
         public static void RegisterLuaInputHandler()
         {
             LoggingInterface.Log(string.Format("Registering our InputHandler.."));
-            Lua_Register("InputHandler", (IntPtr)Functions.Patch_Offset); // This is the code hole we want to use
+            Lua_Register("InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
             LoggingInterface.Log(string.Format("InputHandler Registered"));
         }
 
@@ -383,18 +389,18 @@ namespace Dante
 
             public const uint
                 // 3.1.3
-                Lua_GetState = 0x00499700; 
+                Lua_GetState = 0x00499700;
 
             public const uint
                 // 3.1.3
-                Lua_GetTop = 0x0091A8B0; 
+                Lua_GetTop = 0x0091A8B0;
 
             public const uint
-                Lua_Register = 0x004998E0; 
+                Lua_Register = 0x004998E0;
 
             public const uint
                 // 3.1.3
-                Lua_ToString = 0x0091ADC0; 
+                Lua_ToString = 0x0091ADC0;
 
             public const uint
                 // 3.1.3

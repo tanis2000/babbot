@@ -25,19 +25,22 @@ namespace Dante
         {
             //InitializeVFTable();
 
-            LuaInterface.LoggingInterface.Log(string.Format("Address of Native EndScene (VFTable**) is {0}", NativeIDirect3DDevice9->VFTable[0][42]));
+            LuaInterface.LoggingInterface.Log(string.Format("Address of Native EndScene (VFTable**) is {0:X}", (uint)NativeIDirect3DDevice9->VFTable[0][42]));
 
             LuaInterface.LoggingInterface.Log("Backing up original end scene hook");
             OriginalEndScene = NativeIDirect3DDevice9->VFTable[0][42];
+            RealEndScene = (DelegateEndScene)Marshal.GetDelegateForFunctionPointer(OriginalEndScene, typeof(DelegateEndScene));
 
-            LuaInterface.LoggingInterface.Log(string.Format("Address of Original EndScene Backup is {0}", OriginalEndScene));
+            LuaInterface.LoggingInterface.Log(string.Format("Address of Original EndScene Backup is {0:X}", (uint)OriginalEndScene));
 
 
             //get delegate and pointer to delegate for custon end scene
-            DelegateEndScene MyEndScene = EndScene;
+            //DelegateEndScene fuckinggarbagecollector = EndScene;
+
+            MyEndScene = EndScene;
             IntPtr PointerToMyEndScene = Marshal.GetFunctionPointerForDelegate(MyEndScene);
 
-            LuaInterface.LoggingInterface.Log(string.Format("Address of MyEndScene is {0}", PointerToMyEndScene));
+            LuaInterface.LoggingInterface.Log(string.Format("Address of MyEndScene is {0:X}", (uint)PointerToMyEndScene));
 
             //LuaInterface.LoggingInterface.Log("Unprotecting EndScene Memory...");
             //uint newProtection = (uint)Kernel32.Protection.PAGE_EXECUTE_READWRITE;
@@ -49,8 +52,11 @@ namespace Dante
             //do actual re-routing of the function to run our own custom end scene
             LuaInterface.LoggingInterface.Log("Redirect EndScene to New Function...");
             NativeIDirect3DDevice9->VFTable[0][42] = PointerToMyEndScene;
+            //Marshal.WriteIntPtr(NativeIDirect3DDevice9->VFTable[0][42], PointerToMyEndScene);
 
-            LuaInterface.LoggingInterface.Log(string.Format("Address of New 'Native' EndScene is {0}", NativeIDirect3DDevice9->VFTable[0][42]));
+
+
+            LuaInterface.LoggingInterface.Log(string.Format("Address of New 'Native' EndScene is {0:X}", (uint)NativeIDirect3DDevice9->VFTable[0][42]));
 
 
             //LuaInterface.LoggingInterface.Log("Changing Memory protection back to what it was...");
@@ -160,6 +166,8 @@ namespace Dante
         #region Delegates
 
         public delegate uint DelegateEndScene(D3D9.IDirect3DDevice9 Device);
+        public DelegateEndScene RealEndScene;
+        public DelegateEndScene MyEndScene;
 
         #endregion
         private int iCounter = 0;
@@ -168,6 +176,7 @@ namespace Dante
         {
             lock (LuaInterface.oLocker)
             {
+
                 //Check for pending registrations
                 if (LuaInterface.PendingRegistration)
                 {
@@ -191,12 +200,19 @@ namespace Dante
 
             if (iCounter == 0)
             {
-                LuaInterface.LoggingInterface.Log("EndScene()");
+                
                 iCounter = 1;
             }
 
+            /*
             DelegateEndScene RealEndScene =
                 (DelegateEndScene)Marshal.GetDelegateForFunctionPointer(OriginalEndScene, typeof(DelegateEndScene));
+            */
+
+            LuaInterface.LoggingInterface.Log(string.Format("{0:X} Device", (uint)&Device));
+            LuaInterface.LoggingInterface.Log(string.Format("{0:X} EndScene()", (uint)OriginalEndScene));
+
+
             return RealEndScene(Device);
         }
     }
@@ -358,6 +374,5 @@ namespace Dante
         #endregion
 
         public D3D9.IDirect3D9* NativeIDirect3D9 { get; private set; }
-        //public D3D9.IDirect3DDevice9* NativeIDirect3DDevice9 { get; private set; }
     }
 }
