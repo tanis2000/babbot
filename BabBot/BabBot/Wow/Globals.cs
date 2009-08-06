@@ -23,7 +23,7 @@ namespace BabBot.Wow
 {
     public class Globals
     {
-        public const uint GameOffset = 0x010BD5F4; // 3.1.0: 0x010B65F4; // 3.0.9: 0x127F13C
+        public const uint GameOffset = 0x12BEDB8; // 3.1.2 & 3.1.3 0x010BD5F4; // 3.1.0: 0x010B65F4; // 3.0.9: 0x127F13C
         public const uint MouseOverGuidOffset = 0x011D3F50;
 
         public const uint NameStorePointer = 0x0113ED00 + 0x8;
