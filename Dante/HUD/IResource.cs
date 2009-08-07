@@ -18,16 +18,16 @@
 */
 
 using System;
+using SlimDX.Direct3D9;
 
-namespace Dante
+namespace Dante.HUD
 {
-    public class Logger : MarshalByRefObject
+    public interface IResource : IDisposable
     {
-        public string InjectedDLLChannelName { get; set; }
+        void Initialize(Device managedDevice);
 
-        public void Log(string Message)
-        {
-            Console.WriteLine(Message);
-        }
+        void LoadContent();
+
+        void UnloadContent();
     }
 }
