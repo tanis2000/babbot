@@ -17,9 +17,9 @@
     Copyright 2009 BabBot Team -
 */
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using BabBot.Common;
 using BabBot.Forms;
 
 namespace BabBot
@@ -35,16 +35,21 @@ namespace BabBot
             try
             {
                 string LuaInjectPath = Path.Combine(Application.StartupPath, "Dante.dll");
+                string BSPath = Path.Combine(Application.StartupPath, "B@S.Reversing.dll");
 
                 EasyHook.Config.Register(
                     "Dante",
                     LuaInjectPath);
+                
+                EasyHook.Config.Register(
+                    "B@S.Reversing",
+                    BSPath);
+
             }
             catch (ApplicationException ex)
             {
                 MessageBox.Show("This is an administrative task!", "Permission denied...", MessageBoxButtons.OK);
-
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
+                Process.GetCurrentProcess().Kill();
             }
 
             Application.EnableVisualStyles();
@@ -64,8 +69,7 @@ namespace BabBot
             catch (Exception ex)
             {
                 var form = new ExceptionForm(ex);
-                DialogResult result;
-                result = form.ShowDialog();
+                DialogResult result = form.ShowDialog();
                 Application.Exit();
             }
         }

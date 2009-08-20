@@ -246,7 +246,7 @@ namespace BabBot.Manager
                     //Inject!!!!
                     Injector.InjectLua(process.Id);
 
-                    //resume
+                    // resume
                     ResumeMainWowThread();
                     afterProcessStart();
                 }

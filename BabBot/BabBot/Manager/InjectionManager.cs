@@ -19,52 +19,43 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
 using BabBot.Common;
 using BabBot.Wow;
-using Magic;
-using EasyHook;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels.Ipc;
-using System.Runtime.Remoting.Channels;
 using Dante;
-using System.Windows.Forms;
-using System.IO;
+using EasyHook;
+using Magic;
 
 namespace BabBot.Manager
 {
     public class InjectionManager
     {
         // cache of GUID vs Relation to local player. These are static (more or less)
+
+        private static String ChannelName;
+        private static DanteInterface RemoteObject;
+
         private readonly IDictionary<ulong, Descriptor.eUnitReaction> RelationCache =
             new Dictionary<ulong, Descriptor.eUnitReaction>();
 
         private readonly IDictionary<string, uint> SpellIdCache = new Dictionary<string, uint>();
-
-        // Shortcut to the BM instance
-        private BlackMagic wow
-        {
-            get { return ProcessManager.WowProcess; }
-        }
-
+        public bool Injected;
         private uint state;
 
-        static String ChannelName = null;
-        static DanteInterface RemoteObject;
-        public bool Injected = false;
-        
         #region External function calls
+
         [DllImport("kernel32", CharSet = CharSet.Ansi)]
-        private extern static IntPtr LoadLibrary(string libFileName);
+        private static extern IntPtr LoadLibrary(string libFileName);
 
         [DllImport("kernel32")]
-        private extern static bool FreeLibrary(IntPtr hLibModule);
+        private static extern bool FreeLibrary(IntPtr hLibModule);
 
         [DllImport("kernel32", CharSet = CharSet.Ansi)]
-        private extern static IntPtr GetProcAddress(IntPtr hLibModule, string procName);
+        private static extern IntPtr GetProcAddress(IntPtr hLibModule, string procName);
+
         #endregion
 
         #region Common Assembly
@@ -86,8 +77,8 @@ namespace BabBot.Manager
         /// </summary>
         private void AsmSendResumeMessage()
         {
-            uint sendmessage = (uint)GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
-            uint hwnd = (uint)AppHelper.BotHandle;
+            var sendmessage = (uint) GetProcAddress(LoadLibrary("User32.dll"), "SendMessageA");
+            var hwnd = (uint) AppHelper.BotHandle;
 
             wow.Asm.AddLine("push eax");
             wow.Asm.AddLine("push {0}", 0x10);
@@ -337,11 +328,17 @@ namespace BabBot.Manager
          */
         public void CastSpellByName(string name, bool onSelf)
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", name));
+            ProcessManager.Injector.Lua_DoString(
+                string.Format(
+                    "name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");",
+                    name));
             string castTime = ProcessManager.Injector.Lua_GetLocalizedText(6);
 
             // empty cast time means we do not know that spell
-            if (castTime == "") return;
+            if (castTime == "")
+            {
+                return;
+            }
 
             Int32 realCastTime = Convert.ToInt32(castTime); // milliseconds
 
@@ -452,7 +449,7 @@ namespace BabBot.Manager
             AsmUpdateCurMgr();
             wow.Asm.AddLine("mov eax, {0}", Environment.TickCount);
             wow.Asm.AddLine("mov ecx, {0}", wow.ReadUInt(Globals.Functions.CInputControl));
-                // Base of the CInputControl class
+            // Base of the CInputControl class
             wow.Asm.AddLine("push {0}", 0);
             wow.Asm.AddLine("push eax");
             wow.Asm.AddLine("push {0}", enable ? 1 : 0); // Enable
@@ -578,6 +575,7 @@ namespace BabBot.Manager
             return sResult;
         }
         */
+
         public void InjectLua()
         {
             InjectLua(wow.ProcessId);
@@ -587,19 +585,19 @@ namespace BabBot.Manager
         {
             try
             {
-                if (Injected) return;
-
-                //get pointers
-                //ProcessThread wowMainThread = SThread.GetMainThread(ProcessManager.WowProcess.ProcessId);
-                //IntPtr hThread = SThread.OpenThread(wowMainThread.Id);
+                if (Injected)
+                {
+                    return;
+                }
 
                 //create IPC log channell for injected dll, so it can log to the console
-                string logChannelName=null;
-                IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<Logger>(ref logChannelName, WellKnownObjectMode.Singleton);
-                Logger remoteLog = RemoteHooking.IpcConnectClient<Logger>(logChannelName);
+                string logChannelName = null;
+                IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<Logger>(ref logChannelName,
+                                                                                       WellKnownObjectMode.Singleton);
+                var remoteLog = RemoteHooking.IpcConnectClient<Logger>(logChannelName);
 
                 //inject dante.dll, pass in the log channel name
-                RemoteHooking.Inject(
+                RemoteHooking.Inject( 
                     ProcessID,
                     "Dante.dll",
                     "Dante.dll",
@@ -616,13 +614,11 @@ namespace BabBot.Manager
 
                 Injected = true;
                 Console.WriteLine("Dante injected");
-
             }
             catch (Exception ExtInfo)
             {
-                Console.WriteLine("There was an error while connecting to target:\r\n{0}", ExtInfo.ToString());
+                Console.WriteLine("There was an error while connecting to target:\r\n{0}", ExtInfo);
             }
-
         }
 
         public void Lua_RegisterInputHandler()
@@ -663,7 +659,7 @@ namespace BabBot.Manager
             }
         }
 
-        
+
         public string Lua_GetLocalizedText(int position)
         {
             List<string> values = RemoteGetValues();
@@ -678,7 +674,7 @@ namespace BabBot.Manager
         {
             return RemoteObject.GetValues();
         }
-        
+
         #endregion
 
         #region FindPattern
@@ -709,7 +705,7 @@ namespace BabBot.Manager
             uint mod = 0;
             if (add != 0)
             {
-                mod = wow.ReadUInt((uint)(loc + add));
+                mod = wow.ReadUInt((uint) (loc + add));
             }
 
             Console.WriteLine("final: 0x{0:X08} + 0x{1:X} + 0x{2:X} =  0x{0:X08}", loc, mod, rel, loc + mod + rel);
@@ -718,5 +714,9 @@ namespace BabBot.Manager
 
         #endregion
 
+        private BlackMagic wow
+        {
+            get { return ProcessManager.WowProcess; }
+        }
     }
 }
