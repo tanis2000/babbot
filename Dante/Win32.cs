@@ -39,6 +39,48 @@ namespace Dante
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize, uint flNewProtect, out uint lpflOldProtect);
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+        public static extern IntPtr LoadLibrary(string lpFileName);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetCurrentProcess();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress,
+                                                      byte[] lpBuffer, uint nSize, out int lpNumberOfBytesWritten);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess,
+                                                 [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
+                                                 uint dwProcessId);
+
+        /* not used
+        [DllImport("kernel32.dll")]
+        public static extern uint SuspendThread(IntPtr hThread);
+
+        [DllImport("kernel32.dll")]
+        public static extern uint ResumeThread(IntPtr hThread);
+        */
+
+        #endregion
+
+        #region ProcessAccessFlags enum
+
+        [Flags]
+        public enum ProcessAccessFlags : uint
+        {
+            All = 0x001F0FFF,
+            Terminate = 0x00000001,
+            CreateThread = 0x00000002,
+            VMOperation = 0x00000008,
+            VMRead = 0x00000010,
+            VMWrite = 0x00000020,
+            DupHandle = 0x00000040,
+            SetInformation = 0x00000200,
+            QueryInformation = 0x00000400,
+            Synchronize = 0x00100000
+        }
+
         #endregion
 
         #region Enum Memory Protections
@@ -59,7 +101,6 @@ namespace Dante
         }
 
         #endregion
-    
     }
 
     public unsafe class D3D9

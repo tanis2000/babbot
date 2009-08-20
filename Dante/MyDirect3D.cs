@@ -293,20 +293,11 @@ namespace Dante
                                                  presentationParameters, deviceInterface);
 
 
-            // SlimDX.Direct3D9.DeviceEx 
             // if creation was successful, then remap appopriate function pointers for EndScene
             if (CreateDevice == 0)
             {
                 LuaInterface.LoggingInterface.Log(String.Format("CreateDevice = {0}", CreateDevice));
                 var device = new IDirect3DDevice9(This, deviceInterface);
-
-                /*IntPtr z = MarshalToPointer(*deviceInterface);
-                SlimDX.Direct3D9.Device x = SlimDX.Direct3D9.Device.FromPointer(new IntPtr(0));
-                if (x != null)
-                {
-                   
-                    LuaInterface.LoggingInterface.Log("Managed DirectX Device");
-                }*/
             }
 
             LuaInterface.LoggingInterface.Log("Returning CreateDevice");

@@ -30,26 +30,6 @@ namespace Dante
 {
     public class LuaInterface : IEntryPoint
     {
-
-        #region ProcessAccessFlags enum
-
-        [Flags]
-        public enum ProcessAccessFlags : uint
-        {
-            All = 0x001F0FFF,
-            Terminate = 0x00000001,
-            CreateThread = 0x00000002,
-            VMOperation = 0x00000008,
-            VMRead = 0x00000010,
-            VMWrite = 0x00000020,
-            DupHandle = 0x00000040,
-            SetInformation = 0x00000200,
-            QueryInformation = 0x00000400,
-            Synchronize = 0x00100000
-        }
-
-        #endregion
-
         #region declarations
 
         private static readonly CommandHandlerDelegate CommandHandler = InputHandler;
@@ -113,7 +93,7 @@ namespace Dante
         #region Nested type: Lua_GetTopDelegate
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint Lua_GetTopDelegate(uint luaState);
+        private delegate int Lua_GetTopDelegate(uint luaState);
 
         #endregion
 
@@ -132,124 +112,6 @@ namespace Dante
         #endregion
 
         #endregion
-
-        public LuaInterface(
-            RemoteHooking.IContext InContext,
-            string LogChannelName)
-        {
-            LoggingInterface = RemoteHooking.IpcConnectClient<Logger>(LogChannelName);
-
-            LoggingInterface.Log("Main()");
-            Process thisProcess = Process.GetCurrentProcess();
-            LoggingInterface.Log(string.Format("Hooked Into: {0}, {1}", thisProcess.ProcessName, thisProcess.Id));
-        }
-
-        #region imports
-
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetCurrentProcess();
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress,
-                                                      byte[] lpBuffer, uint nSize, out int lpNumberOfBytesWritten);
-
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess,
-                                                 [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
-                                                 uint dwProcessId);
-
-        [DllImport("kernel32.dll")]
-        private static extern uint SuspendThread(IntPtr hThread);
-
-        [DllImport("kernel32.dll")]
-        private static extern uint ResumeThread(IntPtr hThread);
-
-        #endregion
-
-        public void Run(
-            RemoteHooking.IContext InContext,
-            string ChannelName)
-        {
-            LoggingInterface.Log("Run()");
-
-            try
-            {
-                // Install the first hook...
-
-                try
-                {
-                    hitCount = 0;
-                    LoggingInterface.Log("Creating LoadLibraryHook...");
-
-                    // Create the hook on the LoadLibraryA call 
-                    LoadLibraryHook = LocalHook.Create(LocalHook.GetProcAddress("kernel32.dll", "LoadLibraryA"),
-                                                       new LoadLibraryDelegate(MyLoadLibrary),
-                                                       this);
-
-                    LoggingInterface.Log("SetExclusiveACL on LoadLibraryHook...");
-                    LoadLibraryHook.ThreadACL.SetExclusiveACL(new Int32[] {0});
-                }
-                catch (Exception e)
-                {
-                    hitCount = 0;
-                    LoggingInterface.Log(string.Format("Exception on LoadLibraryHook: " + e.Message));
-                }
-
-                LoggingInterface.Log("Setting up channel :)");
-                string outChannelName = null;
-                IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<DanteInterface>(ref outChannelName,
-                                                                                               WellKnownObjectMode.
-                                                                                                   Singleton);
-
-                //notify client of channel creation via logger
-                LoggingInterface.InjectedDLLChannelName = outChannelName;
-
-                /*
-                LoggingInterface.Log("Setting up process stuff");
-                // Start the server stuff
-                LoggingInterface.Log(string.Format("Waking up process.."));
-                //RemoteHooking.WakeUpProcess();
-
-
-                LoggingInterface.Log(string.Format("Registering LUA functions.."));
-                Lua_Register =
-                    (Lua_RegisterDelegate)
-                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_Register, typeof (Lua_RegisterDelegate));
-                Lua_GetTop =
-                    (Lua_GetTopDelegate)
-                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_GetTop, typeof (Lua_GetTopDelegate));
-                Lua_ToString =
-                    (Lua_ToStringDelegate)
-                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_ToString, typeof (Lua_ToStringDelegate));
-                Lua_GetState =
-                    (Lua_GetStateDelegate)
-                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_GetState, typeof (Lua_GetStateDelegate));
-                Lua_DoString =
-                    (Lua_DoStringDelegate)
-                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_DoString, typeof (Lua_DoStringDelegate));
-
-                // Init the lua_State
-                L = Lua_GetState();
-                LoggingInterface.Log(string.Format("GetState returned {0:X}", L));
-
-
-                //Interface.Log(string.Format("Patching WoW.. CommandHandler: {0:X}", (uint)CommandHandlerPtr));
-                //int bw = SetFunctionPtr(CommandHandlerPtr);
-                //Interface.Log(string.Format("Bytes written: {0}", bw));
-                */
-
-                while (true)
-                {
-                    Thread.Sleep(250);
-                }
-            }
-            catch (Exception e)
-            {
-                //Interface.SendMessage(RemoteHooking.GetCurrentProcessId(), e.ToString());
-                // Ping() will raise an exception if host is unreachable
-                LoggingInterface.Log(e.ToString());
-            }
-        }
 
         #region DirectXHook
 
@@ -291,9 +153,6 @@ namespace Dante
 
         private LocalHook LoadLibraryHook;
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
-        private static extern IntPtr LoadLibrary(string lpFileName);
-
         private static IntPtr MyLoadLibrary(string lpFileName)
         {
             // WoW main thread
@@ -305,7 +164,7 @@ namespace Dante
                 if (This.hitCount == HIT_BARRIER)
                 {
                     LoggingInterface.Log(string.Format("LoadLibraryA on {0}", lpFileName));
-                    IntPtr hModule = LoadLibrary(lpFileName);
+                    IntPtr hModule = Kernel32.LoadLibrary(lpFileName);
 
                     if (hModule != IntPtr.Zero)
                     {
@@ -318,7 +177,7 @@ namespace Dante
                 This.hitCount++;
             }
 
-            return LoadLibrary(lpFileName);
+            return Kernel32.LoadLibrary(lpFileName);
         }
 
         public unsafe void InstallDirect3DHook()
@@ -386,7 +245,7 @@ namespace Dante
             lock (Values)
             {
                 Values.Clear();
-                uint n = Lua_GetTop(luaState);
+                int n = Lua_GetTop(luaState);
                 //Interface.Log(string.Format("LUA_State: {0:X}", luaState));
                 //Interface.Log(string.Format("Vars num: {0}", n));
                 for (uint i = 1; i <= n; i++)
@@ -401,21 +260,23 @@ namespace Dante
         public static int SetFunctionPtr(IntPtr pointer)
         {
             bool ReturnVal;
-            uint p = (uint)pointer - Functions.Patch_Offset - 5;
+            uint p = (uint) pointer - Functions.Patch_Offset - 5;
             var buf = new byte[4];
             var buf2 = new byte[1];
             buf2[0] = 0xE9;
-            buf[3] = (byte)((p & 0xFF000000) >> 24);
-            buf[2] = (byte)((p & 0xFF0000) >> 16);
-            buf[1] = (byte)((p & 0xFF00) >> 8);
-            buf[0] = (byte)((p & 0xFF));
+            buf[3] = (byte) ((p & 0xFF000000) >> 24);
+            buf[2] = (byte) ((p & 0xFF0000) >> 16);
+            buf[1] = (byte) ((p & 0xFF00) >> 8);
+            buf[0] = (byte) ((p & 0xFF));
 
-            IntPtr hProcess = GetCurrentProcess(); // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
+            IntPtr hProcess = Kernel32.GetCurrentProcess();
+                // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            LoggingInterface.Log(string.Format("SetFunctionPtr -> hProcess = {0:X}", (uint)hProcess));
+            LoggingInterface.Log(string.Format("SetFunctionPtr -> hProcess = {0:X}", (uint) hProcess));
 
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)Functions.Patch_Offset, buf2, 1, out BytesWritten);
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)(Functions.Patch_Offset + 1), buf, 4, out BytesWritten);
+            ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr) Functions.Patch_Offset, buf2, 1, out BytesWritten);
+            ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr) (Functions.Patch_Offset + 1), buf, 4,
+                                                    out BytesWritten);
             return BytesWritten;
         }
 
@@ -425,20 +286,173 @@ namespace Dante
             var buf = new byte[5];
             buf[0] = buf[1] = buf[2] = buf[3] = buf[4] = 0xCC;
 
-            IntPtr hProcess = GetCurrentProcess(); // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
+            IntPtr hProcess = Kernel32.GetCurrentProcess();
+                // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            LoggingInterface.Log(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", (uint)hProcess));
+            LoggingInterface.Log(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", (uint) hProcess));
 
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)Functions.Patch_Offset, buf, 5, out BytesWritten);
+            ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr) Functions.Patch_Offset, buf, 5, out BytesWritten);
             return BytesWritten;
         }
+
+        private static void RegisterLUADelegate()
+        {
+            LoggingInterface.Log("RegisterLUADelegate:  Lua_Register");
+            Lua_Register = Tools.GetRegisterDelegate<Lua_RegisterDelegate>(Functions.Lua_Register);
+
+            LoggingInterface.Log("RegisterLUADelegate:  Lua_GetTop");
+            Lua_GetTop = Tools.GetRegisterDelegate<Lua_GetTopDelegate>(Functions.Lua_GetTop);
+
+            LoggingInterface.Log("RegisterLUADelegate:  Lua_ToString");
+            Lua_ToString = Tools.GetRegisterDelegate<Lua_ToStringDelegate>(Functions.Lua_ToString);
+
+            LoggingInterface.Log("RegisterLUADelegate:  Lua_GetState");
+            Lua_GetState = Tools.GetRegisterDelegate<Lua_GetStateDelegate>(Functions.Lua_GetState);
+
+            LoggingInterface.Log("RegisterLUADelegate:  Lua_DoString");
+            Lua_DoString = Tools.GetRegisterDelegate<Lua_DoStringDelegate>(Functions.Lua_DoString);
+        }
+
+        private static void InitLUAState()
+        {
+            // wrong address???
+            //L = Lua_GetState();
+            LoggingInterface.Log(string.Format("InitLUAState returned {0:X}", L));
+        }
+
 
         public static void RegisterLuaInputHandler()
         {
             LoggingInterface.Log(string.Format("Registering our InputHandler.."));
-            Lua_Register("InputHandler", (IntPtr)Functions.Patch_Offset); // This is the code hole we want to use
+            Lua_Register("InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
             LoggingInterface.Log(string.Format("InputHandler Registered"));
         }
+
+        #endregion
+
+        public LuaInterface(
+            RemoteHooking.IContext InContext,
+            string LogChannelName)
+        {
+            LoggingInterface = RemoteHooking.IpcConnectClient<Logger>(LogChannelName);
+
+            LoggingInterface.Log("Main()");
+            Process thisProcess = Process.GetCurrentProcess();
+            LoggingInterface.Log(string.Format("Hooked Into: {0}, {1}", thisProcess.ProcessName, thisProcess.Id));
+        }
+
+        public void Run(
+            RemoteHooking.IContext InContext,
+            string ChannelName)
+        {
+            LoggingInterface.Log("Run()");
+
+            try
+            {
+                LoggingInterface.Log("Setting up IPC channel :)");
+                string outChannelName = null;
+                IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<DanteInterface>(ref outChannelName,
+                                                                                               WellKnownObjectMode.
+                                                                                                   Singleton);
+
+                //notify client of channel creation via logger
+                LoggingInterface.InjectedDLLChannelName = outChannelName;
+
+                // Register our LUA delegates
+                RegisterLUADelegate();
+
+                // Init LUA state
+                InitLUAState();
+
+                // Install the first hook...
+                try
+                {
+                    hitCount = 0;
+                    LoggingInterface.Log("Creating LoadLibraryHook...");
+
+                    // Create the hook on the LoadLibraryA call 
+                    LoadLibraryHook = LocalHook.Create(LocalHook.GetProcAddress("kernel32.dll", "LoadLibraryA"),
+                                                       new LoadLibraryDelegate(MyLoadLibrary),
+                                                       this);
+
+                    LoggingInterface.Log("SetExclusiveACL on LoadLibraryHook...");
+                    LoadLibraryHook.ThreadACL.SetExclusiveACL(new Int32[] {0});
+                }
+                catch (Exception e)
+                {
+                    hitCount = 0;
+                    LoggingInterface.Log(string.Format("Exception on LoadLibraryHook: " + e.Message));
+                }
+
+                while (true)
+                {
+                    Thread.Sleep(250);
+                }
+            }
+            catch (Exception e)
+            {
+                LoggingInterface.Log(string.Format("Exception in Run(): {0}", e));
+            }
+        }
+
+        #region garbage
+
+        /*
+                
+
+                LoggingInterface.Log("Setting up process stuff");
+                // Start the server stuff
+                LoggingInterface.Log(string.Format("Waking up process.."));
+                //RemoteHooking.WakeUpProcess();
+
+
+                LoggingInterface.Log(string.Format("Registering LUA functions.."));
+                Lua_Register =
+                    (Lua_RegisterDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_Register, typeof (Lua_RegisterDelegate));
+                Lua_GetTop =
+                    (Lua_GetTopDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_GetTop, typeof (Lua_GetTopDelegate));
+                Lua_ToString =
+                    (Lua_ToStringDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_ToString, typeof (Lua_ToStringDelegate));
+                Lua_GetState =
+                    (Lua_GetStateDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_GetState, typeof (Lua_GetStateDelegate));
+                Lua_DoString =
+                    (Lua_DoStringDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_DoString, typeof (Lua_DoStringDelegate));
+
+                // Init the lua_State
+                L = Lua_GetState();
+                LoggingInterface.Log(string.Format("GetState returned {0:X}", L));
+
+
+                //Interface.Log(string.Format("Patching WoW.. CommandHandler: {0:X}", (uint)CommandHandlerPtr));
+                //int bw = SetFunctionPtr(CommandHandlerPtr);
+                //Interface.Log(string.Format("Bytes written: {0}", bw));
+        public static T GetReturnVal<T>(string lua, uint retVal)
+        {
+            Lua_DoString(string.Format("InputHandler({0})", lua), "BabBot.lua", 0);
+            object tmp;
+
+            if (Values[(int) retVal] == "nil")
+            {
+                return default(T);
+            }
+
+            if (typeof (T) == typeof (bool))
+            {
+                tmp = Values[(int) retVal] == "1" || Values[(int) retVal].ToLower() == "true";
+            }
+            else
+            {
+                tmp = (T) Convert.ChangeType(Values[(int) retVal], typeof (T));
+            }
+            return (T) tmp;
+            
+        }
+        */
 
         #endregion
 
@@ -471,32 +485,5 @@ namespace Dante
         }
 
         #endregion
-
-        #region garbage
-        /*
-        public static T GetReturnVal<T>(string lua, uint retVal)
-        {
-            Lua_DoString(string.Format("InputHandler({0})", lua), "BabBot.lua", 0);
-            object tmp;
-
-            if (Values[(int) retVal] == "nil")
-            {
-                return default(T);
-            }
-
-            if (typeof (T) == typeof (bool))
-            {
-                tmp = Values[(int) retVal] == "1" || Values[(int) retVal].ToLower() == "true";
-            }
-            else
-            {
-                tmp = (T) Convert.ChangeType(Values[(int) retVal], typeof (T));
-            }
-            return (T) tmp;
-            
-        }
-        */
-        #endregion
-
     }
 }
