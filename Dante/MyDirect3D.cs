@@ -18,100 +18,46 @@
 */
 
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using Dante.HUD;
-using SlimDX;
-using SlimDX.Direct3D9;
 
 namespace Dante
 {
-    #region Test
-
-    /*
-    public class PinnedObject<T> : IDisposable where T : struct
-    {
-        protected T managedObject;
-        protected GCHandle handle;
-        protected IntPtr ptr;
-        protected bool disposed;
-
-        public T ManangedObject
-        {
-            get
-            {
-                return (T)handle.Target;
-            }
-            set
-            {
-                Marshal.StructureToPtr(value, ptr, false);
-            }
-        }
-
-        public IntPtr Pointer
-        {
-            get { return ptr; }
-        }
-
-        public PinnedObject()
-        {
-            handle = GCHandle.Alloc(managedObject, GCHandleType.Pinned);
-            ptr = handle.AddrOfPinnedObject();
-        }
-
-        ~PinnedObject()
-        {
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            if (!disposed)
-            {
-                handle.Free();
-                ptr = IntPtr.Zero;
-                disposed = true;
-            }
-        }
-    }
-    */
-
-    #endregion
 
     public unsafe class IDirect3DDevice9 : IDisposable
     {
-        private IntPtr OriginalEndScene;
+        #region Delegates
 
-        public D3D9.IDirect3D9* NativeIDirect3D9 { get; private set; }
-        public D3D9.IDirect3DDevice9* NativeIDirect3DDevice9 { get; private set; }
+        public delegate uint DelegateEndScene(D3D9.IDirect3DDevice9 Device);
 
-        public DelegateEndScene RealEndScene;
+        #endregion
+
         public DelegateEndScene MyEndScene;
 
-        // HUD experiment
-        public HUDConsole hud;
-        public Device managed_device { get; private set; }
+        private IntPtr OriginalEndScene;
+
+        public DelegateEndScene RealEndScene;
 
 
         public IDirect3DDevice9(D3D9.IDirect3D9* InNativeIDirect3D9, D3D9.IDirect3DDevice9* InNativeIDirect3DDevice9)
         {
-            managed_device = null;
-
             NativeIDirect3D9 = InNativeIDirect3D9;
             NativeIDirect3DDevice9 = InNativeIDirect3DDevice9;
 
             // Override the functions in NativeIDirect3DDevice9 with our own.
             OverrideFunctions();
-
-            managed_device = Device.FromPointer((IntPtr)NativeIDirect3DDevice9->VFTable);
-            if (managed_device != null)
-            {
-                hud = new HUDConsole();
-                hud.Initialize(managed_device);
-                LuaInterface.LoggingInterface.Log("Managed DirectX Device");
-            }
-
         }
+
+        public D3D9.IDirect3D9* NativeIDirect3D9 { get; private set; }
+        public D3D9.IDirect3DDevice9* NativeIDirect3DDevice9 { get; private set; }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(false);
+        }
+
+        #endregion
 
         private void OverrideFunctions()
         {
@@ -142,11 +88,6 @@ namespace Dante
                                                             (uint) NativeIDirect3DDevice9->VFTable[0][42]));
         }
 
-        public void Dispose()
-        {
-            Dispose(false);
-        }
-
         ~IDirect3DDevice9()
         {
             Dispose(true);
@@ -156,12 +97,6 @@ namespace Dante
         private void Dispose(bool Destructing)
         {
         }
-
-        #region Delegates
-
-        public delegate uint DelegateEndScene(D3D9.IDirect3DDevice9 Device);
-
-        #endregion
 
         public uint EndScene(D3D9.IDirect3DDevice9 Device)
         {
@@ -192,43 +127,23 @@ namespace Dante
                 //LuaInterface.LoggingInterface.Log(string.Format("{0:X} EndScene()", (uint)OriginalEndScene));
             }
 
-            if (managed_device != null && hud != null)
-            {
-                LuaInterface.LoggingInterface.Log(string.Format("{0:X}", (uint)NativeIDirect3DDevice9->VFTable[0][42])); 
-                LuaInterface.LoggingInterface.Log("HUD != NULL"); 
-                hud.Begin();
-                LuaInterface.LoggingInterface.Log("hud.Begin");
-                hud.Location = new Point(700, 50);
-                LuaInterface.LoggingInterface.Log("hud.Location");
-                hud.ForegroundColor = new Color4(1.0f, 1.0f, 1.0f, 0.0f);
-                LuaInterface.LoggingInterface.Log("hud.ForegroundColor");
-                hud.WriteLine(string.Format("BabBot HUD - {0}", DateTime.Now));
-                LuaInterface.LoggingInterface.Log("hud.WriteLine");
-                hud.End();
-                LuaInterface.LoggingInterface.Log("hud.End");
-                LuaInterface.LoggingInterface.Log(string.Format("{0:X}", (uint)NativeIDirect3DDevice9->VFTable[0][42]));
-                
-                // Trash solution, the device has been resetted and we lost the redirection
-                // force it again and again...
-                NativeIDirect3DDevice9->VFTable[0][42] = Marshal.GetFunctionPointerForDelegate(MyEndScene);
-            }
+
+            // NativeIDirect3DDevice9->VFTable[0][42] = Marshal.GetFunctionPointerForDelegate(MyEndScene);
 
             LuaInterface.LoggingInterface.Log("EndScene()");
             return RealEndScene(Device);
         }
-
     }
-
 
 
     public unsafe class IDirect3D9 : IDisposable
     {
         // A pointer to the native IDirect3D9 object that we are providing overrides for.
         // A pointer to the original array of virtual functions.  We keep this around so we can call the originals.
+        public DelegateCreateDevice MyCreateDevice;
         private IntPtr* OriginalVFTable = null;
 
         public DelegateCreateDevice RealCreateDevice;
-        public DelegateCreateDevice MyCreateDevice;
         public D3D9.IDirect3D9* NativeIDirect3D9 { get; private set; }
 
         #region Construction
@@ -292,7 +207,7 @@ namespace Dante
             // IDirect3D9 has 17 members.
             const uint VFTableLength = 17;
             // Allocate space for our new VFTable.
-            IntPtr* NewVFTable =
+            var NewVFTable =
                 (IntPtr*) Kernel32.HeapAlloc(Kernel32.GetProcessHeap(), 0, (UIntPtr) (VFTableLength*sizeof (IntPtr)));
 
             // Copy all of the original function pointers into our new VFTable.
@@ -343,11 +258,11 @@ namespace Dante
 
         #region Delegates
 
-        public delegate uint DelegateGetAdapterCount(D3D9.IDirect3D9* This);
-
         public delegate uint DelegateCreateDevice(
             D3D9.IDirect3D9* This, uint adapter, uint deviceType, IntPtr focusWindow, uint behaviorFlags,
             IntPtr presentationParameters, D3D9.IDirect3DDevice9* deviceInterface);
+
+        public delegate uint DelegateGetAdapterCount(D3D9.IDirect3D9* This);
 
         #endregion
 
@@ -356,7 +271,7 @@ namespace Dante
             IntPtr buf = Marshal.AllocHGlobal(
                 Marshal.SizeOf(data));
             Marshal.StructureToPtr(data,
-                buf, false);
+                                   buf, false);
             return buf;
         }
 
@@ -365,7 +280,6 @@ namespace Dante
                                  uint behaviorFlags, IntPtr presentationParameters,
                                  D3D9.IDirect3DDevice9* deviceInterface)
         {
-           
             LuaInterface.LoggingInterface.Log("CreateDevice Start...");
             RealCreateDevice =
                 (DelegateCreateDevice)
@@ -378,13 +292,13 @@ namespace Dante
             uint CreateDevice = RealCreateDevice(This, adapter, deviceType, focusWindow, behaviorFlags,
                                                  presentationParameters, deviceInterface);
 
-            
+
             // SlimDX.Direct3D9.DeviceEx 
             // if creation was successful, then remap appopriate function pointers for EndScene
             if (CreateDevice == 0)
             {
                 LuaInterface.LoggingInterface.Log(String.Format("CreateDevice = {0}", CreateDevice));
-                IDirect3DDevice9 device = new IDirect3DDevice9(This, deviceInterface);
+                var device = new IDirect3DDevice9(This, deviceInterface);
 
                 /*IntPtr z = MarshalToPointer(*deviceInterface);
                 SlimDX.Direct3D9.Device x = SlimDX.Direct3D9.Device.FromPointer(new IntPtr(0));
@@ -393,7 +307,6 @@ namespace Dante
                    
                     LuaInterface.LoggingInterface.Log("Managed DirectX Device");
                 }*/
-
             }
 
             LuaInterface.LoggingInterface.Log("Returning CreateDevice");
@@ -401,6 +314,5 @@ namespace Dante
         }
 
         #endregion
-
     }
 }

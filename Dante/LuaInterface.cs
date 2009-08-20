@@ -30,7 +30,6 @@ namespace Dante
 {
     public class LuaInterface : IEntryPoint
     {
-        // WoW Function Addresses
 
         #region ProcessAccessFlags enum
 
@@ -51,11 +50,14 @@ namespace Dante
 
         #endregion
 
+        #region declarations
+
         private static readonly CommandHandlerDelegate CommandHandler = InputHandler;
 
         private static int BytesWritten;
         public static IntPtr CommandHandlerPtr = Marshal.GetFunctionPointerForDelegate(CommandHandler);
         private static uint L;
+        public static Logger LoggingInterface;
         private static Lua_DoStringDelegate Lua_DoString;
         private static Lua_GetStateDelegate Lua_GetState;
 
@@ -78,14 +80,12 @@ namespace Dante
         private static Lua_RegisterDelegate Lua_Register;
         private static Lua_ToStringDelegate Lua_ToString;
 
-        public static List<string> Values = new List<string>();
-        //public static IntPtr WowProcessHandle;
-        //public static IntPtr WowThreadHandle;
-        public static Logger LoggingInterface;
-
         internal static object oLocker = new object();
-        internal static bool PendingRegistration = false;
         internal static string PendingDoString = string.Empty;
+        internal static bool PendingRegistration;
+        public static List<string> Values = new List<string>();
+
+        #endregion
 
         #region delegates
 
@@ -142,11 +142,9 @@ namespace Dante
             LoggingInterface.Log("Main()");
             Process thisProcess = Process.GetCurrentProcess();
             LoggingInterface.Log(string.Format("Hooked Into: {0}, {1}", thisProcess.ProcessName, thisProcess.Id));
-            //WowProcessHandle = processHandle;
-            //Interface.Log(string.Format("WowProcessHandle: {0}", WowProcessHandle));
-            //WowThreadHandle = threadHandle;
-            //Interface.Log(string.Format("ThreadHandle: {0}", WowThreadHandle));
         }
+
+        #region imports
 
         [DllImport("kernel32.dll")]
         private static extern IntPtr GetCurrentProcess();
@@ -166,39 +164,38 @@ namespace Dante
         [DllImport("kernel32.dll")]
         private static extern uint ResumeThread(IntPtr hThread);
 
+        #endregion
 
-        public unsafe void Run(
+        public void Run(
             RemoteHooking.IContext InContext,
             string ChannelName)
         {
             LoggingInterface.Log("Run()");
-            // wait for host process termination...
 
             try
             {
+                // Install the first hook...
+
                 try
                 {
-                    count = 0;
-                    LoggingInterface.Log(string.Format("Creating Direct3DCreate9Hook..."));
-                    Direct3DCreate9Hook = LocalHook.Create(LocalHook.GetProcAddress("D3D9.DLL", "Direct3DCreate9"),
-                                                           new Direct3DCreate9Delegate(MyDirect3DCreate9),
-                                                           this);
+                    hitCount = 0;
+                    LoggingInterface.Log("Creating LoadLibraryHook...");
 
-                    LoggingInterface.Log(string.Format("SetExclusiveACL on Direct3DCreate9Hook..."));
-                    Direct3DCreate9Hook.ThreadACL.SetExclusiveACL(new Int32[] {0});
+                    // Create the hook on the LoadLibraryA call 
+                    LoadLibraryHook = LocalHook.Create(LocalHook.GetProcAddress("kernel32.dll", "LoadLibraryA"),
+                                                       new LoadLibraryDelegate(MyLoadLibrary),
+                                                       this);
+
+                    LoggingInterface.Log("SetExclusiveACL on LoadLibraryHook...");
+                    LoadLibraryHook.ThreadACL.SetExclusiveACL(new Int32[] {0});
                 }
                 catch (Exception e)
                 {
-                    count = 0;
-                    LoggingInterface.Log(string.Format("Exception on Direct3DCreate9Hook: " + e.Message));
+                    hitCount = 0;
+                    LoggingInterface.Log(string.Format("Exception on LoadLibraryHook: " + e.Message));
                 }
 
-                LoggingInterface.Log("Setting up process stuff");
-                // Start the server stuff
-                LoggingInterface.Log(string.Format("Waking up process.."));
-                RemoteHooking.WakeUpProcess();
-
-                LoggingInterface.Log("setting up channel :)");
+                LoggingInterface.Log("Setting up channel :)");
                 string outChannelName = null;
                 IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<DanteInterface>(ref outChannelName,
                                                                                                WellKnownObjectMode.
@@ -206,6 +203,13 @@ namespace Dante
 
                 //notify client of channel creation via logger
                 LoggingInterface.InjectedDLLChannelName = outChannelName;
+
+                /*
+                LoggingInterface.Log("Setting up process stuff");
+                // Start the server stuff
+                LoggingInterface.Log(string.Format("Waking up process.."));
+                //RemoteHooking.WakeUpProcess();
+
 
                 LoggingInterface.Log(string.Format("Registering LUA functions.."));
                 Lua_Register =
@@ -232,6 +236,7 @@ namespace Dante
                 //Interface.Log(string.Format("Patching WoW.. CommandHandler: {0:X}", (uint)CommandHandlerPtr));
                 //int bw = SetFunctionPtr(CommandHandlerPtr);
                 //Interface.Log(string.Format("Bytes written: {0}", bw));
+                */
 
                 while (true)
                 {
@@ -246,59 +251,101 @@ namespace Dante
             }
         }
 
-        /*
-        public static T GetReturnVal<T>(string lua, uint retVal)
-        {
-            Lua_DoString(string.Format("InputHandler({0})", lua), "BabBot.lua", 0);
-            object tmp;
-
-            if (Values[(int) retVal] == "nil")
-            {
-                return default(T);
-            }
-
-            if (typeof (T) == typeof (bool))
-            {
-                tmp = Values[(int) retVal] == "1" || Values[(int) retVal].ToLower() == "true";
-            }
-            else
-            {
-                tmp = (T) Convert.ChangeType(Values[(int) retVal], typeof (T));
-            }
-            return (T) tmp;
-            
-        }
-        */
-
-        #region DirectX
+        #region DirectXHook
 
         private LocalHook Direct3DCreate9Hook;
         private IDirect3D9 IDirect3D9;
-        private int count;
 
         // This is our fake version of Direct3DCreate9.  We call the real one but this let's us grab the IDirect3D pointer.
         private static unsafe D3D9.IDirect3D9* MyDirect3DCreate9(ushort SdkVersion)
         {
             // Since this function is static we need to get a reference to "this".
-            LuaInterface This = (LuaInterface) HookRuntimeInfo.Callback;
-
-            // Create one of our custom IDirect3D9 objects (which insantiates a real one and passes most calls through to it).
-            if (This.count == 1)
+            var This = (LuaInterface) HookRuntimeInfo.Callback;
+            if (This.Direct3DCreate9Hook.IsThreadIntercepted(0))
             {
-                LoggingInterface.Log(string.Format("MyDirect3DCreate9 Start...SDK Version {0}", SdkVersion));
-                This.IDirect3D9 = new IDirect3D9(SdkVersion);
-                This.count++;
-                LoggingInterface.Log("MyDirect3DCreate9 Created...");
-                return This.IDirect3D9.NativeIDirect3D9;
+                LoggingInterface.Log("Direct3DCreate9Hook.IsThreadIntercepted(0)");
+
+                // Exclude the current thread (WoW main thread) from to be intercepted
+                This.Direct3DCreate9Hook.ThreadACL.SetExclusiveACL(new Int32[] {0});
+                LoggingInterface.Log("Underlying interception has been removed");
             }
 
-            This.count++;
-            return D3D9.Direct3DCreate9(SdkVersion);
+            // Create one of our custom IDirect3D9 objects (which insantiates a real one and passes most calls through to it).
+            LoggingInterface.Log(string.Format("MyDirect3DCreate9 Start...SDK Version {0}", SdkVersion));
+            This.IDirect3D9 = new IDirect3D9(SdkVersion);
+            LoggingInterface.Log("MyDirect3DCreate9 has been created");
+
+            return This.IDirect3D9.NativeIDirect3D9;
         }
 
         // This is the wrapping that let's us give Win32 a delegate instead of a function pointer.
         [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true)]
         private unsafe delegate D3D9.IDirect3D9* Direct3DCreate9Delegate(ushort SdkVersion);
+
+        #endregion
+
+        #region LoadLibraryHook
+
+        private const int HIT_BARRIER = 1;
+        private int hitCount;
+
+        private LocalHook LoadLibraryHook;
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+        private static extern IntPtr LoadLibrary(string lpFileName);
+
+        private static IntPtr MyLoadLibrary(string lpFileName)
+        {
+            // WoW main thread
+
+            var This = (LuaInterface) HookRuntimeInfo.Callback;
+
+            if (lpFileName == "d3d9.dll")
+            {
+                if (This.hitCount == HIT_BARRIER)
+                {
+                    LoggingInterface.Log(string.Format("LoadLibraryA on {0}", lpFileName));
+                    IntPtr hModule = LoadLibrary(lpFileName);
+
+                    if (hModule != IntPtr.Zero)
+                    {
+                        This.hitCount++;
+                        This.InstallDirect3DHook();
+                        return hModule;
+                    }
+                }
+
+                This.hitCount++;
+            }
+
+            return LoadLibrary(lpFileName);
+        }
+
+        public unsafe void InstallDirect3DHook()
+        {
+            try
+            {
+                LoggingInterface.Log("Creating Direct3DCreate9Hook...");
+
+                Direct3DCreate9Hook = LocalHook.Create(LocalHook.GetProcAddress("D3D9.DLL", "Direct3DCreate9"),
+                                                       new Direct3DCreate9Delegate(MyDirect3DCreate9),
+                                                       this);
+
+                Direct3DCreate9Hook.ThreadACL.SetInclusiveACL(new Int32[] {0});
+                if (Direct3DCreate9Hook.IsThreadIntercepted(0))
+                {
+                    LoggingInterface.Log("Direct3DCreate9Hook.IsThreadIntercepted(0)");
+                }
+            }
+            catch (Exception e)
+            {
+                hitCount = 0;
+                LoggingInterface.Log(string.Format("Exception on Direct3DCreate9Hook: " + e.Message));
+            }
+        }
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall, SetLastError = true, CharSet = CharSet.Ansi)]
+        private delegate IntPtr LoadLibraryDelegate(string lpFileName);
 
         #endregion
 
@@ -354,21 +401,21 @@ namespace Dante
         public static int SetFunctionPtr(IntPtr pointer)
         {
             bool ReturnVal;
-            uint p = (uint) pointer - Functions.Patch_Offset - 5;
+            uint p = (uint)pointer - Functions.Patch_Offset - 5;
             var buf = new byte[4];
             var buf2 = new byte[1];
             buf2[0] = 0xE9;
-            buf[3] = (byte) ((p & 0xFF000000) >> 24);
-            buf[2] = (byte) ((p & 0xFF0000) >> 16);
-            buf[1] = (byte) ((p & 0xFF00) >> 8);
-            buf[0] = (byte) ((p & 0xFF));
+            buf[3] = (byte)((p & 0xFF000000) >> 24);
+            buf[2] = (byte)((p & 0xFF0000) >> 16);
+            buf[1] = (byte)((p & 0xFF00) >> 8);
+            buf[0] = (byte)((p & 0xFF));
 
             IntPtr hProcess = GetCurrentProcess(); // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            LoggingInterface.Log(string.Format("SetFunctionPtr -> hProcess = {0:X}", (uint) hProcess));
+            LoggingInterface.Log(string.Format("SetFunctionPtr -> hProcess = {0:X}", (uint)hProcess));
 
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr) Functions.Patch_Offset, buf2, 1, out BytesWritten);
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr) (Functions.Patch_Offset + 1), buf, 4, out BytesWritten);
+            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)Functions.Patch_Offset, buf2, 1, out BytesWritten);
+            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)(Functions.Patch_Offset + 1), buf, 4, out BytesWritten);
             return BytesWritten;
         }
 
@@ -380,16 +427,16 @@ namespace Dante
 
             IntPtr hProcess = GetCurrentProcess(); // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            LoggingInterface.Log(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", (uint) hProcess));
+            LoggingInterface.Log(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", (uint)hProcess));
 
-            ReturnVal = WriteProcessMemory(hProcess, (IntPtr) Functions.Patch_Offset, buf, 5, out BytesWritten);
+            ReturnVal = WriteProcessMemory(hProcess, (IntPtr)Functions.Patch_Offset, buf, 5, out BytesWritten);
             return BytesWritten;
         }
 
         public static void RegisterLuaInputHandler()
         {
             LoggingInterface.Log(string.Format("Registering our InputHandler.."));
-            Lua_Register("InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
+            Lua_Register("InputHandler", (IntPtr)Functions.Patch_Offset); // This is the code hole we want to use
             LoggingInterface.Log(string.Format("InputHandler Registered"));
         }
 
@@ -424,5 +471,32 @@ namespace Dante
         }
 
         #endregion
+
+        #region garbage
+        /*
+        public static T GetReturnVal<T>(string lua, uint retVal)
+        {
+            Lua_DoString(string.Format("InputHandler({0})", lua), "BabBot.lua", 0);
+            object tmp;
+
+            if (Values[(int) retVal] == "nil")
+            {
+                return default(T);
+            }
+
+            if (typeof (T) == typeof (bool))
+            {
+                tmp = Values[(int) retVal] == "1" || Values[(int) retVal].ToLower() == "true";
+            }
+            else
+            {
+                tmp = (T) Convert.ChangeType(Values[(int) retVal], typeof (T));
+            }
+            return (T) tmp;
+            
+        }
+        */
+        #endregion
+
     }
 }
