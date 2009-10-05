@@ -461,27 +461,28 @@ namespace Dante
         private static class Functions
         {
             public const uint
-                // 3.1.3
-                Lua_DoString = 0x0049AAB0;
+                // 3.2.2
+                Lua_DoString = 0x007CF660; // 3.1.3: 0x0049AAB0;
 
             public const uint
-                // 3.1.3
-                Lua_GetState = 0x00499700;
+                // 3.2.2
+                Lua_GetState = 0x007CE280; // 3.1.3: 0x00499700;
 
             public const uint
-                // 3.1.3
-                Lua_GetTop = 0x0091A8B0;
+                // 3.2.2
+                Lua_GetTop = 0x00803290; // 3.1.3: 0x0091A8B0;
 
             public const uint
-                Lua_Register = 0x004998E0;
+                // 3.2.2
+                Lua_Register = 0x007CE410; // 3.1.3: 0x004998E0;
 
             public const uint
-                // 3.1.3
-                Lua_ToString = 0x0091ADC0;
+                // 3.2.2
+                Lua_ToString = 0x008037A0; // 3.1.3: 0x0091ADC0;
 
             public const uint
-                // 3.1.3
-                Patch_Offset = 0x00401643; // this is our codecave
+                // 3.2.2
+                Patch_Offset = 0x005932F8; //3.1.3: 0x00401643; // this is our codecave
         }
 
         #endregion

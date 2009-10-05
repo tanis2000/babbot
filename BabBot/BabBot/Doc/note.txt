@@ -908,3 +908,55 @@ Code:
 
 Some of my patterns may still be out of date.
 Reply With Quote
+
+
+
+
+======================
+
+
+
+Updating the TLS makes it less likely to crash(it still will).
+
+As for the fix, why in the hell are you casting it as an Object()? Cast the address to call as a uint.
+
+Here:
+Code:
+
+...("mov eax, {0}", (uint)(dwAlloc + 0x512));
+...("push 0");
+...("push eax");
+...("push eax");
+...("call {0}", (uint)(0x49AAB0));
+
+The ultimate way to do this is to inject a stub to write to the beginning of endscene and hook it. Have the detour check a bool to see if you have a string to do(pun intended). Run dostring on that string if so, and write 0 to the bool then continue with the actual endscene.
+
+Here's my endscene hook that I use:
+
+Code:
+
+HRESULT __stdcall mEndScene(LPDIRECT3DDEVICE9 pDevice)
+{
+    __asm {
+        pushad;
+        pushfd;
+    }
+    
+    while(!stringstodo.empty())
+    {
+        std::string * s = stringstodo.back();
+        stringstodo.pop_back();
+        DoString(const_cast<char*>(s->c_str()), const_cast<char*>(s->c_str()), 0);
+        delete s;
+    }
+
+    __asm {
+        popfd;
+        popad;
+    }
+    return oEndScene(pDevice);
+}
+
+Obviously it's in C++, but you get the idea. Stringstodo is a global vector that I push_back() a string onto through a P/Invoke.
+
+=============================

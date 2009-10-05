@@ -23,22 +23,22 @@ namespace BabBot.Wow
 {
     public class Globals
     {
-        public const uint GameOffset = 0x12BEDB8; // 3.1.2 & 3.1.3 0x010BD5F4; // 3.1.0: 0x010B65F4; // 3.0.9: 0x127F13C
-        public const uint MouseOverGuidOffset = 0x011D3F50;
+        public const uint GameOffset = 0x12D4EA8; // 3.2.0 0x12BEDB8; // 3.1.2 & 3.1.3 0x010BD5F4; // 3.1.0: 0x010B65F4; // 3.0.9: 0x127F13C
+        public const uint MouseOverGuidOffset = 0x113D798; // 3.2.0 0x011D3F50;
 
-        public const uint NameStorePointer = 0x0113ED00 + 0x8;
+        public const uint NameStorePointer = 0x12541C8; // 3.2.0: 0x0113ED00 + 0x8;
                           // 3.1.0: 0x01137CE0 + 8; // 3.0.9 0x11AF470 + 0x8;  // Player name database
 
-        public const uint PlayerBaseOffset1 = 0x34; // 3.1.0: 0x34; // 3.0.9: 0x30
-        public const uint PlayerBaseOffset2 = 0x24; // 3.1.0: 0x24; // 3.0.9: 0x28;
-        public const uint PlayerCurTargetGuidOffset = 0x011D3F60; // 3.1.0: 0x011CCF38; // 3.0.9: 0x10A68E0
-        public const uint PlayerRotationOffset = 0x7A8; // 3.1.0: 0x79C; // 3.0.9: 0x7D8;
-        public const uint PlayerXOffset = 0x798; // 3.1.0: 0x798; // 3.0.9: 0x7D0
-        public const uint PlayerYOffset = 0x79C; // 3.1.0: 0x79C; // 3.0.9: 0x7D4;
-        public const uint PlayerZOffset = 0x7A0; // 3.1.0: 0x79C; // 3.0.9: 0x7D8;
-        public const uint LocalPlayerCorpseOffset = 0x011D41D8; // 3.1.0: 0x010A6B3C;
-        public static uint cameraOffset = 0x00007834; // 3.1.0: 0x00007834;
-        public static uint cameraPointer = 0x0117108C; // 3.1.0: 0x0117108C;
+        public const uint PlayerBaseOffset1 = 0x34; // 3.2.0: 0x34; // 3.1.0: 0x34; // 3.0.9: 0x30
+        public const uint PlayerBaseOffset2 = 0x24; // 3.2.0: 0x34; // 3.1.0: 0x24; // 3.0.9: 0x28;
+        public const uint PlayerCurTargetGuidOffset = 0x113D7A8; // 3.2.0 0x011D3F60; // 3.1.0: 0x011CCF38; // 3.0.9: 0x10A68E0
+        public const uint PlayerRotationOffset = 0x7A8; // 3.2.0: 0x7A8; // 3.1.0: 0x79C; // 3.0.9: 0x7D8;
+        public const uint PlayerXOffset = 0x798; // 3.2.0: 0x798; // 3.1.0: 0x798; // 3.0.9: 0x7D0
+        public const uint PlayerYOffset = 0x79C; // 3.2.0: 0x79C; // 3.1.0: 0x79C; // 3.0.9: 0x7D4;
+        public const uint PlayerZOffset = 0x7A0; // 3.2.0: 0x7A0; // 3.1.0: 0x79C; // 3.0.9: 0x7D8;
+        public const uint LocalPlayerCorpseOffset = 0x113DA34; // 3.2.0: 0x011D41D8; // 3.1.0: 0x010A6B3C;
+        public static uint cameraOffset = 0x00007da0; // 3.2.0 0x00007834; // 3.1.0: 0x00007834;
+        public static uint cameraPointer = 0x10e1824; // 3.2.0 0x0117108C; // 3.1.0: 0x0117108C;
         public static uint ClientConnection;
         public static uint ClientConnectionOffset;
         public static uint ClientConnectionPointer;

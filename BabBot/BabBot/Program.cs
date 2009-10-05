@@ -40,11 +40,12 @@ namespace BabBot
                 EasyHook.Config.Register(
                     "Dante",
                     LuaInjectPath);
-                
+               
+                /*
                 EasyHook.Config.Register(
                     "B@S.Reversing",
                     BSPath);
-
+                */
             }
             catch (ApplicationException ex)
             {
