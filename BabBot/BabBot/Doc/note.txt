@@ -916,6 +916,86 @@ Reply With Quote
 
 
 
+Code:
+
+public bool IsInGame
+{
+get
+{
+ return ClntObjMgrGetActivePlayer() != 0;
+}
+}
+
+ClntObjMgrGetActivePlayer function address is 0x007BC8D0.
+
+Pattern: \x64\x8B\x0D\x2C\x00\x00\x00\xA1\xFC\xD9\x35\x01\x8B\x14\x81\x8B\x8A\x10\x00\x00 \x00\x85\xC9\x75\x05
+Mask: xxxxxxxx????xxxxxxxxxxxxx
+
+
+
+
+======================
+
+
+
+
+Code:
+
+        public static void Pulse()
+        {
+            // Logging.Write("Start of objmgr traversal!");
+            ObjList.Clear();
+            ulong localGuid = Marshal.ReadIntPtr(ManagerAddress, (int) ObjectManager.localGuid).ToUInt64();
+
+            IntPtr curObj = Marshal.ReadIntPtr(ManagerAddress, (int) ObjectManager.firstObj);
+            //_me = GetMe();
+            while (curObj.ToInt64() != 0 && (curObj.ToInt64() & 1) == 0)
+            {
+                var obj = new WoWObject(curObj);
+                switch (obj.Type)
+                {
+                    case WoWObjectType.Unit:
+                        ObjList.Add(new WoWUnit(obj));
+                        break;
+                    case WoWObjectType.GameObject:
+                        ObjList.Add(new WoWGameObject(obj));
+                        break;
+                    case WoWObjectType.Player:
+                        if (obj.Guid == localGuid)
+                        {
+                            Me = new WoWActivePlayer(obj);
+                            ObjList.Add(Me);
+                            break;
+                        }
+                        ObjList.Add(new WoWPlayer(obj));
+                        break;
+                    default:
+                        ObjList.Add(obj);
+                        break;
+                }
+                IntPtr nextObj = Marshal.ReadIntPtr(curObj, (int) ObjectManager.nextObj);
+                if (nextObj == curObj)
+                {
+                    //Logging.Write("End of objmgr traversal!");
+                    break;
+                }
+
+                curObj = nextObj;
+            }
+            //Logging.Write("End of objmgr traversal!");
+        }
+
+That should help
+
+Reply With Quote
+
+
+
+
+======================
+
+
+
 Updating the TLS makes it less likely to crash(it still will).
 
 As for the fix, why in the hell are you casting it as an Object()? Cast the address to call as a uint.
@@ -960,3 +1040,6 @@ HRESULT __stdcall mEndScene(LPDIRECT3DDEVICE9 pDevice)
 Obviously it's in C++, but you get the idea. Stringstodo is a global vector that I push_back() a string onto through a P/Invoke.
 
 =============================
+
+
+
