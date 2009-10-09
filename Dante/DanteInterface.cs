@@ -82,6 +82,7 @@ namespace Dante
             lock (LuaInterface.oLocker)
             {
                 LuaInterface.PendingRegistration = true;
+                Patch();
             }
         }
 

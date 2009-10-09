@@ -482,7 +482,7 @@ namespace Dante
 
             public const uint
                 // 3.2.2
-                Patch_Offset = 0x005932F8; //3.1.3: 0x00401643; // this is our codecave
+                Patch_Offset = 0x00401643; //3.1.3: 0x00401643; // this is our codecave
         }
 
         #endregion
