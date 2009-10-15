@@ -436,6 +436,7 @@ namespace BabBot.Manager
 
         public static void InitializeCaronte()
         {
+            Console.WriteLine(Player.GetCurrentMapContinent());
             //Caronte.Init(Player.GetCurrentMapContinent());
             Caronte.Init("Azeroth"); // temporary fix to get things running while debugging LUA
 

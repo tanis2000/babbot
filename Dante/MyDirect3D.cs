@@ -130,7 +130,8 @@ namespace Dante
 
             // NativeIDirect3DDevice9->VFTable[0][42] = Marshal.GetFunctionPointerForDelegate(MyEndScene);
 
-            LuaInterface.LoggingInterface.Log("EndScene()");
+            // NOTE: disabled logging of each EndScene message as it was driving me mad during debug ;)
+            //LuaInterface.LoggingInterface.Log("EndScene()");
             return RealEndScene(Device);
         }
     }

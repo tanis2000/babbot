@@ -59,20 +59,20 @@ namespace Dante
         public List<string> GetValues()
         {
             try {
-                LuaInterface.LoggingInterface.Log(string.Format("GetValues"));
+                LuaInterface.LoggingInterface.Log(string.Format("GetValues() called"));
 
                 lock (LuaInterface.Values)
                 {
                     foreach (string s in LuaInterface.Values)
                     {
-                        LuaInterface.LoggingInterface.Log("[" + s + "]");
+                        LuaInterface.LoggingInterface.Log("Value [" + s + "]");
                     }
                     return LuaInterface.Values;
                 }
             }
             catch (Exception e)
             {
-                LuaInterface.LoggingInterface.Log(e.ToString());
+                LuaInterface.LoggingInterface.Log("GetValues exception: " + e.ToString());
             }
             return new List<string>();
         }
@@ -81,23 +81,23 @@ namespace Dante
         {
             lock (LuaInterface.oLocker)
             {
-                LuaInterface.PendingRegistration = true;
                 Patch();
+                LuaInterface.PendingRegistration = true;
             }
         }
 
         public void Patch()
         {            
-            LuaInterface.LoggingInterface.Log(string.Format("Patching WoW.. CommandHandler: {0:X}", (uint)LuaInterface.CommandHandlerPtr));
+            LuaInterface.LoggingInterface.Log(string.Format("Patch() - Patching WoW.. CommandHandler: {0:X}", (uint)LuaInterface.CommandHandlerPtr));
             int bw = LuaInterface.SetFunctionPtr(LuaInterface.CommandHandlerPtr);
-            LuaInterface.LoggingInterface.Log(string.Format("Bytes written: {0}", bw));
+            LuaInterface.LoggingInterface.Log(string.Format("Patch() - Bytes written: {0}", bw));
         }
 
         public void RestorePatch()
         {
-            LuaInterface.LoggingInterface.Log(string.Format("Patching WoW.. restoring patched CommandHandler"));
+            LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Patching WoW.. restoring patched CommandHandler"));
             int bw = LuaInterface.RestoreFunctionPtr();
-            LuaInterface.LoggingInterface.Log(string.Format("Bytes written: {0}", bw));
+            LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Bytes written: {0}", bw));
         }
     }
 }

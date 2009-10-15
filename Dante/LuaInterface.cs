@@ -100,7 +100,7 @@ namespace Dante
         #region Nested type: Lua_RegisterDelegate
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        private delegate void Lua_RegisterDelegate(string name, IntPtr function);
+        private delegate void Lua_RegisterDelegate(uint luaState, string name, IntPtr function);
 
         #endregion
 
@@ -215,7 +215,7 @@ namespace Dante
             try
             {
                 string cmd = string.Format("{0}", command);
-                LoggingInterface.Log(string.Format("Calling {0}", cmd));
+                LoggingInterface.Log(string.Format("DoString() - Calling {0}", cmd));
                 //SuspendThread(WowThreadHandle);
                 Lua_DoString(cmd, "babbot.lua", L);
                 //ResumeThread(WowThreadHandle);
@@ -230,8 +230,8 @@ namespace Dante
         {
             try
             {
-                string cmd = string.Format("InputHandler({0})", command);
-                LoggingInterface.Log(string.Format("Calling {0}", cmd));
+                string cmd = string.Format("DoStringInputHandler() - InputHandler({0})", command);
+                LoggingInterface.Log(string.Format("DoStringInputHandler() - Calling {0}", cmd));
                 Lua_DoString(cmd, "babbot.lua", L);
             }
             catch (SEHException e)
@@ -272,11 +272,23 @@ namespace Dante
             IntPtr hProcess = Kernel32.GetCurrentProcess();
                 // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            LoggingInterface.Log(string.Format("SetFunctionPtr -> hProcess = {0:X}", (uint) hProcess));
+            LoggingInterface.Log(string.Format("SetFunctionPtr() - hProcess = {0:X}", (uint) hProcess));
 
             ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr) Functions.Patch_Offset, buf2, 1, out BytesWritten);
+            if (!ReturnVal)
+            {
+                LoggingInterface.Log(string.Format("SetFunctionPtr() - Error during first WriteProcessMemory"));
+            }
+            LoggingInterface.Log(string.Format("SetFunctionPtr() - Written {0:d} bytes", BytesWritten));
+
             ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr) (Functions.Patch_Offset + 1), buf, 4,
                                                     out BytesWritten);
+            if (!ReturnVal)
+            {
+                LoggingInterface.Log(string.Format("SetFunctionPtr() - Error during first WriteProcessMemory"));
+            }
+            LoggingInterface.Log(string.Format("SetFunctionPtr() - Written {0:d} bytes", BytesWritten));
+
             return BytesWritten;
         }
 
@@ -323,9 +335,9 @@ namespace Dante
 
         public static void RegisterLuaInputHandler()
         {
-            LoggingInterface.Log(string.Format("Registering our InputHandler.."));
-            Lua_Register("InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
-            LoggingInterface.Log(string.Format("InputHandler Registered"));
+            LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - Registering our InputHandler.."));
+            Lua_Register(0, "InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
+            LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - InputHandler Registered"));
         }
 
         #endregion
@@ -461,27 +473,27 @@ namespace Dante
         private static class Functions
         {
             public const uint
-                // 3.2.2
+                // 3.2.2a
                 Lua_DoString = 0x007CF660; // 3.1.3: 0x0049AAB0;
 
             public const uint
-                // 3.2.2
+                // 3.2.2a
                 Lua_GetState = 0x007CE280; // 3.1.3: 0x00499700;
 
             public const uint
-                // 3.2.2
+                // 3.2.2a
                 Lua_GetTop = 0x00803290; // 3.1.3: 0x0091A8B0;
 
             public const uint
-                // 3.2.2
+                // 3.2.2a
                 Lua_Register = 0x007CE410; // 3.1.3: 0x004998E0;
 
             public const uint
-                // 3.2.2
+                // 3.2.2a
                 Lua_ToString = 0x008037A0; // 3.1.3: 0x0091ADC0;
 
             public const uint
-                // 3.2.2
+                // 3.2.2a
                 Patch_Offset = 0x00401643; //3.1.3: 0x00401643; // this is our codecave
         }
 
