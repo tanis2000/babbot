@@ -121,6 +121,7 @@ namespace Dante
                     LuaInterface.DoString(LuaInterface.PendingDoString);
 
                     LuaInterface.PendingDoString = string.Empty;
+                    LuaInterface.DoStringDone = true;
                 }
 
                 //LuaInterface.LoggingInterface.Log(string.Format("{0:X} Device", (uint)&Device));

@@ -31,6 +31,7 @@ namespace Dante
                 lock (LuaInterface.oLocker)
                 {
                     LuaInterface.PendingDoString = command;
+                    LuaInterface.DoStringDone = false;
                 }
                 LuaInterface.LoggingInterface.Log(string.Format("Calling DoString(\"{0}\")", command));
                 //LuaInterface.DoString(command);
@@ -98,6 +99,21 @@ namespace Dante
             LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Patching WoW.. restoring patched CommandHandler"));
             int bw = LuaInterface.RestoreFunctionPtr();
             LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Bytes written: {0}", bw));
+        }
+
+        public bool DoStringHasCompleted()
+        {
+            try
+            {
+                LuaInterface.LoggingInterface.Log(string.Format("DoStringHasCompleted() - DoStringDone: {0}", LuaInterface.DoStringDone));
+
+                return LuaInterface.DoStringDone;
+            }
+            catch (Exception e)
+            {
+                LuaInterface.LoggingInterface.Log("DoStringHasCompleted() exception: " + e.ToString());
+            }
+            return false;
         }
     }
 }

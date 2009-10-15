@@ -64,6 +64,7 @@ namespace Dante
         internal static string PendingDoString = string.Empty;
         internal static bool PendingRegistration;
         public static List<string> Values = new List<string>();
+        public static bool DoStringDone = false;
 
         #endregion
 
@@ -100,7 +101,7 @@ namespace Dante
         #region Nested type: Lua_RegisterDelegate
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        private delegate void Lua_RegisterDelegate(uint luaState, string name, IntPtr function);
+        private delegate void Lua_RegisterDelegate(string name, IntPtr function);
 
         #endregion
 
@@ -336,7 +337,7 @@ namespace Dante
         public static void RegisterLuaInputHandler()
         {
             LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - Registering our InputHandler.."));
-            Lua_Register(0, "InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
+            Lua_Register("InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
             LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - InputHandler Registered"));
         }
 
@@ -474,7 +475,7 @@ namespace Dante
         {
             public const uint
                 // 3.2.2a
-                Lua_DoString = 0x007CF660; // 3.1.3: 0x0049AAB0;
+                Lua_DoString = 0x7CF6B0; // 3.1.3: 0x0049AAB0;
 
             public const uint
                 // 3.2.2a
@@ -482,15 +483,15 @@ namespace Dante
 
             public const uint
                 // 3.2.2a
-                Lua_GetTop = 0x00803290; // 3.1.3: 0x0091A8B0;
+                Lua_GetTop = 0x00803340; // 3.1.3: 0x0091A8B0;
 
             public const uint
                 // 3.2.2a
-                Lua_Register = 0x007CE410; // 3.1.3: 0x004998E0;
+                Lua_Register = 0x007CE460; // 3.1.3: 0x004998E0;
 
             public const uint
                 // 3.2.2a
-                Lua_ToString = 0x008037A0; // 3.1.3: 0x0091ADC0;
+                Lua_ToString = 0x803850; // 3.1.3: 0x0091ADC0;
 
             public const uint
                 // 3.2.2a

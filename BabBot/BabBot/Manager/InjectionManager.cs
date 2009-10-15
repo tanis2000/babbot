@@ -633,6 +633,10 @@ namespace BabBot.Manager
         public void Lua_DoString(string command)
         {
             RemoteDoString(command);
+            while (!RemoteDoStringCompleted())
+            {
+                Thread.Sleep(10);
+            }
         }
 
         public void RemoteDoString(string command)
@@ -659,7 +663,23 @@ namespace BabBot.Manager
             }
         }
 
+        public bool RemoteDoStringCompleted()
+        {
+            bool result = false;
+            try
+            {
+                result = RemoteObject.DoStringHasCompleted();
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
+            return result;
+        }
 
+        // NOTE: tanis - This is no longer calling GetLocalizedText. It's actually retrieving the values
+        // from the list of the injected DLL. I am just too lazy to rename all the calls to this 
+        // function to a better name :-P 
         public string Lua_GetLocalizedText(int position)
         {
             List<string> values = RemoteGetValues();
