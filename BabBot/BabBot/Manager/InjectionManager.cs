@@ -633,6 +633,7 @@ namespace BabBot.Manager
         public void Lua_DoString(string command)
         {
             RemoteDoString(command);
+            //RemoteInputHandler(command);
             while (!RemoteDoStringCompleted())
             {
                 Thread.Sleep(10);

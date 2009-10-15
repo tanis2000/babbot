@@ -1153,9 +1153,23 @@ namespace BabBot.Wow
         /// <returns>id of the continent</returns>
         public int GetCurrentMapContinentId()
         {
-            ProcessManager.Injector.Lua_DoString("SetMapToCurrentZone(); local continent = GetCurrentMapContinent();"); // 
-            string sId = ProcessManager.Injector.Lua_GetLocalizedText(0);
-            return Convert.ToInt32(sId);
+            try
+            {
+                //ProcessManager.Injector.Lua_DoString(
+                //    "SetMapToCurrentZone(); local continent = GetCurrentMapContinent();"); // 
+
+                ProcessManager.Injector.Lua_DoString(@"(function()
+	SetMapToCurrentZone()
+	local continent = GetCurrentMapContinent()
+	return continent
+end)()");
+                string sId = ProcessManager.Injector.Lua_GetLocalizedText(0);
+                return Convert.ToInt32(sId);
+            }
+            catch (Exception e)
+            {
+                return 0;
+            }
         }
 
         /// <summary>

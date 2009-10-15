@@ -118,7 +118,8 @@ namespace Dante
                     LuaInterface.LoggingInterface.Log(string.Format("EndScene() - Lua DoString {0}",
                                                                     LuaInterface.PendingDoString));
 
-                    LuaInterface.DoString(LuaInterface.PendingDoString);
+                    //LuaInterface.DoString(LuaInterface.PendingDoString);
+                    LuaInterface.DoStringInputHandler(LuaInterface.PendingDoString);
 
                     LuaInterface.PendingDoString = string.Empty;
                     LuaInterface.DoStringDone = true;
