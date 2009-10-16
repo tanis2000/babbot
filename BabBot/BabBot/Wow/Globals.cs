@@ -54,6 +54,9 @@ namespace BabBot.Wow
         public static uint FirstBuff = 0xEBC; // Offset of the first buff from unit base
         public static uint NextBuff = 0x4;  // Offset of next buff from a given buff
 
+        public static uint UnitNameBaseOffset1 = 0x968;
+        public static uint UnitNameBaseOffset2 = 0x5C; // 3.1.0: 0x54
+        public static int UnitNameLen = 0x40;
 
         public static uint PlayerBaseOffset
         {

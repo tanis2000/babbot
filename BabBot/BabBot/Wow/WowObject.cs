@@ -50,7 +50,11 @@ namespace BabBot.Wow
         {
             get
             {
-                return ProcessManager.WowProcess.ReadASCIIString(ProcessManager.WowProcess.ReadUInt(ProcessManager.WowProcess.ReadUInt(ObjectPointer + 0x968) + 0x54), 0x40);
+                return ProcessManager.WowProcess.ReadASCIIString(
+                    ProcessManager.WowProcess.ReadUInt(
+                        ProcessManager.WowProcess.ReadUInt(ObjectPointer +
+                            Globals.UnitNameBaseOffset1) + Globals.UnitNameBaseOffset2),
+                                Globals.UnitNameLen);
             }
         }
 
