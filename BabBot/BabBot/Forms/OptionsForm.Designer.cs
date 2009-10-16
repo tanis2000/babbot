@@ -28,39 +28,59 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Wave");
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Smile");
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Cry");
-            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Fart");
-            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Pat");
-            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Friend", new System.Windows.Forms.TreeNode[] {
-            treeNode21,
-            treeNode22,
-            treeNode23,
-            treeNode24,
-            treeNode25});
-            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Wave");
-            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Smile");
-            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Cry");
-            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Fart");
-            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Pat");
-            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Foe", new System.Windows.Forms.TreeNode[] {
-            treeNode27,
-            treeNode28,
-            treeNode29,
-            treeNode30,
-            treeNode31});
-            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Follower City Table");
-            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Chat City Table");
-            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("PVP City Ignore Table");
-            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Invite Group Table");
-            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Invite Guild Table");
-            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Invite Trade Table");
-            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Invite Duel Table");
-            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Scripts");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Wave");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Smile");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Cry");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Fart");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Pat");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Friend", new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4,
+            treeNode5});
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Wave");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Smile");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Cry");
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Fart");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Pat");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Foe", new System.Windows.Forms.TreeNode[] {
+            treeNode7,
+            treeNode8,
+            treeNode9,
+            treeNode10,
+            treeNode11});
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Follower City Table");
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Chat City Table");
+            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("PVP City Ignore Table");
+            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Invite Group Table");
+            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Invite Guild Table");
+            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Invite Trade Table");
+            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Invite Duel Table");
+            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Scripts");
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ChkBoxLogOutput = new System.Windows.Forms.CheckBox();
+            this.ChkBoxUseMount = new System.Windows.Forms.CheckBox();
+            this.ChkBoxPullElites = new System.Windows.Forms.CheckBox();
+            this.ChkBoxIgnoreMaxLevel = new System.Windows.Forms.CheckBox();
+            this.ChkBoxIgnoreMinLevel = new System.Windows.Forms.CheckBox();
+            this.ChkBoxIgnoreFactionsInCities = new System.Windows.Forms.CheckBox();
+            this.ChkBoxAttackOtherFaction = new System.Windows.Forms.CheckBox();
+            this.ChkBoxDefendWhenAttacked = new System.Windows.Forms.CheckBox();
+            this.lblMaxAllowedAdds = new System.Windows.Forms.Label();
+            this.lblAddDetectionRadius = new System.Windows.Forms.Label();
+            this.lblCorpseCamped = new System.Windows.Forms.Label();
+            this.label66 = new System.Windows.Forms.Label();
+            this.label67 = new System.Windows.Forms.Label();
+            this.label68 = new System.Windows.Forms.Label();
+            this.ChkBoxSoundOnMobKills = new System.Windows.Forms.CheckBox();
+            this.ChkBoxSoundOnDeath = new System.Windows.Forms.CheckBox();
+            this.ChkBoxSound = new System.Windows.Forms.CheckBox();
+            this.hScrollAddDetectionRadius = new System.Windows.Forms.HScrollBar();
+            this.hScrollMaxAllowsAdds = new System.Windows.Forms.HScrollBar();
+            this.hScrollCorpseCamped = new System.Windows.Forms.HScrollBar();
             this.cbDebugMode = new System.Windows.Forms.CheckBox();
             this.btnFindWowExePath = new System.Windows.Forms.Button();
             this.btnBrowseWowExec = new System.Windows.Forms.Button();
@@ -70,8 +90,6 @@
             this.tbGuestPassword = new System.Windows.Forms.TextBox();
             this.tbGuestUsername = new System.Windows.Forms.TextBox();
             this.tbWowExePath = new System.Windows.Forms.TextBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnOk = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -317,36 +335,10 @@
             this.locationList = new System.Windows.Forms.ListBox();
             this.zoneListcombo = new System.Windows.Forms.ComboBox();
             this.tabPage17 = new System.Windows.Forms.TabPage();
-            this.LblMP5Mod = new System.Windows.Forms.Label();
-            this.label46 = new System.Windows.Forms.Label();
-            this.hScrollMP5Mod = new System.Windows.Forms.HScrollBar();
-            this.LblDPSMod = new System.Windows.Forms.Label();
-            this.label47 = new System.Windows.Forms.Label();
-            this.hScrollDPSMod = new System.Windows.Forms.HScrollBar();
-            this.LblBlockMod = new System.Windows.Forms.Label();
-            this.label48 = new System.Windows.Forms.Label();
-            this.hScrollBlockMod = new System.Windows.Forms.HScrollBar();
-            this.LblArmorMod = new System.Windows.Forms.Label();
-            this.label49 = new System.Windows.Forms.Label();
-            this.hScrollArmorMod = new System.Windows.Forms.HScrollBar();
-            this.LblAPMod = new System.Windows.Forms.Label();
-            this.label50 = new System.Windows.Forms.Label();
-            this.hScrollAPMod = new System.Windows.Forms.HScrollBar();
-            this.LblStaminaMod = new System.Windows.Forms.Label();
-            this.label51 = new System.Windows.Forms.Label();
-            this.hScrollStaminaMod = new System.Windows.Forms.HScrollBar();
-            this.LblIntellectMod = new System.Windows.Forms.Label();
-            this.label52 = new System.Windows.Forms.Label();
-            this.hScrollIntellectMod = new System.Windows.Forms.HScrollBar();
-            this.LblSpritMod = new System.Windows.Forms.Label();
-            this.label53 = new System.Windows.Forms.Label();
-            this.hScrollSpritMod = new System.Windows.Forms.HScrollBar();
-            this.LblStrengthMod = new System.Windows.Forms.Label();
-            this.label54 = new System.Windows.Forms.Label();
-            this.hScrollStrengthMod = new System.Windows.Forms.HScrollBar();
-            this.LblAgilityMod = new System.Windows.Forms.Label();
-            this.label55 = new System.Windows.Forms.Label();
-            this.hScrollAgilityMod = new System.Windows.Forms.HScrollBar();
+            this.ChkBoxSimilarClassArmor = new System.Windows.Forms.CheckBox();
+            this.ChkBoxSimilarWeapons = new System.Windows.Forms.CheckBox();
+            this.ChkBoxActionbar = new System.Windows.Forms.CheckBox();
+            this.ChkBoxAutoEquip = new System.Windows.Forms.CheckBox();
             this.LblSpellCritMod = new System.Windows.Forms.Label();
             this.label56 = new System.Windows.Forms.Label();
             this.hScrollSpellCritMod = new System.Windows.Forms.HScrollBar();
@@ -377,30 +369,36 @@
             this.LblDefenseMod = new System.Windows.Forms.Label();
             this.label65 = new System.Windows.Forms.Label();
             this.hScrollDefenseMod = new System.Windows.Forms.HScrollBar();
-            this.ChkBoxSimilarClassArmor = new System.Windows.Forms.CheckBox();
-            this.ChkBoxSimilarWeapons = new System.Windows.Forms.CheckBox();
-            this.ChkBoxActionbar = new System.Windows.Forms.CheckBox();
-            this.ChkBoxAutoEquip = new System.Windows.Forms.CheckBox();
-            this.lblMaxAllowedAdds = new System.Windows.Forms.Label();
-            this.lblAddDetectionRadius = new System.Windows.Forms.Label();
-            this.lblCorpseCamped = new System.Windows.Forms.Label();
-            this.label66 = new System.Windows.Forms.Label();
-            this.label67 = new System.Windows.Forms.Label();
-            this.label68 = new System.Windows.Forms.Label();
-            this.ChkBoxSoundOnMobKills = new System.Windows.Forms.CheckBox();
-            this.ChkBoxSoundOnDeath = new System.Windows.Forms.CheckBox();
-            this.ChkBoxSound = new System.Windows.Forms.CheckBox();
-            this.hScrollAddDetectionRadius = new System.Windows.Forms.HScrollBar();
-            this.hScrollMaxAllowsAdds = new System.Windows.Forms.HScrollBar();
-            this.hScrollCorpseCamped = new System.Windows.Forms.HScrollBar();
-            this.ChkBoxIgnoreFactionsInCities = new System.Windows.Forms.CheckBox();
-            this.ChkBoxAttackOtherFaction = new System.Windows.Forms.CheckBox();
-            this.ChkBoxDefendWhenAttacked = new System.Windows.Forms.CheckBox();
-            this.ChkBoxPullElites = new System.Windows.Forms.CheckBox();
-            this.ChkBoxIgnoreMaxLevel = new System.Windows.Forms.CheckBox();
-            this.ChkBoxIgnoreMinLevel = new System.Windows.Forms.CheckBox();
-            this.ChkBoxUseMount = new System.Windows.Forms.CheckBox();
-            this.ChkBoxLogOutput = new System.Windows.Forms.CheckBox();
+            this.LblMP5Mod = new System.Windows.Forms.Label();
+            this.label46 = new System.Windows.Forms.Label();
+            this.hScrollMP5Mod = new System.Windows.Forms.HScrollBar();
+            this.LblDPSMod = new System.Windows.Forms.Label();
+            this.label47 = new System.Windows.Forms.Label();
+            this.hScrollDPSMod = new System.Windows.Forms.HScrollBar();
+            this.LblBlockMod = new System.Windows.Forms.Label();
+            this.label48 = new System.Windows.Forms.Label();
+            this.hScrollBlockMod = new System.Windows.Forms.HScrollBar();
+            this.LblArmorMod = new System.Windows.Forms.Label();
+            this.label49 = new System.Windows.Forms.Label();
+            this.hScrollArmorMod = new System.Windows.Forms.HScrollBar();
+            this.LblAPMod = new System.Windows.Forms.Label();
+            this.label50 = new System.Windows.Forms.Label();
+            this.hScrollAPMod = new System.Windows.Forms.HScrollBar();
+            this.LblStaminaMod = new System.Windows.Forms.Label();
+            this.label51 = new System.Windows.Forms.Label();
+            this.hScrollStaminaMod = new System.Windows.Forms.HScrollBar();
+            this.LblIntellectMod = new System.Windows.Forms.Label();
+            this.label52 = new System.Windows.Forms.Label();
+            this.hScrollIntellectMod = new System.Windows.Forms.HScrollBar();
+            this.LblSpritMod = new System.Windows.Forms.Label();
+            this.label53 = new System.Windows.Forms.Label();
+            this.hScrollSpritMod = new System.Windows.Forms.HScrollBar();
+            this.LblStrengthMod = new System.Windows.Forms.Label();
+            this.label54 = new System.Windows.Forms.Label();
+            this.hScrollStrengthMod = new System.Windows.Forms.HScrollBar();
+            this.LblAgilityMod = new System.Windows.Forms.Label();
+            this.label55 = new System.Windows.Forms.Label();
+            this.hScrollAgilityMod = new System.Windows.Forms.HScrollBar();
             this.tabPage18 = new System.Windows.Forms.TabPage();
             this.tabControl4 = new System.Windows.Forms.TabControl();
             this.tabPage19 = new System.Windows.Forms.TabPage();
@@ -486,6 +484,11 @@
             this.ButtonFelReaverRuins = new System.Windows.Forms.Button();
             this.ButtonMageTower = new System.Windows.Forms.Button();
             this.CobBoxEOTSGuardSpot = new System.Windows.Forms.ComboBox();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnOk = new System.Windows.Forms.Button();
+            this.btnBrowseLogPath = new System.Windows.Forms.Button();
+            this.label85 = new System.Windows.Forms.Label();
+            this.tbLogsPath = new System.Windows.Forms.TextBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -599,6 +602,9 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.btnBrowseLogPath);
+            this.tabPage1.Controls.Add(this.label85);
+            this.tabPage1.Controls.Add(this.tbLogsPath);
             this.tabPage1.Controls.Add(this.ChkBoxLogOutput);
             this.tabPage1.Controls.Add(this.ChkBoxUseMount);
             this.tabPage1.Controls.Add(this.ChkBoxPullElites);
@@ -636,10 +642,205 @@
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // ChkBoxLogOutput
+            // 
+            this.ChkBoxLogOutput.AutoSize = true;
+            this.ChkBoxLogOutput.Location = new System.Drawing.Point(148, 158);
+            this.ChkBoxLogOutput.Name = "ChkBoxLogOutput";
+            this.ChkBoxLogOutput.Size = new System.Drawing.Size(79, 17);
+            this.ChkBoxLogOutput.TabIndex = 254;
+            this.ChkBoxLogOutput.Text = "Log Output";
+            this.ChkBoxLogOutput.UseVisualStyleBackColor = true;
+            // 
+            // ChkBoxUseMount
+            // 
+            this.ChkBoxUseMount.AutoSize = true;
+            this.ChkBoxUseMount.Location = new System.Drawing.Point(346, 345);
+            this.ChkBoxUseMount.Name = "ChkBoxUseMount";
+            this.ChkBoxUseMount.Size = new System.Drawing.Size(78, 17);
+            this.ChkBoxUseMount.TabIndex = 253;
+            this.ChkBoxUseMount.Text = "Use Mount";
+            this.ChkBoxUseMount.UseVisualStyleBackColor = true;
+            // 
+            // ChkBoxPullElites
+            // 
+            this.ChkBoxPullElites.AutoSize = true;
+            this.ChkBoxPullElites.Location = new System.Drawing.Point(346, 368);
+            this.ChkBoxPullElites.Name = "ChkBoxPullElites";
+            this.ChkBoxPullElites.Size = new System.Drawing.Size(71, 17);
+            this.ChkBoxPullElites.TabIndex = 252;
+            this.ChkBoxPullElites.Text = "Pull Elites";
+            this.ChkBoxPullElites.UseVisualStyleBackColor = true;
+            // 
+            // ChkBoxIgnoreMaxLevel
+            // 
+            this.ChkBoxIgnoreMaxLevel.AutoSize = true;
+            this.ChkBoxIgnoreMaxLevel.Location = new System.Drawing.Point(152, 335);
+            this.ChkBoxIgnoreMaxLevel.Name = "ChkBoxIgnoreMaxLevel";
+            this.ChkBoxIgnoreMaxLevel.Size = new System.Drawing.Size(108, 17);
+            this.ChkBoxIgnoreMaxLevel.TabIndex = 251;
+            this.ChkBoxIgnoreMaxLevel.Text = "Ignore Max Level";
+            this.ChkBoxIgnoreMaxLevel.UseVisualStyleBackColor = true;
+            // 
+            // ChkBoxIgnoreMinLevel
+            // 
+            this.ChkBoxIgnoreMinLevel.AutoSize = true;
+            this.ChkBoxIgnoreMinLevel.Location = new System.Drawing.Point(17, 335);
+            this.ChkBoxIgnoreMinLevel.Name = "ChkBoxIgnoreMinLevel";
+            this.ChkBoxIgnoreMinLevel.Size = new System.Drawing.Size(105, 17);
+            this.ChkBoxIgnoreMinLevel.TabIndex = 250;
+            this.ChkBoxIgnoreMinLevel.Text = "Ignore Min Level";
+            this.ChkBoxIgnoreMinLevel.UseVisualStyleBackColor = true;
+            // 
+            // ChkBoxIgnoreFactionsInCities
+            // 
+            this.ChkBoxIgnoreFactionsInCities.AutoSize = true;
+            this.ChkBoxIgnoreFactionsInCities.Location = new System.Drawing.Point(346, 205);
+            this.ChkBoxIgnoreFactionsInCities.Name = "ChkBoxIgnoreFactionsInCities";
+            this.ChkBoxIgnoreFactionsInCities.Size = new System.Drawing.Size(224, 17);
+            this.ChkBoxIgnoreFactionsInCities.TabIndex = 249;
+            this.ChkBoxIgnoreFactionsInCities.Text = "Don\'t  Attack Other Faction In Cities (PvP)";
+            this.ChkBoxIgnoreFactionsInCities.UseVisualStyleBackColor = true;
+            // 
+            // ChkBoxAttackOtherFaction
+            // 
+            this.ChkBoxAttackOtherFaction.AutoSize = true;
+            this.ChkBoxAttackOtherFaction.Location = new System.Drawing.Point(346, 182);
+            this.ChkBoxAttackOtherFaction.Name = "ChkBoxAttackOtherFaction";
+            this.ChkBoxAttackOtherFaction.Size = new System.Drawing.Size(158, 17);
+            this.ChkBoxAttackOtherFaction.TabIndex = 248;
+            this.ChkBoxAttackOtherFaction.Text = "Attack Others Faction (PvP)";
+            this.ChkBoxAttackOtherFaction.UseVisualStyleBackColor = true;
+            // 
+            // ChkBoxDefendWhenAttacked
+            // 
+            this.ChkBoxDefendWhenAttacked.AutoSize = true;
+            this.ChkBoxDefendWhenAttacked.Location = new System.Drawing.Point(346, 157);
+            this.ChkBoxDefendWhenAttacked.Name = "ChkBoxDefendWhenAttacked";
+            this.ChkBoxDefendWhenAttacked.Size = new System.Drawing.Size(168, 17);
+            this.ChkBoxDefendWhenAttacked.TabIndex = 247;
+            this.ChkBoxDefendWhenAttacked.Text = "Defend When Attacked (PvP)";
+            this.ChkBoxDefendWhenAttacked.UseVisualStyleBackColor = true;
+            // 
+            // lblMaxAllowedAdds
+            // 
+            this.lblMaxAllowedAdds.AutoSize = true;
+            this.lblMaxAllowedAdds.Location = new System.Drawing.Point(145, 242);
+            this.lblMaxAllowedAdds.Name = "lblMaxAllowedAdds";
+            this.lblMaxAllowedAdds.Size = new System.Drawing.Size(28, 13);
+            this.lblMaxAllowedAdds.TabIndex = 246;
+            this.lblMaxAllowedAdds.Text = "###";
+            // 
+            // lblAddDetectionRadius
+            // 
+            this.lblAddDetectionRadius.AutoSize = true;
+            this.lblAddDetectionRadius.Location = new System.Drawing.Point(145, 279);
+            this.lblAddDetectionRadius.Name = "lblAddDetectionRadius";
+            this.lblAddDetectionRadius.Size = new System.Drawing.Size(28, 13);
+            this.lblAddDetectionRadius.TabIndex = 245;
+            this.lblAddDetectionRadius.Text = "###";
+            // 
+            // lblCorpseCamped
+            // 
+            this.lblCorpseCamped.AutoSize = true;
+            this.lblCorpseCamped.Location = new System.Drawing.Point(145, 207);
+            this.lblCorpseCamped.Name = "lblCorpseCamped";
+            this.lblCorpseCamped.Size = new System.Drawing.Size(28, 13);
+            this.lblCorpseCamped.TabIndex = 244;
+            this.lblCorpseCamped.Text = "###";
+            // 
+            // label66
+            // 
+            this.label66.AutoSize = true;
+            this.label66.Location = new System.Drawing.Point(11, 279);
+            this.label66.Name = "label66";
+            this.label66.Size = new System.Drawing.Size(111, 13);
+            this.label66.TabIndex = 243;
+            this.label66.Text = "Add Detection Radius";
+            // 
+            // label67
+            // 
+            this.label67.AutoSize = true;
+            this.label67.Location = new System.Drawing.Point(8, 242);
+            this.label67.Name = "label67";
+            this.label67.Size = new System.Drawing.Size(97, 13);
+            this.label67.TabIndex = 242;
+            this.label67.Text = "Max Allowed Adds:";
+            // 
+            // label68
+            // 
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(8, 205);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(85, 13);
+            this.label68.TabIndex = 241;
+            this.label68.Text = "Corpse Camped:";
+            // 
+            // ChkBoxSoundOnMobKills
+            // 
+            this.ChkBoxSoundOnMobKills.AutoSize = true;
+            this.ChkBoxSoundOnMobKills.Location = new System.Drawing.Point(346, 299);
+            this.ChkBoxSoundOnMobKills.Name = "ChkBoxSoundOnMobKills";
+            this.ChkBoxSoundOnMobKills.Size = new System.Drawing.Size(119, 17);
+            this.ChkBoxSoundOnMobKills.TabIndex = 240;
+            this.ChkBoxSoundOnMobKills.Text = "Sound On Mob Kills";
+            this.ChkBoxSoundOnMobKills.UseVisualStyleBackColor = true;
+            // 
+            // ChkBoxSoundOnDeath
+            // 
+            this.ChkBoxSoundOnDeath.AutoSize = true;
+            this.ChkBoxSoundOnDeath.Location = new System.Drawing.Point(346, 276);
+            this.ChkBoxSoundOnDeath.Name = "ChkBoxSoundOnDeath";
+            this.ChkBoxSoundOnDeath.Size = new System.Drawing.Size(111, 17);
+            this.ChkBoxSoundOnDeath.TabIndex = 239;
+            this.ChkBoxSoundOnDeath.Text = "Sound On Deaths";
+            this.ChkBoxSoundOnDeath.UseVisualStyleBackColor = true;
+            // 
+            // ChkBoxSound
+            // 
+            this.ChkBoxSound.AutoSize = true;
+            this.ChkBoxSound.Location = new System.Drawing.Point(346, 253);
+            this.ChkBoxSound.Name = "ChkBoxSound";
+            this.ChkBoxSound.Size = new System.Drawing.Size(186, 17);
+            this.ChkBoxSound.TabIndex = 238;
+            this.ChkBoxSound.Text = "Allow Sounds(Global mute Button)";
+            this.ChkBoxSound.UseVisualStyleBackColor = true;
+            // 
+            // hScrollAddDetectionRadius
+            // 
+            this.hScrollAddDetectionRadius.LargeChange = 1;
+            this.hScrollAddDetectionRadius.Location = new System.Drawing.Point(42, 292);
+            this.hScrollAddDetectionRadius.Minimum = 1;
+            this.hScrollAddDetectionRadius.Name = "hScrollAddDetectionRadius";
+            this.hScrollAddDetectionRadius.Size = new System.Drawing.Size(131, 10);
+            this.hScrollAddDetectionRadius.TabIndex = 237;
+            this.hScrollAddDetectionRadius.Value = 5;
+            // 
+            // hScrollMaxAllowsAdds
+            // 
+            this.hScrollMaxAllowsAdds.LargeChange = 1;
+            this.hScrollMaxAllowsAdds.Location = new System.Drawing.Point(42, 255);
+            this.hScrollMaxAllowsAdds.Maximum = 5;
+            this.hScrollMaxAllowsAdds.Minimum = 1;
+            this.hScrollMaxAllowsAdds.Name = "hScrollMaxAllowsAdds";
+            this.hScrollMaxAllowsAdds.Size = new System.Drawing.Size(131, 10);
+            this.hScrollMaxAllowsAdds.TabIndex = 236;
+            this.hScrollMaxAllowsAdds.Value = 5;
+            // 
+            // hScrollCorpseCamped
+            // 
+            this.hScrollCorpseCamped.LargeChange = 1;
+            this.hScrollCorpseCamped.Location = new System.Drawing.Point(42, 220);
+            this.hScrollCorpseCamped.Maximum = 30;
+            this.hScrollCorpseCamped.Name = "hScrollCorpseCamped";
+            this.hScrollCorpseCamped.Size = new System.Drawing.Size(131, 10);
+            this.hScrollCorpseCamped.TabIndex = 235;
+            this.hScrollCorpseCamped.Value = 5;
+            // 
             // cbDebugMode
             // 
             this.cbDebugMode.AutoSize = true;
-            this.cbDebugMode.Location = new System.Drawing.Point(11, 112);
+            this.cbDebugMode.Location = new System.Drawing.Point(11, 158);
             this.cbDebugMode.Name = "cbDebugMode";
             this.cbDebugMode.Size = new System.Drawing.Size(88, 17);
             this.cbDebugMode.TabIndex = 8;
@@ -713,27 +914,6 @@
             this.tbWowExePath.Name = "tbWowExePath";
             this.tbWowExePath.Size = new System.Drawing.Size(241, 20);
             this.tbWowExePath.TabIndex = 0;
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(443, 6);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 1;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            // 
-            // btnOk
-            // 
-            this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(362, 6);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(75, 23);
-            this.btnOk.TabIndex = 0;
-            this.btnOk.Text = "OK";
-            this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // tabPage2
             // 
@@ -891,7 +1071,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(596, 332);
+            this.tabPage4.Size = new System.Drawing.Size(585, 369);
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "Blacklist";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -1011,7 +1191,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(596, 332);
+            this.tabPage5.Size = new System.Drawing.Size(585, 369);
             this.tabPage5.TabIndex = 2;
             this.tabPage5.Text = "Avoidance";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -1288,7 +1468,7 @@
             this.tpKeep.Location = new System.Drawing.Point(4, 22);
             this.tpKeep.Name = "tpKeep";
             this.tpKeep.Padding = new System.Windows.Forms.Padding(3);
-            this.tpKeep.Size = new System.Drawing.Size(307, 270);
+            this.tpKeep.Size = new System.Drawing.Size(482, 292);
             this.tpKeep.TabIndex = 1;
             this.tpKeep.Text = "Keep";
             this.tpKeep.UseVisualStyleBackColor = true;
@@ -1312,7 +1492,7 @@
             this.tpSell.Location = new System.Drawing.Point(4, 22);
             this.tpSell.Name = "tpSell";
             this.tpSell.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSell.Size = new System.Drawing.Size(307, 270);
+            this.tpSell.Size = new System.Drawing.Size(482, 292);
             this.tpSell.TabIndex = 2;
             this.tpSell.Text = "Sell";
             this.tpSell.UseVisualStyleBackColor = true;
@@ -1363,7 +1543,7 @@
             this.tpMule.Location = new System.Drawing.Point(4, 22);
             this.tpMule.Name = "tpMule";
             this.tpMule.Padding = new System.Windows.Forms.Padding(3);
-            this.tpMule.Size = new System.Drawing.Size(307, 270);
+            this.tpMule.Size = new System.Drawing.Size(482, 292);
             this.tpMule.TabIndex = 6;
             this.tpMule.Text = "Mule";
             this.tpMule.UseVisualStyleBackColor = true;
@@ -1428,7 +1608,7 @@
             this.tpDestroy.Location = new System.Drawing.Point(4, 22);
             this.tpDestroy.Name = "tpDestroy";
             this.tpDestroy.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDestroy.Size = new System.Drawing.Size(307, 270);
+            this.tpDestroy.Size = new System.Drawing.Size(482, 292);
             this.tpDestroy.TabIndex = 3;
             this.tpDestroy.Text = "Destroy";
             this.tpDestroy.UseVisualStyleBackColor = true;
@@ -1476,7 +1656,7 @@
             this.tpOpen.Location = new System.Drawing.Point(4, 22);
             this.tpOpen.Name = "tpOpen";
             this.tpOpen.Padding = new System.Windows.Forms.Padding(3);
-            this.tpOpen.Size = new System.Drawing.Size(307, 270);
+            this.tpOpen.Size = new System.Drawing.Size(482, 292);
             this.tpOpen.TabIndex = 4;
             this.tpOpen.Text = "Open";
             this.tpOpen.UseVisualStyleBackColor = true;
@@ -1515,7 +1695,7 @@
             this.tpRestock.Location = new System.Drawing.Point(4, 22);
             this.tpRestock.Name = "tpRestock";
             this.tpRestock.Padding = new System.Windows.Forms.Padding(3);
-            this.tpRestock.Size = new System.Drawing.Size(307, 270);
+            this.tpRestock.Size = new System.Drawing.Size(482, 292);
             this.tpRestock.TabIndex = 5;
             this.tpRestock.Text = "Restock";
             this.tpRestock.UseVisualStyleBackColor = true;
@@ -2400,34 +2580,34 @@
             this.TreeEmote.HotTracking = true;
             this.TreeEmote.Location = new System.Drawing.Point(3, 16);
             this.TreeEmote.Name = "TreeEmote";
-            treeNode21.Name = "Node1";
-            treeNode21.Text = "Wave";
-            treeNode22.Name = "Node2";
-            treeNode22.Text = "Smile";
-            treeNode23.Name = "Node3";
-            treeNode23.Text = "Cry";
-            treeNode24.Name = "Node4";
-            treeNode24.Text = "Fart";
-            treeNode25.Name = "Node5";
-            treeNode25.Text = "Pat";
-            treeNode26.Checked = true;
-            treeNode26.Name = "";
-            treeNode26.Text = "Friend";
-            treeNode27.Name = "Node9";
-            treeNode27.Text = "Wave";
-            treeNode28.Name = "Node10";
-            treeNode28.Text = "Smile";
-            treeNode29.Name = "Node11";
-            treeNode29.Text = "Cry";
-            treeNode30.Name = "Node12";
-            treeNode30.Text = "Fart";
-            treeNode31.Name = "Node13";
-            treeNode31.Text = "Pat";
-            treeNode32.Name = "Node0";
-            treeNode32.Text = "Foe";
+            treeNode1.Name = "Node1";
+            treeNode1.Text = "Wave";
+            treeNode2.Name = "Node2";
+            treeNode2.Text = "Smile";
+            treeNode3.Name = "Node3";
+            treeNode3.Text = "Cry";
+            treeNode4.Name = "Node4";
+            treeNode4.Text = "Fart";
+            treeNode5.Name = "Node5";
+            treeNode5.Text = "Pat";
+            treeNode6.Checked = true;
+            treeNode6.Name = "";
+            treeNode6.Text = "Friend";
+            treeNode7.Name = "Node9";
+            treeNode7.Text = "Wave";
+            treeNode8.Name = "Node10";
+            treeNode8.Text = "Smile";
+            treeNode9.Name = "Node11";
+            treeNode9.Text = "Cry";
+            treeNode10.Name = "Node12";
+            treeNode10.Text = "Fart";
+            treeNode11.Name = "Node13";
+            treeNode11.Text = "Pat";
+            treeNode12.Name = "Node0";
+            treeNode12.Text = "Foe";
             this.TreeEmote.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode26,
-            treeNode32});
+            treeNode6,
+            treeNode12});
             this.TreeEmote.Size = new System.Drawing.Size(142, 274);
             this.TreeEmote.TabIndex = 4;
             // 
@@ -2922,31 +3102,31 @@
             this.TreeTables.HotTracking = true;
             this.TreeTables.Location = new System.Drawing.Point(3, 16);
             this.TreeTables.Name = "TreeTables";
-            treeNode33.Name = "Node0";
-            treeNode33.Text = "Follower City Table";
-            treeNode34.Name = "Node1";
-            treeNode34.Text = "Chat City Table";
-            treeNode35.Name = "Node6";
-            treeNode35.Text = "PVP City Ignore Table";
-            treeNode36.Name = "Node2";
-            treeNode36.Text = "Invite Group Table";
-            treeNode37.Name = "Node3";
-            treeNode37.Text = "Invite Guild Table";
-            treeNode38.Name = "Node4";
-            treeNode38.Text = "Invite Trade Table";
-            treeNode39.Name = "Node5";
-            treeNode39.Text = "Invite Duel Table";
-            treeNode40.Name = "Node7";
-            treeNode40.Text = "Scripts";
+            treeNode13.Name = "Node0";
+            treeNode13.Text = "Follower City Table";
+            treeNode14.Name = "Node1";
+            treeNode14.Text = "Chat City Table";
+            treeNode15.Name = "Node6";
+            treeNode15.Text = "PVP City Ignore Table";
+            treeNode16.Name = "Node2";
+            treeNode16.Text = "Invite Group Table";
+            treeNode17.Name = "Node3";
+            treeNode17.Text = "Invite Guild Table";
+            treeNode18.Name = "Node4";
+            treeNode18.Text = "Invite Trade Table";
+            treeNode19.Name = "Node5";
+            treeNode19.Text = "Invite Duel Table";
+            treeNode20.Name = "Node7";
+            treeNode20.Text = "Scripts";
             this.TreeTables.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode33,
-            treeNode34,
-            treeNode35,
-            treeNode36,
-            treeNode37,
-            treeNode38,
-            treeNode39,
-            treeNode40});
+            treeNode13,
+            treeNode14,
+            treeNode15,
+            treeNode16,
+            treeNode17,
+            treeNode18,
+            treeNode19,
+            treeNode20});
             this.TreeTables.Size = new System.Drawing.Size(156, 344);
             this.TreeTables.TabIndex = 4;
             // 
@@ -3596,255 +3776,45 @@
             this.tabPage17.Text = "Equipment";
             this.tabPage17.UseVisualStyleBackColor = true;
             // 
-            // LblMP5Mod
+            // ChkBoxSimilarClassArmor
             // 
-            this.LblMP5Mod.AutoSize = true;
-            this.LblMP5Mod.Location = new System.Drawing.Point(112, 233);
-            this.LblMP5Mod.Name = "LblMP5Mod";
-            this.LblMP5Mod.Size = new System.Drawing.Size(28, 13);
-            this.LblMP5Mod.TabIndex = 322;
-            this.LblMP5Mod.Text = "###";
+            this.ChkBoxSimilarClassArmor.AutoSize = true;
+            this.ChkBoxSimilarClassArmor.Location = new System.Drawing.Point(384, 269);
+            this.ChkBoxSimilarClassArmor.Name = "ChkBoxSimilarClassArmor";
+            this.ChkBoxSimilarClassArmor.Size = new System.Drawing.Size(114, 17);
+            this.ChkBoxSimilarClassArmor.TabIndex = 356;
+            this.ChkBoxSimilarClassArmor.Text = "Similar Class Armor";
+            this.ChkBoxSimilarClassArmor.UseVisualStyleBackColor = true;
             // 
-            // label46
+            // ChkBoxSimilarWeapons
             // 
-            this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(5, 233);
-            this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(72, 13);
-            this.label46.TabIndex = 321;
-            this.label46.Text = "MP5 Modifier:";
+            this.ChkBoxSimilarWeapons.AutoSize = true;
+            this.ChkBoxSimilarWeapons.Location = new System.Drawing.Point(240, 269);
+            this.ChkBoxSimilarWeapons.Name = "ChkBoxSimilarWeapons";
+            this.ChkBoxSimilarWeapons.Size = new System.Drawing.Size(129, 17);
+            this.ChkBoxSimilarWeapons.TabIndex = 355;
+            this.ChkBoxSimilarWeapons.Text = "Similar Weapons Only";
+            this.ChkBoxSimilarWeapons.UseVisualStyleBackColor = true;
             // 
-            // hScrollMP5Mod
+            // ChkBoxActionbar
             // 
-            this.hScrollMP5Mod.Location = new System.Drawing.Point(143, 235);
-            this.hScrollMP5Mod.Name = "hScrollMP5Mod";
-            this.hScrollMP5Mod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollMP5Mod.TabIndex = 320;
+            this.ChkBoxActionbar.AutoSize = true;
+            this.ChkBoxActionbar.Location = new System.Drawing.Point(140, 269);
+            this.ChkBoxActionbar.Name = "ChkBoxActionbar";
+            this.ChkBoxActionbar.Size = new System.Drawing.Size(71, 17);
+            this.ChkBoxActionbar.TabIndex = 354;
+            this.ChkBoxActionbar.Text = "Actionbar";
+            this.ChkBoxActionbar.UseVisualStyleBackColor = true;
             // 
-            // LblDPSMod
+            // ChkBoxAutoEquip
             // 
-            this.LblDPSMod.AutoSize = true;
-            this.LblDPSMod.Location = new System.Drawing.Point(112, 212);
-            this.LblDPSMod.Name = "LblDPSMod";
-            this.LblDPSMod.Size = new System.Drawing.Size(28, 13);
-            this.LblDPSMod.TabIndex = 319;
-            this.LblDPSMod.Text = "###";
-            // 
-            // label47
-            // 
-            this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(5, 212);
-            this.label47.Name = "label47";
-            this.label47.Size = new System.Drawing.Size(72, 13);
-            this.label47.TabIndex = 318;
-            this.label47.Text = "DPS Modifier:";
-            // 
-            // hScrollDPSMod
-            // 
-            this.hScrollDPSMod.Location = new System.Drawing.Point(143, 214);
-            this.hScrollDPSMod.Name = "hScrollDPSMod";
-            this.hScrollDPSMod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollDPSMod.TabIndex = 317;
-            // 
-            // LblBlockMod
-            // 
-            this.LblBlockMod.AutoSize = true;
-            this.LblBlockMod.Location = new System.Drawing.Point(112, 189);
-            this.LblBlockMod.Name = "LblBlockMod";
-            this.LblBlockMod.Size = new System.Drawing.Size(28, 13);
-            this.LblBlockMod.TabIndex = 316;
-            this.LblBlockMod.Text = "###";
-            // 
-            // label48
-            // 
-            this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(5, 189);
-            this.label48.Name = "label48";
-            this.label48.Size = new System.Drawing.Size(77, 13);
-            this.label48.TabIndex = 315;
-            this.label48.Text = "Block Modifier:";
-            // 
-            // hScrollBlockMod
-            // 
-            this.hScrollBlockMod.Location = new System.Drawing.Point(143, 189);
-            this.hScrollBlockMod.Name = "hScrollBlockMod";
-            this.hScrollBlockMod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollBlockMod.TabIndex = 314;
-            // 
-            // LblArmorMod
-            // 
-            this.LblArmorMod.AutoSize = true;
-            this.LblArmorMod.Location = new System.Drawing.Point(112, 167);
-            this.LblArmorMod.Name = "LblArmorMod";
-            this.LblArmorMod.Size = new System.Drawing.Size(28, 13);
-            this.LblArmorMod.TabIndex = 313;
-            this.LblArmorMod.Text = "###";
-            // 
-            // label49
-            // 
-            this.label49.AutoSize = true;
-            this.label49.Location = new System.Drawing.Point(5, 167);
-            this.label49.Name = "label49";
-            this.label49.Size = new System.Drawing.Size(77, 13);
-            this.label49.TabIndex = 312;
-            this.label49.Text = "Armor Modifier:";
-            // 
-            // hScrollArmorMod
-            // 
-            this.hScrollArmorMod.Location = new System.Drawing.Point(143, 167);
-            this.hScrollArmorMod.Name = "hScrollArmorMod";
-            this.hScrollArmorMod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollArmorMod.TabIndex = 311;
-            // 
-            // LblAPMod
-            // 
-            this.LblAPMod.AutoSize = true;
-            this.LblAPMod.Location = new System.Drawing.Point(112, 144);
-            this.LblAPMod.Name = "LblAPMod";
-            this.LblAPMod.Size = new System.Drawing.Size(28, 13);
-            this.LblAPMod.TabIndex = 310;
-            this.LblAPMod.Text = "###";
-            // 
-            // label50
-            // 
-            this.label50.AutoSize = true;
-            this.label50.Location = new System.Drawing.Point(5, 144);
-            this.label50.Name = "label50";
-            this.label50.Size = new System.Drawing.Size(64, 13);
-            this.label50.TabIndex = 309;
-            this.label50.Text = "AP Modifier:";
-            // 
-            // hScrollAPMod
-            // 
-            this.hScrollAPMod.Location = new System.Drawing.Point(143, 146);
-            this.hScrollAPMod.Name = "hScrollAPMod";
-            this.hScrollAPMod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollAPMod.TabIndex = 308;
-            // 
-            // LblStaminaMod
-            // 
-            this.LblStaminaMod.AutoSize = true;
-            this.LblStaminaMod.Location = new System.Drawing.Point(112, 122);
-            this.LblStaminaMod.Name = "LblStaminaMod";
-            this.LblStaminaMod.Size = new System.Drawing.Size(28, 13);
-            this.LblStaminaMod.TabIndex = 307;
-            this.LblStaminaMod.Text = "###";
-            // 
-            // label51
-            // 
-            this.label51.AutoSize = true;
-            this.label51.Location = new System.Drawing.Point(5, 122);
-            this.label51.Name = "label51";
-            this.label51.Size = new System.Drawing.Size(88, 13);
-            this.label51.TabIndex = 306;
-            this.label51.Text = "Stamina Modifier:";
-            // 
-            // hScrollStaminaMod
-            // 
-            this.hScrollStaminaMod.Location = new System.Drawing.Point(143, 124);
-            this.hScrollStaminaMod.Name = "hScrollStaminaMod";
-            this.hScrollStaminaMod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollStaminaMod.TabIndex = 305;
-            // 
-            // LblIntellectMod
-            // 
-            this.LblIntellectMod.AutoSize = true;
-            this.LblIntellectMod.Location = new System.Drawing.Point(112, 102);
-            this.LblIntellectMod.Name = "LblIntellectMod";
-            this.LblIntellectMod.Size = new System.Drawing.Size(28, 13);
-            this.LblIntellectMod.TabIndex = 304;
-            this.LblIntellectMod.Text = "###";
-            // 
-            // label52
-            // 
-            this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(5, 102);
-            this.label52.Name = "label52";
-            this.label52.Size = new System.Drawing.Size(87, 13);
-            this.label52.TabIndex = 303;
-            this.label52.Text = "Intellect Modifier:";
-            // 
-            // hScrollIntellectMod
-            // 
-            this.hScrollIntellectMod.Location = new System.Drawing.Point(143, 104);
-            this.hScrollIntellectMod.Name = "hScrollIntellectMod";
-            this.hScrollIntellectMod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollIntellectMod.TabIndex = 302;
-            // 
-            // LblSpritMod
-            // 
-            this.LblSpritMod.AutoSize = true;
-            this.LblSpritMod.Location = new System.Drawing.Point(112, 82);
-            this.LblSpritMod.Name = "LblSpritMod";
-            this.LblSpritMod.Size = new System.Drawing.Size(28, 13);
-            this.LblSpritMod.TabIndex = 301;
-            this.LblSpritMod.Text = "###";
-            // 
-            // label53
-            // 
-            this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(5, 82);
-            this.label53.Name = "label53";
-            this.label53.Size = new System.Drawing.Size(71, 13);
-            this.label53.TabIndex = 300;
-            this.label53.Text = "Sprit Modifier:";
-            // 
-            // hScrollSpritMod
-            // 
-            this.hScrollSpritMod.Location = new System.Drawing.Point(143, 84);
-            this.hScrollSpritMod.Name = "hScrollSpritMod";
-            this.hScrollSpritMod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollSpritMod.TabIndex = 299;
-            // 
-            // LblStrengthMod
-            // 
-            this.LblStrengthMod.AutoSize = true;
-            this.LblStrengthMod.Location = new System.Drawing.Point(112, 62);
-            this.LblStrengthMod.Name = "LblStrengthMod";
-            this.LblStrengthMod.Size = new System.Drawing.Size(28, 13);
-            this.LblStrengthMod.TabIndex = 298;
-            this.LblStrengthMod.Text = "###";
-            // 
-            // label54
-            // 
-            this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(5, 62);
-            this.label54.Name = "label54";
-            this.label54.Size = new System.Drawing.Size(90, 13);
-            this.label54.TabIndex = 297;
-            this.label54.Text = "Strength Modifier:";
-            // 
-            // hScrollStrengthMod
-            // 
-            this.hScrollStrengthMod.Location = new System.Drawing.Point(143, 64);
-            this.hScrollStrengthMod.Name = "hScrollStrengthMod";
-            this.hScrollStrengthMod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollStrengthMod.TabIndex = 296;
-            // 
-            // LblAgilityMod
-            // 
-            this.LblAgilityMod.AutoSize = true;
-            this.LblAgilityMod.Location = new System.Drawing.Point(112, 42);
-            this.LblAgilityMod.Name = "LblAgilityMod";
-            this.LblAgilityMod.Size = new System.Drawing.Size(28, 13);
-            this.LblAgilityMod.TabIndex = 295;
-            this.LblAgilityMod.Text = "###";
-            // 
-            // label55
-            // 
-            this.label55.AutoSize = true;
-            this.label55.Location = new System.Drawing.Point(5, 42);
-            this.label55.Name = "label55";
-            this.label55.Size = new System.Drawing.Size(77, 13);
-            this.label55.TabIndex = 294;
-            this.label55.Text = "Agility Modifier:";
-            // 
-            // hScrollAgilityMod
-            // 
-            this.hScrollAgilityMod.Location = new System.Drawing.Point(143, 44);
-            this.hScrollAgilityMod.Name = "hScrollAgilityMod";
-            this.hScrollAgilityMod.Size = new System.Drawing.Size(128, 11);
-            this.hScrollAgilityMod.TabIndex = 293;
+            this.ChkBoxAutoEquip.AutoSize = true;
+            this.ChkBoxAutoEquip.Location = new System.Drawing.Point(26, 269);
+            this.ChkBoxAutoEquip.Name = "ChkBoxAutoEquip";
+            this.ChkBoxAutoEquip.Size = new System.Drawing.Size(78, 17);
+            this.ChkBoxAutoEquip.TabIndex = 353;
+            this.ChkBoxAutoEquip.Text = "Auto Equip";
+            this.ChkBoxAutoEquip.UseVisualStyleBackColor = true;
             // 
             // LblSpellCritMod
             // 
@@ -4096,240 +4066,255 @@
             this.hScrollDefenseMod.Size = new System.Drawing.Size(133, 11);
             this.hScrollDefenseMod.TabIndex = 323;
             // 
-            // ChkBoxSimilarClassArmor
+            // LblMP5Mod
             // 
-            this.ChkBoxSimilarClassArmor.AutoSize = true;
-            this.ChkBoxSimilarClassArmor.Location = new System.Drawing.Point(384, 269);
-            this.ChkBoxSimilarClassArmor.Name = "ChkBoxSimilarClassArmor";
-            this.ChkBoxSimilarClassArmor.Size = new System.Drawing.Size(114, 17);
-            this.ChkBoxSimilarClassArmor.TabIndex = 356;
-            this.ChkBoxSimilarClassArmor.Text = "Similar Class Armor";
-            this.ChkBoxSimilarClassArmor.UseVisualStyleBackColor = true;
+            this.LblMP5Mod.AutoSize = true;
+            this.LblMP5Mod.Location = new System.Drawing.Point(112, 233);
+            this.LblMP5Mod.Name = "LblMP5Mod";
+            this.LblMP5Mod.Size = new System.Drawing.Size(28, 13);
+            this.LblMP5Mod.TabIndex = 322;
+            this.LblMP5Mod.Text = "###";
             // 
-            // ChkBoxSimilarWeapons
+            // label46
             // 
-            this.ChkBoxSimilarWeapons.AutoSize = true;
-            this.ChkBoxSimilarWeapons.Location = new System.Drawing.Point(240, 269);
-            this.ChkBoxSimilarWeapons.Name = "ChkBoxSimilarWeapons";
-            this.ChkBoxSimilarWeapons.Size = new System.Drawing.Size(129, 17);
-            this.ChkBoxSimilarWeapons.TabIndex = 355;
-            this.ChkBoxSimilarWeapons.Text = "Similar Weapons Only";
-            this.ChkBoxSimilarWeapons.UseVisualStyleBackColor = true;
+            this.label46.AutoSize = true;
+            this.label46.Location = new System.Drawing.Point(5, 233);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(72, 13);
+            this.label46.TabIndex = 321;
+            this.label46.Text = "MP5 Modifier:";
             // 
-            // ChkBoxActionbar
+            // hScrollMP5Mod
             // 
-            this.ChkBoxActionbar.AutoSize = true;
-            this.ChkBoxActionbar.Location = new System.Drawing.Point(140, 269);
-            this.ChkBoxActionbar.Name = "ChkBoxActionbar";
-            this.ChkBoxActionbar.Size = new System.Drawing.Size(71, 17);
-            this.ChkBoxActionbar.TabIndex = 354;
-            this.ChkBoxActionbar.Text = "Actionbar";
-            this.ChkBoxActionbar.UseVisualStyleBackColor = true;
+            this.hScrollMP5Mod.Location = new System.Drawing.Point(143, 235);
+            this.hScrollMP5Mod.Name = "hScrollMP5Mod";
+            this.hScrollMP5Mod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollMP5Mod.TabIndex = 320;
             // 
-            // ChkBoxAutoEquip
+            // LblDPSMod
             // 
-            this.ChkBoxAutoEquip.AutoSize = true;
-            this.ChkBoxAutoEquip.Location = new System.Drawing.Point(26, 269);
-            this.ChkBoxAutoEquip.Name = "ChkBoxAutoEquip";
-            this.ChkBoxAutoEquip.Size = new System.Drawing.Size(78, 17);
-            this.ChkBoxAutoEquip.TabIndex = 353;
-            this.ChkBoxAutoEquip.Text = "Auto Equip";
-            this.ChkBoxAutoEquip.UseVisualStyleBackColor = true;
+            this.LblDPSMod.AutoSize = true;
+            this.LblDPSMod.Location = new System.Drawing.Point(112, 212);
+            this.LblDPSMod.Name = "LblDPSMod";
+            this.LblDPSMod.Size = new System.Drawing.Size(28, 13);
+            this.LblDPSMod.TabIndex = 319;
+            this.LblDPSMod.Text = "###";
             // 
-            // lblMaxAllowedAdds
+            // label47
             // 
-            this.lblMaxAllowedAdds.AutoSize = true;
-            this.lblMaxAllowedAdds.Location = new System.Drawing.Point(145, 196);
-            this.lblMaxAllowedAdds.Name = "lblMaxAllowedAdds";
-            this.lblMaxAllowedAdds.Size = new System.Drawing.Size(28, 13);
-            this.lblMaxAllowedAdds.TabIndex = 246;
-            this.lblMaxAllowedAdds.Text = "###";
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(5, 212);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(72, 13);
+            this.label47.TabIndex = 318;
+            this.label47.Text = "DPS Modifier:";
             // 
-            // lblAddDetectionRadius
+            // hScrollDPSMod
             // 
-            this.lblAddDetectionRadius.AutoSize = true;
-            this.lblAddDetectionRadius.Location = new System.Drawing.Point(145, 233);
-            this.lblAddDetectionRadius.Name = "lblAddDetectionRadius";
-            this.lblAddDetectionRadius.Size = new System.Drawing.Size(28, 13);
-            this.lblAddDetectionRadius.TabIndex = 245;
-            this.lblAddDetectionRadius.Text = "###";
+            this.hScrollDPSMod.Location = new System.Drawing.Point(143, 214);
+            this.hScrollDPSMod.Name = "hScrollDPSMod";
+            this.hScrollDPSMod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollDPSMod.TabIndex = 317;
             // 
-            // lblCorpseCamped
+            // LblBlockMod
             // 
-            this.lblCorpseCamped.AutoSize = true;
-            this.lblCorpseCamped.Location = new System.Drawing.Point(145, 161);
-            this.lblCorpseCamped.Name = "lblCorpseCamped";
-            this.lblCorpseCamped.Size = new System.Drawing.Size(28, 13);
-            this.lblCorpseCamped.TabIndex = 244;
-            this.lblCorpseCamped.Text = "###";
+            this.LblBlockMod.AutoSize = true;
+            this.LblBlockMod.Location = new System.Drawing.Point(112, 189);
+            this.LblBlockMod.Name = "LblBlockMod";
+            this.LblBlockMod.Size = new System.Drawing.Size(28, 13);
+            this.LblBlockMod.TabIndex = 316;
+            this.LblBlockMod.Text = "###";
             // 
-            // label66
+            // label48
             // 
-            this.label66.AutoSize = true;
-            this.label66.Location = new System.Drawing.Point(11, 233);
-            this.label66.Name = "label66";
-            this.label66.Size = new System.Drawing.Size(111, 13);
-            this.label66.TabIndex = 243;
-            this.label66.Text = "Add Detection Radius";
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(5, 189);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(77, 13);
+            this.label48.TabIndex = 315;
+            this.label48.Text = "Block Modifier:";
             // 
-            // label67
+            // hScrollBlockMod
             // 
-            this.label67.AutoSize = true;
-            this.label67.Location = new System.Drawing.Point(8, 196);
-            this.label67.Name = "label67";
-            this.label67.Size = new System.Drawing.Size(97, 13);
-            this.label67.TabIndex = 242;
-            this.label67.Text = "Max Allowed Adds:";
+            this.hScrollBlockMod.Location = new System.Drawing.Point(143, 189);
+            this.hScrollBlockMod.Name = "hScrollBlockMod";
+            this.hScrollBlockMod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollBlockMod.TabIndex = 314;
             // 
-            // label68
+            // LblArmorMod
             // 
-            this.label68.AutoSize = true;
-            this.label68.Location = new System.Drawing.Point(8, 159);
-            this.label68.Name = "label68";
-            this.label68.Size = new System.Drawing.Size(85, 13);
-            this.label68.TabIndex = 241;
-            this.label68.Text = "Corpse Camped:";
+            this.LblArmorMod.AutoSize = true;
+            this.LblArmorMod.Location = new System.Drawing.Point(112, 167);
+            this.LblArmorMod.Name = "LblArmorMod";
+            this.LblArmorMod.Size = new System.Drawing.Size(28, 13);
+            this.LblArmorMod.TabIndex = 313;
+            this.LblArmorMod.Text = "###";
             // 
-            // ChkBoxSoundOnMobKills
+            // label49
             // 
-            this.ChkBoxSoundOnMobKills.AutoSize = true;
-            this.ChkBoxSoundOnMobKills.Location = new System.Drawing.Point(346, 220);
-            this.ChkBoxSoundOnMobKills.Name = "ChkBoxSoundOnMobKills";
-            this.ChkBoxSoundOnMobKills.Size = new System.Drawing.Size(119, 17);
-            this.ChkBoxSoundOnMobKills.TabIndex = 240;
-            this.ChkBoxSoundOnMobKills.Text = "Sound On Mob Kills";
-            this.ChkBoxSoundOnMobKills.UseVisualStyleBackColor = true;
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(5, 167);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(77, 13);
+            this.label49.TabIndex = 312;
+            this.label49.Text = "Armor Modifier:";
             // 
-            // ChkBoxSoundOnDeath
+            // hScrollArmorMod
             // 
-            this.ChkBoxSoundOnDeath.AutoSize = true;
-            this.ChkBoxSoundOnDeath.Location = new System.Drawing.Point(346, 197);
-            this.ChkBoxSoundOnDeath.Name = "ChkBoxSoundOnDeath";
-            this.ChkBoxSoundOnDeath.Size = new System.Drawing.Size(111, 17);
-            this.ChkBoxSoundOnDeath.TabIndex = 239;
-            this.ChkBoxSoundOnDeath.Text = "Sound On Deaths";
-            this.ChkBoxSoundOnDeath.UseVisualStyleBackColor = true;
+            this.hScrollArmorMod.Location = new System.Drawing.Point(143, 167);
+            this.hScrollArmorMod.Name = "hScrollArmorMod";
+            this.hScrollArmorMod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollArmorMod.TabIndex = 311;
             // 
-            // ChkBoxSound
+            // LblAPMod
             // 
-            this.ChkBoxSound.AutoSize = true;
-            this.ChkBoxSound.Location = new System.Drawing.Point(346, 174);
-            this.ChkBoxSound.Name = "ChkBoxSound";
-            this.ChkBoxSound.Size = new System.Drawing.Size(186, 17);
-            this.ChkBoxSound.TabIndex = 238;
-            this.ChkBoxSound.Text = "Allow Sounds(Global mute Button)";
-            this.ChkBoxSound.UseVisualStyleBackColor = true;
+            this.LblAPMod.AutoSize = true;
+            this.LblAPMod.Location = new System.Drawing.Point(112, 144);
+            this.LblAPMod.Name = "LblAPMod";
+            this.LblAPMod.Size = new System.Drawing.Size(28, 13);
+            this.LblAPMod.TabIndex = 310;
+            this.LblAPMod.Text = "###";
             // 
-            // hScrollAddDetectionRadius
+            // label50
             // 
-            this.hScrollAddDetectionRadius.LargeChange = 1;
-            this.hScrollAddDetectionRadius.Location = new System.Drawing.Point(42, 246);
-            this.hScrollAddDetectionRadius.Minimum = 1;
-            this.hScrollAddDetectionRadius.Name = "hScrollAddDetectionRadius";
-            this.hScrollAddDetectionRadius.Size = new System.Drawing.Size(131, 10);
-            this.hScrollAddDetectionRadius.TabIndex = 237;
-            this.hScrollAddDetectionRadius.Value = 5;
+            this.label50.AutoSize = true;
+            this.label50.Location = new System.Drawing.Point(5, 144);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(64, 13);
+            this.label50.TabIndex = 309;
+            this.label50.Text = "AP Modifier:";
             // 
-            // hScrollMaxAllowsAdds
+            // hScrollAPMod
             // 
-            this.hScrollMaxAllowsAdds.LargeChange = 1;
-            this.hScrollMaxAllowsAdds.Location = new System.Drawing.Point(42, 209);
-            this.hScrollMaxAllowsAdds.Maximum = 5;
-            this.hScrollMaxAllowsAdds.Minimum = 1;
-            this.hScrollMaxAllowsAdds.Name = "hScrollMaxAllowsAdds";
-            this.hScrollMaxAllowsAdds.Size = new System.Drawing.Size(131, 10);
-            this.hScrollMaxAllowsAdds.TabIndex = 236;
-            this.hScrollMaxAllowsAdds.Value = 5;
+            this.hScrollAPMod.Location = new System.Drawing.Point(143, 146);
+            this.hScrollAPMod.Name = "hScrollAPMod";
+            this.hScrollAPMod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollAPMod.TabIndex = 308;
             // 
-            // hScrollCorpseCamped
+            // LblStaminaMod
             // 
-            this.hScrollCorpseCamped.LargeChange = 1;
-            this.hScrollCorpseCamped.Location = new System.Drawing.Point(42, 174);
-            this.hScrollCorpseCamped.Maximum = 30;
-            this.hScrollCorpseCamped.Name = "hScrollCorpseCamped";
-            this.hScrollCorpseCamped.Size = new System.Drawing.Size(131, 10);
-            this.hScrollCorpseCamped.TabIndex = 235;
-            this.hScrollCorpseCamped.Value = 5;
+            this.LblStaminaMod.AutoSize = true;
+            this.LblStaminaMod.Location = new System.Drawing.Point(112, 122);
+            this.LblStaminaMod.Name = "LblStaminaMod";
+            this.LblStaminaMod.Size = new System.Drawing.Size(28, 13);
+            this.LblStaminaMod.TabIndex = 307;
+            this.LblStaminaMod.Text = "###";
             // 
-            // ChkBoxIgnoreFactionsInCities
+            // label51
             // 
-            this.ChkBoxIgnoreFactionsInCities.AutoSize = true;
-            this.ChkBoxIgnoreFactionsInCities.Location = new System.Drawing.Point(346, 123);
-            this.ChkBoxIgnoreFactionsInCities.Name = "ChkBoxIgnoreFactionsInCities";
-            this.ChkBoxIgnoreFactionsInCities.Size = new System.Drawing.Size(224, 17);
-            this.ChkBoxIgnoreFactionsInCities.TabIndex = 249;
-            this.ChkBoxIgnoreFactionsInCities.Text = "Don\'t  Attack Other Faction In Cities (PvP)";
-            this.ChkBoxIgnoreFactionsInCities.UseVisualStyleBackColor = true;
+            this.label51.AutoSize = true;
+            this.label51.Location = new System.Drawing.Point(5, 122);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(88, 13);
+            this.label51.TabIndex = 306;
+            this.label51.Text = "Stamina Modifier:";
             // 
-            // ChkBoxAttackOtherFaction
+            // hScrollStaminaMod
             // 
-            this.ChkBoxAttackOtherFaction.AutoSize = true;
-            this.ChkBoxAttackOtherFaction.Location = new System.Drawing.Point(346, 100);
-            this.ChkBoxAttackOtherFaction.Name = "ChkBoxAttackOtherFaction";
-            this.ChkBoxAttackOtherFaction.Size = new System.Drawing.Size(158, 17);
-            this.ChkBoxAttackOtherFaction.TabIndex = 248;
-            this.ChkBoxAttackOtherFaction.Text = "Attack Others Faction (PvP)";
-            this.ChkBoxAttackOtherFaction.UseVisualStyleBackColor = true;
+            this.hScrollStaminaMod.Location = new System.Drawing.Point(143, 124);
+            this.hScrollStaminaMod.Name = "hScrollStaminaMod";
+            this.hScrollStaminaMod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollStaminaMod.TabIndex = 305;
             // 
-            // ChkBoxDefendWhenAttacked
+            // LblIntellectMod
             // 
-            this.ChkBoxDefendWhenAttacked.AutoSize = true;
-            this.ChkBoxDefendWhenAttacked.Location = new System.Drawing.Point(346, 75);
-            this.ChkBoxDefendWhenAttacked.Name = "ChkBoxDefendWhenAttacked";
-            this.ChkBoxDefendWhenAttacked.Size = new System.Drawing.Size(168, 17);
-            this.ChkBoxDefendWhenAttacked.TabIndex = 247;
-            this.ChkBoxDefendWhenAttacked.Text = "Defend When Attacked (PvP)";
-            this.ChkBoxDefendWhenAttacked.UseVisualStyleBackColor = true;
+            this.LblIntellectMod.AutoSize = true;
+            this.LblIntellectMod.Location = new System.Drawing.Point(112, 102);
+            this.LblIntellectMod.Name = "LblIntellectMod";
+            this.LblIntellectMod.Size = new System.Drawing.Size(28, 13);
+            this.LblIntellectMod.TabIndex = 304;
+            this.LblIntellectMod.Text = "###";
             // 
-            // ChkBoxPullElites
+            // label52
             // 
-            this.ChkBoxPullElites.AutoSize = true;
-            this.ChkBoxPullElites.Location = new System.Drawing.Point(346, 312);
-            this.ChkBoxPullElites.Name = "ChkBoxPullElites";
-            this.ChkBoxPullElites.Size = new System.Drawing.Size(71, 17);
-            this.ChkBoxPullElites.TabIndex = 252;
-            this.ChkBoxPullElites.Text = "Pull Elites";
-            this.ChkBoxPullElites.UseVisualStyleBackColor = true;
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(5, 102);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(87, 13);
+            this.label52.TabIndex = 303;
+            this.label52.Text = "Intellect Modifier:";
             // 
-            // ChkBoxIgnoreMaxLevel
+            // hScrollIntellectMod
             // 
-            this.ChkBoxIgnoreMaxLevel.AutoSize = true;
-            this.ChkBoxIgnoreMaxLevel.Location = new System.Drawing.Point(152, 289);
-            this.ChkBoxIgnoreMaxLevel.Name = "ChkBoxIgnoreMaxLevel";
-            this.ChkBoxIgnoreMaxLevel.Size = new System.Drawing.Size(108, 17);
-            this.ChkBoxIgnoreMaxLevel.TabIndex = 251;
-            this.ChkBoxIgnoreMaxLevel.Text = "Ignore Max Level";
-            this.ChkBoxIgnoreMaxLevel.UseVisualStyleBackColor = true;
+            this.hScrollIntellectMod.Location = new System.Drawing.Point(143, 104);
+            this.hScrollIntellectMod.Name = "hScrollIntellectMod";
+            this.hScrollIntellectMod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollIntellectMod.TabIndex = 302;
             // 
-            // ChkBoxIgnoreMinLevel
+            // LblSpritMod
             // 
-            this.ChkBoxIgnoreMinLevel.AutoSize = true;
-            this.ChkBoxIgnoreMinLevel.Location = new System.Drawing.Point(17, 289);
-            this.ChkBoxIgnoreMinLevel.Name = "ChkBoxIgnoreMinLevel";
-            this.ChkBoxIgnoreMinLevel.Size = new System.Drawing.Size(105, 17);
-            this.ChkBoxIgnoreMinLevel.TabIndex = 250;
-            this.ChkBoxIgnoreMinLevel.Text = "Ignore Min Level";
-            this.ChkBoxIgnoreMinLevel.UseVisualStyleBackColor = true;
+            this.LblSpritMod.AutoSize = true;
+            this.LblSpritMod.Location = new System.Drawing.Point(112, 82);
+            this.LblSpritMod.Name = "LblSpritMod";
+            this.LblSpritMod.Size = new System.Drawing.Size(28, 13);
+            this.LblSpritMod.TabIndex = 301;
+            this.LblSpritMod.Text = "###";
             // 
-            // ChkBoxUseMount
+            // label53
             // 
-            this.ChkBoxUseMount.AutoSize = true;
-            this.ChkBoxUseMount.Location = new System.Drawing.Point(346, 289);
-            this.ChkBoxUseMount.Name = "ChkBoxUseMount";
-            this.ChkBoxUseMount.Size = new System.Drawing.Size(78, 17);
-            this.ChkBoxUseMount.TabIndex = 253;
-            this.ChkBoxUseMount.Text = "Use Mount";
-            this.ChkBoxUseMount.UseVisualStyleBackColor = true;
+            this.label53.AutoSize = true;
+            this.label53.Location = new System.Drawing.Point(5, 82);
+            this.label53.Name = "label53";
+            this.label53.Size = new System.Drawing.Size(71, 13);
+            this.label53.TabIndex = 300;
+            this.label53.Text = "Sprit Modifier:";
             // 
-            // ChkBoxLogOutput
+            // hScrollSpritMod
             // 
-            this.ChkBoxLogOutput.AutoSize = true;
-            this.ChkBoxLogOutput.Location = new System.Drawing.Point(148, 112);
-            this.ChkBoxLogOutput.Name = "ChkBoxLogOutput";
-            this.ChkBoxLogOutput.Size = new System.Drawing.Size(79, 17);
-            this.ChkBoxLogOutput.TabIndex = 254;
-            this.ChkBoxLogOutput.Text = "Log Output";
-            this.ChkBoxLogOutput.UseVisualStyleBackColor = true;
+            this.hScrollSpritMod.Location = new System.Drawing.Point(143, 84);
+            this.hScrollSpritMod.Name = "hScrollSpritMod";
+            this.hScrollSpritMod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollSpritMod.TabIndex = 299;
+            // 
+            // LblStrengthMod
+            // 
+            this.LblStrengthMod.AutoSize = true;
+            this.LblStrengthMod.Location = new System.Drawing.Point(112, 62);
+            this.LblStrengthMod.Name = "LblStrengthMod";
+            this.LblStrengthMod.Size = new System.Drawing.Size(28, 13);
+            this.LblStrengthMod.TabIndex = 298;
+            this.LblStrengthMod.Text = "###";
+            // 
+            // label54
+            // 
+            this.label54.AutoSize = true;
+            this.label54.Location = new System.Drawing.Point(5, 62);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(90, 13);
+            this.label54.TabIndex = 297;
+            this.label54.Text = "Strength Modifier:";
+            // 
+            // hScrollStrengthMod
+            // 
+            this.hScrollStrengthMod.Location = new System.Drawing.Point(143, 64);
+            this.hScrollStrengthMod.Name = "hScrollStrengthMod";
+            this.hScrollStrengthMod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollStrengthMod.TabIndex = 296;
+            // 
+            // LblAgilityMod
+            // 
+            this.LblAgilityMod.AutoSize = true;
+            this.LblAgilityMod.Location = new System.Drawing.Point(112, 42);
+            this.LblAgilityMod.Name = "LblAgilityMod";
+            this.LblAgilityMod.Size = new System.Drawing.Size(28, 13);
+            this.LblAgilityMod.TabIndex = 295;
+            this.LblAgilityMod.Text = "###";
+            // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(5, 42);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(77, 13);
+            this.label55.TabIndex = 294;
+            this.label55.Text = "Agility Modifier:";
+            // 
+            // hScrollAgilityMod
+            // 
+            this.hScrollAgilityMod.Location = new System.Drawing.Point(143, 44);
+            this.hScrollAgilityMod.Name = "hScrollAgilityMod";
+            this.hScrollAgilityMod.Size = new System.Drawing.Size(128, 11);
+            this.hScrollAgilityMod.TabIndex = 293;
             // 
             // tabPage18
             // 
@@ -4604,7 +4589,7 @@
             this.tabPage20.Location = new System.Drawing.Point(4, 22);
             this.tabPage20.Name = "tabPage20";
             this.tabPage20.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage20.Size = new System.Drawing.Size(566, 234);
+            this.tabPage20.Size = new System.Drawing.Size(585, 369);
             this.tabPage20.TabIndex = 1;
             this.tabPage20.Text = "Alterac Valley";
             this.tabPage20.UseVisualStyleBackColor = true;
@@ -4816,7 +4801,7 @@
             this.tabPage21.Location = new System.Drawing.Point(4, 22);
             this.tabPage21.Name = "tabPage21";
             this.tabPage21.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage21.Size = new System.Drawing.Size(566, 234);
+            this.tabPage21.Size = new System.Drawing.Size(585, 369);
             this.tabPage21.TabIndex = 2;
             this.tabPage21.Text = "Arathi Basin";
             this.tabPage21.UseVisualStyleBackColor = true;
@@ -4950,7 +4935,7 @@
             this.tabPage22.Location = new System.Drawing.Point(4, 22);
             this.tabPage22.Name = "tabPage22";
             this.tabPage22.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage22.Size = new System.Drawing.Size(566, 234);
+            this.tabPage22.Size = new System.Drawing.Size(585, 369);
             this.tabPage22.TabIndex = 3;
             this.tabPage22.Text = "Warsong Gulch";
             this.tabPage22.UseVisualStyleBackColor = true;
@@ -5097,7 +5082,7 @@
             this.tabPage23.Controls.Add(this.CobBoxEOTSGuardSpot);
             this.tabPage23.Location = new System.Drawing.Point(4, 22);
             this.tabPage23.Name = "tabPage23";
-            this.tabPage23.Size = new System.Drawing.Size(566, 234);
+            this.tabPage23.Size = new System.Drawing.Size(585, 369);
             this.tabPage23.TabIndex = 4;
             this.tabPage23.Text = "Eye of the Storm";
             this.tabPage23.UseVisualStyleBackColor = true;
@@ -5193,6 +5178,53 @@
             this.CobBoxEOTSGuardSpot.Name = "CobBoxEOTSGuardSpot";
             this.CobBoxEOTSGuardSpot.Size = new System.Drawing.Size(154, 21);
             this.CobBoxEOTSGuardSpot.TabIndex = 279;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(443, 6);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 1;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // btnOk
+            // 
+            this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOk.Location = new System.Drawing.Point(362, 6);
+            this.btnOk.Name = "btnOk";
+            this.btnOk.Size = new System.Drawing.Size(75, 23);
+            this.btnOk.TabIndex = 0;
+            this.btnOk.Text = "OK";
+            this.btnOk.UseVisualStyleBackColor = true;
+            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            // 
+            // btnBrowseLogPath
+            // 
+            this.btnBrowseLogPath.Location = new System.Drawing.Point(357, 97);
+            this.btnBrowseLogPath.Name = "btnBrowseLogPath";
+            this.btnBrowseLogPath.Size = new System.Drawing.Size(75, 23);
+            this.btnBrowseLogPath.TabIndex = 257;
+            this.btnBrowseLogPath.Text = "Browse..";
+            this.btnBrowseLogPath.UseVisualStyleBackColor = true;
+            this.btnBrowseLogPath.Click += new System.EventHandler(this.btnBrowseLogPath_Click);
+            // 
+            // label85
+            // 
+            this.label85.AutoSize = true;
+            this.label85.Location = new System.Drawing.Point(8, 102);
+            this.label85.Name = "label85";
+            this.label85.Size = new System.Drawing.Size(55, 13);
+            this.label85.TabIndex = 256;
+            this.label85.Text = "Logs Path";
+            // 
+            // tbLogsPath
+            // 
+            this.tbLogsPath.Location = new System.Drawing.Point(105, 99);
+            this.tbLogsPath.Name = "tbLogsPath";
+            this.tbLogsPath.Size = new System.Drawing.Size(241, 20);
+            this.tbLogsPath.TabIndex = 255;
             // 
             // OptionsForm
             // 
@@ -5738,5 +5770,8 @@
         private System.Windows.Forms.Button ButtonFelReaverRuins;
         private System.Windows.Forms.Button ButtonMageTower;
         internal System.Windows.Forms.ComboBox CobBoxEOTSGuardSpot;
+        private System.Windows.Forms.Button btnBrowseLogPath;
+        private System.Windows.Forms.Label label85;
+        private System.Windows.Forms.TextBox tbLogsPath;
     }
 }

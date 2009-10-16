@@ -423,7 +423,7 @@ namespace BabBot.Manager
                 InitializeObjectManager();
                 Injector.Lua_RegisterInputHandler();
                 InitializeCaronte();
-                //ScriptHost.Start();
+                ScriptHost.Start();
                 //StateManager.Instance.Stop();
                 
                 Initialized = true;
@@ -436,9 +436,8 @@ namespace BabBot.Manager
 
         public static void InitializeCaronte()
         {
-            Console.WriteLine(Player.GetCurrentMapContinent());
-            //Caronte.Init(Player.GetCurrentMapContinent());
-            Caronte.Init("Azeroth"); // temporary fix to get things running while debugging LUA
+            Caronte.Init(Player.GetCurrentMapContinent());
+            //Caronte.Init("Azeroth"); // temporary fix to get things running while debugging LUA
 
             // We generate a fake path once to initialize the chunk loader stuff
             //Pather.Graph.Path path = ProcessManager.Caronte.CalculatePath(new Pather.Graph.Location(Player.Location.X, Player.Location.Y, Player.Location.Z), 

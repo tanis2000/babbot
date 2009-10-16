@@ -18,6 +18,7 @@ namespace BabBot.Forms
             tbGuestUsername.Text = ProcessManager.Config.GuestUsername;
             tbGuestPassword.Text = ProcessManager.Config.GuestPassword;
             cbDebugMode.Checked = ProcessManager.Config.DebugMode;
+            tbLogsPath.Text = ProcessManager.Config.LogPath;
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -26,6 +27,7 @@ namespace BabBot.Forms
             ProcessManager.Config.GuestUsername = tbGuestUsername.Text;
             ProcessManager.Config.GuestPassword = tbGuestPassword.Text;
             ProcessManager.Config.DebugMode = cbDebugMode.Checked;
+            ProcessManager.Config.LogPath = tbLogsPath.Text;
         }
 
         private void btnBrowseWowExec_Click(object sender, EventArgs e)
@@ -53,6 +55,15 @@ namespace BabBot.Forms
         private void lstAll_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnBrowseLogPath_Click(object sender, EventArgs e)
+        {
+            var dlg = new FolderBrowserDialog();
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                tbLogsPath.Text = dlg.SelectedPath;
+            }
         }
     }
 }

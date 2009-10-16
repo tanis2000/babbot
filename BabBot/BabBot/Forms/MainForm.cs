@@ -40,16 +40,21 @@ namespace BabBot.Forms
 
             Process.EnterDebugMode();
 
+            // Configuration must be loaded first of all. 
+            // We need it even for logging (the log path is in there)
+            LoadConfig();
 
             // Load the configuration file
             Output.OutputEvent += LogOutput;
             Output.DebugEvent += LogDebug;
-            Output.Instance.Echo("Initializing.....");
+            Output.Instance.LogDebug = true; // We force logging of debug messages for now (it should become an option)
+            Output.Instance.Log("Initializing..");
             
-            LoadConfig();
 
             // Custom initialization of some components
             Initialize();
+
+            Output.Instance.Log("Initialization done.");
 
             // ProcessManager events binding
             ProcessManager.WoWProcessStarted += wow_ProcessStarted;
@@ -89,7 +94,7 @@ namespace BabBot.Forms
         {
             if (m.Msg == 0xBEEF)
             {
-                Console.WriteLine("0xBEEF message recieved, resuming main WoW thread!");
+                Output.Instance.Debug("0xBEEF message recieved, resuming main WoW thread!", this);
 
                 ProcessManager.ResumeMainWowThread();
             }
@@ -440,6 +445,7 @@ namespace BabBot.Forms
 
         private void btnStartBot_Click(object sender, EventArgs e)
         {
+            Output.Instance.Log("Starting StateMachine");
             ////get location of nearest mobs and then create a circle path between some MPC's
             //List<WowObject> mobs = Player.GetNearObjects();
 
@@ -467,8 +473,16 @@ namespace BabBot.Forms
             //        WaypointVector3DHelper.Vector3DToLocation(Player.Location),
             //        new Location(-6003.86f, -232.1742f, 410.5543f));
 
+
+            if (ProcessManager.Player == null)
+            {
+                Output.Instance.Log("Cannot start StateMachine, we are not in the game yet");
+                return;
+            }
+
             //if a normal path exists, use it, else exit and don't start
-            if (WayPointManager.Instance.RepairNodeCount <= 0)
+            // TODO: this is wrong, we should start the state machine even if there's no waypoints (I guess we're doing this because the test script is just a pathing one for now)
+            if (WayPointManager.Instance.NormalNodeCount <= 0)
                 return;
 
             Pather.Graph.Path p = new Pather.Graph.Path();
@@ -484,12 +498,22 @@ namespace BabBot.Forms
 
             ProcessManager.Player.StateMachine.IsRunning = true;
             //StateManager.Instance.Start();
+            Output.Instance.Log("StateMachine started");
         }
 
         private void btnStopBot_Click(object sender, EventArgs e)
         {
+            Output.Instance.Log("Stopping StateMachine");
+
+            if (ProcessManager.Player == null)
+            {
+                Output.Instance.Log("Cannot stop StateMachine, we are not in the game yet");
+                return;
+            }
+            
             ProcessManager.Player.StateMachine.IsRunning = false;
             //StateManager.Instance.Stop();
+            Output.Instance.Log("StateMachine stopped");
         }
 
         private void btnAddEnemyToList_Click(object sender, EventArgs e)

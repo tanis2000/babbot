@@ -28,5 +28,6 @@ namespace BabBot
         public string GuestUsername = "Guest";
         public string InteractKey = "{SHIFTD}ì{SHIFTU}";
         public string WowExePath = "";
+        public string LogPath = ".\\Log";
     }
 }

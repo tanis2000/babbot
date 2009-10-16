@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+using BabBot.Manager;
 
 namespace BabBot.Common
 {
@@ -23,7 +24,7 @@ namespace BabBot.Common
         #endregion
 
 
-        public static bool LogDebug;
+        public bool LogDebug;
 
         private static string DateString
         {
@@ -48,24 +49,29 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        private static void Log(string message)
+        internal void Log(string message)
         {
-            using (StreamWriter w = new StreamWriter(Format("\\{0} DebugLog.txt", DateString), true))
+            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-DebugLog.txt", DateString, ProcessManager.Config.LogPath), true))
             {
                 w.WriteLine(Format("{0} {1}", BTimeString, message));
             }
+            if (OutputEvent != null)
+            {
+                OutputEvent(message);
+            }
         }
+
 
         /// <summary>
         /// A simple logging method. Will output to ChatLog.txt.
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        internal static void ChatLog(string message)
+        internal void ChatLog(string message)
         {
-            using (StreamWriter w = new StreamWriter(Format("{0} ChatLog.txt", DateString), true))
+            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-ChatLog.txt", DateString, ProcessManager.Config.LogPath), true))
             {
-                w.WriteLine(Format("[{0}] {1}", TimeString, message));
+                w.WriteLine(Format("{0} {1}", BTimeString, message));
             }
         }
 
@@ -74,11 +80,11 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="exception">The exception to be logged</param>
         /// <returns>Nothing.</returns>
-        internal static void LogError(Exception exception)
+        internal void LogError(Exception exception)
         {
-            using (StreamWriter w = new StreamWriter(Format("{0} DebugLog.txt", DateString), true))
+            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-ErrorLog.txt", DateString, ProcessManager.Config.LogPath), true))
             {
-                w.WriteLine(Format("[{0}] {1}{2}{3}{2}{4}", TimeString, exception.InnerException, Environment.NewLine,
+                w.WriteLine(Format("{0} {1}{2}{3}{2}{4}", BTimeString, exception.InnerException, Environment.NewLine,
                                    exception.Message, exception.StackTrace));
             }
         }
@@ -89,9 +95,9 @@ namespace BabBot.Common
         /// <param name="textFile">The text file. Using a full path will output to that path, otherwise it will output to the current directory.</param>
         /// <param name="message">The message.</param>
         /// <param name="args">The args.</param>
-        internal static void LogText(string textFile, string message, params object[] args)
+        internal void LogText(string textFile, string message, params object[] args)
         {
-            using (TextWriter tw = new StreamWriter(DateString + " " + textFile, true))
+            using (TextWriter tw = new StreamWriter(DateString + "-" + textFile, true))
             {
                 tw.WriteLine(Format(message, args));
             }
@@ -103,7 +109,7 @@ namespace BabBot.Common
         /// <param name="sender">Should always be "this"</param>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        internal static void Debug(string message, object sender)
+        internal void Debug(string message, object sender)
         {
             if (LogDebug)
             {
@@ -119,7 +125,7 @@ namespace BabBot.Common
         /// Debugs the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal static void Debug(string message)
+        internal void Debug(string message)
         {
             if (LogDebug)
             {
@@ -131,6 +137,7 @@ namespace BabBot.Common
             }
         }
 
+        /*
         /// <summary>
         /// Normal output to the console window.
         /// </summary>
@@ -143,6 +150,7 @@ namespace BabBot.Common
                 OutputEvent(message);
             }
         }
+        */
 
         /// <summary>
         /// Formats the specified message. This is the equivalent to String.Format, except that it already includes the culture
@@ -176,7 +184,7 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="messageType">Type of the message.</param>
-        internal static DialogResult MsgBox(string message, OBMessageBoxType messageType)
+        internal DialogResult MsgBox(string message, OBMessageBoxType messageType)
         {
             if (String.IsNullOrEmpty(message))
             {
