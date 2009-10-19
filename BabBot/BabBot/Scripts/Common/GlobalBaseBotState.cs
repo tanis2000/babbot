@@ -39,7 +39,7 @@ namespace BabBot.Scripts.Common
         protected float MaxMeleeDistance = 5.0f;
         protected float MaxRangedDistance = 25.0f;
 
-        protected float MinDistanceFromCorpse = 20.0f;
+        public static float MinDistanceFromCorpse = 20.0f;
                         // Minimum distance from corpse after which we stop pathing looking for it
 
         protected int MinHPPct = 80; // Minimum health percentage to start eating
@@ -245,7 +245,7 @@ namespace BabBot.Scripts.Common
             string scroll = CheckForScroll(player, kind);
             if (scroll != "")
             {
-                Console.WriteLine(string.Format("Using scroll of {0}", kind));
+                Output.Instance.Script(string.Format("Using scroll of {0}", kind), this);
                 player.TargetMe();
                 Consumable.UseScroll(kind);
                 return;
@@ -383,8 +383,136 @@ namespace BabBot.Scripts.Common
             //Main update loop.  Basically just do a bunch of checks and then 
             // let another state take over.
 
+            if (!Entity.StateMachine.IsRunning)
+            {
+                /// Right now we only make sure that we're no longer moving around.
+                /// At some point we might want to switch to a stop state to also stop fighting,
+                /// ressing or whatever else can happen
+                Entity.Stop();
+                return;
+            }
+
+
+            if (Entity.StateMachine.IsInState(typeof(AttackNearMobState)))
+            {
+                if (Entity.IsBeingAttacked())
+                {
+                    /// We should target the mob that is attacking us
+                    /// and I have no clue how to do it at the moment.
+                    /// That way we can also know the location of the mob
+                    /// in case we want to move closer in order to be able to fight
+                    /// if it's a caster
+                    /// 
+                    /// Idea #1:
+                    /// get the mob GUID (we have it) 
+                    /// get the location of that mob
+                    /// turn in order to face it
+                    /// send TAB and check the current target GUID and keep
+                    /// TABbing until the GUID matches
+                    /// 
+                    /// Should we implement this in the cscript? (I think so)
+                    var pcs = new PreCombatState();
+                    CallChangeStateEvent(Entity, pcs, true, false);
+                    return;
+                }
+
+                if (Entity.EnemyInSight())
+                {
+                    /// We have an enemy somewhere around us, we'd better get ready for the fight
+                    var pcs = new PreCombatState();
+                    CallChangeStateEvent(Entity, pcs, true, false);
+                    return;
+                }
+
+            }
+
+
+            if (Entity.StateMachine.IsInState(typeof(PreCombatState)))
+            {
+                if ((Entity.IsBeingAttacked()) || (Entity.HasTarget))
+                {
+                    var ics = new InCombatState();
+                    CallChangeStateEvent(Entity, ics, true, false);
+                    return;
+                }
+
+                if (!Entity.HasTarget)
+                {
+                    var rs = new RoamingState();
+                    CallChangeStateEvent(Entity, rs, true, false);
+                    return;
+
+                }
+            }
+
+
+            if (Entity.StateMachine.IsInState(typeof(InCombatState)))
+            {
+                /// We should check if our target died and
+                /// in that case go to PostCombat, but we lose target once the
+                /// mob dies, so we cannot use that. We've got to come up with
+                /// a better idea. 
+                if (!Entity.HasTarget)
+                {
+                    var pcs = new PostCombatState();
+                    CallChangeStateEvent(Entity, pcs, true, false);
+                    return;
+                }
+            }
+
+            if (Entity.StateMachine.IsInState(typeof(PostCombatState)))
+            {
+                if (NeedRest())
+                {
+                    var rs = new RestState();
+                    CallChangeStateEvent(Entity, rs, true, false);
+                    return;
+                }
+            }
+
+            /*
+            if (Entity.StateMachine.IsInState(typeof(PreRestState)))
+            {
+                /// We should check if we finished resting
+                CurrentState = PlayerState.Rest;
+                return;
+            }
+            */
+
+            if (Entity.StateMachine.IsInState(typeof(RestState)))
+            {
+                /// We ask the script if we should keep resting
+                if (!NeedRest())
+                {
+                    var rs = new RoamingState();
+                    CallChangeStateEvent(Entity, rs, true, false);
+                    return;
+                }
+                return;
+            }
+
+            /*
+            if (Entity.StateMachine.IsInState(typeof(PostRestState)))
+            {
+                /// We finished resting, go back to roaming
+                CurrentState = PlayerState.Roaming;
+                return;
+            }
+            */
+
+            if (Entity.StateMachine.IsInState(typeof(DeadState)))
+            {
+                /// Let's see if we are still dead or what
+                if ((!Entity.IsDead) && (!Entity.IsGhost))
+                {
+                    var rs = new RoamingState();
+                    CallChangeStateEvent(Entity, rs, true, false);
+                }
+                return;
+            }
+
             //Check if dead, if so then switch over to the dead state
-            if (Entity.IsDead)
+            if (Entity.IsDead || Entity.IsGhost)
             {
                 //if the current state is not already dead then don't worry about it
                 if (!_IsDeadStateRunning)
@@ -402,12 +530,21 @@ namespace BabBot.Scripts.Common
                 return;
             }
 
+            /// We ask the script if we should keep resting
+            if (NeedRest())
+            {
+                var rs = new RestState();
+                CallChangeStateEvent(Entity, rs, true, false);
+            }
+
+/*
             //auto attack a target
             if (!Entity.StateMachine.IsInState(typeof (AttackNearMobState)))
             {
                 var anbs = new AttackNearMobState();
                 CallChangeStateEvent(Entity, anbs, true, false);
             }
+ */
         }
 
         private void deadState_Exited(object sender, StateEventArgs<WowPlayer> e)

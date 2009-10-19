@@ -16,6 +16,8 @@
   
     Copyright 2009 BabBot Team
 */
+using System;
+using BabBot.Common;
 using BabBot.Wow;
 using BabBot.States;
 
@@ -33,11 +35,13 @@ namespace BabBot.Scripts.Common
 
         protected override void DoExecute(WowPlayer Entity)
         {
-            //on execute, if the distance to our corpose is more then 5 yards, we need to get there
-            if (Entity.DistanceFromCorpse() > 5f)
+            //on execute, if the distance to our corpose is more than xx yards, we need to get there
+            Output.Instance.Script(string.Format("Distance from corpse: {0}", Entity.DistanceFromCorpse()), this);
+            if (Entity.DistanceFromCorpse() > GlobalBaseBotState.MinDistanceFromCorpse)
             {
+                Output.Instance.Script("We're still too far, walking to corpse");
                 // so we make a new move to state that will take us to our corpose
-                var mtsCorpse = new MoveToState(_CorpseLocation);
+                var mtsCorpse = new MoveToState(_CorpseLocation, GlobalBaseBotState.MinDistanceFromCorpse);
 
                 //request that we move to this location
                 CallChangeStateEvent(Entity, mtsCorpse, true, false);
@@ -45,8 +49,15 @@ namespace BabBot.Scripts.Common
                 return;
             }
 
-            //we should now web close to our corpse so rez!
-            // but since we can't yet... just finish and exit...
+            //we should now be close to our corpse so rez!
+            // TODO: we should check that there's no delay time running before trying this
+            Output.Instance.Script("Trying to resurrect", this);
+            Entity.RetrieveCorpse();
+
+            /// TODO: We should also check the time we spent running around trying to recover our corpse
+            /// and if it's over a certain threshold we should run back to the spirit healer and repop there
+
+            // We're done, let's finish & exit
             Finish(Entity);
             Exit(Entity);
         }

@@ -143,7 +143,7 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        internal void Script(string message)
+        public void Script(string message)
         {
             using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-ScriptLog.txt", DateString, ProcessManager.Config.LogPath), true))
             {
@@ -157,7 +157,7 @@ namespace BabBot.Common
         /// <param name="sender">Should always be "this"</param>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        internal void Script(string message, object sender)
+        public void Script(string message, object sender)
         {
             if (LogScript)
             {

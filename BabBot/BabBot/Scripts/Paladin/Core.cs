@@ -18,6 +18,7 @@
 */
 using System;
 using BabBot.Bot;
+using BabBot.Common;
 using BabBot.Scripting;
 using BabBot.Scripts.Common;
 using BabBot.Wow;
@@ -45,19 +46,19 @@ namespace BabBot.Scripts.Paladin
 
         #endregion
 
-        protected bool IsHealer()
+        protected override bool IsHealer()
         {
             return true;
         }
 
         protected void SelfHeal(WowPlayer player)
         {
-            Console.WriteLine("SelfHeal()");
+            Output.Instance.Script("SelfHeal()", this);
             foreach (var spell in HealingSpells)
             {
                 if (!spell.IsOnCooldown() && (spell.Cost < player.Mp))
                 {
-                    Console.WriteLine("SelfHeal() - Casting " + spell.Name);
+                    Output.Instance.Script("SelfHeal() - Casting " + spell.Name, this);
                     player.CastSpellByName(spell.Name, true);
                 }
             }
@@ -66,7 +67,7 @@ namespace BabBot.Scripts.Paladin
         // TODO: with some refactoring we could use this as a generic routine
         protected void OnInCombat(WowPlayer player)
         {
-            Console.WriteLine("Paladin->OnInCombat()");
+            Output.Instance.Script("OnInCombat()", this);
 
             if (!player.HasTarget || player.IsTargetDead())
             {
@@ -92,7 +93,7 @@ namespace BabBot.Scripts.Paladin
 
             if (player.DistanceFromTarget() > MaxMeleeDistance)
             {
-                Console.WriteLine("Paladin->OnInCombat() - Moving towards target");
+                Output.Instance.Script("OnInCombat() - Moving towards target", this);
                 player.FaceTarget();
                 player.MoveToTarget(MinMeleeDistance);
                 return;
@@ -139,7 +140,7 @@ namespace BabBot.Scripts.Paladin
                 if (player.TargetHpPct > 10)
                 {
                     HealSystem(player);
-                    Console.WriteLine("Hammer of Justice healing");
+                    Output.Instance.Script("Hammer of Justice healing", this);
                     return;
                 }
                 return;
@@ -318,19 +319,19 @@ namespace BabBot.Scripts.Paladin
 
             if (player.MpPct < RestMana && !player.IsCasting() && !player.HasBuff("Drink"))
             {
-                Console.WriteLine("Resting for mana");
+                Output.Instance.Script("Resting for mana", this);
                 return true;
             }
 
             if (player.MpPct < MinMPPct && player.HasBuff("Drink"))
             {
-                Console.WriteLine("Resting to continue drinking");
+                Output.Instance.Script("Resting to continue drinking", this);
                 return true;
             }
 
             if (player.HpPct < RestHp && !player.IsCasting() && !player.HasBuff("Drink"))
             {
-                Console.WriteLine("Resting for health");
+                Output.Instance.Script("Resting for health", this);
                 return true;
             }
 
@@ -340,7 +341,7 @@ namespace BabBot.Scripts.Paladin
 
         protected void OnRest(WowPlayer player)
         {
-            Console.WriteLine("OnRest()");
+            Output.Instance.Script("OnRest()", this);
 
             if (player.IsCasting() && player.HpPct > 90)
             {
@@ -357,7 +358,7 @@ namespace BabBot.Scripts.Paladin
             if (player.HasDebuff("Resurrection Sickness") && !player.IsSitting)
             {
                 Sit(player);
-                Console.WriteLine("OnRest() - We have resurrection sickness. We stay put.");
+                Output.Instance.Script("OnRest() - We have resurrection sickness. We stay put.", this);
                 return;
             }
 

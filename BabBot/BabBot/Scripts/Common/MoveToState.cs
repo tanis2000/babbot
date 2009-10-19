@@ -36,6 +36,11 @@ namespace BabBot.Scripts.Common
             SetDefaults(Destination);
         }
 
+        public MoveToState(Vector3D Destination, float iTolerance)
+        {
+            SetDefaults(Destination, iTolerance);
+        }
+
         public MoveToState(Path TravelPath)
         {
             this.TravelPath = TravelPath;
@@ -48,10 +53,15 @@ namespace BabBot.Scripts.Common
         public Location CurrentWaypoint { get; protected set; }
         public float Tolerance { get; protected set; }
 
-        protected void SetDefaults(Vector3D Destination)
+        protected void SetDefaults(Vector3D iDestination, float iTolerance)
         {
-            this.Destination = Destination;
-            Tolerance = 1.0f;
+            Destination = iDestination;
+            Tolerance = iTolerance;
+        }
+
+        protected void SetDefaults(Vector3D iDestination)
+        {
+            SetDefaults(Destination, 1.0f);
         }
 
         protected override void DoEnter(WowPlayer Entity)
