@@ -195,6 +195,29 @@ namespace BabBot.Manager
                     //verify we haven't already opened it, like when we do injection
                     if(!wowProcess.IsProcessOpen)
                     ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
+
+                    Thread.Sleep(5000);
+
+                    Injector.Lua_RegisterInputHandler();
+                    Injector.Lua_DoString(@"(function()
+                        AccountLoginAccountEdit:SetText('attn');
+                        AccountLoginPasswordEdit:SetText('game2009z');
+                        DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText());
+                    end)()");
+                    
+                    // Injector.Lua_RegisterInputHandler();
+                    // Injector.Lua_DoString(@"DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText())");
+
+                    for (int i = 0; i < 25; i++)
+                    {
+                        Injector.Lua_DoString(@"(function()
+                        return GlueDialog::GetDialogText();
+                    end)()");
+
+                        String s = Injector.Lua_GetLocalizedText(0);
+                        Output.Instance.Log("GlueDialog: [" + s + "]");
+                    }
+
                 }
             }
             catch (Exception e)
@@ -238,7 +261,24 @@ namespace BabBot.Manager
 
                 if (!string.IsNullOrEmpty(wowPath))
                 {
-                    process = AppHelper.RunAs(Config.GuestUsername, Config.GuestPassword, null, wowPath);
+                    // Guest account might not be enabled
+                    try
+                    {
+                        process = AppHelper.RunAs(Config.GuestUsername, 
+                                            Config.GuestPassword, null, wowPath);
+                    }
+                    catch (Win32Exception w32e)
+                    {
+                        if (WoWProcessFailed != null)
+                        {
+                            WoWProcessFailed("Unable start '" + wowPath + 
+                              "' under Guest account (" + w32e.Message + ").\n" + 
+                              "Check that path correct and Guest account enabled." );
+                        }
+
+                        return;
+
+                    }
                     // The process is now being started as suspended. We should actually
                     // create our own IDirect3DDevice and get the pointer to the EndScene function
                     // and then save it, resume wow, do all our stuff and use that pointer when we 
