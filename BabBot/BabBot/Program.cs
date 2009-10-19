@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using BabBot.Forms;
+using BabBot.Manager;
 
 namespace BabBot
 {
@@ -30,7 +31,7 @@ namespace BabBot
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
             try
             {
@@ -55,6 +56,24 @@ namespace BabBot
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // Create log directory if doesn't existst
+            if (!Directory.Exists(ProcessManager.Config.LogPath))
+                Directory.CreateDirectory(ProcessManager.Config.LogPath);
+
+            // Check and parse command line parameters before start MainForm
+            if (args.Length > 0)
+            {
+                foreach (string arg in args)
+                {
+                    if (arg.Equals("-a"))
+                    {
+                        // Set auto-mode
+                        ProcessManager.SetAutoRun();
+                    }
+                }
+            }
+
             var mainForm = new MainForm();
             Application.ThreadException += mainForm.UnhandledThreadExceptionHandler;
             try

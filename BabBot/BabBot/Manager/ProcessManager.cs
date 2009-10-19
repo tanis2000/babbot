@@ -124,6 +124,7 @@ namespace BabBot.Manager
         public static Host ScriptHost;
         public static uint TLS;
         public static int WowHWND;
+        private static bool arun = false;
 
         static ProcessManager()
         {
@@ -458,5 +459,17 @@ namespace BabBot.Manager
             SThread.ResumeThread(hThread);
         }
 
-    }
+        /// <summary>
+        /// Get AutoRun mode
+        /// </summary>
+        public static bool AutoRun
+        {
+            get { return arun; }
+        }
+
+        public static void SetAutoRun()
+        {
+            arun = true;
+        }
+     }
 }
