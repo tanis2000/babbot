@@ -48,6 +48,7 @@ namespace BabBot.Forms
             Output.OutputEvent += LogOutput;
             Output.DebugEvent += LogDebug;
             Output.Instance.LogDebug = true; // We force logging of debug messages for now (it should become an option)
+            Output.Instance.LogScript = true; // We force logging of script messages for debugging purpouses
             Output.Instance.Log("Initializing..");
             
 
@@ -239,7 +240,7 @@ namespace BabBot.Forms
             {
                 // Main Thread
                 btnRun.Enabled = true;
-                btnAttachToWow.Enabled = true;
+                //btnAttachToWow.Enabled = true;
 
                 // Stop the reading thread
                 ProcessManager.BotManager.Stop();
@@ -480,6 +481,7 @@ namespace BabBot.Forms
                 return;
             }
 
+            /*
             //if a normal path exists, use it, else exit and don't start
             // TODO: this is wrong, we should start the state machine even if there's no waypoints (I guess we're doing this because the test script is just a pathing one for now)
             if (WayPointManager.Instance.NormalNodeCount <= 0)
@@ -494,7 +496,7 @@ namespace BabBot.Forms
             }
 
             ProcessManager.Player.StateMachine.SetGlobalState(new BabBot.States.Common.MoveToState(p));
-
+            */
 
             ProcessManager.Player.StateMachine.IsRunning = true;
             //StateManager.Instance.Start();
@@ -699,6 +701,27 @@ namespace BabBot.Forms
             }
         }
         #endregion
+
+        private void btnLoadScript_Click(object sender, EventArgs e)
+        {
+            if (ProcessManager.Player == null)
+            {
+                Output.Instance.Log("Cannot load a script as the bot has not yet been initialized. Make sure that WoW is running and that a character has been logged in.");
+                return;
+            }
+
+            var dlg = new OpenFileDialog { Multiselect = false, Filter = "BabBot Script (*.cs)|*.cs" };
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                // Make sure the State Machine is stopped
+                ProcessManager.Player.StateMachine.IsRunning = false;
+                
+                ProcessManager.ScriptHost.Start(dlg.FileName);
+
+                // UI Stuff
+                tbScript.Text = dlg.FileName;
+            }
+        }
 
 
 

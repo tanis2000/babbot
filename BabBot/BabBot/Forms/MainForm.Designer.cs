@@ -153,6 +153,11 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label34 = new System.Windows.Forms.Label();
+            this.tbScript = new System.Windows.Forms.TextBox();
+            this.btnLoadScript = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -166,6 +171,8 @@
             this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -242,18 +249,10 @@
             // 
             // tabPageMain
             // 
+            this.tabPageMain.Controls.Add(this.groupBox5);
+            this.tabPageMain.Controls.Add(this.groupBox1);
             this.tabPageMain.Controls.Add(this.txtConsole);
-            this.tabPageMain.Controls.Add(this.btnStopBot);
-            this.tabPageMain.Controls.Add(this.btnStartBot);
             this.tabPageMain.Controls.Add(this.btnAttachToWow);
-            this.tabPageMain.Controls.Add(this.label9);
-            this.tabPageMain.Controls.Add(this.label8);
-            this.tabPageMain.Controls.Add(this.tbProfileDescription);
-            this.tabPageMain.Controls.Add(this.tbProfileName);
-            this.tabPageMain.Controls.Add(this.btnSaveProfile);
-            this.tabPageMain.Controls.Add(this.btnLoadProfile);
-            this.tabPageMain.Controls.Add(this.tbProfile);
-            this.tabPageMain.Controls.Add(this.label7);
             this.tabPageMain.Controls.Add(this.btnRun);
             this.tabPageMain.Location = new System.Drawing.Point(4, 22);
             this.tabPageMain.Name = "tabPageMain";
@@ -265,16 +264,16 @@
             // 
             // txtConsole
             // 
-            this.txtConsole.Location = new System.Drawing.Point(6, 182);
+            this.txtConsole.Location = new System.Drawing.Point(6, 242);
             this.txtConsole.Name = "txtConsole";
             this.txtConsole.ReadOnly = true;
-            this.txtConsole.Size = new System.Drawing.Size(558, 182);
+            this.txtConsole.Size = new System.Drawing.Size(558, 122);
             this.txtConsole.TabIndex = 90;
             this.txtConsole.Text = "";
             // 
             // btnStopBot
             // 
-            this.btnStopBot.Location = new System.Drawing.Point(369, 153);
+            this.btnStopBot.Location = new System.Drawing.Point(132, 74);
             this.btnStopBot.Name = "btnStopBot";
             this.btnStopBot.Size = new System.Drawing.Size(75, 23);
             this.btnStopBot.TabIndex = 17;
@@ -284,7 +283,7 @@
             // 
             // btnStartBot
             // 
-            this.btnStartBot.Location = new System.Drawing.Point(288, 153);
+            this.btnStartBot.Location = new System.Drawing.Point(51, 74);
             this.btnStartBot.Name = "btnStartBot";
             this.btnStartBot.Size = new System.Drawing.Size(75, 23);
             this.btnStartBot.TabIndex = 16;
@@ -306,7 +305,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(8, 96);
+            this.label9.Location = new System.Drawing.Point(6, 73);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(35, 13);
             this.label9.TabIndex = 14;
@@ -315,7 +314,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(8, 68);
+            this.label8.Location = new System.Drawing.Point(6, 45);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(38, 13);
             this.label8.TabIndex = 13;
@@ -323,24 +322,24 @@
             // 
             // tbProfileDescription
             // 
-            this.tbProfileDescription.Location = new System.Drawing.Point(48, 93);
+            this.tbProfileDescription.Location = new System.Drawing.Point(46, 70);
             this.tbProfileDescription.Multiline = true;
             this.tbProfileDescription.Name = "tbProfileDescription";
-            this.tbProfileDescription.Size = new System.Drawing.Size(234, 83);
+            this.tbProfileDescription.Size = new System.Drawing.Size(215, 83);
             this.tbProfileDescription.TabIndex = 12;
             this.tbProfileDescription.TextChanged += new System.EventHandler(this.tbProfileDescription_TextChanged);
             // 
             // tbProfileName
             // 
-            this.tbProfileName.Location = new System.Drawing.Point(48, 66);
+            this.tbProfileName.Location = new System.Drawing.Point(46, 43);
             this.tbProfileName.Name = "tbProfileName";
-            this.tbProfileName.Size = new System.Drawing.Size(234, 20);
+            this.tbProfileName.Size = new System.Drawing.Size(215, 20);
             this.tbProfileName.TabIndex = 11;
             this.tbProfileName.TextChanged += new System.EventHandler(this.tbProfileName_TextChanged);
             // 
             // btnSaveProfile
             // 
-            this.btnSaveProfile.Location = new System.Drawing.Point(369, 34);
+            this.btnSaveProfile.Location = new System.Drawing.Point(126, 159);
             this.btnSaveProfile.Name = "btnSaveProfile";
             this.btnSaveProfile.Size = new System.Drawing.Size(75, 23);
             this.btnSaveProfile.TabIndex = 10;
@@ -350,7 +349,7 @@
             // 
             // btnLoadProfile
             // 
-            this.btnLoadProfile.Location = new System.Drawing.Point(288, 34);
+            this.btnLoadProfile.Location = new System.Drawing.Point(45, 159);
             this.btnLoadProfile.Name = "btnLoadProfile";
             this.btnLoadProfile.Size = new System.Drawing.Size(75, 23);
             this.btnLoadProfile.TabIndex = 9;
@@ -360,16 +359,16 @@
             // 
             // tbProfile
             // 
-            this.tbProfile.Location = new System.Drawing.Point(48, 36);
+            this.tbProfile.Location = new System.Drawing.Point(46, 13);
             this.tbProfile.Name = "tbProfile";
             this.tbProfile.ReadOnly = true;
-            this.tbProfile.Size = new System.Drawing.Size(234, 20);
+            this.tbProfile.Size = new System.Drawing.Size(215, 20);
             this.tbProfile.TabIndex = 7;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 39);
+            this.label7.Location = new System.Drawing.Point(6, 16);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(39, 13);
             this.label7.TabIndex = 6;
@@ -1365,6 +1364,64 @@
             this.statusLabel.Size = new System.Drawing.Size(62, 17);
             this.statusLabel.Text = "statusLabel";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.tbProfile);
+            this.groupBox1.Controls.Add(this.tbProfileName);
+            this.groupBox1.Controls.Add(this.tbProfileDescription);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.btnSaveProfile);
+            this.groupBox1.Controls.Add(this.btnLoadProfile);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Location = new System.Drawing.Point(8, 35);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(276, 197);
+            this.groupBox1.TabIndex = 91;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Profile";
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.btnLoadScript);
+            this.groupBox5.Controls.Add(this.label34);
+            this.groupBox5.Controls.Add(this.tbScript);
+            this.groupBox5.Controls.Add(this.btnStopBot);
+            this.groupBox5.Controls.Add(this.btnStartBot);
+            this.groupBox5.Location = new System.Drawing.Point(290, 35);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(263, 197);
+            this.groupBox5.TabIndex = 92;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Script";
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(6, 16);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(37, 13);
+            this.label34.TabIndex = 8;
+            this.label34.Text = "Script:";
+            // 
+            // tbScript
+            // 
+            this.tbScript.Location = new System.Drawing.Point(51, 13);
+            this.tbScript.Name = "tbScript";
+            this.tbScript.ReadOnly = true;
+            this.tbScript.Size = new System.Drawing.Size(195, 20);
+            this.tbScript.TabIndex = 9;
+            // 
+            // btnLoadScript
+            // 
+            this.btnLoadScript.Location = new System.Drawing.Point(51, 45);
+            this.btnLoadScript.Name = "btnLoadScript";
+            this.btnLoadScript.Size = new System.Drawing.Size(75, 23);
+            this.btnLoadScript.TabIndex = 10;
+            this.btnLoadScript.Text = "Load";
+            this.btnLoadScript.UseVisualStyleBackColor = true;
+            this.btnLoadScript.Click += new System.EventHandler(this.btnLoadScript_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1384,7 +1441,6 @@
             this.msMain.PerformLayout();
             this.tabControlMain.ResumeLayout(false);
             this.tabPageMain.ResumeLayout(false);
-            this.tabPageMain.PerformLayout();
             this.tabPageWayPoints.ResumeLayout(false);
             this.tabPageWayPoints.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -1405,6 +1461,10 @@
             this.tabPageDebug2.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1536,6 +1596,11 @@
         private System.Windows.Forms.Button btnInjectDll;
         private System.Windows.Forms.RichTextBox txtConsole;
         private System.Windows.Forms.Button btnInputHandler;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Button btnLoadScript;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.TextBox tbScript;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 

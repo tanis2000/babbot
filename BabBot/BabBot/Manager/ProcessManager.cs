@@ -423,7 +423,7 @@ namespace BabBot.Manager
                 InitializeObjectManager();
                 Injector.Lua_RegisterInputHandler();
                 InitializeCaronte();
-                ScriptHost.Start();
+                //ScriptHost.Start();
                 //StateManager.Instance.Stop();
                 
                 Initialized = true;

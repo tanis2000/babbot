@@ -30,10 +30,10 @@ namespace BabBot.Scripting
     {
         private States.State<Wow.WowPlayer> script;
 
-        public void Start()
+        public void Start(string iScript)
         {
-            script = Load("Scripts/PatTestScript.cs");
-
+            //script = Load("Scripts/PatTestScript.cs");
+            script = Load(iScript);
             ProcessManager.Player.StateMachine.SetGlobalState(script);
         }
 
@@ -44,6 +44,9 @@ namespace BabBot.Scripting
 
             //true to share host assemblies
             CSScript.ShareHostRefAssemblies = true;
+
+            // do not cache the scripts
+            CSScript.CacheEnabled = false;
 
             Assembly asm = CSScript.Load(Path.GetFullPath(iScript), null, true);
 

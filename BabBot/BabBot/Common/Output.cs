@@ -25,6 +25,7 @@ namespace BabBot.Common
 
 
         public bool LogDebug;
+        public bool LogScript;
 
         private static string DateString
         {
@@ -134,6 +135,33 @@ namespace BabBot.Common
             if (DebugEvent != null)
             {
                 DebugEvent(Format("{0}", message));
+            }
+        }
+
+        /// <summary>
+        /// Simple logging for scripts. Will output to ScriptLog.txt.
+        /// </summary>
+        /// <param name="message">The message to be logged.</param>
+        /// <returns>Nothing.</returns>
+        internal void Script(string message)
+        {
+            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-ScriptLog.txt", DateString, ProcessManager.Config.LogPath), true))
+            {
+                w.WriteLine(Format("{0} {1}", BTimeString, message));
+            }
+        }
+
+        /// <summary>
+        /// Log a script message with reference to the script itself
+        /// </summary>
+        /// <param name="sender">Should always be "this"</param>
+        /// <param name="message">The message to be logged.</param>
+        /// <returns>Nothing.</returns>
+        internal void Script(string message, object sender)
+        {
+            if (LogScript)
+            {
+                Script(Format("[{0}] {1}", sender.GetType().Name, message));
             }
         }
 

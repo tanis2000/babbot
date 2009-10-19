@@ -613,11 +613,12 @@ namespace BabBot.Manager
                 //RemoteObject.Patch();
 
                 Injected = true;
-                Console.WriteLine("Dante injected");
+                Output.Instance.Log("Dante injected");
             }
             catch (Exception ExtInfo)
             {
-                Console.WriteLine("There was an error while connecting to target:\r\n{0}", ExtInfo);
+                Output.Instance.Log("There was an error while connecting to the target DLL");
+                Output.Instance.LogError(ExtInfo);
             }
         }
 

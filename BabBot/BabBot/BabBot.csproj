@@ -179,9 +179,9 @@
     <Compile Include="Scripting\UnitWrapper.cs" />
     <Compile Include="Scripting\Host.cs" />
     <Compile Include="Scripting\PlayerWrapper.cs" />
-    <None Include="Scripts\Paladin.cs">
+    <Compile Include="Scripts\Paladin\Core.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Compile>
     <None Include="Scripts\PatTestScript.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -189,6 +189,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scripts\ZFClassScript.cs" />
+    <Compile Include="Scripts\Common\AttackNearMobState.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Scripts\Common\DeadState.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Scripts\Common\GlobalBaseBotState.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Scripts\Common\MoveToState.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="States\ChangeStateEventArgs.cs" />
     <Compile Include="States\Common\AttackNearMobState.cs" />
     <Compile Include="States\Common\DeadState.cs" />

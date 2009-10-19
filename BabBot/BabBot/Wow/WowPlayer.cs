@@ -1445,6 +1445,41 @@ end)()");
             ProcessManager.Injector.Lua_DoString(string.Format("TargetUnit(\"player\");"));
         }
 
+        public void CastSpellByName(string name)
+        {
+            CastSpellByName(name, false);
+        }
+
+        public void CastSpellByName(string name, bool onSelf)
+        {
+            ProcessManager.Injector.CastSpellByName(name, onSelf);
+        }
+
+        public int HpPct
+        {
+            get { return (int) ((float) ((float) Hp/(float) MaxHp)*100); }
+        }
+
+        public int MpPct
+        {
+            get { return (int) ((float) ((float) Mp/(float) MaxMp)*100); }
+        }
+
+        public int TargetHpPct
+        {
+            get { return (int) ((TargetHp/TargetMaxHp)*100); }
+        }
+
+        public int TargetMpPct
+        {
+            get { return (int) ((TargetMp/TargetMaxMp)*100); }
+        }
+        
+        public void DoString(string iCommand)
+        {
+            ProcessManager.Injector.Lua_DoString(iCommand);
+        }
+
         // Actions
         public bool Cast(string SlotBar, string Key)
         {

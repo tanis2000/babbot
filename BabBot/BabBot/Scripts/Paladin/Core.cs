@@ -19,43 +19,13 @@
 using System;
 using BabBot.Bot;
 using BabBot.Scripting;
+using BabBot.Scripts.Common;
+using BabBot.Wow;
 
-namespace BabBot.Scripts
+namespace BabBot.Scripts.Paladin
 {
-    public class Toon : Script, IScript
+    public class Core : GlobalBaseBotState
     {
-        #region IScript Members
-
-        void IScript.Init()
-        {
-            Console.WriteLine("Paladin->Init()");
-            // TODO: find a way to override this function so that we don't have to clone those lines
-            Bindings = new BindingList();
-            Actions = new PlayerActionList();
-            HealingSpells = new SpellList();
-
-            SConsumable.Instance.Init(player);
-            Consumable = SConsumable.Instance;
-
-            // TODO: get that stuff out of the way and load bindings from the appropriate XML file
-            var b = new Binding("melee", 1, "1");
-            Bindings.Add(b.Name, b);
-            b = new Binding("test", 1, "2");
-            Bindings.Add(b.Name, b);
-
-            var a = new PlayerAction("attack", Bindings["melee"], 0.0f, 0.0f, false, true);
-            Actions.Add(a.Name, a);
-            a = new PlayerAction("fakeattack", Bindings["test"], 0.0f, 2.0f, true, true);
-            Actions.Add(a.Name, a);
-
-            // Populate the list of our healing spells
-            var s = new Spell("Holy Light", 1);
-            HealingSpells.Add(s);
-            // TODO: We should sort the list by weight now 
-        }
-
-        #endregion
-
         #region Paladin specific settings
 
         protected string multiAura = "Retribution Aura";
@@ -75,17 +45,17 @@ namespace BabBot.Scripts
 
         #endregion
 
-        protected override bool IsHealer()
+        protected bool IsHealer()
         {
             return true;
         }
 
-        protected override void SelfHeal()
+        protected void SelfHeal(WowPlayer player)
         {
             Console.WriteLine("SelfHeal()");
             foreach (var spell in HealingSpells)
             {
-                if (!spell.IsOnCooldown() && (spell.Cost < player.Mp()))
+                if (!spell.IsOnCooldown() && (spell.Cost < player.Mp))
                 {
                     Console.WriteLine("SelfHeal() - Casting " + spell.Name);
                     player.CastSpellByName(spell.Name, true);
@@ -94,11 +64,11 @@ namespace BabBot.Scripts
         }
 
         // TODO: with some refactoring we could use this as a generic routine
-        protected override void OnInCombat()
+        protected void OnInCombat(WowPlayer player)
         {
             Console.WriteLine("Paladin->OnInCombat()");
 
-            if (!player.HasTarget() || player.IsTargetDead())
+            if (!player.HasTarget || player.IsTargetDead())
             {
                 return;
             }
@@ -143,32 +113,32 @@ namespace BabBot.Scripts
                 player.AttackTarget();
             }
 
-            if (player.HpPct() <= HpPctEmergency)
+            if (player.HpPct <= HpPctEmergency)
             {
-                Emergency();
+                Emergency(player);
             }
 
-            if (player.HpPct() <= HpPctPotion && HasHealthPotion())
+            if (player.HpPct <= HpPctPotion && HasHealthPotion())
             {
                 player.SpellStopCasting();
                 // TODO: implement a function to select the best health potion and drink it
                 //player.TakePotion("HP");
             }
 
-            if (player.MpPct() <= MpPctPotion && HasManaPotion())
+            if (player.MpPct <= MpPctPotion && HasManaPotion())
             {
                 player.SpellStopCasting();
                 // TODO: implement a function to select the best mana potion and drink it
                 //player.TakePotion("MP");
             }
 
-            if (player.HpPct() <= HpHammer && player.MpPct() > 5 && player.HpPct() >= HpPctEmergency && player.CanCast("Hammer of Justice"))
+            if (player.HpPct <= HpHammer && player.MpPct > 5 && player.HpPct >= HpPctEmergency && player.CanCast("Hammer of Justice"))
             {
                 player.CastSpellByName("Hammer of Justice", true);
 
-                if (player.TargetHpPct() > 10)
+                if (player.TargetHpPct > 10)
                 {
-                    HealSystem();
+                    HealSystem(player);
                     Console.WriteLine("Hammer of Justice healing");
                     return;
                 }
@@ -199,7 +169,7 @@ namespace BabBot.Scripts
             }
             */
 
-            if (player.TargetHpPct() <= 20)
+            if (player.TargetHpPct <= 20)
             {
                 FinalFight();
             }
@@ -213,7 +183,7 @@ namespace BabBot.Scripts
             /*
             if (useExorcism)
             {
-                if (player.MpPct() > 30 && player.TargetHpPct() > exorcismHp && player.CanCast("Exorcism") && player.TargetCreatureType() == "Undead" || player.TargetCreatureType() == "Demon")
+                if (player.MpPct > 30 && player.TargetHpPct > exorcismHp && player.CanCast("Exorcism") && player.TargetCreatureType() == "Undead" || player.TargetCreatureType() == "Demon")
                 {
                     player.CastSpellByName("Exorcism");
                 }
@@ -229,12 +199,12 @@ namespace BabBot.Scripts
             /*
             if (player.Race() == "Blood Elf")
             {
-                if (player.Buff("Mana Tap").Application > 0 && player.MpPct() <= 20)
+                if (player.Buff("Mana Tap").Application > 0 && player.MpPct <= 20)
                 {
                     player.SpellStopCasting();
                     player.CastSpellByName("Arcane Torrent");
                 }
-                if (player.TargetMpPct() > 0 && player.IsActionUsable("Mana Tap") && player.Buff("Mana Tap").Application < 3) 
+                if (player.TargetMpPct > 0 && player.IsActionUsable("Mana Tap") && player.Buff("Mana Tap").Application < 3) 
                 {
                     player.CastSpellByName("Mana Tap");
                 }
@@ -243,7 +213,7 @@ namespace BabBot.Scripts
         }
 
 
-        protected void Emergency()
+        protected void Emergency(WowPlayer player)
         {
             if (!player.IsCasting("Holy Light") && !player.IsCasting("Flash of Light"))
             {
@@ -261,13 +231,13 @@ namespace BabBot.Scripts
                             player.SpellStopCasting();
                             player.CastSpellByName("Divine Protection");
                         }
-                        HealSystem();
+                        HealSystem(player);
                     }
                     else if (player.CanCast("Blessing of Protection"))
                     {
                         player.SpellStopCasting();
                         player.CastSpellByName("Blessing of Protection");
-                        HealSystem();
+                        HealSystem(player);
                     }
                 }
 
@@ -284,21 +254,21 @@ namespace BabBot.Scripts
 
                 if (player.HasBuff("Forbearance"))
                 {
-                    if (player.CanCast("Lay on Hands") && player.HpPct() < 24) 
+                    if (player.CanCast("Lay on Hands") && player.HpPct < 24) 
                     {
                         player.SpellStopCasting();
                         player.CastSpellByName("Lay on Hands");
                     }
                 }
 
-                if (player.HpPct() < MinHPPct)
+                if (player.HpPct < MinHPPct)
                 {
-                    HealSystem();
+                    HealSystem(player);
                 }
             }
         }
 
-        protected void HealSystem()
+        protected void HealSystem(WowPlayer player)
         {
             if (player.CanCast("Flash of Light"))
             {
@@ -329,9 +299,9 @@ namespace BabBot.Scripts
         {
         }
 
-        public override bool NeedRest()
+        public bool NeedRest(WowPlayer player)
         {
-            if (player.IsDead())
+            if (player.IsDead)
             {
                 return false;
             }
@@ -346,19 +316,19 @@ namespace BabBot.Scripts
                 return true;
             }
 
-            if (player.MpPct() < RestMana && !player.IsCasting() && !player.HasBuff("Drink"))
+            if (player.MpPct < RestMana && !player.IsCasting() && !player.HasBuff("Drink"))
             {
                 Console.WriteLine("Resting for mana");
                 return true;
             }
 
-            if (player.MpPct() < MinMPPct && player.HasBuff("Drink"))
+            if (player.MpPct < MinMPPct && player.HasBuff("Drink"))
             {
                 Console.WriteLine("Resting to continue drinking");
                 return true;
             }
 
-            if (player.HpPct() < RestHp && !player.IsCasting() && !player.HasBuff("Drink"))
+            if (player.HpPct < RestHp && !player.IsCasting() && !player.HasBuff("Drink"))
             {
                 Console.WriteLine("Resting for health");
                 return true;
@@ -368,11 +338,11 @@ namespace BabBot.Scripts
             return false;
         }
 
-        protected override void OnRest()
+        protected void OnRest(WowPlayer player)
         {
             Console.WriteLine("OnRest()");
 
-            if (player.IsCasting() && player.HpPct() > 90)
+            if (player.IsCasting() && player.HpPct > 90)
             {
                 // we don't need to finish casting a healing spell, let's stop it
                 player.SpellStopCasting();
@@ -384,9 +354,9 @@ namespace BabBot.Scripts
                 player.Stop();
             }
 
-            if (player.HasDebuff("Resurrection Sickness") && !player.IsSitting())
+            if (player.HasDebuff("Resurrection Sickness") && !player.IsSitting)
             {
-                Sit();
+                Sit(player);
                 Console.WriteLine("OnRest() - We have resurrection sickness. We stay put.");
                 return;
             }
@@ -394,41 +364,41 @@ namespace BabBot.Scripts
             DebuffAll();
 
             
-            if (scrollSpam && CanUseScroll())
+            if (scrollSpam && CanUseScroll(player))
             {
-                UseScroll();
+                UseScroll(player);
             }
             
 
             if (!debuffStatus)
             {
-                if (player.MpPct() >= RestMana && player.HpPct() <= MinHPPct && Consumable.HasBandage() && useBandage)
+                if (player.MpPct >= RestMana && player.HpPct <= MinHPPct && Consumable.HasBandage() && useBandage)
                 {
                     Consumable.UseBandage();
                 }
             }
 
-            if (player.HpPct() >= MinHPPct && player.MpPct() >= MinMPPct)
+            if (player.HpPct >= MinHPPct && player.MpPct >= MinMPPct)
             {
-                Stand();
+                Stand(player);
                 return;
             }
 
-            if (player.HpPct() <= RestHp && player.MpPct() > 10 && !player.HasBuff("Drink") && !player.IsCasting())
+            if (player.HpPct <= RestHp && player.MpPct > 10 && !player.HasBuff("Drink") && !player.IsCasting())
             {
-                if (player.IsSitting())
+                if (player.IsSitting)
                 {
-                    Stand();
+                    Stand(player);
                 }
 
                 if (!player.IsCasting())
                 {
-                    HealSystem();
+                    HealSystem(player);
                     return;
                 }
             }
             
-            if (!player.HasBuff("Drink") && player.MpPct() <= RestMana && !player.IsCasting())
+            if (!player.HasBuff("Drink") && player.MpPct <= RestMana && !player.IsCasting())
             {
                 if (Consumable.HasDrink())
                 {
