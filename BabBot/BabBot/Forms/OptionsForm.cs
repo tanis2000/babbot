@@ -19,6 +19,9 @@ namespace BabBot.Forms
             tbGuestPassword.Text = ProcessManager.Config.GuestPassword;
             cbDebugMode.Checked = ProcessManager.Config.DebugMode;
             tbLogsPath.Text = ProcessManager.Config.LogPath;
+            cbAutoLogin.Checked = ProcessManager.Config.AutoLogin;
+            tbLoginUsername.Text = ProcessManager.Config.LoginUsername;
+            tbLoginPassword.Text = ProcessManager.Config.LoginPassword;
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -28,6 +31,9 @@ namespace BabBot.Forms
             ProcessManager.Config.GuestPassword = tbGuestPassword.Text;
             ProcessManager.Config.DebugMode = cbDebugMode.Checked;
             ProcessManager.Config.LogPath = tbLogsPath.Text;
+            ProcessManager.Config.AutoLogin = cbAutoLogin.Checked;
+            ProcessManager.Config.LoginUsername = tbLoginUsername.Text;
+            ProcessManager.Config.LoginPassword = tbLoginPassword.Text;
         }
 
         private void btnBrowseWowExec_Click(object sender, EventArgs e)

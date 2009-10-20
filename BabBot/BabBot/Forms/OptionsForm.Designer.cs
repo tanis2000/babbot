@@ -61,6 +61,9 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnBrowseLogPath = new System.Windows.Forms.Button();
+            this.label85 = new System.Windows.Forms.Label();
+            this.tbLogsPath = new System.Windows.Forms.TextBox();
             this.ChkBoxLogOutput = new System.Windows.Forms.CheckBox();
             this.ChkBoxUseMount = new System.Windows.Forms.CheckBox();
             this.ChkBoxPullElites = new System.Windows.Forms.CheckBox();
@@ -486,9 +489,12 @@
             this.CobBoxEOTSGuardSpot = new System.Windows.Forms.ComboBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
-            this.btnBrowseLogPath = new System.Windows.Forms.Button();
-            this.label85 = new System.Windows.Forms.Label();
-            this.tbLogsPath = new System.Windows.Forms.TextBox();
+            this.tabPage24 = new System.Windows.Forms.TabPage();
+            this.cbAutoLogin = new System.Windows.Forms.CheckBox();
+            this.tbLoginUsername = new System.Windows.Forms.TextBox();
+            this.label86 = new System.Windows.Forms.Label();
+            this.label87 = new System.Windows.Forms.Label();
+            this.tbLoginPassword = new System.Windows.Forms.TextBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -562,6 +568,7 @@
             this.tabPage21.SuspendLayout();
             this.tabPage22.SuspendLayout();
             this.tabPage23.SuspendLayout();
+            this.tabPage24.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -587,6 +594,7 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage24);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Controls.Add(this.tabPage7);
@@ -641,6 +649,32 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // btnBrowseLogPath
+            // 
+            this.btnBrowseLogPath.Location = new System.Drawing.Point(357, 97);
+            this.btnBrowseLogPath.Name = "btnBrowseLogPath";
+            this.btnBrowseLogPath.Size = new System.Drawing.Size(75, 23);
+            this.btnBrowseLogPath.TabIndex = 257;
+            this.btnBrowseLogPath.Text = "Browse..";
+            this.btnBrowseLogPath.UseVisualStyleBackColor = true;
+            this.btnBrowseLogPath.Click += new System.EventHandler(this.btnBrowseLogPath_Click);
+            // 
+            // label85
+            // 
+            this.label85.AutoSize = true;
+            this.label85.Location = new System.Drawing.Point(8, 102);
+            this.label85.Name = "label85";
+            this.label85.Size = new System.Drawing.Size(55, 13);
+            this.label85.TabIndex = 256;
+            this.label85.Text = "Logs Path";
+            // 
+            // tbLogsPath
+            // 
+            this.tbLogsPath.Location = new System.Drawing.Point(105, 99);
+            this.tbLogsPath.Name = "tbLogsPath";
+            this.tbLogsPath.Size = new System.Drawing.Size(241, 20);
+            this.tbLogsPath.TabIndex = 255;
             // 
             // ChkBoxLogOutput
             // 
@@ -5200,31 +5234,62 @@
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
-            // btnBrowseLogPath
+            // tabPage24
             // 
-            this.btnBrowseLogPath.Location = new System.Drawing.Point(357, 97);
-            this.btnBrowseLogPath.Name = "btnBrowseLogPath";
-            this.btnBrowseLogPath.Size = new System.Drawing.Size(75, 23);
-            this.btnBrowseLogPath.TabIndex = 257;
-            this.btnBrowseLogPath.Text = "Browse..";
-            this.btnBrowseLogPath.UseVisualStyleBackColor = true;
-            this.btnBrowseLogPath.Click += new System.EventHandler(this.btnBrowseLogPath_Click);
+            this.tabPage24.Controls.Add(this.tbLoginPassword);
+            this.tabPage24.Controls.Add(this.label87);
+            this.tabPage24.Controls.Add(this.label86);
+            this.tabPage24.Controls.Add(this.tbLoginUsername);
+            this.tabPage24.Controls.Add(this.cbAutoLogin);
+            this.tabPage24.Location = new System.Drawing.Point(4, 22);
+            this.tabPage24.Name = "tabPage24";
+            this.tabPage24.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage24.Size = new System.Drawing.Size(599, 401);
+            this.tabPage24.TabIndex = 7;
+            this.tabPage24.Text = "Account";
+            this.tabPage24.UseVisualStyleBackColor = true;
             // 
-            // label85
+            // cbAutoLogin
             // 
-            this.label85.AutoSize = true;
-            this.label85.Location = new System.Drawing.Point(8, 102);
-            this.label85.Name = "label85";
-            this.label85.Size = new System.Drawing.Size(55, 13);
-            this.label85.TabIndex = 256;
-            this.label85.Text = "Logs Path";
+            this.cbAutoLogin.AutoSize = true;
+            this.cbAutoLogin.Location = new System.Drawing.Point(9, 7);
+            this.cbAutoLogin.Name = "cbAutoLogin";
+            this.cbAutoLogin.Size = new System.Drawing.Size(70, 17);
+            this.cbAutoLogin.TabIndex = 0;
+            this.cbAutoLogin.Text = "Autologin";
+            this.cbAutoLogin.UseVisualStyleBackColor = true;
             // 
-            // tbLogsPath
+            // tbLoginUsername
             // 
-            this.tbLogsPath.Location = new System.Drawing.Point(105, 99);
-            this.tbLogsPath.Name = "tbLogsPath";
-            this.tbLogsPath.Size = new System.Drawing.Size(241, 20);
-            this.tbLogsPath.TabIndex = 255;
+            this.tbLoginUsername.Location = new System.Drawing.Point(70, 30);
+            this.tbLoginUsername.Name = "tbLoginUsername";
+            this.tbLoginUsername.Size = new System.Drawing.Size(181, 20);
+            this.tbLoginUsername.TabIndex = 1;
+            // 
+            // label86
+            // 
+            this.label86.AutoSize = true;
+            this.label86.Location = new System.Drawing.Point(6, 33);
+            this.label86.Name = "label86";
+            this.label86.Size = new System.Drawing.Size(58, 13);
+            this.label86.TabIndex = 2;
+            this.label86.Text = "Username:";
+            // 
+            // label87
+            // 
+            this.label87.AutoSize = true;
+            this.label87.Location = new System.Drawing.Point(6, 59);
+            this.label87.Name = "label87";
+            this.label87.Size = new System.Drawing.Size(56, 13);
+            this.label87.TabIndex = 3;
+            this.label87.Text = "Password:";
+            // 
+            // tbLoginPassword
+            // 
+            this.tbLoginPassword.Location = new System.Drawing.Point(70, 56);
+            this.tbLoginPassword.Name = "tbLoginPassword";
+            this.tbLoginPassword.Size = new System.Drawing.Size(181, 20);
+            this.tbLoginPassword.TabIndex = 4;
             // 
             // OptionsForm
             // 
@@ -5336,6 +5401,8 @@
             this.tabPage22.PerformLayout();
             this.tabPage23.ResumeLayout(false);
             this.tabPage23.PerformLayout();
+            this.tabPage24.ResumeLayout(false);
+            this.tabPage24.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -5773,5 +5840,11 @@
         private System.Windows.Forms.Button btnBrowseLogPath;
         private System.Windows.Forms.Label label85;
         private System.Windows.Forms.TextBox tbLogsPath;
+        private System.Windows.Forms.TabPage tabPage24;
+        private System.Windows.Forms.TextBox tbLoginPassword;
+        private System.Windows.Forms.Label label87;
+        private System.Windows.Forms.Label label86;
+        private System.Windows.Forms.TextBox tbLoginUsername;
+        private System.Windows.Forms.CheckBox cbAutoLogin;
     }
 }

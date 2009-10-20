@@ -627,6 +627,12 @@ namespace BabBot.Manager
             RemoteObject.RegisterLuaHandler();
         }
 
+        public void Lua_UnRegisterInputHandler()
+        {
+            RemoteObject.RestorePatch();
+        }
+
+
         /// <summary>
         /// Wrapper for the RemoteDoString function.
         /// </summary>

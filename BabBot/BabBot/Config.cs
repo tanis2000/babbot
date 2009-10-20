@@ -29,5 +29,8 @@ namespace BabBot
         public string InteractKey = "{SHIFTD}ì{SHIFTU}";
         public string WowExePath = "";
         public string LogPath = ".\\Log";
+        public bool AutoLogin = false;
+        public string LoginUsername = "";
+        public string LoginPassword = "";
     }
 }

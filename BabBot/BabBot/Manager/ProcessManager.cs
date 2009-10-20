@@ -180,44 +180,48 @@ namespace BabBot.Manager
             try
             {
                 ProcessRunning = false;
-                // TODO: è un po sporca ogni tanto scazza, meglio usare una FindWindow, per
-                // sapere esattamente quando aprire il processo con BlackMagic
-                //process.WaitForInputIdle(15000);
+
                 if (process != null)
                 {
-                    // Set before to use BlackMagic methods
+                    // Set before using any BlackMagic methods
                     process.EnableRaisingEvents = true;
                     process.Exited += exitProcess;
 
                     WowHWND = AppHelper.WaitForWowWindow();
                     CommandManager.WowHWND = WowHWND;
 
-                    //verify we haven't already opened it, like when we do injection
+                    //verify we haven't already opened it, like when we do the injection
                     if(!wowProcess.IsProcessOpen)
                     ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
 
-                    Thread.Sleep(5000);
-
-                    Injector.Lua_RegisterInputHandler();
-                    Injector.Lua_DoString(@"(function()
-                        AccountLoginAccountEdit:SetText('attn');
-                        AccountLoginPasswordEdit:SetText('game2009z');
-                        DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText());
-                    end)()");
-                    
-                    // Injector.Lua_RegisterInputHandler();
-                    // Injector.Lua_DoString(@"DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText())");
-
-                    for (int i = 0; i < 25; i++)
+                    // We don't let anyone do anything until wow has finished launching
+                    // We look for the TLS first
+                    while (!FindTLS())
                     {
-                        Injector.Lua_DoString(@"(function()
-                        return GlueDialog::GetDialogText();
-                    end)()");
-
-                        String s = Injector.Lua_GetLocalizedText(0);
-                        Output.Instance.Log("GlueDialog: [" + s + "]");
+                        if (UpdateStatus != null)
+                        {
+                            UpdateStatus("Looking for the TLS..");
+                        }
+                        Thread.Sleep(250);
                     }
 
+
+
+                    // I'm pretty sure we should wait for something else to be instantiated
+                    // by the client before going on.. I just can't find what yet
+
+                    //Thread.Sleep(5000);
+
+                    // At this point it should be safe to do any LUA calls
+                    if (config.AutoLogin)
+                    {
+                        AutoLogin();
+                    } 
+                    else
+                    {
+                        // If we're not using autologin we make sure that the LUA hook is off the way until we are logged in
+                        Injector.Lua_UnRegisterInputHandler();
+                    }
                 }
             }
             catch (Exception e)
@@ -271,9 +275,9 @@ namespace BabBot.Manager
                     {
                         if (WoWProcessFailed != null)
                         {
-                            WoWProcessFailed("Unable start '" + wowPath + 
-                              "' under Guest account (" + w32e.Message + ").\n" + 
-                              "Check that path correct and Guest account enabled." );
+                            WoWProcessFailed("Unable to start '" + wowPath + 
+                              "' with the Guest account (" + w32e.Message + ").\n" + 
+                              "Check that the path is correct and the Guest account is enabled." );
                         }
 
                         return;
@@ -286,6 +290,7 @@ namespace BabBot.Manager
 
                     //Inject!!!!
                     Injector.InjectLua(process.Id);
+                    Injector.Lua_RegisterInputHandler();
 
                     // resume
                     ResumeMainWowThread();
@@ -411,9 +416,9 @@ namespace BabBot.Manager
         }
 
         /// <summary>
-        /// Try to find the Thread Local Storage: must be logged in WoW
+        /// Try to find the Thread Local Storage, aka WoW must be running
         /// </summary>
-        public static void FindTLS()
+        public static bool FindTLS()
         {
             try
             {
@@ -425,26 +430,64 @@ namespace BabBot.Manager
 
                 if (TLS == uint.MaxValue)
                 {
-                    throw new Exception("Could not find WoW's Object Manager.");
+                    //throw new Exception("Could not find WoW's Object Manager.");
+                    Output.Instance.Debug("Looking for the TLS returned an invalid value");
+                    return false;
                 }
 
                 if (UpdateStatus != null)
                 {
                     UpdateStatus("TLS found");
+                    Output.Instance.Debug("TLS found");
                 }
+
+                return true;
 
             } catch (Exception ex)
             {
-                throw new Exception("Cannot find the TLS");
+                //throw new Exception("Cannot find the TLS");
+                Output.Instance.Debug("Cannot find the TLS");
+                return false;
             }
         }
 
-        private static void InitializeObjectManager()
+        private static bool InitializeConnectionManager()
         {
-            Globals.ClientConnectionPointer = wowProcess.ReadUInt(TLS + 0x16);
-            Globals.ClientConnection = wowProcess.ReadUInt(Globals.ClientConnectionPointer);
-            Globals.ClientConnectionOffset = wowProcess.ReadUInt(TLS + 0x1C);
-            Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
+            try
+            {
+                Globals.ClientConnectionPointer = wowProcess.ReadUInt(TLS + 0x16);
+                Globals.ClientConnection = wowProcess.ReadUInt(Globals.ClientConnectionPointer);
+                if (Globals.ClientConnection == 0)
+                {
+                    Output.Instance.Debug("ClientConnection not yet available");
+                    return false;
+                }
+                Globals.ClientConnectionOffset = wowProcess.ReadUInt(TLS + 0x1C);
+                if (Globals.ClientConnectionOffset == 0)
+                {
+                    Output.Instance.Debug("ClientConnectionOffset not yet available");
+                    return false;
+                }
+                Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
+                if (Globals.CurMgr == 0)
+                {
+                    Output.Instance.Debug("ConnectionManager not yet available");
+                    return false;
+                }
+                //ObjectManager = new ObjectManager();
+                //Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
+                Output.Instance.Debug("ConnectionManager found");
+                return true;
+            }
+            catch(Exception e)
+            {
+                Output.Instance.Debug("ConnectionManager not found");
+                return false;
+            }
+        }
+
+        private static void InitializePlayer()
+        {
             ObjectManager = new ObjectManager();
             Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
         }
@@ -458,10 +501,21 @@ namespace BabBot.Manager
             {
                 if (UpdateStatus != null)
                 {
-                    UpdateStatus("Looking for the TLS");
+                    UpdateStatus("Initializing..");
                 }
-                FindTLS();
-                InitializeObjectManager();
+                //FindTLS();
+                //InitializeObjectManager();
+                while (!InitializeConnectionManager())
+                {
+                    if (UpdateStatus != null)
+                    {
+                        UpdateStatus("Looking for the ConnectionManager..");
+                    }
+                    Thread.Sleep(250);
+                } 
+                InitializePlayer();
+                // This might have already been done, but since we could have autologin disabled
+                // we do this again (there are no issues if you call this more than once anyway)
                 Injector.Lua_RegisterInputHandler();
                 InitializeCaronte();
                 //ScriptHost.Start();
@@ -510,6 +564,39 @@ namespace BabBot.Manager
         public static void SetAutoRun()
         {
             arun = true;
+        }
+
+        /// <summary>
+        /// Tries to log the user in
+        /// </summary>
+        protected static void AutoLogin()
+        {
+            Injector.Lua_DoString(string.Format(@"(function()
+                        AccountLoginAccountEdit:SetText('{0}')
+                        AccountLoginPasswordEdit:SetText('{1}')
+                        DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText())
+                    end)()", config.LoginUsername, config.LoginPassword));
+
+            // Unregister our hook right away before wow tries to login
+            Injector.Lua_UnRegisterInputHandler();
+
+            // Wait
+            Thread.Sleep(5000);
+
+            // Reregister the hook
+            Injector.Lua_RegisterInputHandler();
+
+            // This should return whether we are connected or not but it isn't working
+            Injector.Lua_DoString(@"(function()
+                    local connected = IsConnectedToServer()
+                    return connected
+                end)()");
+
+            string s = Injector.Lua_GetLocalizedText(0);
+            Output.Instance.Log("Connected: [" + s + "]");
+
+            // TODO: If we are connected to the server we should now select the character and press the enter world button
+            CommandManager.SendKeys(CommandManager.SK_ENTER);
         }
      }
 }
