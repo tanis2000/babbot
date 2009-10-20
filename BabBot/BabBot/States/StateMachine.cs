@@ -177,7 +177,7 @@ namespace BabBot.States
         /// <summary>Is state machine in the specified state?</summary>
         public bool IsInState(Type State)
         {
-            if (CurrentState != null && CurrentState.GetType() == State && CurrentState.ExitTime != DateTime.MinValue)
+            if (CurrentState != null && CurrentState.GetType() == State && CurrentState.ExitTime == DateTime.MinValue)
             {
                 return true;
             }

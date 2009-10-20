@@ -33,22 +33,22 @@ namespace BabBot.Scripts.Common
     {
         #region Configurable properties
 
-        protected int HpPctEmergency = 25; // Minimum health percentage at which we call the emergency healing routine
-        protected int HpPctPotion = 20; // Minimum health percentage at which we look for a health potion
+        public static int HpPctEmergency = 25; // Minimum health percentage at which we call the emergency healing routine
+        public static int HpPctPotion = 20; // Minimum health percentage at which we look for a health potion
         protected WowUnit LastTarget;
-        protected float MaxMeleeDistance = 5.0f;
-        protected float MaxRangedDistance = 25.0f;
+        public static float MinMeleeDistance = 1.0f;
+        public static float MaxMeleeDistance = 5.0f;
+        public static float MaxRangedDistance = 25.0f;
 
         public static float MinDistanceFromCorpse = 20.0f;
                         // Minimum distance from corpse after which we stop pathing looking for it
 
-        protected int MinHPPct = 80; // Minimum health percentage to start eating
-        protected float MinMeleeDistance = 1.0f;
-        protected int MinMPPct = 80; // Minimum mana percentage to start drinking
-        protected float MinRangedDistance = 15.0f;
-        protected int MpPctPotion = 15; // Minimum mana percentage at which we look for a mana potion
+        public static int MinHPPct = 80; // Minimum health percentage to start eating
+        public static int MinMPPct = 80; // Minimum mana percentage to start drinking
+        public static float MinRangedDistance = 15.0f;
+        public static int MpPctPotion = 15; // Minimum mana percentage at which we look for a mana potion
 
-        protected float PullRange = 25.0f; // Distance at which we want to pull mobs
+        public static float PullRange = 25.0f; // Distance at which we want to pull mobs
 
         #endregion
 
@@ -350,12 +350,12 @@ namespace BabBot.Scripts.Common
 
         #region Consumables
 
-        protected bool HasHealthPotion()
+        public static bool HasHealthPotion()
         {
             return false;
         }
 
-        protected bool HasManaPotion()
+        public static bool HasManaPotion()
         {
             return false;
         }
@@ -363,9 +363,23 @@ namespace BabBot.Scripts.Common
 
         #endregion
 
+        #region PreConfigured States
+
+        /*
+         * This is the list of states that we're using. We define them here so that
+         * we can override them in specific scripts (see the example in the Paladin folder)
+         */
+        protected State<WowPlayer> inCombatState;
+        protected State<WowPlayer> roamingState;
+        protected State<WowPlayer> preCombatState;
+        protected State<WowPlayer> postCombatState;
+        protected State<WowPlayer> restState;
+
+        #endregion
+
         protected override void DoEnter(WowPlayer Entity)
         {
-            Output.Instance.Script("DoEnter() -- Begin", this);
+            Output.Instance.Script("GlobalBaseBotState.DoEnter() -- Begin", this);
 
             // Initialize all the lists
             Bindings = new BindingList();
@@ -375,7 +389,14 @@ namespace BabBot.Scripts.Common
             //Init SConsumable
             SConsumable.Instance.Init(Entity);
 
-            Output.Instance.Script("DoEnter() -- End", this);
+
+            inCombatState = new InCombatState();
+            roamingState = new RoamingState();
+            preCombatState = new PreCombatState();
+            postCombatState = new PostCombatState();
+            restState = new RestState();
+
+            Output.Instance.Script("GlobalBaseBotState.DoEnter() -- End", this);
         }
 
         protected override void DoExecute(WowPlayer Entity)
@@ -383,17 +404,40 @@ namespace BabBot.Scripts.Common
             //Main update loop.  Basically just do a bunch of checks and then 
             // let another state take over.
 
+            // Output the current state we are in for debugging purpouses
+            if (Entity.StateMachine.CurrentState == null)
+            {
+                Output.Instance.Script(string.Format("Current State: null"),
+                                       this);
+            }
+            else
+            {
+                Output.Instance.Script(string.Format("Current State: {0}", Entity.StateMachine.CurrentState.GetType()),
+                                       this);
+            }
+
+            // This should never happen. But if we end up there, we simply stop all movements
             if (!Entity.StateMachine.IsRunning)
             {
                 /// Right now we only make sure that we're no longer moving around.
                 /// At some point we might want to switch to a stop state to also stop fighting,
                 /// ressing or whatever else can happen
+                Output.Instance.Script("The StateMachine is currently stopped. We stop movement as well", this);
                 Entity.Stop();
                 return;
             }
 
+            // If it's the first time we enter here, we will have no CurrentState assigned
+            // and we start by jumping to the RoamingState
+            if (Entity.StateMachine.CurrentState == null)
+            {
+                // We just started, let's go roaming
+                CallChangeStateEvent(Entity, roamingState, true, false);
+                return;
+            }
 
-            if (Entity.StateMachine.IsInState(typeof(AttackNearMobState)))
+            // Are we roaming? Let's check if there's anything else to do
+            if (Entity.StateMachine.IsInState(roamingState.GetType()))
             {
                 if (Entity.IsBeingAttacked())
                 {
@@ -411,61 +455,59 @@ namespace BabBot.Scripts.Common
                     /// TABbing until the GUID matches
                     /// 
                     /// Should we implement this in the cscript? (I think so)
-                    var pcs = new PreCombatState();
-                    CallChangeStateEvent(Entity, pcs, true, false);
+                    CallChangeStateEvent(Entity, preCombatState, true, false);
                     return;
                 }
 
+                Output.Instance.Script("Checking for enemies while roaming", this);
                 if (Entity.EnemyInSight())
                 {
+                    Output.Instance.Script("We have an enemy in sight, switching to PreCombat", this);
                     /// We have an enemy somewhere around us, we'd better get ready for the fight
-                    var pcs = new PreCombatState();
-                    CallChangeStateEvent(Entity, pcs, true, false);
+                    CallChangeStateEvent(Entity, preCombatState, true, false);
                     return;
                 }
 
             }
 
 
-            if (Entity.StateMachine.IsInState(typeof(PreCombatState)))
+            if (Entity.StateMachine.IsInState(preCombatState.GetType()))
             {
                 if ((Entity.IsBeingAttacked()) || (Entity.HasTarget))
                 {
-                    var ics = new InCombatState();
-                    CallChangeStateEvent(Entity, ics, true, false);
+                    CallChangeStateEvent(Entity, inCombatState, true, false);
                     return;
                 }
 
                 if (!Entity.HasTarget)
                 {
-                    var rs = new RoamingState();
-                    CallChangeStateEvent(Entity, rs, true, false);
+                    CallChangeStateEvent(Entity, roamingState, true, false);
                     return;
 
                 }
             }
 
 
-            if (Entity.StateMachine.IsInState(typeof(InCombatState)))
+            if (Entity.StateMachine.IsInState(inCombatState.GetType()))
             {
                 /// We should check if our target died and
                 /// in that case go to PostCombat, but we lose target once the
                 /// mob dies, so we cannot use that. We've got to come up with
                 /// a better idea. 
+                Output.Instance.Script("Checking if we no longer have a target after a fight", this);
                 if (!Entity.HasTarget)
                 {
-                    var pcs = new PostCombatState();
-                    CallChangeStateEvent(Entity, pcs, true, false);
+                    Output.Instance.Script("We no longer have a target, thus we enter PostCombatState", this);
+                    CallChangeStateEvent(Entity, postCombatState, true, false);
                     return;
                 }
             }
 
-            if (Entity.StateMachine.IsInState(typeof(PostCombatState)))
+            if (Entity.StateMachine.IsInState(postCombatState.GetType()))
             {
                 if (NeedRest())
                 {
-                    var rs = new RestState();
-                    CallChangeStateEvent(Entity, rs, true, false);
+                    CallChangeStateEvent(Entity, restState, true, false);
                     return;
                 }
             }
@@ -479,13 +521,12 @@ namespace BabBot.Scripts.Common
             }
             */
 
-            if (Entity.StateMachine.IsInState(typeof(RestState)))
+            if (Entity.StateMachine.IsInState(restState.GetType()))
             {
                 /// We ask the script if we should keep resting
                 if (!NeedRest())
                 {
-                    var rs = new RoamingState();
-                    CallChangeStateEvent(Entity, rs, true, false);
+                    CallChangeStateEvent(Entity, roamingState, true, false);
                     return;
                 }
                 return;
@@ -505,8 +546,7 @@ namespace BabBot.Scripts.Common
                 /// Let's see if we are still dead or what
                 if ((!Entity.IsDead) && (!Entity.IsGhost))
                 {
-                    var rs = new RoamingState();
-                    CallChangeStateEvent(Entity, rs, true, false);
+                    CallChangeStateEvent(Entity, roamingState, true, false);
                 }
                 return;
             }
@@ -533,8 +573,7 @@ namespace BabBot.Scripts.Common
             /// We ask the script if we should keep resting
             if (NeedRest())
             {
-                var rs = new RestState();
-                CallChangeStateEvent(Entity, rs, true, false);
+                CallChangeStateEvent(Entity, restState, true, false);
             }
 
 /*

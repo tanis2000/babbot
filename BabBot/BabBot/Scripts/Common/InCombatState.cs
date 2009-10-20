@@ -20,6 +20,7 @@ using System;
 using BabBot.Common;
 using BabBot.Wow;
 using BabBot.States;
+using BabBot.Scripts;
 
 namespace BabBot.Scripts.Common
 {

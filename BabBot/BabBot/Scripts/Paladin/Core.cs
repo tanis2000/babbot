@@ -29,22 +29,30 @@ namespace BabBot.Scripts.Paladin
     {
         #region Paladin specific settings
 
-        protected string multiAura = "Retribution Aura";
-        protected int HpHammer = 40;
-        protected int exorcismHp = 100;
-        protected bool useExorcism = true;
-        protected bool combatDebuff = false;
-        protected bool scrollSpam = true;
-        protected bool debuffStatus = false;
-        protected int RestMana = 50;
-        protected int RestHp = 50;
-        protected bool useBandage = false;
-        protected bool divineShield = true;
-        protected bool emergBless = true;
-        protected string emBless = "Blessing of Light";
+        public static string multiAura = "Retribution Aura";
+        public static int HpHammer = 40;
+        public static int exorcismHp = 100;
+        public static bool useExorcism = true;
+        public static bool combatDebuff = false;
+        public static bool scrollSpam = true;
+        public static bool debuffStatus = false;
+        public static int RestMana = 50;
+        public static int RestHp = 50;
+        public static bool useBandage = false;
+        public static bool divineShield = true;
+        public static bool emergBless = true;
+        public static string emBless = "Blessing of Light";
 
 
         #endregion
+
+        protected override void DoEnter(WowPlayer Entity)
+        {
+            base.DoEnter(Entity);
+            Output.Instance.Script("Core.DoEnter() -- Begin", this);
+            inCombatState = new Paladin.InCombatState();
+            Output.Instance.Script("Core.DoEnter() -- End", this);
+        }
 
         protected override bool IsHealer()
         {
@@ -64,157 +72,10 @@ namespace BabBot.Scripts.Paladin
             }
         }
 
-        // TODO: with some refactoring we could use this as a generic routine
-        protected void OnInCombat(WowPlayer player)
-        {
-            Output.Instance.Script("OnInCombat()", this);
-
-            if (!player.HasTarget || player.IsTargetDead())
-            {
-                return;
-            }
-
-            // TODO: Before uncommenting this part we need to work out a FindBestTarget routine
-            /*
-            if (player.IsTargetTapped() && !player.IsTargetTappedByMe())
-            {
-                player.SpellStopCasting();
-                player.ClearTarget();
-                player.FindBestTarget();
-                player.AttackTarget();
-            }
-            */
-
-            // We turn to face the target if we're facing away for some reason
-            if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
-            {
-                player.FaceTarget();
-            }
-
-            if (player.DistanceFromTarget() > MaxMeleeDistance)
-            {
-                Output.Instance.Script("OnInCombat() - Moving towards target", this);
-                player.FaceTarget();
-                player.MoveToTarget(MinMeleeDistance);
-                return;
-            }
-
-            if (player.IsMoving() && player.DistanceFromTarget() < MaxMeleeDistance && player.DistanceFromTarget() > MinMeleeDistance)
-            {
-                player.Stop();
-            }
-
-            if (player.DistanceFromTarget() < MinMeleeDistance)
-            {
-                player.MoveBackward(300);
-            }
-
-            if (!player.IsAttacking())
-            {
-                player.AttackTarget();
-            }
-
-            if (player.HpPct <= HpPctEmergency)
-            {
-                Emergency(player);
-            }
-
-            if (player.HpPct <= HpPctPotion && HasHealthPotion())
-            {
-                player.SpellStopCasting();
-                // TODO: implement a function to select the best health potion and drink it
-                //player.TakePotion("HP");
-            }
-
-            if (player.MpPct <= MpPctPotion && HasManaPotion())
-            {
-                player.SpellStopCasting();
-                // TODO: implement a function to select the best mana potion and drink it
-                //player.TakePotion("MP");
-            }
-
-            if (player.HpPct <= HpHammer && player.MpPct > 5 && player.HpPct >= HpPctEmergency && player.CanCast("Hammer of Justice"))
-            {
-                player.CastSpellByName("Hammer of Justice", true);
-
-                if (player.TargetHpPct > 10)
-                {
-                    HealSystem(player);
-                    Output.Instance.Script("Hammer of Justice healing", this);
-                    return;
-                }
-                return;
-            }
-
-            // TODO: implement IsBeingAttackedByManyMobs by going through all the mobs who have aggro on us and are in range
-            /*
-            if (player.IsBeingAttackedByManyMobs())
-            {
-                if (player.CanCast(multiAura))
-                {
-                    player.CastSpellByName(multiAura);
-                }
-
-                if (player.CanCast("Consecration"))
-                {
-                    player.CastSpellByName("Consecration");
-                }
-            }
-            */
-
-            // TODO: implement TargetIsCasting()
-            /*
-            if (player.TargetIsCasting())
-            {
-                CastInterruption();
-            }
-            */
-
-            if (player.TargetHpPct <= 20)
-            {
-                FinalFight();
-            }
-            else
-            {
-                NormalFight();
-            }
 
 
-            // TODO: implement TargetCreatureType()
-            /*
-            if (useExorcism)
-            {
-                if (player.MpPct > 30 && player.TargetHpPct > exorcismHp && player.CanCast("Exorcism") && player.TargetCreatureType() == "Undead" || player.TargetCreatureType() == "Demon")
-                {
-                    player.CastSpellByName("Exorcism");
-                }
-            }
-            */
 
-            if (combatDebuff)
-            {
-                DebuffAll();
-            }
-
-            // TODO: implement reading of the player race
-            /*
-            if (player.Race() == "Blood Elf")
-            {
-                if (player.Buff("Mana Tap").Application > 0 && player.MpPct <= 20)
-                {
-                    player.SpellStopCasting();
-                    player.CastSpellByName("Arcane Torrent");
-                }
-                if (player.TargetMpPct > 0 && player.IsActionUsable("Mana Tap") && player.Buff("Mana Tap").Application < 3) 
-                {
-                    player.CastSpellByName("Mana Tap");
-                }
-            }
-             */
-        }
-
-
-        protected void Emergency(WowPlayer player)
+        public static void Emergency(WowPlayer player)
         {
             if (!player.IsCasting("Holy Light") && !player.IsCasting("Flash of Light"))
             {
@@ -269,7 +130,7 @@ namespace BabBot.Scripts.Paladin
             }
         }
 
-        protected void HealSystem(WowPlayer player)
+        public static void HealSystem(WowPlayer player)
         {
             if (player.CanCast("Flash of Light"))
             {
@@ -288,15 +149,9 @@ namespace BabBot.Scripts.Paladin
         { 
         }
 
-        protected void FinalFight()
-        {
-        }
 
-        protected void NormalFight()
-        {
-        }
 
-        protected void DebuffAll()
+        public static void DebuffAll()
         {
         }
 

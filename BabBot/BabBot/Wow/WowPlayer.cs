@@ -311,7 +311,11 @@ namespace BabBot.Wow
 
         public bool IsInCombat()
         {
-            ProcessManager.Injector.Lua_DoString("incombat = InCombatLockdown();");
+            ProcessManager.Injector.Lua_DoString(@"(function()
+	SetMapToCurrentZone()
+	local incombat = InCombatLockdown()
+	return incombat
+end)()");
             string incombat = ProcessManager.Injector.Lua_GetLocalizedText(0);
             if (incombat == "1") return true; else return false;
         }
@@ -319,7 +323,7 @@ namespace BabBot.Wow
         public void AddLastTargetToLootList()
         {
             Thread.Sleep(2000);
-            ProcessManager.Injector.Lua_DoString("TargetLastTarget();");
+            ProcessManager.Injector.Lua_DoString("TargetLastTarget()");
             Thread.Sleep(2000);
             if (HasTarget)
             {
@@ -735,6 +739,12 @@ namespace BabBot.Wow
                 ProcessManager.Caronte.CalculatePath(
                     new Location(Location.X, Location.Y, Location.Z),
                     new Location(target.Location.X, target.Location.Y, target.Location.Z));
+
+            if (path == null)
+            {
+                Output.Instance.Debug(string.Format("Cannot find a path from X:{0} Y:{1} Z:{2} to X:{3} Y:{4} Z:{5}", Location.X, Location.Y, Location.Z, target.Location.X, target.Location.Y, target.Location.Z), this);
+                return NavigationState.Ready;
+            }
 
             foreach (Location loc in path.locations)
             {
@@ -1155,9 +1165,6 @@ namespace BabBot.Wow
         {
             try
             {
-                //ProcessManager.Injector.Lua_DoString(
-                //    "SetMapToCurrentZone(); local continent = GetCurrentMapContinent();"); // 
-
                 ProcessManager.Injector.Lua_DoString(@"(function()
 	SetMapToCurrentZone()
 	local continent = GetCurrentMapContinent()
@@ -1205,12 +1212,12 @@ end)()");
 
         public void AttackTarget()
         {
-            ProcessManager.Injector.Lua_DoString("AttackTarget();");
+            ProcessManager.Injector.Lua_DoString("AttackTarget()");
         }
 
         public void SpellStopCasting()
         {
-            ProcessManager.Injector.Lua_DoString("SpellStopCasting();");
+            ProcessManager.Injector.Lua_DoString("SpellStopCasting()");
         }
 
         public bool IsMoving()
@@ -1227,14 +1234,22 @@ end)()");
         public bool IsAttacking()
         {
             // TODO: find a way to read if we are attacking without checking the action bar
-            ProcessManager.Injector.Lua_DoString("action = IsCurrentAction(1);");
+            ProcessManager.Injector.Lua_DoString(@"(function()
+	SetMapToCurrentZone()
+	local action = IsCurrentAction(1)
+	return action
+end)()");
             string action = ProcessManager.Injector.Lua_GetLocalizedText(0);
             if (action == "1") return true; else return false;
         }
 
         public bool CanCast(string iName)
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");", iName));
+            ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
+	SetMapToCurrentZone()
+	local name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(""{0}"")
+	return name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange
+end)()", iName));
             string cost = ProcessManager.Injector.Lua_GetLocalizedText(3);
 
             // If we cannot get the info it means we don't know this spell
@@ -1347,14 +1362,22 @@ end)()");
 
         public bool HasBuff(string iName)
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitBuff(\"player\", \"{0}\")", iName));
+            ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
+	SetMapToCurrentZone()
+	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitBuff(""player"", ""{0}"")
+	return name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable
+end)()", iName));
             string name = ProcessManager.Injector.Lua_GetLocalizedText(0);
             if (name == "") return false; else return true;
         }
 
         public bool HasDebuff(string iName)
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitDebuff(\"player\", \"{0}\")", iName));
+            ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
+	SetMapToCurrentZone()
+	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitDebuff(""player"", ""{0}"")
+	return name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable
+end)()", iName));
             string name = ProcessManager.Injector.Lua_GetLocalizedText(0);
             if (name == "") return false; else return true;
         }
@@ -1371,12 +1394,12 @@ end)()");
 
         public void RetrieveCorpse()
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("RetrieveCorpse();"));
+            ProcessManager.Injector.Lua_DoString(string.Format("RetrieveCorpse()"));
         }
 
         public void RepopMe()
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("RepopMe();"));
+            ProcessManager.Injector.Lua_DoString(string.Format("RepopMe()"));
         }
 
         public float TargetBoundingRadius()
@@ -1402,10 +1425,18 @@ end)()");
 
         public bool IsCasting(string spellName)
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(\"player\")"));
+            ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
+	SetMapToCurrentZone()
+	local spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(""player"")
+	return spell, rank, displayName, icon, startTime, endTime, isTradeSkill
+end)()"));
             string spell = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
-            ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitChannelInfo(\"player\")"));
+            ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
+	SetMapToCurrentZone()
+	local spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitChannelInfo(""player"")
+	return spell, rank, displayName, icon, startTime, endTime, isTradeSkill
+end)()"));
             string channel = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
             if (channel == spellName ||  spell == spellName) return true; else return false;
@@ -1413,7 +1444,11 @@ end)()");
 
         public Item GetMerchantItemInfo(int idx)
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("name, texture, price, quantity, numAvailable, isUsable, extendedCost = GetMerchantItemInfo({0})", idx));
+            ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
+	SetMapToCurrentZone()
+	local name, texture, price, quantity, numAvailable, isUsable, extendedCost = GetMerchantItemInfo({0})
+	return name, texture, price, quantity, numAvailable, isUsable, extendedCost
+end)()", idx));
             string name = ProcessManager.Injector.Lua_GetLocalizedText(0);
             string price = ProcessManager.Injector.Lua_GetLocalizedText(2);
             string quantity = ProcessManager.Injector.Lua_GetLocalizedText(3);
@@ -1432,17 +1467,17 @@ end)()");
         {
             if (quantity > 0)
             {
-                ProcessManager.Injector.Lua_DoString(string.Format("BuyMerchantItem({0}, {1});", idx, quantity));
+                ProcessManager.Injector.Lua_DoString(string.Format("BuyMerchantItem({0}, {1})", idx, quantity));
             }
             else
             {
-                ProcessManager.Injector.Lua_DoString(string.Format("BuyMerchantItem({0});"));
+                ProcessManager.Injector.Lua_DoString(string.Format("BuyMerchantItem({0})", idx));
             }
         }
 
         public void TargetMe()
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("TargetUnit(\"player\");"));
+            ProcessManager.Injector.Lua_DoString(string.Format("TargetUnit(\"player\")"));
         }
 
         public void CastSpellByName(string name)
