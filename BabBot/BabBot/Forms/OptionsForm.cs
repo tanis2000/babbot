@@ -21,7 +21,12 @@ namespace BabBot.Forms
             tbLogsPath.Text = ProcessManager.Config.LogPath;
             cbAutoLogin.Checked = ProcessManager.Config.AutoLogin;
             tbLoginUsername.Text = ProcessManager.Config.LoginUsername;
-            tbLoginPassword.Text = ProcessManager.Config.LoginPassword;
+            tbLoginPassword.Text = ProcessManager.Config.getAutoLoginPassword();
+            cbNoSound.Checked = ProcessManager.Config.NoSound;
+            cbWindowed.Checked = ProcessManager.Config.Windowed;
+            cbResize.Checked = ProcessManager.Config.Resize;
+
+            cbAutoLogin_CheckedChanged(sender, e);
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -33,7 +38,10 @@ namespace BabBot.Forms
             ProcessManager.Config.LogPath = tbLogsPath.Text;
             ProcessManager.Config.AutoLogin = cbAutoLogin.Checked;
             ProcessManager.Config.LoginUsername = tbLoginUsername.Text;
-            ProcessManager.Config.LoginPassword = tbLoginPassword.Text;
+            ProcessManager.Config.EncryptPassword(tbLoginPassword.Text);
+            ProcessManager.Config.NoSound = cbNoSound.Checked;
+            ProcessManager.Config.Windowed = cbWindowed.Checked;
+            ProcessManager.Config.Resize = cbResize.Checked;
         }
 
         private void btnBrowseWowExec_Click(object sender, EventArgs e)
@@ -70,6 +78,14 @@ namespace BabBot.Forms
             {
                 tbLogsPath.Text = dlg.SelectedPath;
             }
+        }
+
+        private void cbAutoLogin_CheckedChanged(object sender, EventArgs e)
+        {
+            tbLoginUsername.Enabled = cbAutoLogin.Checked;
+            tbLoginPassword.Enabled = cbAutoLogin.Checked;
+            labelUser.Enabled = cbAutoLogin.Checked;
+            labelPwd.Enabled = cbAutoLogin.Checked;
         }
     }
 }

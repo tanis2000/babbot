@@ -32,5 +32,27 @@ namespace BabBot
         public bool AutoLogin = false;
         public string LoginUsername = "";
         public string LoginPassword = "";
+        public bool NoSound = false;
+        public bool Windowed = false;
+        public bool Resize = false;
+
+        // Private fields not included into serializer
+        private string AutoLoginPassword = "";
+
+        public void EncryptPassword(string PlainText)
+        {
+            AutoLoginPassword = PlainText;
+            LoginPassword = BabBot.Common.Security.Encrypt(PlainText);
+        }
+
+        public void DecryptPassword(string ComplexText)
+        {
+            LoginPassword = ComplexText;
+            AutoLoginPassword = BabBot.Common.Security.Decrypt(ComplexText);
+        }
+
+        public string getAutoLoginPassword() {
+            return AutoLoginPassword;
+        }
     }
 }

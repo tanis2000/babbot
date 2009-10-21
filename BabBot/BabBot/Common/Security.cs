@@ -34,16 +34,22 @@ namespace BabBot.Common
 
         private static System.Security.Cryptography.TripleDESCryptoServiceProvider des =
                 new System.Security.Cryptography.TripleDESCryptoServiceProvider();
+
+        static Security()
+        {
+            des.Key = CalcMD5(key);
+            des.Mode = System.Security.Cryptography.CipherMode.ECB;
+        }
+
         /// <summary>
         /// Calculate MD5 Hash given a string
         /// </summary>
-        private static string CalcMD5(string s)
+        private static byte[] CalcMD5(string s)
         {
             System.Security.Cryptography.MD5CryptoServiceProvider x =
                 new System.Security.Cryptography.MD5CryptoServiceProvider();
             byte[] data = System.Text.Encoding.ASCII.GetBytes(s);
-            data = x.ComputeHash(data);
-            return System.Text.Encoding.ASCII.GetString(data);
+            return x.ComputeHash(data);
         }
 
         /// <summary>
@@ -52,7 +58,7 @@ namespace BabBot.Common
         /// <param name="s">Given String</param>
         public static string Encrypt(string s)
         {
-            des.Mode = System.Security.Cryptography.CipherMode.ECB;
+            if (s.Equals("")) return s;
 
             byte[] buff = ASCIIEncoding.ASCII.GetBytes(s);
             return Convert.ToBase64String(des.CreateEncryptor().TransformFinalBlock(buff, 0, buff.Length));
@@ -64,7 +70,7 @@ namespace BabBot.Common
         /// <param name="x">Given String</param>
         public static string Decrypt(string x)
         {
-            des.Mode = System.Security.Cryptography.CipherMode.ECB;
+            if (x.Equals("")) return x;
 
             byte[] buff = Convert.FromBase64String(x);
             return ASCIIEncoding.ASCII.GetString(

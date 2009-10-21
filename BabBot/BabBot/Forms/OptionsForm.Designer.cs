@@ -93,6 +93,16 @@
             this.tbGuestPassword = new System.Windows.Forms.TextBox();
             this.tbGuestUsername = new System.Windows.Forms.TextBox();
             this.tbWowExePath = new System.Windows.Forms.TextBox();
+            this.tabPage24 = new System.Windows.Forms.TabPage();
+            this.label86 = new System.Windows.Forms.Label();
+            this.cbResize = new System.Windows.Forms.CheckBox();
+            this.cbNoSound = new System.Windows.Forms.CheckBox();
+            this.cbWindowed = new System.Windows.Forms.CheckBox();
+            this.tbLoginPassword = new System.Windows.Forms.TextBox();
+            this.labelPwd = new System.Windows.Forms.Label();
+            this.labelUser = new System.Windows.Forms.Label();
+            this.tbLoginUsername = new System.Windows.Forms.TextBox();
+            this.cbAutoLogin = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -489,17 +499,12 @@
             this.CobBoxEOTSGuardSpot = new System.Windows.Forms.ComboBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
-            this.tabPage24 = new System.Windows.Forms.TabPage();
-            this.cbAutoLogin = new System.Windows.Forms.CheckBox();
-            this.tbLoginUsername = new System.Windows.Forms.TextBox();
-            this.label86 = new System.Windows.Forms.Label();
-            this.label87 = new System.Windows.Forms.Label();
-            this.tbLoginPassword = new System.Windows.Forms.TextBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage24.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -568,7 +573,6 @@
             this.tabPage21.SuspendLayout();
             this.tabPage22.SuspendLayout();
             this.tabPage23.SuspendLayout();
-            this.tabPage24.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -948,6 +952,112 @@
             this.tbWowExePath.Name = "tbWowExePath";
             this.tbWowExePath.Size = new System.Drawing.Size(241, 20);
             this.tbWowExePath.TabIndex = 0;
+            // 
+            // tabPage24
+            // 
+            this.tabPage24.Controls.Add(this.label86);
+            this.tabPage24.Controls.Add(this.cbResize);
+            this.tabPage24.Controls.Add(this.cbNoSound);
+            this.tabPage24.Controls.Add(this.cbWindowed);
+            this.tabPage24.Controls.Add(this.tbLoginPassword);
+            this.tabPage24.Controls.Add(this.labelPwd);
+            this.tabPage24.Controls.Add(this.labelUser);
+            this.tabPage24.Controls.Add(this.tbLoginUsername);
+            this.tabPage24.Controls.Add(this.cbAutoLogin);
+            this.tabPage24.Location = new System.Drawing.Point(4, 22);
+            this.tabPage24.Name = "tabPage24";
+            this.tabPage24.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage24.Size = new System.Drawing.Size(599, 401);
+            this.tabPage24.TabIndex = 7;
+            this.tabPage24.Text = "Account";
+            this.tabPage24.UseVisualStyleBackColor = true;
+            // 
+            // label86
+            // 
+            this.label86.AutoSize = true;
+            this.label86.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label86.Location = new System.Drawing.Point(8, 89);
+            this.label86.Name = "label86";
+            this.label86.Size = new System.Drawing.Size(103, 13);
+            this.label86.TabIndex = 8;
+            this.label86.Text = "Start Up options:";
+            // 
+            // cbResize
+            // 
+            this.cbResize.AutoSize = true;
+            this.cbResize.Location = new System.Drawing.Point(24, 161);
+            this.cbResize.Name = "cbResize";
+            this.cbResize.Size = new System.Drawing.Size(92, 17);
+            this.cbResize.TabIndex = 7;
+            this.cbResize.Text = "Resize to min.";
+            this.cbResize.UseVisualStyleBackColor = true;
+            // 
+            // cbNoSound
+            // 
+            this.cbNoSound.AutoSize = true;
+            this.cbNoSound.Location = new System.Drawing.Point(24, 138);
+            this.cbNoSound.Name = "cbNoSound";
+            this.cbNoSound.Size = new System.Drawing.Size(72, 17);
+            this.cbNoSound.TabIndex = 6;
+            this.cbNoSound.Text = "No sound";
+            this.cbNoSound.UseVisualStyleBackColor = true;
+            // 
+            // cbWindowed
+            // 
+            this.cbWindowed.AutoSize = true;
+            this.cbWindowed.Location = new System.Drawing.Point(24, 115);
+            this.cbWindowed.Name = "cbWindowed";
+            this.cbWindowed.Size = new System.Drawing.Size(99, 17);
+            this.cbWindowed.TabIndex = 5;
+            this.cbWindowed.Text = "Windows mode";
+            this.cbWindowed.UseVisualStyleBackColor = true;
+            // 
+            // tbLoginPassword
+            // 
+            this.tbLoginPassword.Enabled = false;
+            this.tbLoginPassword.Location = new System.Drawing.Point(70, 56);
+            this.tbLoginPassword.Name = "tbLoginPassword";
+            this.tbLoginPassword.Size = new System.Drawing.Size(181, 20);
+            this.tbLoginPassword.TabIndex = 4;
+            // 
+            // labelPwd
+            // 
+            this.labelPwd.AutoSize = true;
+            this.labelPwd.Enabled = false;
+            this.labelPwd.Location = new System.Drawing.Point(6, 59);
+            this.labelPwd.Name = "labelPwd";
+            this.labelPwd.Size = new System.Drawing.Size(56, 13);
+            this.labelPwd.TabIndex = 3;
+            this.labelPwd.Text = "Password:";
+            // 
+            // labelUser
+            // 
+            this.labelUser.AutoSize = true;
+            this.labelUser.Enabled = false;
+            this.labelUser.Location = new System.Drawing.Point(6, 33);
+            this.labelUser.Name = "labelUser";
+            this.labelUser.Size = new System.Drawing.Size(58, 13);
+            this.labelUser.TabIndex = 2;
+            this.labelUser.Text = "Username:";
+            // 
+            // tbLoginUsername
+            // 
+            this.tbLoginUsername.Enabled = false;
+            this.tbLoginUsername.Location = new System.Drawing.Point(70, 30);
+            this.tbLoginUsername.Name = "tbLoginUsername";
+            this.tbLoginUsername.Size = new System.Drawing.Size(181, 20);
+            this.tbLoginUsername.TabIndex = 1;
+            // 
+            // cbAutoLogin
+            // 
+            this.cbAutoLogin.AutoSize = true;
+            this.cbAutoLogin.Location = new System.Drawing.Point(9, 7);
+            this.cbAutoLogin.Name = "cbAutoLogin";
+            this.cbAutoLogin.Size = new System.Drawing.Size(70, 17);
+            this.cbAutoLogin.TabIndex = 0;
+            this.cbAutoLogin.Text = "Autologin";
+            this.cbAutoLogin.UseVisualStyleBackColor = true;
+            this.cbAutoLogin.CheckedChanged += new System.EventHandler(this.cbAutoLogin_CheckedChanged);
             // 
             // tabPage2
             // 
@@ -5234,63 +5344,6 @@
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
-            // tabPage24
-            // 
-            this.tabPage24.Controls.Add(this.tbLoginPassword);
-            this.tabPage24.Controls.Add(this.label87);
-            this.tabPage24.Controls.Add(this.label86);
-            this.tabPage24.Controls.Add(this.tbLoginUsername);
-            this.tabPage24.Controls.Add(this.cbAutoLogin);
-            this.tabPage24.Location = new System.Drawing.Point(4, 22);
-            this.tabPage24.Name = "tabPage24";
-            this.tabPage24.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage24.Size = new System.Drawing.Size(599, 401);
-            this.tabPage24.TabIndex = 7;
-            this.tabPage24.Text = "Account";
-            this.tabPage24.UseVisualStyleBackColor = true;
-            // 
-            // cbAutoLogin
-            // 
-            this.cbAutoLogin.AutoSize = true;
-            this.cbAutoLogin.Location = new System.Drawing.Point(9, 7);
-            this.cbAutoLogin.Name = "cbAutoLogin";
-            this.cbAutoLogin.Size = new System.Drawing.Size(70, 17);
-            this.cbAutoLogin.TabIndex = 0;
-            this.cbAutoLogin.Text = "Autologin";
-            this.cbAutoLogin.UseVisualStyleBackColor = true;
-            // 
-            // tbLoginUsername
-            // 
-            this.tbLoginUsername.Location = new System.Drawing.Point(70, 30);
-            this.tbLoginUsername.Name = "tbLoginUsername";
-            this.tbLoginUsername.Size = new System.Drawing.Size(181, 20);
-            this.tbLoginUsername.TabIndex = 1;
-            // 
-            // label86
-            // 
-            this.label86.AutoSize = true;
-            this.label86.Location = new System.Drawing.Point(6, 33);
-            this.label86.Name = "label86";
-            this.label86.Size = new System.Drawing.Size(58, 13);
-            this.label86.TabIndex = 2;
-            this.label86.Text = "Username:";
-            // 
-            // label87
-            // 
-            this.label87.AutoSize = true;
-            this.label87.Location = new System.Drawing.Point(6, 59);
-            this.label87.Name = "label87";
-            this.label87.Size = new System.Drawing.Size(56, 13);
-            this.label87.TabIndex = 3;
-            this.label87.Text = "Password:";
-            // 
-            // tbLoginPassword
-            // 
-            this.tbLoginPassword.Location = new System.Drawing.Point(70, 56);
-            this.tbLoginPassword.Name = "tbLoginPassword";
-            this.tbLoginPassword.Size = new System.Drawing.Size(181, 20);
-            this.tbLoginPassword.TabIndex = 4;
-            // 
             // OptionsForm
             // 
             this.AcceptButton = this.btnOk;
@@ -5307,6 +5360,8 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.tabPage24.ResumeLayout(false);
+            this.tabPage24.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
@@ -5401,8 +5456,6 @@
             this.tabPage22.PerformLayout();
             this.tabPage23.ResumeLayout(false);
             this.tabPage23.PerformLayout();
-            this.tabPage24.ResumeLayout(false);
-            this.tabPage24.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -5842,9 +5895,13 @@
         private System.Windows.Forms.TextBox tbLogsPath;
         private System.Windows.Forms.TabPage tabPage24;
         private System.Windows.Forms.TextBox tbLoginPassword;
-        private System.Windows.Forms.Label label87;
-        private System.Windows.Forms.Label label86;
+        private System.Windows.Forms.Label labelPwd;
+        private System.Windows.Forms.Label labelUser;
         private System.Windows.Forms.TextBox tbLoginUsername;
         private System.Windows.Forms.CheckBox cbAutoLogin;
+        private System.Windows.Forms.CheckBox cbNoSound;
+        private System.Windows.Forms.CheckBox cbWindowed;
+        private System.Windows.Forms.CheckBox cbResize;
+        private System.Windows.Forms.Label label86;
     }
 }

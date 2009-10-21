@@ -614,6 +614,9 @@ namespace BabBot.Forms
                 {
                     DeactivateDebugMode();
                 }
+
+                // Decrypt auto-login password
+                ProcessManager.Config.DecryptPassword(ProcessManager.Config.LoginPassword);
             }
             catch (FileNotFoundException ex)
             {
@@ -625,6 +628,7 @@ namespace BabBot.Forms
         {
             string fileName = "config.xml";
             var serializer = new Serializer<Config>();
+
             serializer.Save(fileName, ProcessManager.Config);
 
             if (ProcessManager.Config.DebugMode)
@@ -721,6 +725,16 @@ namespace BabBot.Forms
                 // UI Stuff
                 tbScript.Text = dlg.FileName;
             }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            if (ProcessManager.AutoRun)
+            {
+                // Start wow for now
+                btnRun_Click(sender, e);
+            }
+
         }
 
 

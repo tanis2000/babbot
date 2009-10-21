@@ -205,7 +205,11 @@ namespace BabBot.Manager
                         Thread.Sleep(250);
                     }
 
+                    // Small delay if loading slow
+                    Thread.Sleep(2000);
 
+                    if (config.Resize)
+                        BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND, 0, 0, 328, 274);
 
                     // I'm pretty sure we should wait for something else to be instantiated
                     // by the client before going on.. I just can't find what yet
@@ -268,6 +272,12 @@ namespace BabBot.Manager
                     // Guest account might not be enabled
                     try
                     {
+                        // Process startup options
+                        if (config.NoSound)
+                            wowPath += " -nosound";
+                        if (config.Windowed)
+                            wowPath += " -windowed";
+
                         process = AppHelper.RunAs(Config.GuestUsername, 
                                             Config.GuestPassword, null, wowPath);
                     }
@@ -575,7 +585,7 @@ namespace BabBot.Manager
                         AccountLoginAccountEdit:SetText('{0}')
                         AccountLoginPasswordEdit:SetText('{1}')
                         DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText())
-                    end)()", config.LoginUsername, config.LoginPassword));
+                    end)()", config.LoginUsername, config.getAutoLoginPassword()));
 
             // Unregister our hook right away before wow tries to login
             Injector.Lua_UnRegisterInputHandler();

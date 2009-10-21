@@ -27,6 +27,11 @@ namespace BabBot.Common
         [DllImport("user32.dll")]
         private static extern bool GetWindowInfo(IntPtr hwnd, ref tagWINDOWINFO pwi);
 
+        [DllImport(@"user32.dll", EntryPoint = "SetWindowPos", 
+            CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        public static extern int SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, 
+                                            int X, int Y, int cx, int cy, uint uFlags);
+
         public static Rectangle GetSize(IntPtr hwnd)
         {
             var info = new tagWINDOWINFO();
@@ -38,6 +43,11 @@ namespace BabBot.Common
             returnRectangle.Width = info.rcClient.right - returnRectangle.X;
             returnRectangle.Height = info.rcClient.bottom - returnRectangle.Y;
             return returnRectangle;
+        }
+
+        public static void SetPositionSize(IntPtr hwnd, int x, int y, int width, int height)
+        {
+            SetWindowPos(hwnd, (IntPtr)null, x, y, width, height, 0u);
         }
     }
 
