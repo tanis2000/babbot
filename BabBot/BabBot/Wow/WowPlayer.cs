@@ -574,7 +574,7 @@ end)()");
         {
             Output.Instance.Debug("===Lootable List===", this);
             // We wait a bit as the corpse seems not to be entirely populated at times.. weird
-            Thread.Sleep(250);
+            Thread.Sleep(2000);
             foreach (WowUnit wowUnit in LootableList)
             {
                 Output.Instance.Debug(wowUnit.Guid + " - " + wowUnit.Name, this);
@@ -837,7 +837,12 @@ end)()");
                             {
                                 angle = MathFuncs.GetFaceRadian(target.Location, Location);
                             }
-                            Face(angle);
+                            // NOTE: tanis - I've switched this to the memory write one. I dunno if it's better yet
+                            //Face(angle);
+                            angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(path.locations[currentStep]),
+                                      Location);
+                            FaceUsingMemoryWrite(angle, true);
+                            // NOTE: tanis - end
                         }
                     }
                 }
@@ -983,6 +988,11 @@ end)()");
 
         public void FaceUsingMemoryWrite(float angle, bool Timed)
         {
+            Output.Instance.Debug(string.Format("FaceUsingMemoryWrite() - angle:{0}", angle));
+            //if angle is smaller then error margin then don't bother to fix
+            if (Math.Abs(angle) < 0.04f)
+                return;
+
             //if timed is false then do memory write immediately and exit
             if (!Timed)
             {
@@ -1083,9 +1093,11 @@ end)()");
 
         public void Face(Vector3D dest)
         {
+            // NOTE: tanis - begin test
             float angle = GetFaceAngle(dest);
-
-            Face(angle);
+            //Face(angle);
+            FaceUsingMemoryWrite(angle, false);
+            // NOTE: tanis - end
         }
 
         protected float GetFaceAngle(Vector3D dest)
