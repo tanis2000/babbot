@@ -140,7 +140,7 @@ namespace BabBot.Scripts.Common
                 // we can actually know exactly how much we move "per-tick")
                 if (Math.Abs(currentDistance - distance) < 0.1f && Math.Abs(currentDistance - distance) > 0.0001f)
                 {
-                    //Console.WriteLine(string.Format("Stuck! Distance difference: {0}", Math.Abs(currentDistance - distance)));
+                    //Output.Instance.Script(string.Format("Stuck! Distance difference: {0}", Math.Abs(currentDistance - distance)), this);
                     Entity.Unstuck();
                 }
 

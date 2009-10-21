@@ -539,10 +539,10 @@ end)()");
 
             if (closest != null)
             {
-                Console.WriteLine("We have a lootable mob");
+                Output.Instance.Debug("We have a lootable mob", this);
                 return closest;
             }
-            Console.WriteLine("No lootable mob found");
+            Output.Instance.Debug("No lootable mob found", this);
             return null;
         }
 
@@ -552,7 +552,7 @@ end)()");
 
             if (closest != null)
             {
-                Console.WriteLine("Facing closest lootable mob");
+                Output.Instance.Debug("Facing closest lootable mob", this);
                 Face(closest.Location);
             }
         }
@@ -569,10 +569,10 @@ end)()");
 
         public void LootClosestLootableMob()
         {
-            Console.WriteLine("===Lootable List===");
+            Output.Instance.Debug("===Lootable List===", this);
             foreach (WowUnit wowUnit in LootableList)
             {
-                Console.WriteLine(Guid + " - " + Name);
+                Output.Instance.Debug(Guid + " - " + Name, this);
             }
             WowUnit mob = FindClosestLootableMob();
             if (mob != null)
@@ -693,7 +693,7 @@ end)()");
                 // we can actually know exactly how much we move "per-tick")
                 if (Math.Abs(currentDistance - distance) < 0.1f && Math.Abs(currentDistance - distance) > 0.0001f) 
                 {
-                    Console.WriteLine(string.Format("Stuck! Distance difference: {0}", Math.Abs(currentDistance - distance)));
+                    Output.Instance.Debug(string.Format("Stuck! Distance difference: {0}", Math.Abs(currentDistance - distance)), this);
                     Unstuck();
                 }
                 else if (TravelTime >= MAX_REACHTIME)
@@ -702,7 +702,7 @@ end)()");
                     res = NavigationState.WayPointTimeout;
                     break;
                 }
-                Console.WriteLine(string.Format("Tolerance: {0} - Distance: {1}", tolerance, distance));
+                Output.Instance.Debug(string.Format("Tolerance: {0} - Distance: {1}", tolerance, distance), this);
             }
 
             PlayerCM.ArrowKeyUp(key);
@@ -748,7 +748,7 @@ end)()");
 
             foreach (Location loc in path.locations)
             {
-                Console.WriteLine("X: {0}  Y: {1}   Z: {2}", loc.X, loc.Y, loc.Z);
+                Output.Instance.Debug(string.Format("X: {0}  Y: {1}   Z: {2}", loc.X, loc.Y, loc.Z), this);
             }
 
 
@@ -811,10 +811,10 @@ end)()");
                         MathFuncs.GetDistance(
                             new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y,
                                          path.locations[currentStep].Z), Location, false);
-                    Console.WriteLine("Step: " + currentStep);
-                    Console.WriteLine("Location: " + Location);
-                    Console.WriteLine("Distance from step: " + distanceFromStep);
-                    Console.WriteLine("Distance from target: " + distance);
+                    Output.Instance.Debug("Step: " + currentStep, this);
+                    Output.Instance.Debug("Location: " + Location, this);
+                    Output.Instance.Debug("Distance from step: " + distanceFromStep, this);
+                    Output.Instance.Debug("Distance from target: " + distance, this);
                     if (distanceFromStep < 10.0f)
                     {
                         if (currentStep < steps - 1)
@@ -857,7 +857,7 @@ end)()");
                     res = NavigationState.WayPointTimeout;
                     break;
                 }
-                Console.WriteLine(string.Format("Tolerance: {0} - Distance: {1}", tolerance, distance));
+                Output.Instance.Debug(string.Format("Tolerance: {0} - Distance: {1}", tolerance, distance), this);
             }
 
             PlayerCM.ArrowKeyUp(key);

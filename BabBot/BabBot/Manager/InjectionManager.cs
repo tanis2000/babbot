@@ -736,7 +736,7 @@ namespace BabBot.Manager
                 mod = wow.ReadUInt((uint) (loc + add));
             }
 
-            Console.WriteLine("final: 0x{0:X08} + 0x{1:X} + 0x{2:X} =  0x{0:X08}", loc, mod, rel, loc + mod + rel);
+            Output.Instance.Debug(string.Format("final: 0x{0:X08} + 0x{1:X} + 0x{2:X} =  0x{0:X08}", loc, mod, rel, loc + mod + rel), this);
             return loc + mod + rel;
         }
 

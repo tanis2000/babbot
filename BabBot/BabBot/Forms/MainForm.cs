@@ -554,7 +554,7 @@ namespace BabBot.Forms
 
         private void btnDumpBagsToConsole_Click(object sender, EventArgs e)
         {
-            Console.WriteLine(ProcessManager.Player.BagsAsTextList);
+            Output.Instance.Debug(ProcessManager.Player.BagsAsTextList, this);
         }
 
         private void btnInteract_Click(object sender, EventArgs e)
@@ -660,13 +660,6 @@ namespace BabBot.Forms
         private delegate void ProcessEndedDelegate(int process);
 
         #endregion
-
-        private void btnInjectDll_Click(object sender, EventArgs e)
-        {
-            //uint res = ProcessManager.WowProcess.InjectDllCreateThread(@"C:\lavori\cvs\babbot\Dante\Debug\bootstrapper.dll");
-            //Console.WriteLine(string.Format("Injection res = {0}", res));
-            ProcessManager.Injector.InjectLua();
-        }
 
         #region Logging
 

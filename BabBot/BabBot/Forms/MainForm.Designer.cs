@@ -144,7 +144,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
             this.btnInputHandler = new System.Windows.Forms.Button();
-            this.btnInjectDll = new System.Windows.Forms.Button();
             this.btnGetLuaText = new System.Windows.Forms.Button();
             this.tbLuaVariable = new System.Windows.Forms.TextBox();
             this.tbLuaResult = new System.Windows.Forms.TextBox();
@@ -1270,7 +1269,6 @@
             // tabPageDebug2
             // 
             this.tabPageDebug2.Controls.Add(this.btnInputHandler);
-            this.tabPageDebug2.Controls.Add(this.btnInjectDll);
             this.tabPageDebug2.Controls.Add(this.btnGetLuaText);
             this.tabPageDebug2.Controls.Add(this.tbLuaVariable);
             this.tabPageDebug2.Controls.Add(this.tbLuaResult);
@@ -1299,16 +1297,6 @@
             this.btnInputHandler.Text = "InputHandler";
             this.btnInputHandler.UseVisualStyleBackColor = true;
             this.btnInputHandler.Click += new System.EventHandler(this.btnInputHandler_Click);
-            // 
-            // btnInjectDll
-            // 
-            this.btnInjectDll.Location = new System.Drawing.Point(235, 64);
-            this.btnInjectDll.Name = "btnInjectDll";
-            this.btnInjectDll.Size = new System.Drawing.Size(75, 23);
-            this.btnInjectDll.TabIndex = 17;
-            this.btnInjectDll.Text = "DLL Inject";
-            this.btnInjectDll.UseVisualStyleBackColor = true;
-            this.btnInjectDll.Click += new System.EventHandler(this.btnInjectDll_Click);
             // 
             // btnGetLuaText
             // 
@@ -1410,7 +1398,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 414);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 421);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(580, 22);
             this.statusStrip1.TabIndex = 2;
@@ -1426,7 +1414,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(580, 436);
+            this.ClientSize = new System.Drawing.Size(580, 443);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControlMain);
             this.Controls.Add(this.msMain);
@@ -1594,7 +1582,6 @@
         private System.Windows.Forms.TextBox tbCorpseX;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
-        private System.Windows.Forms.Button btnInjectDll;
         private System.Windows.Forms.RichTextBox txtConsole;
         private System.Windows.Forms.Button btnInputHandler;
         private System.Windows.Forms.GroupBox groupBox5;
