@@ -61,7 +61,7 @@ namespace BabBot.Scripts.Common
 
         protected void SetDefaults(Vector3D iDestination)
         {
-            SetDefaults(Destination, 1.0f);
+            SetDefaults(iDestination, 1.0f);
         }
 
         protected override void DoEnter(WowPlayer Entity)

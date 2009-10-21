@@ -92,11 +92,13 @@ namespace BabBot.Wow
         public static class VMT
         {
             public const uint
-                GetPosition = 9 * 4,
-                GetFacing   = 10 * 4,
-                GetScale    = 11 * 4,
-                Interact    = 38 * 4,
-                GetName     = 48 * 4;
+                GetBagPtr = 10 * 4, 
+                GetPosition = 11 * 4, // 3.1.3: 9 * 4,
+                GetFacing = 12 * 4, // 3.1.3: 10 * 4,
+                GetScale = 14 * 4, // 3.1.3: 11 * 4,
+                GetModel = 22 * 4, 
+                Interact = 41 * 4, // 3.1.3: 38 * 4,
+                GetName = 51 * 4;// 3.1.3: 48 * 4;
         }
 
         // WoW Function Addresses

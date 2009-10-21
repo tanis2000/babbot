@@ -643,7 +643,7 @@ namespace BabBot.Manager
             //RemoteInputHandler(command);
             while (!RemoteDoStringCompleted())
             {
-                Thread.Sleep(10);
+                Thread.Sleep(250); // was 10
             }
         }
 

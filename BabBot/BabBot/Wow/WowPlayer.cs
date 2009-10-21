@@ -322,14 +322,24 @@ end)()");
         public void AddLastTargetToLootList()
         {
             Thread.Sleep(2000);
+            Output.Instance.Debug("AddLastTargetToLootList() - Adding our last target to the list of lootable mobs", this);
             ProcessManager.Injector.Lua_DoString("TargetLastTarget()");
             Thread.Sleep(2000);
             if (HasTarget)
             {
                 if (CurTarget.IsLootable)
                 {
-                    LootableList.Add(LastTargetedMob);
+                    LootableList.Add(CurTarget);
+                    Output.Instance.Debug("AddLastTargetToLootList() - Mob added to the list of llotable mobs", this);
                 }
+                else
+                {
+                    Output.Instance.Debug("AddLastTargetToLootList() - It looks like our last kill is not lootable for some reason", this);
+                }
+            }
+            else
+            {
+                Output.Instance.Debug("AddLastTargetToLootList() - Something bad happened. We couldn't target our last target", this);
             }
         }
 
@@ -573,20 +583,25 @@ end)()");
         public void LootClosestLootableMob()
         {
             Output.Instance.Debug("===Lootable List===", this);
-            // We wait a bit as the corpse seems not to be entirely populated at times.. weird
-            Thread.Sleep(2000);
             foreach (WowUnit wowUnit in LootableList)
             {
-                Output.Instance.Debug(wowUnit.Guid + " - " + wowUnit.Name, this);
+                if (wowUnit != null)
+                {
+                    Output.Instance.Debug(wowUnit.Guid + " - " + wowUnit.Name, this);
+                }
             }
+            Output.Instance.Debug("LootClosestLootableMob() - Finding closest lootable mob", this);
             WowUnit mob = FindClosestLootableMob();
             if (mob != null)
             {
+                Output.Instance.Debug("LootClosestLootableMob() - Lootable mob found", this);
                 Face(mob.Location);
                 if (MathFuncs.GetDistance(mob.Location, Location, false) > 5.0f)
                 {
+                    Output.Instance.Debug("LootClosestLootableMob() - We are too far. Getting closer.", this);
                     MoveTo(mob.Location, 5.0f);
                 }
+                Output.Instance.Debug("LootClosestLootableMob() - Looting the mob", this);
                 Loot(mob);
             }
         }
@@ -597,8 +612,11 @@ end)()");
         /// <param name="mob">Corpse that we want to loot</param>
         public void Loot(WowUnit mob)
         {
-            mob.Interact();
+            Output.Instance.Debug("Loot() - Interacting with the corpse mob", this);
+            //mob.Interact();
+            ProcessManager.Injector.Lua_DoString(@"InteractUnit(""target"")");
             Thread.Sleep(2000);
+            Output.Instance.Debug("Loot() - Removing this corpse from the list", this);
             LootableList.Remove(mob);
         }
         

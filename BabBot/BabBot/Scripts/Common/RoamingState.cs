@@ -21,6 +21,7 @@ using BabBot.Bot;
 using BabBot.Common;
 using BabBot.Wow;
 using BabBot.States;
+using BabBot.Manager;
 
 namespace BabBot.Scripts.Common
 {
@@ -42,7 +43,29 @@ namespace BabBot.Scripts.Common
             /// 
             /// Right now we only walk through the waypoints as a proof of concept
             Output.Instance.Script("OnRoaming() -- Walking to the next waypoint");
-            Entity.WalkToNextWayPoint(WayPointType.Normal);
+            //Entity.WalkToNextWayPoint(WayPointType.Normal);
+            WayPoint wp = WayPointManager.Instance.GetNextWayPoint(WayPointType.Normal);
+            if (wp != null)
+            {
+                Output.Instance.Script("Moving to next waypoint", this);
+                //MoveTo(wp.Location);
+                float distance = MathFuncs.GetDistance(wp.Location, Entity.Location, false);
+                if (distance > 0.5f)
+                {
+                    var mtsTarget = new MoveToState(wp.Location);
+
+                    //request that we move to this location
+                    CallChangeStateEvent(Entity, mtsTarget, true, false);
+
+                    return;
+                }
+
+            }
+            else
+            {
+                Output.Instance.Script("We are supposed to walk through waypoints but there's no waypoints defined", this);
+            }
+
         }
 
         protected override void DoExit(WowPlayer Entity)
