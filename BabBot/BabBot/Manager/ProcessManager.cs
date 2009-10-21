@@ -205,20 +205,17 @@ namespace BabBot.Manager
                         Thread.Sleep(250);
                     }
 
-                    // Small delay if loading slow
-                    Thread.Sleep(2000);
-
                     if (config.Resize)
                         BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND, 0, 0, 328, 274);
 
-                    // I'm pretty sure we should wait for something else to be instantiated
-                    // by the client before going on.. I just can't find what yet
-
-                    //Thread.Sleep(5000);
 
                     // At this point it should be safe to do any LUA calls
                     if (config.AutoLogin)
                     {
+                        // I'm pretty sure we should wait for something else to be instantiated
+                        // by the client before going on.. I just can't find what yet
+
+                        Thread.Sleep(5000);
                         AutoLogin();
                     } 
                     else

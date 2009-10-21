@@ -495,7 +495,7 @@ namespace BabBot.Scripts.Common
                 /// mob dies, so we cannot use that. We've got to come up with
                 /// a better idea. 
                 Output.Instance.Script("Checking if we no longer have a target after a fight", this);
-                if (!Entity.HasTarget)
+                if (!Entity.HasTarget || Entity.IsTargetDead())
                 {
                     Output.Instance.Script("We no longer have a target, thus we enter PostCombatState", this);
                     CallChangeStateEvent(Entity, postCombatState, true, false);
@@ -510,6 +510,8 @@ namespace BabBot.Scripts.Common
                     CallChangeStateEvent(Entity, restState, true, false);
                     return;
                 }
+                CallChangeStateEvent(Entity, roamingState, true, false);
+                return;
             }
 
             /*

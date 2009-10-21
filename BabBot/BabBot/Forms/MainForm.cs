@@ -616,7 +616,18 @@ namespace BabBot.Forms
                 }
 
                 // Decrypt auto-login password
-                ProcessManager.Config.DecryptPassword(ProcessManager.Config.LoginPassword);
+                if (!string.IsNullOrEmpty(ProcessManager.Config.LoginPassword))
+                {
+                    try
+                    {
+                        ProcessManager.Config.DecryptPassword(ProcessManager.Config.LoginPassword);
+                    }
+                    catch (Exception e)
+                    {
+                        // We couldn't decrypt the password for some reason. We reset it to blank.
+                        ProcessManager.Config.LoginPassword = "";
+                    }
+                }
             }
             catch (FileNotFoundException ex)
             {

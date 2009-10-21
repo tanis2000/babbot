@@ -312,7 +312,6 @@ namespace BabBot.Wow
         public bool IsInCombat()
         {
             ProcessManager.Injector.Lua_DoString(@"(function()
-	SetMapToCurrentZone()
 	local incombat = InCombatLockdown()
 	return incombat
 end)()");
@@ -369,7 +368,9 @@ end)()");
         public bool SelectMob(WowUnit u)
         {
             // We face the target otherwise the tabbing won't work as it might be out of our scope
-            FaceUsingMemoryWrite(GetFaceAngle(u.Location), true);
+            // NOTE: we are using the timed one, but it's a bit shaky
+            //FaceUsingMemoryWrite(GetFaceAngle(u.Location), true);
+            Face(u.Location);
 
             // We tab till we have found our target or till we come back to the first GUID we met
             return FindMob(u);
@@ -383,6 +384,7 @@ end)()");
 
             if (firstGuid == 0)
             {
+                Output.Instance.Debug("We tried targeting but the first TAB didn't land on anything", this);
                 return false;
             }
 
@@ -393,11 +395,12 @@ end)()");
                 if (CurTargetGuid == u.Guid)
                 {
                     LastTargetedMob = u;
+                    Output.Instance.Debug("We found a target while TABbing", this);
                     return true;
                 }
             } while ((CurTargetGuid != u.Guid) && (CurTargetGuid != firstGuid));
 
-
+            Output.Instance.Debug("We cycled through all the targets but nothing good could be found", this);
             return false;
         }
 
@@ -570,9 +573,11 @@ end)()");
         public void LootClosestLootableMob()
         {
             Output.Instance.Debug("===Lootable List===", this);
+            // We wait a bit as the corpse seems not to be entirely populated at times.. weird
+            Thread.Sleep(250);
             foreach (WowUnit wowUnit in LootableList)
             {
-                Output.Instance.Debug(Guid + " - " + Name, this);
+                Output.Instance.Debug(wowUnit.Guid + " - " + wowUnit.Name, this);
             }
             WowUnit mob = FindClosestLootableMob();
             if (mob != null)
@@ -1235,7 +1240,6 @@ end)()");
         {
             // TODO: find a way to read if we are attacking without checking the action bar
             ProcessManager.Injector.Lua_DoString(@"(function()
-	SetMapToCurrentZone()
 	local action = IsCurrentAction(1)
 	return action
 end)()");
@@ -1246,7 +1250,6 @@ end)()");
         public bool CanCast(string iName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	SetMapToCurrentZone()
 	local name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(""{0}"")
 	return name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange
 end)()", iName));
@@ -1363,7 +1366,6 @@ end)()", iName));
         public bool HasBuff(string iName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	SetMapToCurrentZone()
 	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitBuff(""player"", ""{0}"")
 	return name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable
 end)()", iName));
@@ -1374,7 +1376,6 @@ end)()", iName));
         public bool HasDebuff(string iName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	SetMapToCurrentZone()
 	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitDebuff(""player"", ""{0}"")
 	return name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable
 end)()", iName));
@@ -1426,14 +1427,12 @@ end)()", iName));
         public bool IsCasting(string spellName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	SetMapToCurrentZone()
 	local spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(""player"")
 	return spell, rank, displayName, icon, startTime, endTime, isTradeSkill
 end)()"));
             string spell = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	SetMapToCurrentZone()
 	local spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitChannelInfo(""player"")
 	return spell, rank, displayName, icon, startTime, endTime, isTradeSkill
 end)()"));
@@ -1445,7 +1444,6 @@ end)()"));
         public Item GetMerchantItemInfo(int idx)
         {
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	SetMapToCurrentZone()
 	local name, texture, price, quantity, numAvailable, isUsable, extendedCost = GetMerchantItemInfo({0})
 	return name, texture, price, quantity, numAvailable, isUsable, extendedCost
 end)()", idx));
@@ -1502,12 +1500,20 @@ end)()", idx));
 
         public int TargetHpPct
         {
-            get { return (int) ((TargetHp/TargetMaxHp)*100); }
+            get
+            {
+                if (TargetMaxHp == 0) return 0;
+                return (int) ((TargetHp/TargetMaxHp)*100);
+            }
         }
 
         public int TargetMpPct
         {
-            get { return (int) ((TargetMp/TargetMaxMp)*100); }
+            get
+            {
+                if (TargetMaxMp == 0) return 0;
+                return (int) ((TargetMp/TargetMaxMp)*100);
+            }
         }
         
         public void DoString(string iCommand)

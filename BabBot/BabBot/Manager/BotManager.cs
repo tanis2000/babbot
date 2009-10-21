@@ -79,27 +79,28 @@ namespace BabBot.Manager
 
         private void OnFinalize()
         {
-            Output.Instance.Debug("OnFinalize", this);
+            //Output.Instance.Debug("OnFinalize", this);
         }
 
         private void OnBeforeStop()
         {
-            Output.Instance.Debug("OnBeforeStop", this);
+            //Output.Instance.Debug("OnBeforeStop", this);
         }
 
         private void OnBeforeStart()
         {
-            Output.Instance.Debug("OnBeforeStart", this);
+            //Output.Instance.Debug("OnBeforeStart", this);
         }
 
         private void OnInitialize()
         {
-            Output.Instance.Debug("OnInitialize", this);
+            //Output.Instance.Debug("OnInitialize", this);
         }
 
         private void OnException(Exception e, GThread.ThreadPhase phase)
         {
-            Output.Instance.LogError(e);
+            //Output.Instance.LogError(e);
+            Console.WriteLine(e.ToString());
         }
 
         private void OnRun()
