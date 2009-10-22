@@ -110,7 +110,7 @@ namespace BabBot.Manager
                         return null;
                     }
                     CurrentVendorWayPointIndex++;
-                    if (CurrentVendorWayPointIndex > VendorNodeCount)
+                    if (CurrentVendorWayPointIndex >= VendorNodeCount)
                     {
                         CurrentVendorWayPointIndex = 0;
                     }
@@ -122,7 +122,7 @@ namespace BabBot.Manager
                         return null;
                     }
                     CurrentRepairWayPointIndex++;
-                    if (CurrentRepairWayPointIndex > RepairNodeCount)
+                    if (CurrentRepairWayPointIndex >= RepairNodeCount)
                     {
                         CurrentRepairWayPointIndex = 0;
                     }
@@ -134,7 +134,7 @@ namespace BabBot.Manager
                         return null;
                     }
                     CurrentNormalWayPointIndex++;
-                    if (CurrentNormalWayPointIndex > NormalNodeCount)
+                    if (CurrentNormalWayPointIndex >= NormalNodeCount)
                     {
                         CurrentNormalWayPointIndex = 0;
                     }
@@ -146,7 +146,7 @@ namespace BabBot.Manager
                         return null;
                     }
                     CurrentGhostWayPointIndex++;
-                    if (CurrentGhostWayPointIndex > GhostNodeCount)
+                    if (CurrentGhostWayPointIndex >= GhostNodeCount)
                     {
                         CurrentGhostWayPointIndex = 0;
                     }
@@ -157,6 +157,30 @@ namespace BabBot.Manager
             }
         }
 
+        public void ClearWaypoints(WayPointType wpType)
+        {
+            switch (wpType)
+            {
+                case WayPointType.Vendor:
+                    VendorPath.Clear();
+                    CurrentVendorWayPointIndex = 0;
+                    break;
+                case WayPointType.Repair:
+                    RepairPath.Clear();
+                    CurrentRepairWayPointIndex = 0;
+                    break;
+                case WayPointType.Normal:
+                    NormalPath.Clear();
+                    CurrentNormalWayPointIndex = 0;
+                    break; 
+                case WayPointType.Ghost:
+                    GhostPath.Clear();
+                    CurrentGhostWayPointIndex = 0;
+                    break;
+                default:
+                    return;
+            }
+        }
         #region Properties
 
         public int NormalNodeCount

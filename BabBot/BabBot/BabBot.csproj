@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -136,7 +136,6 @@
     <Compile Include="Manager\InjectionManager.cs" />
     <Compile Include="Manager\ProcessManager.cs" />
     <Compile Include="Bot\WayPoint.cs" />
-    <None Include="Manager\StateManager.cs" />
     <Compile Include="Manager\WayPointManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -176,10 +175,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Scripting\SConsumable.cs" />
-    <Compile Include="Scripting\UnitWrapper.cs" />
     <Compile Include="Scripting\Host.cs" />
-    <Compile Include="Scripting\PlayerWrapper.cs" />
+    <Compile Include="Scripting\SConsumable.cs" />
     <Compile Include="Scripts\Common\RoamingState.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

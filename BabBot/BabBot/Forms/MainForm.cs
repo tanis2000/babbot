@@ -47,6 +47,7 @@ namespace BabBot.Forms
             // Load the configuration file
             Output.OutputEvent += LogOutput;
             Output.DebugEvent += LogDebug;
+            Output.ScriptEvent += LogScript;
             Output.Instance.LogDebug = true; // We force logging of debug messages for now (it should become an option)
             Output.Instance.LogScript = true; // We force logging of script messages for debugging purpouses
             Output.Instance.Log("Initializing..");
@@ -240,7 +241,6 @@ namespace BabBot.Forms
             {
                 // Main Thread
                 btnRun.Enabled = true;
-                //btnAttachToWow.Enabled = true;
 
                 // Stop the reading thread
                 ProcessManager.BotManager.Stop();
@@ -255,7 +255,6 @@ namespace BabBot.Forms
         private void wow_ProcessStarted(int process)
         {
             btnRun.Enabled = false;
-            btnAttachToWow.Enabled = false;
 
             // Start the reading thread
             ProcessManager.BotManager.Start();
@@ -352,11 +351,6 @@ namespace BabBot.Forms
                 // UI Stuff
                 tbProfile.Text = dlg.FileName;
             }
-        }
-
-        private void btnAttachToWow_Click(object sender, EventArgs e)
-        {
-            ProcessManager.AttachToWow();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -695,7 +689,7 @@ namespace BabBot.Forms
         {
             if (txtConsole.InvokeRequired)
             {
-                Output.OutputEventHandler handler = LogDebug;
+                Output.OutputEventHandler handler = LogOutput;
                 Invoke(handler, new object[] { message });
             }
             else
@@ -706,6 +700,23 @@ namespace BabBot.Forms
                                                     DateTime.Now.ToShortTimeString(), message,
                                                     Environment.NewLine));
                 txtConsole.ScrollToCaret();
+            }
+        }
+
+        internal void LogScript(string message)
+        {
+            if (txtScript.InvokeRequired)
+            {
+                Output.OutputEventHandler handler = LogScript;
+                Invoke(handler, new object[] { message });
+            }
+            else
+            {
+                txtScript.SelectionColor = Color.Black;
+                txtScript.AppendText(String.Format(CultureInfo.CurrentCulture, "[{0}] {1}{2}",
+                                                    DateTime.Now.ToShortTimeString(), message,
+                                                    Environment.NewLine));
+                txtScript.ScrollToCaret();
             }
         }
         #endregion
@@ -739,6 +750,47 @@ namespace BabBot.Forms
                 btnRun_Click(sender, e);
             }
 
+        }
+
+        private void btnResetBot_Click(object sender, EventArgs e)
+        {
+            Output.Instance.Log("Resetting StateMachine");
+
+            if (ProcessManager.Player == null)
+            {
+                Output.Instance.Log("Cannot reset the StateMachine, we are not in the game yet");
+                return;
+            }
+
+            
+            ProcessManager.Player.StateMachine.SetGlobalState(ProcessManager.Player.StateMachine.GlobalState);
+
+            Output.Instance.Log("StateMachine resetted");
+        }
+
+        private void btnAddWayPoint_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnClearNormalWP_Click(object sender, EventArgs e)
+        {
+            WayPointManager.Instance.ClearWaypoints(WayPointType.Normal);
+        }
+
+        private void btnClearGhostWP_Click(object sender, EventArgs e)
+        {
+            WayPointManager.Instance.ClearWaypoints(WayPointType.Ghost);
+        }
+
+        private void btnClearVendorWP_Click(object sender, EventArgs e)
+        {
+            WayPointManager.Instance.ClearWaypoints(WayPointType.Vendor);
+        }
+
+        private void btnClearRepairWP_Click(object sender, EventArgs e)
+        {
+            WayPointManager.Instance.ClearWaypoints(WayPointType.Repair);
         }
 
 

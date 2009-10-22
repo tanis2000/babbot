@@ -27,6 +27,8 @@ namespace BabBot.Scripts.Common
 {
     public class RoamingState : State<WowPlayer>
     {
+        protected static WayPoint _lastWayPoint = null;
+
         protected override void DoEnter(WowPlayer Entity)
         {
         }
@@ -44,15 +46,38 @@ namespace BabBot.Scripts.Common
             /// Right now we only walk through the waypoints as a proof of concept
             Output.Instance.Script("OnRoaming() -- Walking to the next waypoint");
             //Entity.WalkToNextWayPoint(WayPointType.Normal);
-            WayPoint wp = WayPointManager.Instance.GetNextWayPoint(WayPointType.Normal);
+            WayPoint wp = null;
+            if (_lastWayPoint != null)
+            {
+                Output.Instance.Script("OnRoaming() -- We have a last waypoint. Checking if we reached it");
+
+                float distanceFromLast = MathFuncs.GetDistance(_lastWayPoint.Location, Entity.Location, false);
+                if (distanceFromLast <= 2.0f)
+                {
+                    Output.Instance.Script("OnRoaming() -- We reached the last waypoint. Let's get a new one");
+                    wp = WayPointManager.Instance.GetNextWayPoint(WayPointType.Normal);
+                }
+                else
+                {
+                    Output.Instance.Script("OnRoaming() -- We still need to reach the last waypoint. We reuse the last one.");
+                    wp = _lastWayPoint;
+                }
+            }
+            else
+            {
+                Output.Instance.Script("OnRoaming() -- This is the first waypoint. We try to get a new one.");
+                wp = WayPointManager.Instance.GetNextWayPoint(WayPointType.Normal);
+            }
             if (wp != null)
             {
-                Output.Instance.Script("Moving to next waypoint", this);
+                _lastWayPoint = wp;
+                Output.Instance.Script(string.Format("Moving to waypoint. Index:{0}", WayPointManager.Instance.CurrentNormalWayPointIndex), this);
+                Output.Instance.Script(string.Format("WayPoint: X:{0} Y:{1} Z:{2}", wp.Location.X, wp.Location.Y, wp.Location.Z), this);
                 //MoveTo(wp.Location);
                 float distance = MathFuncs.GetDistance(wp.Location, Entity.Location, false);
-                if (distance > 0.5f)
+                if (distance > 3.5f)
                 {
-                    var mtsTarget = new MoveToState(wp.Location);
+                    var mtsTarget = new MoveToState(wp.Location, 3.0f);
 
                     //request that we move to this location
                     CallChangeStateEvent(Entity, mtsTarget, true, false);

@@ -908,12 +908,12 @@ end)()");
             Thread.Sleep(250);
 
             // Then we strafe right a bit
-            StrafeRight(300);
+            StrafeRight(2000);
             PlayerCM.SendKeys(" ");
             Thread.Sleep(250);
 
             // And then left a bit
-            StrafeLeft(300);
+            StrafeLeft(2000);
             PlayerCM.SendKeys(" ");
             Thread.Sleep(250);
         }

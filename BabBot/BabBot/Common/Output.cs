@@ -44,6 +44,7 @@ namespace BabBot.Common
 
         public static event OutputEventHandler OutputEvent;
         public static event OutputEventHandler DebugEvent;
+        public static event OutputEventHandler ScriptEvent;
 
         /// <summary>
         /// A simple logging method. Will output to DebugLog.txt.
@@ -148,6 +149,10 @@ namespace BabBot.Common
             using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-ScriptLog.txt", DateString, ProcessManager.Config.LogPath), true))
             {
                 w.WriteLine(Format("{0} {1}", BTimeString, message));
+            }
+            if (ScriptEvent != null)
+            {
+                ScriptEvent(Format("{0}", message));
             }
         }
 

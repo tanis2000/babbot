@@ -46,14 +46,14 @@ namespace BabBot.Common
         {
             if (angle < 0f)
             {
-                angle += 6.283185f;
+                angle += 2 * (float)Math.PI; //6.283185f
             }
             return angle;
         }
 
         public static float RadianToDegree(float value)
         {
-            return (float) Math.Round((double) (value * 57.295779513082323));
+            return (float) Math.Round((double) (value * 180/Math.PI));
         }
 
         public static int RandomNumber(int min, int max)

@@ -39,6 +39,7 @@
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.btnResetBot = new System.Windows.Forms.Button();
             this.btnLoadScript = new System.Windows.Forms.Button();
             this.label34 = new System.Windows.Forms.Label();
             this.tbScript = new System.Windows.Forms.TextBox();
@@ -54,23 +55,26 @@
             this.btnLoadProfile = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.txtConsole = new System.Windows.Forms.RichTextBox();
-            this.btnAttachToWow = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageWayPoints = new System.Windows.Forms.TabPage();
             this.cbAutoAddWaypoints = new System.Windows.Forms.CheckBox();
             this.btnAddWayPoint = new System.Windows.Forms.Button();
             this.comboWayPointTypes = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnClearRepairWP = new System.Windows.Forms.Button();
             this.btnCopyFromVendor = new System.Windows.Forms.Button();
             this.tbCountRepair = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnClearVendorWP = new System.Windows.Forms.Button();
             this.tbCountVendor = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnClearGhostWP = new System.Windows.Forms.Button();
             this.tbCountGhost = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.gbNormalWaypoints = new System.Windows.Forms.GroupBox();
+            this.btnClearNormalWP = new System.Windows.Forms.Button();
             this.tbCountNormal = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPagePlayer = new System.Windows.Forms.TabPage();
@@ -157,6 +161,8 @@
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tabPageScript = new System.Windows.Forms.TabPage();
+            this.txtScript = new System.Windows.Forms.RichTextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -172,6 +178,7 @@
             this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.tabPageScript.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -239,6 +246,7 @@
             this.tabControlMain.Controls.Add(this.tabPageEnemies);
             this.tabControlMain.Controls.Add(this.tabPageDebug);
             this.tabControlMain.Controls.Add(this.tabPageDebug2);
+            this.tabControlMain.Controls.Add(this.tabPageScript);
             this.tabControlMain.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControlMain.Location = new System.Drawing.Point(0, 24);
             this.tabControlMain.Name = "tabControlMain";
@@ -251,7 +259,6 @@
             this.tabPageMain.Controls.Add(this.groupBox5);
             this.tabPageMain.Controls.Add(this.groupBox1);
             this.tabPageMain.Controls.Add(this.txtConsole);
-            this.tabPageMain.Controls.Add(this.btnAttachToWow);
             this.tabPageMain.Controls.Add(this.btnRun);
             this.tabPageMain.Location = new System.Drawing.Point(4, 22);
             this.tabPageMain.Name = "tabPageMain";
@@ -263,6 +270,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.btnResetBot);
             this.groupBox5.Controls.Add(this.btnLoadScript);
             this.groupBox5.Controls.Add(this.label34);
             this.groupBox5.Controls.Add(this.tbScript);
@@ -274,6 +282,16 @@
             this.groupBox5.TabIndex = 92;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Script";
+            // 
+            // btnResetBot
+            // 
+            this.btnResetBot.Location = new System.Drawing.Point(51, 103);
+            this.btnResetBot.Name = "btnResetBot";
+            this.btnResetBot.Size = new System.Drawing.Size(75, 23);
+            this.btnResetBot.TabIndex = 18;
+            this.btnResetBot.Text = "Reset";
+            this.btnResetBot.UseVisualStyleBackColor = true;
+            this.btnResetBot.Click += new System.EventHandler(this.btnResetBot_Click);
             // 
             // btnLoadScript
             // 
@@ -420,17 +438,6 @@
             this.txtConsole.TabIndex = 90;
             this.txtConsole.Text = "";
             // 
-            // btnAttachToWow
-            // 
-            this.btnAttachToWow.Enabled = false;
-            this.btnAttachToWow.Location = new System.Drawing.Point(87, 6);
-            this.btnAttachToWow.Name = "btnAttachToWow";
-            this.btnAttachToWow.Size = new System.Drawing.Size(95, 23);
-            this.btnAttachToWow.TabIndex = 15;
-            this.btnAttachToWow.Text = "Attach to WoW";
-            this.btnAttachToWow.UseVisualStyleBackColor = true;
-            this.btnAttachToWow.Click += new System.EventHandler(this.btnAttachToWow_Click);
-            // 
             // btnRun
             // 
             this.btnRun.Location = new System.Drawing.Point(6, 6);
@@ -477,6 +484,7 @@
             this.btnAddWayPoint.TabIndex = 5;
             this.btnAddWayPoint.Text = "Add WayPoint";
             this.btnAddWayPoint.UseVisualStyleBackColor = true;
+            this.btnAddWayPoint.Click += new System.EventHandler(this.btnAddWayPoint_Click);
             // 
             // comboWayPointTypes
             // 
@@ -494,6 +502,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.btnClearRepairWP);
             this.groupBox4.Controls.Add(this.btnCopyFromVendor);
             this.groupBox4.Controls.Add(this.tbCountRepair);
             this.groupBox4.Controls.Add(this.label13);
@@ -503,6 +512,16 @@
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Repair";
+            // 
+            // btnClearRepairWP
+            // 
+            this.btnClearRepairWP.Location = new System.Drawing.Point(9, 71);
+            this.btnClearRepairWP.Name = "btnClearRepairWP";
+            this.btnClearRepairWP.Size = new System.Drawing.Size(75, 23);
+            this.btnClearRepairWP.TabIndex = 6;
+            this.btnClearRepairWP.Text = "Clear";
+            this.btnClearRepairWP.UseVisualStyleBackColor = true;
+            this.btnClearRepairWP.Click += new System.EventHandler(this.btnClearRepairWP_Click);
             // 
             // btnCopyFromVendor
             // 
@@ -532,6 +551,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.btnClearVendorWP);
             this.groupBox3.Controls.Add(this.tbCountVendor);
             this.groupBox3.Controls.Add(this.label12);
             this.groupBox3.Location = new System.Drawing.Point(3, 112);
@@ -540,6 +560,16 @@
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Vendor";
+            // 
+            // btnClearVendorWP
+            // 
+            this.btnClearVendorWP.Location = new System.Drawing.Point(10, 44);
+            this.btnClearVendorWP.Name = "btnClearVendorWP";
+            this.btnClearVendorWP.Size = new System.Drawing.Size(75, 23);
+            this.btnClearVendorWP.TabIndex = 4;
+            this.btnClearVendorWP.Text = "Clear";
+            this.btnClearVendorWP.UseVisualStyleBackColor = true;
+            this.btnClearVendorWP.Click += new System.EventHandler(this.btnClearVendorWP_Click);
             // 
             // tbCountVendor
             // 
@@ -560,6 +590,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnClearGhostWP);
             this.groupBox2.Controls.Add(this.tbCountGhost);
             this.groupBox2.Controls.Add(this.label11);
             this.groupBox2.Location = new System.Drawing.Point(209, 6);
@@ -568,6 +599,16 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Ghost";
+            // 
+            // btnClearGhostWP
+            // 
+            this.btnClearGhostWP.Location = new System.Drawing.Point(9, 43);
+            this.btnClearGhostWP.Name = "btnClearGhostWP";
+            this.btnClearGhostWP.Size = new System.Drawing.Size(75, 23);
+            this.btnClearGhostWP.TabIndex = 3;
+            this.btnClearGhostWP.Text = "Clear";
+            this.btnClearGhostWP.UseVisualStyleBackColor = true;
+            this.btnClearGhostWP.Click += new System.EventHandler(this.btnClearGhostWP_Click);
             // 
             // tbCountGhost
             // 
@@ -588,6 +629,7 @@
             // 
             // gbNormalWaypoints
             // 
+            this.gbNormalWaypoints.Controls.Add(this.btnClearNormalWP);
             this.gbNormalWaypoints.Controls.Add(this.tbCountNormal);
             this.gbNormalWaypoints.Controls.Add(this.label10);
             this.gbNormalWaypoints.Location = new System.Drawing.Point(3, 6);
@@ -596,6 +638,16 @@
             this.gbNormalWaypoints.TabIndex = 0;
             this.gbNormalWaypoints.TabStop = false;
             this.gbNormalWaypoints.Text = "Normal";
+            // 
+            // btnClearNormalWP
+            // 
+            this.btnClearNormalWP.Location = new System.Drawing.Point(10, 43);
+            this.btnClearNormalWP.Name = "btnClearNormalWP";
+            this.btnClearNormalWP.Size = new System.Drawing.Size(75, 23);
+            this.btnClearNormalWP.TabIndex = 2;
+            this.btnClearNormalWP.Text = "Clear";
+            this.btnClearNormalWP.UseVisualStyleBackColor = true;
+            this.btnClearNormalWP.Click += new System.EventHandler(this.btnClearNormalWP_Click);
             // 
             // tbCountNormal
             // 
@@ -1410,6 +1462,26 @@
             this.statusLabel.Size = new System.Drawing.Size(62, 17);
             this.statusLabel.Text = "statusLabel";
             // 
+            // tabPageScript
+            // 
+            this.tabPageScript.Controls.Add(this.txtScript);
+            this.tabPageScript.Location = new System.Drawing.Point(4, 22);
+            this.tabPageScript.Name = "tabPageScript";
+            this.tabPageScript.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageScript.Size = new System.Drawing.Size(572, 370);
+            this.tabPageScript.TabIndex = 6;
+            this.tabPageScript.Text = "Script";
+            this.tabPageScript.UseVisualStyleBackColor = true;
+            // 
+            // txtScript
+            // 
+            this.txtScript.Location = new System.Drawing.Point(8, 6);
+            this.txtScript.Name = "txtScript";
+            this.txtScript.ReadOnly = true;
+            this.txtScript.Size = new System.Drawing.Size(558, 358);
+            this.txtScript.TabIndex = 91;
+            this.txtScript.Text = "";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1454,6 +1526,7 @@
             this.tabPageDebug2.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.tabPageScript.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1519,7 +1592,6 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Button btnAttachToWow;
         private System.Windows.Forms.TextBox tbWndHandle;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Button btnMovementTest;
@@ -1589,6 +1661,13 @@
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.TextBox tbScript;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button btnResetBot;
+        private System.Windows.Forms.Button btnClearNormalWP;
+        private System.Windows.Forms.Button btnClearRepairWP;
+        private System.Windows.Forms.Button btnClearVendorWP;
+        private System.Windows.Forms.Button btnClearGhostWP;
+        private System.Windows.Forms.TabPage tabPageScript;
+        private System.Windows.Forms.RichTextBox txtScript;
     }
 }
 

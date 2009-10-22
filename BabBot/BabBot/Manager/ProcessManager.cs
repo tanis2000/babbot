@@ -324,38 +324,7 @@ namespace BabBot.Manager
             }
         }
 
-        /// <summary>
-        /// Try to attach on the WoW process 
-        /// </summary>
-        public static void AttachToWow()
-        {
-            try
-            {
-                process = AppHelper.GetRunningWoWProcess(Config.GuestUsername);
-                if (process != null)
-                {
-                    afterProcessStart();
-                }
-                else
-                {
-                    throw new Exception("Wow is not running in the current context.");
-                }
-            }
-            catch (Win32Exception w32e)
-            {
-                if (WoWProcessFailed != null)
-                {
-                    WoWProcessFailed(w32e.Message);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (WoWProcessAccessFailed != null)
-                {
-                    WoWProcessAccessFailed(ex.Message);
-                }
-            }
-        }
+
 
         public static void ResetWayPoint()
         {

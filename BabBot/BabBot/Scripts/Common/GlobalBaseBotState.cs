@@ -150,7 +150,7 @@ namespace BabBot.Scripts.Common
         /// Returns the best target from the target collection
         /// </summary>
         /// <returns>the best target</returns>
-        protected UnitWrapper BestTarget()
+        protected WowUnit BestTarget()
         {
             // TODO: implement
             return null;
@@ -160,7 +160,7 @@ namespace BabBot.Scripts.Common
         /// Returns the next best target in the collection
         /// </summary>
         /// <returns>next best target</returns>
-        protected UnitWrapper NextBestTarget()
+        protected WowUnit NextBestTarget()
         {
             // TODO: implement
             return null;
