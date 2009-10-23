@@ -50,7 +50,11 @@ namespace BabBot.Scripts.Paladin
         {
             base.DoEnter(Entity);
             Output.Instance.Script("Core.DoEnter() -- Begin", this);
+
+            // We override the default states with our own
             inCombatState = new Paladin.InCombatState();
+            restState = new Paladin.RestState();
+
             Output.Instance.Script("Core.DoEnter() -- End", this);
         }
 
@@ -155,7 +159,7 @@ namespace BabBot.Scripts.Paladin
         {
         }
 
-        public bool NeedRest(WowPlayer player)
+        public override bool NeedRest(WowPlayer player)
         {
             if (player.IsDead)
             {
@@ -194,79 +198,6 @@ namespace BabBot.Scripts.Paladin
             return false;
         }
 
-        protected void OnRest(WowPlayer player)
-        {
-            Output.Instance.Script("OnRest()", this);
-
-            if (player.IsCasting() && player.HpPct > 90)
-            {
-                // we don't need to finish casting a healing spell, let's stop it
-                player.SpellStopCasting();
-            }
-
-            if (player.IsMoving())
-            {
-                // If we're still moving, let's stop
-                player.Stop();
-            }
-
-            if (player.HasDebuff("Resurrection Sickness") && !player.IsSitting)
-            {
-                Sit(player);
-                Output.Instance.Script("OnRest() - We have resurrection sickness. We stay put.", this);
-                return;
-            }
-
-            DebuffAll();
-
-            
-            if (scrollSpam && CanUseScroll(player))
-            {
-                UseScroll(player);
-            }
-            
-
-            if (!debuffStatus)
-            {
-                if (player.MpPct >= RestMana && player.HpPct <= MinHPPct && Consumable.HasBandage() && useBandage)
-                {
-                    Consumable.UseBandage();
-                }
-            }
-
-            if (player.HpPct >= MinHPPct && player.MpPct >= MinMPPct)
-            {
-                Stand(player);
-                return;
-            }
-
-            if (player.HpPct <= RestHp && player.MpPct > 10 && !player.HasBuff("Drink") && !player.IsCasting())
-            {
-                if (player.IsSitting)
-                {
-                    Stand(player);
-                }
-
-                if (!player.IsCasting())
-                {
-                    HealSystem(player);
-                    return;
-                }
-            }
-            
-            if (!player.HasBuff("Drink") && player.MpPct <= RestMana && !player.IsCasting())
-            {
-                if (Consumable.HasDrink())
-                {
-                    Consumable.UseDrink();
-                }
-                else
-                {
-                    player.CastSpellByName("Blessing of Wisdom");
-                }
-            }
-            
-        }
 
     }
 }

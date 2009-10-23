@@ -217,6 +217,9 @@
     <Compile Include="Scripts\Paladin\InCombatState.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Scripts\Paladin\RestState.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="States\ChangeStateEventArgs.cs" />
     <Compile Include="States\Common\AttackNearMobState.cs" />
     <Compile Include="States\Common\DeadState.cs" />

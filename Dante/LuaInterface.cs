@@ -245,18 +245,25 @@ namespace Dante
 
         public static int InputHandler(uint luaState)
         {
-            LoggingInterface.Log("InputHandler() called");
-            lock (Values)
+            try
             {
-                Values.Clear();
-                int n = Lua_GetTop(luaState);
-                LoggingInterface.Log(string.Format("InputHandler() - LUA_State: {0:X}", luaState));
-                LoggingInterface.Log(string.Format("InputHandler() - Vars num: {0}", n));
-                for (int i = 1; i <= n; i++)
+                LoggingInterface.Log("InputHandler() called");
+                lock (Values)
                 {
-                    string res = Lua_ToString(luaState, i, 0);
-                    Values.Add(res);
+                    Values.Clear();
+                    int n = Lua_GetTop(luaState);
+                    LoggingInterface.Log(string.Format("InputHandler() - LUA_State: {0:X}", luaState));
+                    LoggingInterface.Log(string.Format("InputHandler() - Vars num: {0}", n));
+                    for (int i = 1; i <= n; i++)
+                    {
+                        string res = Lua_ToString(luaState, i, 0);
+                        Values.Add(res);
+                    }
                 }
+                
+            } catch (SEHException e)
+            {
+                LoggingInterface.Log("InputHandler() exception: " + e.ToString());                
             }
             return 0;
         }

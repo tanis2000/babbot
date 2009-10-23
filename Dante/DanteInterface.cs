@@ -28,14 +28,15 @@ namespace Dante
         {
             try
             {
+                LuaInterface.LoggingInterface.Log(string.Format("Locking from DoString"));
                 lock (LuaInterface.oLocker)
                 {
                     LuaInterface.PendingDoString = command;
                     LuaInterface.DoStringDone = false;
                 }
-                LuaInterface.LoggingInterface.Log(string.Format("Calling DoString(\"{0}\")", command));
+                LuaInterface.LoggingInterface.Log(string.Format("Queued DoString(\"{0}\")", command));
                 //LuaInterface.DoString(command);
-                LuaInterface.LoggingInterface.Log(string.Format("Done with DoString"));
+                //LuaInterface.LoggingInterface.Log(string.Format("Done with DoString"));
             }
             catch(Exception e)
             {

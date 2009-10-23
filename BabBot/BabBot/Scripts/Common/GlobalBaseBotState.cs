@@ -61,14 +61,14 @@ namespace BabBot.Scripts.Common
         #endregion
 
         protected bool _IsDeadStateRunning;
-        protected SConsumable Consumable = SConsumable.Instance;
+        public static SConsumable Consumable = SConsumable.Instance;
 
         /// <summary>
         /// This is called by the StateManager to check if we need to rest. It should be
         /// implemented by each class
         /// </summary>
         /// <returns>true if we need to rest</returns>
-        public virtual bool NeedRest()
+        public virtual bool NeedRest(WowPlayer player)
         {
             return false;
         }
@@ -172,12 +172,12 @@ namespace BabBot.Scripts.Common
             return true;
         }
 
-        protected bool CanUseScroll(WowPlayer player)
+        public static bool CanUseScroll(WowPlayer player)
         {
             return CanUseScroll(player, "ANY");
         }
 
-        protected bool CanUseScroll(WowPlayer player, string kind)
+        public static bool CanUseScroll(WowPlayer player, string kind)
         {
             string scroll = CheckForScroll(player, kind);
             if (!string.IsNullOrEmpty(scroll))
@@ -187,12 +187,12 @@ namespace BabBot.Scripts.Common
             return false;
         }
 
-        protected string CheckForScroll(WowPlayer player)
+        public static string CheckForScroll(WowPlayer player)
         {
             return CheckForScroll(player, "ANY");
         }
 
-        protected string CheckForScroll(WowPlayer player, string kind)
+        public static string CheckForScroll(WowPlayer player, string kind)
         {
             if (kind == "ANY")
             {
@@ -235,17 +235,17 @@ namespace BabBot.Scripts.Common
             return "";
         }
 
-        protected void UseScroll(WowPlayer player)
+        public static void UseScroll(WowPlayer player)
         {
             UseScroll(player, "ANY");
         }
 
-        protected void UseScroll(WowPlayer player, string kind)
+        public static void UseScroll(WowPlayer player, string kind)
         {
             string scroll = CheckForScroll(player, kind);
             if (scroll != "")
             {
-                Output.Instance.Script(string.Format("Using scroll of {0}", kind), this);
+                //Output.Instance.Script(string.Format("Using scroll of {0}", kind), this);
                 player.TargetMe();
                 Consumable.UseScroll(kind);
                 return;
@@ -257,7 +257,7 @@ namespace BabBot.Scripts.Common
 
         #region Sit & Stand
 
-        protected bool IsSitting(WowPlayer player)
+        protected static bool IsSitting(WowPlayer player)
         {
             // This should prevent drowning
             if (player.IsSitting)
@@ -269,7 +269,7 @@ namespace BabBot.Scripts.Common
             return false;
         }
 
-        protected void Sit(WowPlayer player)
+        public static void Sit(WowPlayer player)
         {
             if (!IsSitting(player))
             {
@@ -278,7 +278,7 @@ namespace BabBot.Scripts.Common
             }
         }
 
-        protected void Stand(WowPlayer player)
+        public static void Stand(WowPlayer player)
         {
             if (IsSitting(player))
             {
@@ -505,7 +505,7 @@ namespace BabBot.Scripts.Common
 
             if (Entity.StateMachine.IsInState(postCombatState.GetType()))
             {
-                if (NeedRest())
+                if (NeedRest(Entity))
                 {
                     CallChangeStateEvent(Entity, restState, true, false);
                     return;
@@ -526,7 +526,7 @@ namespace BabBot.Scripts.Common
             if (Entity.StateMachine.IsInState(restState.GetType()))
             {
                 /// We ask the script if we should keep resting
-                if (!NeedRest())
+                if (!NeedRest(Entity))
                 {
                     CallChangeStateEvent(Entity, roamingState, true, false);
                     return;
@@ -573,7 +573,7 @@ namespace BabBot.Scripts.Common
             }
 
             /// We ask the script if we should keep resting
-            if (NeedRest())
+            if (NeedRest(Entity))
             {
                 CallChangeStateEvent(Entity, restState, true, false);
             }

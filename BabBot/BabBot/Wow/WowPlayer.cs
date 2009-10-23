@@ -321,10 +321,10 @@ end)()");
 
         public void AddLastTargetToLootList()
         {
-            Thread.Sleep(2000);
+            //Thread.Sleep(2000);
             Output.Instance.Debug("AddLastTargetToLootList() - Adding our last target to the list of lootable mobs", this);
             ProcessManager.Injector.Lua_DoString("TargetLastTarget()");
-            Thread.Sleep(2000);
+            //Thread.Sleep(2000);
             if (HasTarget)
             {
                 if (CurTarget.IsLootable)
@@ -1409,21 +1409,21 @@ end)()", iName));
         public bool HasBuff(string iName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitBuff(""player"", ""{0}"")
-	return name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable
+	local name, rank, icon, count, debuffType, duration, expirationTime, source, isStealable = UnitBuff(""player"", ""{0}"")
+	return name, rank, icon, count, debuffType, duration, expirationTime, source, isStealable
 end)()", iName));
             string name = ProcessManager.Injector.Lua_GetLocalizedText(0);
-            if (name == "") return false; else return true;
+            if (string.IsNullOrEmpty(name)) return false; else return true;
         }
 
         public bool HasDebuff(string iName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitDebuff(""player"", ""{0}"")
-	return name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable
+	local name, rank, icon, count, debuffType, duration, expirationTime, source, isStealable = UnitDebuff(""player"", ""{0}"")
+	return name, rank, icon, count, debuffType, duration, expirationTime, source, isStealable
 end)()", iName));
             string name = ProcessManager.Injector.Lua_GetLocalizedText(0);
-            if (name == "") return false; else return true;
+            if (string.IsNullOrEmpty(name)) return false; else return true;
         }
 
         public void MoveToCorpse(float tolerance)
@@ -1458,10 +1458,16 @@ end)()", iName));
 
         public bool IsCasting()
         {
-            ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(\"player\")"));
+            ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
+            local spell, rank, displayName, icon, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(""player"")
+            return spell, rank, displayName, icon, startTime, endTime, isTradeSkill, castID, notInterruptible
+end)()"));
             string spell = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
-            ProcessManager.Injector.Lua_DoString(string.Format("spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitChannelInfo(\"player\")"));
+            ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
+            local spell, rank, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(""player"")
+            return spell, rank, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible
+end)()"));
             string channel = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
             if (channel == "" && spell == "") return false; else return true;
@@ -1470,14 +1476,14 @@ end)()", iName));
         public bool IsCasting(string spellName)
         {
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	local spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(""player"")
-	return spell, rank, displayName, icon, startTime, endTime, isTradeSkill
+	local spell, rank, displayName, icon, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(""player"")
+	return spell, rank, displayName, icon, startTime, endTime, isTradeSkill, castID, notInterruptible
 end)()"));
             string spell = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
             ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
-	local spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitChannelInfo(""player"")
-	return spell, rank, displayName, icon, startTime, endTime, isTradeSkill
+	local spell, rank, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(""player"")
+	return spell, rank, displayName, icon, startTime, endTime, isTradeSkill, notInterruptible
 end)()"));
             string channel = ProcessManager.Injector.Lua_GetLocalizedText(0);
 

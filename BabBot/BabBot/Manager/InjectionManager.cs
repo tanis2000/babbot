@@ -330,7 +330,10 @@ namespace BabBot.Manager
         {
             ProcessManager.Injector.Lua_DoString(
                 string.Format(
-                    "name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(\"{0}\");",
+                    @"(function()
+    local name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange = GetSpellInfo(""{0}"")
+    return name, rank, icon, cost, isFunnel, powerType, castTime, minRange, maxRange
+end)()",
                     name));
             string castTime = ProcessManager.Injector.Lua_GetLocalizedText(6);
 
@@ -342,7 +345,7 @@ namespace BabBot.Manager
 
             Int32 realCastTime = Convert.ToInt32(castTime); // milliseconds
 
-            Lua_DoString(string.Format("CastSpellByName(\"{0}\"{1});", name, onSelf ? ",\"player\"" : ""));
+            Lua_DoString(string.Format("CastSpellByName(\"{0}\"{1})", name, onSelf ? ",\"player\"" : ""));
             Thread.Sleep(realCastTime + 100);
         }
 
@@ -639,6 +642,7 @@ namespace BabBot.Manager
         /// <param name="command"></param>
         public void Lua_DoString(string command)
         {
+            Output.Instance.Debug(command, this);
             RemoteDoString(command);
             //RemoteInputHandler(command);
             while (!RemoteDoStringCompleted())
@@ -693,6 +697,8 @@ namespace BabBot.Manager
             List<string> values = RemoteGetValues();
             if (values.Count > position)
             {
+                if (values[position] == null) return "";
+
                 return values[position];
             }
             return "";
@@ -700,7 +706,12 @@ namespace BabBot.Manager
 
         public List<string> RemoteGetValues()
         {
-            return RemoteObject.GetValues();
+            List<string> l = RemoteObject.GetValues();
+            foreach (string s in l)
+            {
+                Output.Instance.Debug(string.Format("Value[{0}]", s), this);
+            }
+            return l;
         }
 
         #endregion
