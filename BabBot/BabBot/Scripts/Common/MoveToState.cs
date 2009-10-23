@@ -66,6 +66,7 @@ namespace BabBot.Scripts.Common
 
         protected override void DoEnter(WowPlayer Entity)
         {
+            /*
             //if travel path is not defined then generate from location points
             if (TravelPath == null)
             {
@@ -95,10 +96,45 @@ namespace BabBot.Scripts.Common
                         WaypointVector3DHelper.Vector3DToLocation(Entity.Location).GetDistanceTo(CurrentWaypoint);
                 }
             }
+             * */
         }
 
         protected override void DoExecute(WowPlayer Entity)
         {
+            //if travel path is not defined then generate from location points
+            if (TravelPath == null)
+            {
+                //get current and destination as ppather locations
+                var currentLocation = new Location(Entity.Location.X, Entity.Location.Y, Entity.Location.Z);
+                var destinationLocation = new Location(Destination.X, Destination.Y, Destination.Z);
+                //calculate and store travel path
+                Output.Instance.Script("Calculating path started.", this);
+                TravelPath = ProcessManager.Caronte.CalculatePath(currentLocation, destinationLocation);
+                //TravelPath.locations = new List<Location>(TravelPath.locations.Distinct<Location>());
+                Output.Instance.Script("Calculating path finished.", this);
+            }
+
+            //if there are locations then set first waypoint
+            if (TravelPath.locations.Count > 0)
+            {
+                CurrentWaypoint = TravelPath.RemoveFirst();
+
+                //Entity.Face(new Vector3D(CurrentWaypoint.X, CurrentWaypoint.Y, CurrentWaypoint.Z));
+                _LastDistance = WaypointVector3DHelper.Vector3DToLocation(Entity.Location).GetDistanceTo(CurrentWaypoint);
+
+                //if the distance to the next waypoint is less then 1f, use the get next waypoint method
+                if (_LastDistance < 3f)
+                {
+                    CurrentWaypoint = GetNextWayPoint();
+                    _LastDistance =
+                        WaypointVector3DHelper.Vector3DToLocation(Entity.Location).GetDistanceTo(CurrentWaypoint);
+                }
+            }
+
+
+
+
+
             //on execute, first verify we have a waypoit to follow, else exit
             if (CurrentWaypoint == null)
             {
@@ -146,13 +182,14 @@ namespace BabBot.Scripts.Common
                     Entity.FaceUsingMemoryWrite(angle, true);
                     // we take as granted that we should move at least 0.1 yards per cycle (might be a good idea to get this routine synchronized so that 
                     // we can actually know exactly how much we move "per-tick")
-                    /*
-                if (Math.Abs(currentDistance - distance) < 0.1f && Math.Abs(currentDistance - distance) > 0.0001f)
-                {
-                    Output.Instance.Script(string.Format("Stuck! Distance difference: {0}", Math.Abs(currentDistance - distance)), this);
-                    Entity.Unstuck();
-                }
-                */
+                    
+                    //if (Math.Abs(currentDistance - distance) < 0.1f && Math.Abs(currentDistance - distance) > 0.0001f)
+                    if (Math.Abs(currentDistance - distance) < 0.1f)
+                    {
+                        Output.Instance.Script(string.Format("Stuck! Distance difference: {0}", Math.Abs(currentDistance - distance)), this);
+                        Entity.Unstuck();
+                    }
+                
                     //repoint at the waypoint if we are getting off course
                     //angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint), Entity.Location);
                     //if (Math.Abs(Entity.Rotation - angle) > 0.1f)
@@ -161,16 +198,16 @@ namespace BabBot.Scripts.Common
                     //}
 
                     // We release every 250 ms
-                    /*
-                if (tsTravelTime.TotalMilliseconds > 250)
-                {
-                    Output.Instance.Script(string.Format("Releasing after 250ms"), this);
-                    Finish(Entity);
-                    Exit(Entity);
-                    //Entity.PlayerCM.ArrowKeyUp(key);
-                    return;
-                }
-                */
+                    
+                    if (tsTravelTime.TotalMilliseconds > 250)
+                    {
+                        Output.Instance.Script(string.Format("Releasing after 250ms"), this);
+                        Finish(Entity);
+                        Exit(Entity);
+                        //Entity.PlayerCM.ArrowKeyUp(key);
+                        return;
+                    }
+                
                 }
                 Output.Instance.Script("Getting next waypoint", this);
                 CurrentWaypoint = GetNextWayPoint();

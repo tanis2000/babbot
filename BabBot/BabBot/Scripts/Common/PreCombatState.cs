@@ -36,6 +36,7 @@ namespace BabBot.Scripts.Common
         protected override void DoExecute(WowPlayer Entity)
         {
             Output.Instance.Script("OnPreCombat() Begin", this);
+            Entity.Stop();
             if (Entity.IsBeingAttacked())
             {
                 Output.Instance.Script("OnPreCombat() - We are being attacked", this);
@@ -54,7 +55,7 @@ namespace BabBot.Scripts.Common
                 if (Entity.EnemyInSight())
                 {
                     // Face the closest enemy
-                    Output.Instance.Script("OnPreCombat() - Facing closest enemy (we should have a target now)", this);
+                    Output.Instance.Script("OnPreCombat() - Facing closest enemy (we should get a target this way)", this);
                     Entity.FaceClosestEnemy();
 
                     // Let's check if we actually got it as our target

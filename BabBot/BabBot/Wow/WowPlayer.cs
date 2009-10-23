@@ -388,8 +388,10 @@ end)()");
 
         public bool FindMob(WowUnit u)
         {
+            DateTime start = DateTime.Now;
+            TimeSpan tsTimeSpent;
             PlayerCM.SendKeys(CommandManager.SK_TAB);
-            Thread.Sleep(1000);
+            Thread.Sleep(250);
             ulong firstGuid = CurTargetGuid;
 
             if (firstGuid == 0)
@@ -400,16 +402,24 @@ end)()");
 
             do
             {
+                DateTime end = DateTime.Now;
+                tsTimeSpent = end - start;
+
                 PlayerCM.SendKeys(CommandManager.SK_TAB);
-                Thread.Sleep(1000);
+                Thread.Sleep(250);
                 if (CurTargetGuid == u.Guid)
                 {
                     LastTargetedMob = u;
                     Output.Instance.Debug("We found a target while TABbing", this);
                     return true;
                 }
-            } while ((CurTargetGuid != u.Guid) && (CurTargetGuid != firstGuid));
+            } while ((CurTargetGuid != u.Guid) && (CurTargetGuid != firstGuid) && (tsTimeSpent.TotalMilliseconds < 10000));
 
+            if (tsTimeSpent.TotalMilliseconds >= 10000)
+            {
+                // If we couldn't find the target we were looking for we clear the target
+                ProcessManager.Injector.Lua_DoString(@"ClearTarget()");
+            }
             Output.Instance.Debug("We cycled through all the targets but nothing good could be found", this);
             return false;
         }
@@ -925,6 +935,8 @@ end)()");
         public void Stop()
         {
             StopMovement = true;
+            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+            PlayerCM.ArrowKeyUp(key);
         }
 
         /// <summary>
@@ -1112,8 +1124,9 @@ end)()");
         public void Face(Vector3D dest)
         {
             // NOTE: tanis - begin test
-            float angle = GetFaceAngle(dest);
+            //float angle = GetFaceAngle(dest);
             //Face(angle);
+            float angle = MathFuncs.GetFaceRadian(dest, Location);
             FaceUsingMemoryWrite(angle, false);
             // NOTE: tanis - end
         }

@@ -18,6 +18,7 @@
 */
 using System;
 using BabBot.Common;
+using BabBot.Scripts.Common;
 using BabBot.Wow;
 using BabBot.Scripts;
 
@@ -56,7 +57,9 @@ namespace BabBot.Scripts.Paladin
             */
 
             // We turn to face the target if we're facing away for some reason
-            if (Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees()) > 20.0f)
+            float angleDifference = Math.Abs(player.FacingDegrees() - player.AngleToTargetDegrees());
+            Output.Instance.Script(string.Format("Degrees difference between player and target: {0}", angleDifference));
+            if (angleDifference > 20.0f)
             {
                 Output.Instance.Script("Facing target", this);
                 player.FaceTarget();
@@ -66,7 +69,10 @@ namespace BabBot.Scripts.Paladin
             {
                 Output.Instance.Script("Moving towards target", this);
                 player.FaceTarget();
-                player.MoveToTarget(Core.MinMeleeDistance);
+                //player.MoveToTarget(Core.MinMeleeDistance);
+                var mts = new MoveToState(player.CurTarget.Location, Core.MinMeleeDistance);
+                CallChangeStateEvent(player, mts, true, false);
+                player.Stop();
                 return;
             }
 
