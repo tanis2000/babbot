@@ -35,6 +35,7 @@ namespace BabBot
         public bool NoSound = false;
         public bool Windowed = false;
         public bool Resize = false;
+        public string Character = "";
 
         // Private fields not included into serializer
         private string AutoLoginPassword = "";

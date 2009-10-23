@@ -212,17 +212,8 @@ namespace BabBot.Manager
                     // At this point it should be safe to do any LUA calls
                     if (config.AutoLogin)
                     {
-                        // I'm pretty sure we should wait for something else to be instantiated
-                        // by the client before going on.. I just can't find what yet
-
-                        Thread.Sleep(5000);
-                        AutoLogin();
-                    } 
-                    else
-                    {
-                        // If we're not using autologin we make sure that the LUA hook is off the way until we are logged in
-                        Injector.Lua_UnRegisterInputHandler();
-                    }
+                        Login.AutoLogin("", config.LoginUsername, config.getAutoLoginPassword(), config.Character, 5);
+                    }                    
                 }
             }
             catch (Exception e)
@@ -540,39 +531,6 @@ namespace BabBot.Manager
         public static void SetAutoRun()
         {
             arun = true;
-        }
-
-        /// <summary>
-        /// Tries to log the user in
-        /// </summary>
-        protected static void AutoLogin()
-        {
-            Injector.Lua_DoString(string.Format(@"(function()
-                        AccountLoginAccountEdit:SetText('{0}')
-                        AccountLoginPasswordEdit:SetText('{1}')
-                        DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText())
-                    end)()", config.LoginUsername, config.getAutoLoginPassword()));
-
-            // Unregister our hook right away before wow tries to login
-            Injector.Lua_UnRegisterInputHandler();
-
-            // Wait
-            Thread.Sleep(5000);
-
-            // Reregister the hook
-            Injector.Lua_RegisterInputHandler();
-
-            // This should return whether we are connected or not but it isn't working
-            Injector.Lua_DoString(@"(function()
-                    local connected = IsConnectedToServer()
-                    return connected
-                end)()");
-
-            string s = Injector.Lua_GetLocalizedText(0);
-            Output.Instance.Log("Connected: [" + s + "]");
-
-            // TODO: If we are connected to the server we should now select the character and press the enter world button
-            CommandManager.SendKeys(CommandManager.SK_ENTER);
         }
      }
 }

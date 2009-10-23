@@ -21,6 +21,7 @@ namespace BabBot.Forms
             tbLogsPath.Text = ProcessManager.Config.LogPath;
             cbAutoLogin.Checked = ProcessManager.Config.AutoLogin;
             tbLoginUsername.Text = ProcessManager.Config.LoginUsername;
+			tbCharacter.Text = ProcessManager.Config.Character;
             tbLoginPassword.Text = ProcessManager.Config.getAutoLoginPassword();
             cbNoSound.Checked = ProcessManager.Config.NoSound;
             cbWindowed.Checked = ProcessManager.Config.Windowed;
@@ -39,6 +40,7 @@ namespace BabBot.Forms
             ProcessManager.Config.AutoLogin = cbAutoLogin.Checked;
             ProcessManager.Config.LoginUsername = tbLoginUsername.Text;
             ProcessManager.Config.EncryptPassword(tbLoginPassword.Text);
+			ProcessManager.Config.Character = tbCharacter.Text;
             ProcessManager.Config.NoSound = cbNoSound.Checked;
             ProcessManager.Config.Windowed = cbWindowed.Checked;
             ProcessManager.Config.Resize = cbResize.Checked;
@@ -84,8 +86,11 @@ namespace BabBot.Forms
         {
             tbLoginUsername.Enabled = cbAutoLogin.Checked;
             tbLoginPassword.Enabled = cbAutoLogin.Checked;
+			tbCharacter.Enabled = cbAutoLogin.Checked;
             labelUser.Enabled = cbAutoLogin.Checked;
             labelPwd.Enabled = cbAutoLogin.Checked;
+			labelCharacter.Enabled = cbAutoLogin.Checked;
+			
         }
     }
 }
