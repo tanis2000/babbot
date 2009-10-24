@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+    This file is part of BabBot.
+
+    BabBot is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BabBot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
+  
+    Copyright 2009 BabBot Team
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,22 +26,13 @@ using BabBot.Common;
 using System.Threading;
 
 // TODO Critical
+// Realm wizard
 // Patch downloading, trace download process, bot restart
-// Cancel TOC, EULA (we violating it anyway :)
-// Cancel movie (we've seen it already :)
 
 // TODO Minor
-// Detect queue and wait
+// Detect realm queue and wait
 // Localization
 
-// TOSScrollFrameScrollBar:SetValue(0); 
-// local scrollbar = _G[scrollFrame:GetName().."ScrollBar"];
-//	local min, max = scrollbar:GetMinMaxValues();
-
-//	-- HACK: scrollbars do not handle max properly
-//	-- DO NOT CHANGE - without speaking to Mikros/Barris/Thompson
-//	if (scrollbar:GetValue() >= max - 20) then
-//		TOSAccept:Enable();
 
 namespace BabBot.Wow
 {
@@ -34,10 +44,10 @@ namespace BabBot.Wow
         private static bool RetryCount;
         private static string CurrentGlueScreen;
         private static string CurrentGlueDialog;
+        private static DateTime StateChangeTime;
 
-        // State Machine
+        // Login States
 		static Array LoginState = Array.CreateInstance( typeof(String), 11);
-		
 		
 		// Login progress
 		static string LOGIN_SERVER_DOWN = "Login Server Down";
@@ -72,82 +82,88 @@ namespace BabBot.Wow
 
             do
             {
-                if (!GetGlueState())
-                    return false;
-
                 if (RetryCount > 0)
                     Output.Instance.Log("Retrying " + RetryCount + " of " + retry);
 
-                while (State != -1)
+                if (SetGlueState() == -1)
+                    return false;
+
+                switch (State)
                 {
-                    switch (State)
-                    {
-                        case 0: // Login
-                            SendLogin(realm, account, pwd);
+                    case 0: // Login
+                        SendLogin(realm, account, pwd);
+                        break;
 
-                            if (!WaitGlueScreen(0, 1))
-                                return false;
-                            break;
-
-                        case 1: // Character Selection
-                            int idx = SelectCharacter(name);
-                            if (idx > 0)
-                            {
-                                Output.Instance.Log("Found " + name + " as id:" + idx);
-                                ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
-                            }
-                            else if (idx == 0)
-                            {
-                                Output.Instance.Log("Character '" + name +
-                                    "' not found in list for realm '" + realm + "'");
-                                return false;
-                            }
-                            else
-                                return false;
-                            break;
-
-                        // case 2: // Realm Wiz
-                            // break;
-                        case 6: // Movie
-                            // Ohhh, cmon
-                            ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
-                            if (!GetGlueState())
-                                return false;
-                            break;
-                        
-                        // case 9: // eula
-                        // case 10: // tos
-                           // ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
-                           // break;
-                         
-                        default:
-                            Output.Instance.Log("'" + CurrentGlueScreen + "' not implemented yet");
+                    case 1: // Character Selection
+                        int idx = SelectCharacter(name);
+                        if (idx > 0)
+                        {
+                            Output.Instance.Log("Found " + name + " as id:" + idx);
+                            ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
+                            
+                            // We done. World loading
+                            State = 999;
+                        }
+                        else if (idx == -1)
+                        {
+                            Output.Instance.Log("Character '" + name +
+                                "' not found in list for realm '" + realm + "'");
                             return false;
-                        // 
-                        /*
-                        // This should return whether we are connected or not but it isn't working
-                        Injector.Lua_DoString(@"(function()
-                            local connected = IsConnectedToServer()
-                            return connected
-                        end)()");
+                        }
+                        else
+                            return false;
+                        break;
 
-                        string s = Injector.Lua_GetLocalizedText(0);
-                        Output.Instance.Log("Connected: [" + s + "]");
+                    // case 2: // Realm Wiz
+                        // break;
+                        
+                    case 6: // Movie
+                        // Ohhh, cmon
+                        ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
+                        break;
+                        
+                    case 9: // tos
+                    case 10: // eula
+                        ProcessManager.Injector.Lua_DoString(string.Format(
+                           @"Accept{0}()
+                            TOSFrame():Hide()
+                            TOSNotice:Hide()
+                            AccountLogin_ShowUserAgreements()", CurrentGlueDialog.ToUpper()));
+                        break;
+                        
+                    case 99: // disconnect
+                        ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
+                        break;
 
-                        // TODO: If we are connected to the server we should now select the character and press the enter world button
-                        CommandManager.SendKeys(CommandManager.SK_ENTER); */
+                    case 100: // Pending
+                        if (DateTime.Now.Millisecond - StateChangeTime.Millisecond <= MaxScreenWaitTime) {
+                            // Cancel current process and retry
+                            RetryCount++;
+                            ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
+                            Thread.Sleep(10000);
+                            StateChangeTime = DateTime.Now;
+                        } else 
+                            Thread.Sleep(1000);
 
-                    }
-
-                    if (NeedRetry)
-                    {
-                        NeedRetry = false;
+                        break;
+                    
+                    case 101: // Retry
                         RetryCount++;
                         Thread.Sleep(10000);
-                    }
+                        StateChangeTime = DateTime.Now;
+                        break;
 
+                    default:
+                        Output.Instance.Log("'" + LoginState.GetValue(State) + "' not implemented yet");
+                        return false;
                 }
-            } while (NeedRetry && (RetryCount <= retry));
+
+                if ((State >= 0) && (State < 100))
+                    // Wait after execution of last command
+                    Thread.Sleep(1000);
+
+                
+            } while (!((State == 999) || (RetryCount > retry)));
 
             return true;
         }
@@ -191,7 +207,7 @@ namespace BabBot.Wow
 
             string idx = ProcessManager.Injector.Lua_GetLocalizedText(0);
 
-            if (idx == null)
+            if ((idx == null) || idx.Equals(""))
             {
                 Output.Instance.Log("Unable found character name '" + name + "'");
                 return -1;
@@ -199,50 +215,15 @@ namespace BabBot.Wow
                 return Convert.ToInt32(idx);
 		}
 		
-        private static bool WaitGlueScreen(int state_old, int state_new)
+        private static int SetState(int state)
         {
-            bool f = false;
-            DateTime CurrTime = DateTime.Now;
-
-            while (!f && (DateTime.Now.Millisecond - CurrTime.Millisecond <= MaxScreenWaitTime))
-            {
-                if (!GetGlueState())
-					return false;
-				
-                f = (State == state_new);
-                if (!f)
-                {
-                    if (State != state_old)
-                        // Something unexpected
-                        return true;
-
-					if (State == 0)
-					{
-                        // Check for glue dialog. Only valid is handshaking or connection fail
-                        if (!(CurrentGlueDialog.Equals("CANCEL") ||
-                                NeedRetry))
-                            // Something wrong
-                            return false;
-                        else
-                        {
-                            if (CurrentGlueDialog.Equals(LOGIN_STATE_HANDSHAKING))
-                                // Keep waiting
-                                Thread.Sleep(1000);
-                        }
-					}
-                }
-            }
-			
-			if (!f) {
-				Output.Instance.Log("Login pending longer than " + 
-                    MaxScreenWaitTime/1000 + " sec.\n" + "Cancelling this try");
-				ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
-			}
-			
-			return f;
+            State = state;
+            StateChangeTime = DateTime.Now;
+            return State;
         }
 
-		static bool GetGlueState()
+
+		static int SetGlueState()
 		{
             ProcessManager.Injector.Lua_DoString(@"(function()
               local d1, d2, d3
@@ -255,8 +236,11 @@ namespace BabBot.Wow
               else 
                 if (TOSFrame:IsShown()) then
                     d1 = string.lower(TOSFrame.noticeType)
-					local min, max = TOSScrollFrameScrollBar:GetMinMaxValues();
-					TOSScrollFrameScrollBar:SetValue(max);
+                    local scrollbar = _G[TOSFrame.noticeType .. 'ScrollFrameScrollBar'];
+                    if (scrollbar:IsShown()) then
+					    local min, max = scrollbar:GetMinMaxValues()
+					    scrollbar:SetValue(max)
+                    end
                 end
               end
               return CURRENT_GLUE_SCREEN, CURRENT_GLUE_PENDING, d1, d2, d3, IsConnectedToServer()
@@ -265,53 +249,85 @@ namespace BabBot.Wow
             CurrentGlueScreen = ProcessManager.Injector.Lua_GetLocalizedText(0);
             string PendingScreen = ProcessManager.Injector.Lua_GetLocalizedText(1);
             CurrentGlueDialog = ProcessManager.Injector.Lua_GetLocalizedText(2);
-            string d2 = ProcessManager.Injector.Lua_GetLocalizedText(3);
+            string DialogText = ProcessManager.Injector.Lua_GetLocalizedText(3);
             string d3 = ProcessManager.Injector.Lua_GetLocalizedText(4);
             string Connected = ProcessManager.Injector.Lua_GetLocalizedText(5);
 
-            if (PendingScreen != null)
-                        Output.Instance.Log("'" + PendingScreen + "' coming ...");
+            bool IsDialogText = (!((DialogText == null) || DialogText.Equals("")));
+            bool IsHtml = ((d3 != null) && !d3.Equals(""));
 
-            if (CurrentGlueScreen != null)
-			{
-                int idx = Array.IndexOf(LoginState, CurrentGlueScreen);
-                if (idx < 0)
+            if (!((PendingScreen == null) || PendingScreen.Equals("")))
+            {
+                Output.Instance.Log("'" + PendingScreen + "' coming ...");
+                return SetState(100);
+            }
+            
+            if (CurrentGlueScreen == null)
+                // Login completed
+                return SetState(999);
+
+            int idx = Array.IndexOf(LoginState, CurrentGlueScreen);
+            if (idx < 0)
+            {
+                Output.Instance.Log("Unknown GlueScreen '" + CurrentGlueScreen + "'");
+                return -1;
+            }
+
+            SetState(idx);
+
+            // Check for dialog
+            if ((CurrentGlueDialog == null) || CurrentGlueDialog.Equals(""))
+            {
+                // we done
+                return State;
+            }
+
+            // Analyze dialogs
+            
+            // 1. TOS & EULA & realm select shown in dialog
+            int idy = Array.IndexOf(LoginState, CurrentGlueDialog);
+            if (idy >= 0)
+            {
+                return SetState(idy);
+            }
+
+             // Check for progress dialog
+             if (CurrentGlueDialog.Equals("CANCEL")) {
+                // Current state in progress
+                string s = "Current state in progress";
+                if (IsDialogText) 
+                    s += DialogText;
+                 s += " ...";
+                 Output.Instance.Log(s);
+                 return SetState(100);
+             }
+             
+            if (CurrentGlueDialog.Equals("DISCONNECT"))
+                return SetState(99);
+
+            if (IsHtml) {
+                if (CurrentGlueDialog.Equals("CONNECTION_HELP_HTML") && IsHtml)
                 {
-                    Output.Instance.Log("Unknown GlueScreen '" + CurrentGlueScreen + "'");
-                    return false;
+                    Output.Instance.Log("Network problem. Retrying in 10 sec");
+                    // Connection problem
+                    ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
+                    return SetState(101);
+                } else {
+                    Output.Instance.Log("Received Blizz. message. Interrupting login");
+                    return -1;
                 }
-                else
-                {
-                    State = idx;
+            }
 
-                    // Check for dialog
-                    if (CurrentGlueDialog != null)
-                    {
-                        // TOS & EULA shown in dialog
-                        int idy = Array.IndexOf(LoginState, CurrentGlueDialog);
-                        if (idy >= 0)
-                            State = idy;
-                        else
-                        {
-                            // Check for connection problem
-                            if (CurrentGlueDialog.Equals("CONNECTION_HELP_HTML"))
-                            {
-                                ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
-                                NeedRetry = true;
-                            }
-                        }
-                    }
-                }
-			} else {
-				if (PendingScreen != null)
-				// Wait screen to fade in / fade out
-                Thread.Sleep(1000);
-			}
+            if (IsDialogText)
+            {
+                Output.Instance.Log("received" + DialogText);
+                return SetState(100);
+            }
 
-            return true;
-		}
-
-
-
+            // If we still here than something wrong
+            Output.Instance.Log(string.Format(@"Unknow state detected for GlueScreen: {0}; 
+                    GlueDialog: {1}", CurrentGlueScreen, CurrentGlueDialog));
+            return -1;
+        }
     }
 }
