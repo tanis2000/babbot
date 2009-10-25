@@ -211,9 +211,10 @@ namespace BabBot.Manager
 
                     // At this point it should be safe to do any LUA calls
                     if (config.AutoLogin)
-                    {
                         Login.AutoLogin("", config.LoginUsername, config.getAutoLoginPassword(), config.Character, 5);
-                    }                    
+                    else
+                        // If we're not using autologin we make sure that the LUA hook is off the way until we are logged in
+                        Injector.Lua_UnRegisterInputHandler();
                 }
             }
             catch (Exception e)

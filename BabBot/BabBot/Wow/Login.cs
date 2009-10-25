@@ -183,6 +183,15 @@ namespace BabBot.Wow
                         AccountLoginPasswordEdit:SetText('{2}')
                         DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText())
                     end)()", realm_cmd, user, pwd));
+
+            // Unregister our hook right away before wow tries to login
+            ProcessManager.Injector.Lua_UnRegisterInputHandler();
+
+            // Wait
+            Thread.Sleep(5000);
+
+            // ReRegister the hook
+            ProcessManager.Injector.Lua_RegisterInputHandler();
 		}
 		
 		
@@ -261,10 +270,13 @@ namespace BabBot.Wow
                 Output.Instance.Log("'" + PendingScreen + "' coming ...");
                 return SetState(100);
             }
-            
+
             if (CurrentGlueScreen == null)
-                // Login completed
-                return SetState(999);
+            {
+                Output.Instance.Log("Not on login page");
+                // not on login page
+                return -1;
+            }
 
             int idx = Array.IndexOf(LoginState, CurrentGlueScreen);
             if (idx < 0)
