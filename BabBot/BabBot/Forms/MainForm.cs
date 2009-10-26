@@ -363,6 +363,14 @@ namespace BabBot.Forms
         {
             ProcessManager.BotManager.Stop();
             Process.LeaveDebugMode();
+
+            // Save Bot & Wow positions
+            ProcessManager.Config.BotPos = new WinPos(Location, Size);
+            if (ProcessManager.WowHWND != 0)
+                ProcessManager.Config.WowPos = new WinPos(BabBot.Common.WindowSize.
+                                    GetSize((IntPtr)ProcessManager.WowHWND));
+            
+            SaveConfig();
         }
 
         private void btnMovementTest_Click(object sender, EventArgs e)
@@ -744,6 +752,12 @@ namespace BabBot.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            if (ProcessManager.Config.BotPos != null)
+            {
+                Location = ProcessManager.Config.BotPos.Pos.Location;
+                Size = ProcessManager.Config.BotPos.Pos.Size;
+            }
+
             if (ProcessManager.AutoRun)
             {
                 // Start wow for now

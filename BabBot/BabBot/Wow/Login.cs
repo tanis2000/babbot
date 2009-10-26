@@ -125,10 +125,12 @@ namespace BabBot.Wow
                     case 9: // tos
                     case 10: // eula
                         ProcessManager.Injector.Lua_DoString(string.Format(
-                           @"Accept{0}()
-                            TOSFrame():Hide()
+                           @"(function()
+                            Accept{0}()
+                            TOSFrame:Hide()
                             TOSNotice:Hide()
-                            AccountLogin_ShowUserAgreements()", CurrentGlueDialog.ToUpper()));
+                            AccountLogin_ShowUserAgreements()
+                        end)()", CurrentGlueDialog.ToUpper()));
                         break;
                         
                     case 99: // disconnect

@@ -17,6 +17,7 @@
     Copyright 2009 BabBot Team
 */
 using System;
+using System.Drawing;
 
 namespace BabBot
 {
@@ -36,6 +37,8 @@ namespace BabBot
         public bool Windowed = false;
         public bool Resize = false;
         public string Character = "";
+        public WinPos WowPos;
+        public WinPos BotPos;
 
         // Private fields not included into serializer
         private string AutoLoginPassword = "";
@@ -54,6 +57,24 @@ namespace BabBot
 
         public string getAutoLoginPassword() {
             return AutoLoginPassword;
+        }
+    }
+
+    [Serializable]
+    public class WinPos
+    {
+        public Rectangle Pos;
+
+        public WinPos() { }
+
+        public WinPos(Rectangle r)
+        {
+            Pos = r;
+        }
+
+        public WinPos(Point p, Size s)
+        {
+            Pos = new Rectangle(p, s);
         }
     }
 }

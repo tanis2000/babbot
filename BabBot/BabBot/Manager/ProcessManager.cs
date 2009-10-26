@@ -205,13 +205,19 @@ namespace BabBot.Manager
                         Thread.Sleep(250);
                     }
 
-                    if (config.Resize)
+                    if (config.WowPos != null)
+                        BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND,
+                              config.WowPos.Pos.Location.X,
+                              config.WowPos.Pos.Location.Y,
+                              config.WowPos.Pos.Size.Width,
+                              config.WowPos.Pos.Size.Height);
+                    else if (config.Resize)
                         BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND, 0, 0, 328, 274);
 
 
                     // At this point it should be safe to do any LUA calls
                     if (config.AutoLogin)
-                        Login.AutoLogin("", config.LoginUsername, config.getAutoLoginPassword(), config.Character, 5);
+                          Login.AutoLogin("", config.LoginUsername, config.getAutoLoginPassword(), config.Character, 5);
                     else
                         // If we're not using autologin we make sure that the LUA hook is off the way until we are logged in
                         Injector.Lua_UnRegisterInputHandler();
