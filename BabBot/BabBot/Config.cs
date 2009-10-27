@@ -64,7 +64,9 @@ namespace BabBot
     public class WinPos
     {
         public Rectangle Pos;
-
+		public bool TopMost = false;
+		public double Opacity = 1.0;
+		
         public WinPos() { }
 
         public WinPos(Rectangle r)
@@ -72,9 +74,11 @@ namespace BabBot
             Pos = r;
         }
 
-        public WinPos(Point p, Size s)
+        public WinPos(Point p, Size s, bool top, double opacity)
         {
             Pos = new Rectangle(p, s);
+			TopMost = top;
+			Opacity = opacity;
         }
     }
 }

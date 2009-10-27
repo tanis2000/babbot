@@ -159,10 +159,13 @@
             this.lblLocation = new System.Windows.Forms.Label();
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabPageScript = new System.Windows.Forms.TabPage();
             this.txtScript = new System.Windows.Forms.RichTextBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.cbStayOnTop = new System.Windows.Forms.CheckBox();
+            this.hsOpacity = new System.Windows.Forms.HScrollBar();
+            this.label35 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -177,8 +180,8 @@
             this.tabPageEnemies.SuspendLayout();
             this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.tabPageScript.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -256,6 +259,9 @@
             // 
             // tabPageMain
             // 
+            this.tabPageMain.Controls.Add(this.label35);
+            this.tabPageMain.Controls.Add(this.hsOpacity);
+            this.tabPageMain.Controls.Add(this.cbStayOnTop);
             this.tabPageMain.Controls.Add(this.groupBox5);
             this.tabPageMain.Controls.Add(this.groupBox1);
             this.tabPageMain.Controls.Add(this.txtConsole);
@@ -1446,22 +1452,6 @@
             this.tbLocation.Size = new System.Drawing.Size(301, 20);
             this.tbLocation.TabIndex = 6;
             // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 421);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(580, 22);
-            this.statusStrip1.TabIndex = 2;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // statusLabel
-            // 
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(62, 17);
-            this.statusLabel.Text = "statusLabel";
-            // 
             // tabPageScript
             // 
             this.tabPageScript.Controls.Add(this.txtScript);
@@ -1482,11 +1472,58 @@
             this.txtScript.TabIndex = 91;
             this.txtScript.Text = "";
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 414);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(580, 22);
+            this.statusStrip1.TabIndex = 2;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(62, 17);
+            this.statusLabel.Text = "statusLabel";
+            // 
+            // cbStayOnTop
+            // 
+            this.cbStayOnTop.AutoSize = true;
+            this.cbStayOnTop.Location = new System.Drawing.Point(105, 10);
+            this.cbStayOnTop.Name = "cbStayOnTop";
+            this.cbStayOnTop.Size = new System.Drawing.Size(86, 17);
+            this.cbStayOnTop.TabIndex = 93;
+            this.cbStayOnTop.Text = "Stay On Top";
+            this.cbStayOnTop.UseVisualStyleBackColor = true;
+            this.cbStayOnTop.CheckedChanged += new System.EventHandler(this.cbStayOnTop_CheckedChanged);
+            // 
+            // hsOpacity
+            // 
+            this.hsOpacity.Location = new System.Drawing.Point(255, 10);
+            this.hsOpacity.Minimum = 50;
+            this.hsOpacity.Name = "hsOpacity";
+            this.hsOpacity.Size = new System.Drawing.Size(80, 17);
+            this.hsOpacity.SmallChange = 5;
+            this.hsOpacity.TabIndex = 95;
+            this.hsOpacity.Value = 100;
+            this.hsOpacity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hsOpacity_Scroll);
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(209, 11);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(43, 13);
+            this.label35.TabIndex = 96;
+            this.label35.Text = "Opacity";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(580, 443);
+            this.ClientSize = new System.Drawing.Size(580, 436);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControlMain);
             this.Controls.Add(this.msMain);
@@ -1502,6 +1539,7 @@
             this.msMain.PerformLayout();
             this.tabControlMain.ResumeLayout(false);
             this.tabPageMain.ResumeLayout(false);
+            this.tabPageMain.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -1524,9 +1562,9 @@
             this.tabPageDebug.PerformLayout();
             this.tabPageDebug2.ResumeLayout(false);
             this.tabPageDebug2.PerformLayout();
+            this.tabPageScript.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.tabPageScript.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1668,6 +1706,9 @@
         private System.Windows.Forms.Button btnClearGhostWP;
         private System.Windows.Forms.TabPage tabPageScript;
         private System.Windows.Forms.RichTextBox txtScript;
+        private System.Windows.Forms.CheckBox cbStayOnTop;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.HScrollBar hsOpacity;
     }
 }
 

@@ -365,7 +365,7 @@ namespace BabBot.Forms
             Process.LeaveDebugMode();
 
             // Save Bot & Wow positions
-            ProcessManager.Config.BotPos = new WinPos(Location, Size);
+            ProcessManager.Config.BotPos = new WinPos(Location, Size, TopMost, Opacity);
             if (ProcessManager.WowHWND != 0)
                 ProcessManager.Config.WowPos = new WinPos(BabBot.Common.WindowSize.
                                     GetSize((IntPtr)ProcessManager.WowHWND));
@@ -756,6 +756,10 @@ namespace BabBot.Forms
             {
                 Location = ProcessManager.Config.BotPos.Pos.Location;
                 Size = ProcessManager.Config.BotPos.Pos.Size;
+				hsOpacity.Value = Convert.ToInt32(ProcessManager.Config.BotPos.Opacity * 100);
+                hsOpacity_Scroll(sender, null);
+				cbStayOnTop.Checked = ProcessManager.Config.BotPos.TopMost;
+                cbStayOnTop_CheckedChanged(sender, e);
             }
 
             if (ProcessManager.AutoRun)
@@ -807,10 +811,15 @@ namespace BabBot.Forms
             WayPointManager.Instance.ClearWaypoints(WayPointType.Repair);
         }
 
+        private void cbStayOnTop_CheckedChanged(object sender, EventArgs e)
+        {
+            TopMost = cbStayOnTop.Checked;
+        }
 
-
-
-
-
+        private void hsOpacity_Scroll(object sender, ScrollEventArgs e)
+        {
+            double x = Convert.ToDouble(hsOpacity.Value)/100;
+            Opacity = x;
+        }
     }
 }
