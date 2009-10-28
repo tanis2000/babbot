@@ -1,5 +1,0 @@
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\SharedInterface\bin\Debug\SharedInterface.dll
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\SharedInterface\bin\Debug\SharedInterface.pdb
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\SharedInterface\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\SharedInterface\obj\Debug\SharedInterface.dll
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\SharedInterface\obj\Debug\SharedInterface.pdb

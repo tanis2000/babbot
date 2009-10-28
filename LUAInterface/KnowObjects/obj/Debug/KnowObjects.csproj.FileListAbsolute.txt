@@ -1,5 +1,0 @@
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\KnowObjects\bin\Debug\KnowObjects.dll
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\KnowObjects\bin\Debug\KnowObjects.pdb
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\KnowObjects\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\KnowObjects\obj\Debug\KnowObjects.dll
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\KnowObjects\obj\Debug\KnowObjects.pdb

@@ -1,7 +1,0 @@
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAHost\bin\Debug\LUAHost.dll
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAHost\bin\Debug\LUAHost.pdb
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAHost\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAHost\obj\Debug\LUAHost.dll
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAHost\obj\Debug\LUAHost.pdb
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAHost\bin\Debug\SharedInterface.dll
-C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAHost\bin\Debug\SharedInterface.pdb
