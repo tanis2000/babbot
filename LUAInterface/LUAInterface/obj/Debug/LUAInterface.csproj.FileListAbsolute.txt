@@ -1,0 +1,16 @@
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\LUAInterface.exe
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\LUAInterface.pdb
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\CommandPrompt.dll
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\EasyHook.dll
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\EasyHook.xml
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\CommandPrompt.pdb
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\obj\Debug\LUAInterface.FrmMain.resources
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\obj\Debug\LUAInterface.Properties.Resources.resources
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\obj\Debug\LUAInterface.csproj.GenerateResource.Cache
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\obj\Debug\LUAInterface.exe
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\obj\Debug\LUAInterface.pdb
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\SharedInterface.dll
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\SharedInterface.pdb
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\LUAHost.dll
+C:\Users\Administrator\Desktop\sourceforge\LUAProject\LUAInterface\LUAInterface\bin\Debug\LUAHost.pdb
