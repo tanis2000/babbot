@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using BabBot.Manager;
+using System.Drawing;
 
 namespace BabBot.Common
 {
@@ -10,7 +11,7 @@ namespace BabBot.Common
     {
 
         private static readonly Output instance = new Output();
-
+         
         public static Output Instance
         {
             get { return instance; }
@@ -19,17 +20,18 @@ namespace BabBot.Common
 
         #region Delegates
 
-        public delegate void OutputEventHandler(string message);
+        public delegate void OutputEventHandler(string facility, string time, 
+                                                            string message, Color color);
 
         #endregion
 
 
-        public bool LogDebug;
-        public bool LogScript;
+        private bool LogDebug = true; // We force logging of debug messages for now (it should become an option)
+        private bool LogScript = true; // We force logging of script messages for debugging purpouses
 
         private static string DateString
         {
-            get { return DateTime.Today.ToShortDateString().Replace('/', '-'); }
+            get { return DateTime.Today.ToShortDateString().Replace("/", ""); }
         }
 
         private static string TimeString
@@ -39,12 +41,10 @@ namespace BabBot.Common
 
         private static string BTimeString
         {
-            get { return string.Format("[{0}]", TimeString); }
+            get { return TimeString; }
         }
 
         public static event OutputEventHandler OutputEvent;
-        public static event OutputEventHandler DebugEvent;
-        public static event OutputEventHandler ScriptEvent;
 
         /// <summary>
         /// A simple logging method. Will output to DebugLog.txt.
@@ -53,28 +53,39 @@ namespace BabBot.Common
         /// <returns>Nothing.</returns>
         internal void Log(string message)
         {
-            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-DebugLog.txt", DateString, ProcessManager.Config.LogPath), true))
-            {
-                w.WriteLine(Format("{0} {1}", BTimeString, message));
-            }
-            if (OutputEvent != null)
-            {
-                OutputEvent(message);
-            }
+            Log("misc", message);
         }
 
+        internal void Log(string facility, string message)
+        {
+            Log(facility, message, Color.Black);
+        }
 
         /// <summary>
-        /// A simple logging method. Will output to ChatLog.txt.
+        /// logging method for specific facility. Will output to Debug-<Facility>.txt.
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        internal void ChatLog(string message)
+        internal void Log(string facility, string message, Color color)
         {
-            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-ChatLog.txt", DateString, ProcessManager.Config.LogPath), true))
+            string fs = char.ToUpper(facility[0]) + facility.Substring(1);
+
+            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-Log-{2}.txt", 
+                    DateString, ProcessManager.Config.LogPath, fs), true))
             {
-                w.WriteLine(Format("{0} {1}", BTimeString, message));
+                w.WriteLine(Format("{0},{1}", BTimeString, message));
             }
+
+            if (OutputEvent != null)
+            {
+                OutputEvent(fs, BTimeString, message, color);
+            }
+        }
+
+        // Added for compatibility
+        internal void LogError(Exception exception)
+        {
+            LogError("misc", exception);
         }
 
         /// <summary>
@@ -82,13 +93,20 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="exception">The exception to be logged</param>
         /// <returns>Nothing.</returns>
-        internal void LogError(Exception exception)
+        internal void LogError(string facility, Exception exception)
         {
-            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-ErrorLog.txt", DateString, ProcessManager.Config.LogPath), true))
-            {
-                w.WriteLine(Format("{0} {1}{2}{3}{2}{4}", BTimeString, exception.InnerException, Environment.NewLine,
-                                   exception.Message, exception.StackTrace));
-            }
+            Log(facility, Format("{0}{1}{2}{1}{3}", exception.InnerException, 
+                            Environment.NewLine, exception.Message, exception.StackTrace), Color.Red);
+        }
+
+        /// <summary>
+        /// A simple logging method. Will output to ChatLog.txt.
+        /// </summary>
+        /// <param name="message">The message to be logged.</param>
+        /// <returns>Nothing.</returns>
+        internal void ChatLog(string message, Color color)
+        {
+            Log("chat", message, color);
         }
 
         /// <summary>
@@ -105,38 +123,56 @@ namespace BabBot.Common
             }
         }
 
+        // Added for compatibility
+        internal void Debug(string message, object sender)
+        {
+            Debug(Format("[{0}] {1}", sender.GetType().Name, message));
+        }
+
+        // Added for compatibility
+        internal void Debug(string message)
+        {
+            Debug("misc", message, Color.Gray);
+        }
+
         /// <summary>
         /// A simple debug method. Will log debug messages.
         /// </summary>
         /// <param name="sender">Should always be "this"</param>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        internal void Debug(string message, object sender)
+        internal void Debug(string facility, string message, object sender, Color color)
         {
-            if (LogDebug)
-            {
-                Log(Format("[{0}] {1}", sender.GetType().Name, message));
-            }
-            if (DebugEvent != null)
-            {
-                DebugEvent(Format("[{0}] {1}", sender.GetType().Name, message));
-            }
+            Debug(facility, Format("[{0}] {1}", sender.GetType().Name, message), color);
+        }
+
+        internal void Debug(string facility, string message)
+        {
+            Debug(facility, Format("{0}", message), Color.Gray);
         }
 
         /// <summary>
         /// Debugs the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        internal void Debug(string message)
+        internal void Debug(string facility, string message, Color color)
         {
             if (LogDebug)
             {
-                Log(Format("{0}", message));
+                Log(facility, Format("{0}", message), color);
             }
-            if (DebugEvent != null)
-            {
-                DebugEvent(Format("{0}", message));
-            }
+        }
+
+        // Added for compatibility
+        public void Script(string message, object sender)
+        {
+            Script(Format("[{0}] {1}", sender.GetType().Name, message));
+        }
+
+        // Added for compatibility
+        public void Script(string message)
+        {
+            Script("misc", message, Color.Blue);
         }
 
         /// <summary>
@@ -144,15 +180,11 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        public void Script(string message)
+        public void Script(string facility, string message, Color color)
         {
-            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-ScriptLog.txt", DateString, ProcessManager.Config.LogPath), true))
+            if (LogScript)
             {
-                w.WriteLine(Format("{0} {1}", BTimeString, message));
-            }
-            if (ScriptEvent != null)
-            {
-                ScriptEvent(Format("{0}", message));
+                Log(facility, message, color);
             }
         }
 
@@ -162,12 +194,9 @@ namespace BabBot.Common
         /// <param name="sender">Should always be "this"</param>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        public void Script(string message, object sender)
+        public void Script(string facility, string message, object sender, Color color)
         {
-            if (LogScript)
-            {
-                Script(Format("[{0}] {1}", sender.GetType().Name, message));
-            }
+            Script(facility, Format("[{0}] {1}", sender.GetType().Name, message), color);
         }
 
         /*

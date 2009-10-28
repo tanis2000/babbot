@@ -61,6 +61,9 @@ namespace BabBot.Wow
 		static string LOGIN_STATE_INITIALIZED = "Initialized";
 		static string LOGIN_STATE_SURVEY = "Submitting non-personal system specification";
 
+        // Log facility
+        private static string LogFS = "char";
+
         static Login()
         {
             LoginState.SetValue("login", 0); // "AccountLogin";
@@ -91,9 +94,6 @@ namespace BabBot.Wow
 
             do
             {
-                if (RetryCount > 0)
-                    Output.Instance.Log("Retrying " + RetryCount + " of " + retry);
-
                 if (SetGlueState() == -1)
                     return false;
 
@@ -107,7 +107,7 @@ namespace BabBot.Wow
                         int idx = SelectCharacter(name);
                         if (idx > 0)
                         {
-                            Output.Instance.Log("Found " + name + " as id:" + idx);
+                            Output.Instance.Log(LogFS, "Found " + name + " as id:" + idx);
                             ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
                             
                             // We done. World loading
@@ -115,7 +115,7 @@ namespace BabBot.Wow
                         }
                         else if (idx == -1)
                         {
-                            Output.Instance.Log("Character '" + name +
+                            Output.Instance.Log(LogFS, "Character '" + name +
                                 "' not found in list for realm '" + realm + "'");
                             return false;
                         }
@@ -147,11 +147,14 @@ namespace BabBot.Wow
                         break;
 
                     case 100: // Pending
-                        if (DateTime.Now.Millisecond - StateChangeTime.Millisecond <= MaxScreenWaitTime) {
+                        if (DateTime.Now.Millisecond - StateChangeTime.Millisecond > MaxScreenWaitTime) {
                             // Cancel current process and retry
                             RetryCount++;
+                            Output.Instance.Log(LogFS, "Session stack. Canceling ...");
                             ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
                             Thread.Sleep(10000);
+
+                            Output.Instance.Log(LogFS, "Retrying " + RetryCount + " of " + retry);
                             StateChangeTime = DateTime.Now;
                         } else 
                             Thread.Sleep(1000);
@@ -161,11 +164,14 @@ namespace BabBot.Wow
                     case 101: // Retry
                         RetryCount++;
                         Thread.Sleep(10000);
+
+                        Output.Instance.Log(LogFS, "Retrying " + RetryCount + " of " + retry);
                         StateChangeTime = DateTime.Now;
                         break;
 
                     default:
-                        Output.Instance.Log("'" + LoginState.GetValue(State) + "' not implemented yet");
+                        Output.Instance.Log(LogFS, "'" + LoginState.GetValue(State) + 
+                                                                  "' not implemented yet");
                         return false;
                 }
 
@@ -238,7 +244,7 @@ namespace BabBot.Wow
 
             if ((idx == null) || idx.Equals(""))
             {
-                Output.Instance.Log("Unable found character name '" + name + "'");
+                Output.Instance.Log(LogFS, "Unable found character name '" + name + "'");
                 return -1;
             } else
                 return Convert.ToInt32(idx);
@@ -293,15 +299,19 @@ namespace BabBot.Wow
             bool IsDialogText = (!((DialogText == null) || DialogText.Equals("")));
             bool IsHtml = ((d3 != null) && !d3.Equals(""));
 
+            Output.Instance.Debug(LogFS, string.Format("Screen: {0}; Pending: {1};" +
+                " Dialog: {2}; DialogText: {3}; Html: {4}; Connected: {5}",
+                CurrentGlueScreen, PendingScreen, CurrentGlueDialog, DialogText, IsHtml, Connected));
+
             if (!((PendingScreen == null) || PendingScreen.Equals("")))
             {
-                Output.Instance.Log("'" + PendingScreen + "' coming ...");
+                Output.Instance.Log(LogFS, "'" + PendingScreen + "' coming ...");
                 return SetState(100);
             }
 
             if (CurrentGlueScreen == null)
             {
-                Output.Instance.Log("Not on login page");
+                Output.Instance.Log(LogFS, "Not on login page");
                 // not on login page
                 return -1;
             }
@@ -309,7 +319,7 @@ namespace BabBot.Wow
             int idx = Array.IndexOf(LoginState, CurrentGlueScreen);
             if (idx < 0)
             {
-                Output.Instance.Log("Unknown GlueScreen '" + CurrentGlueScreen + "'");
+                Output.Instance.Log(LogFS, "Unknown GlueScreen '" + CurrentGlueScreen + "'");
                 return -1;
             }
 
@@ -336,9 +346,9 @@ namespace BabBot.Wow
                 // Current state in progress
                 string s = "Current state in progress";
                 if (IsDialogText) 
-                    s += DialogText;
+                    s += " '" + DialogText + "'";
                  s += " ...";
-                 Output.Instance.Log(s);
+                 Output.Instance.Log(LogFS, s);
                  return SetState(100);
              }
              
@@ -348,24 +358,24 @@ namespace BabBot.Wow
             if (IsHtml) {
                 if (CurrentGlueDialog.Equals("CONNECTION_HELP_HTML") && IsHtml)
                 {
-                    Output.Instance.Log("Network problem. Retrying in 10 sec");
+                    Output.Instance.Log(LogFS, "Networking problem. Retrying in 10 sec");
                     // Connection problem
                     ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
                     return SetState(101);
                 } else {
-                    Output.Instance.Log("Received Blizz. message. Interrupting login");
+                    Output.Instance.Log(LogFS, "Received Blizz. message. Interrupting login");
                     return -1;
                 }
             }
 
             if (IsDialogText)
             {
-                Output.Instance.Log("received" + DialogText);
+                Output.Instance.Log(LogFS, "Received" + DialogText);
                 return SetState(100);
             }
 
             // If we still here than something wrong
-            Output.Instance.Log(string.Format(@"Unknow state detected for GlueScreen: {0}; 
+            Output.Instance.Log(string.Format(LogFS, @"Unknow state detected for GlueScreen: {0}; 
                     GlueDialog: {1}", CurrentGlueScreen, CurrentGlueDialog));
             return -1;
         }

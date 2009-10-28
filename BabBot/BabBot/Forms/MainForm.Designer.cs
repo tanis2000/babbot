@@ -38,6 +38,13 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControlMain = new System.Windows.Forms.TabControl();
             this.tabPageMain = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.tabLogs = new System.Windows.Forms.TabControl();
+            this.tabAll = new System.Windows.Forms.TabPage();
+            this.txtConsole = new System.Windows.Forms.RichTextBox();
+            this.label35 = new System.Windows.Forms.Label();
+            this.hsOpacity = new System.Windows.Forms.HScrollBar();
+            this.cbStayOnTop = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.btnResetBot = new System.Windows.Forms.Button();
             this.btnLoadScript = new System.Windows.Forms.Button();
@@ -54,7 +61,6 @@
             this.btnSaveProfile = new System.Windows.Forms.Button();
             this.btnLoadProfile = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
-            this.txtConsole = new System.Windows.Forms.RichTextBox();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabPageWayPoints = new System.Windows.Forms.TabPage();
             this.cbAutoAddWaypoints = new System.Windows.Forms.CheckBox();
@@ -163,12 +169,12 @@
             this.txtScript = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.cbStayOnTop = new System.Windows.Forms.CheckBox();
-            this.hsOpacity = new System.Windows.Forms.HScrollBar();
-            this.label35 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
+            this.groupBox6.SuspendLayout();
+            this.tabLogs.SuspendLayout();
+            this.tabAll.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPageWayPoints.SuspendLayout();
@@ -192,7 +198,7 @@
             this.helpToolStripMenuItem});
             this.msMain.Location = new System.Drawing.Point(0, 0);
             this.msMain.Name = "msMain";
-            this.msMain.Size = new System.Drawing.Size(580, 24);
+            this.msMain.Size = new System.Drawing.Size(572, 24);
             this.msMain.TabIndex = 0;
             this.msMain.Text = "menuStrip1";
             // 
@@ -254,25 +260,104 @@
             this.tabControlMain.Location = new System.Drawing.Point(0, 24);
             this.tabControlMain.Name = "tabControlMain";
             this.tabControlMain.SelectedIndex = 0;
-            this.tabControlMain.Size = new System.Drawing.Size(580, 396);
+            this.tabControlMain.Size = new System.Drawing.Size(572, 396);
             this.tabControlMain.TabIndex = 1;
             // 
             // tabPageMain
             // 
+            this.tabPageMain.Controls.Add(this.groupBox6);
             this.tabPageMain.Controls.Add(this.label35);
             this.tabPageMain.Controls.Add(this.hsOpacity);
             this.tabPageMain.Controls.Add(this.cbStayOnTop);
             this.tabPageMain.Controls.Add(this.groupBox5);
             this.tabPageMain.Controls.Add(this.groupBox1);
-            this.tabPageMain.Controls.Add(this.txtConsole);
             this.tabPageMain.Controls.Add(this.btnRun);
             this.tabPageMain.Location = new System.Drawing.Point(4, 22);
             this.tabPageMain.Name = "tabPageMain";
             this.tabPageMain.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMain.Size = new System.Drawing.Size(572, 370);
+            this.tabPageMain.Size = new System.Drawing.Size(564, 370);
             this.tabPageMain.TabIndex = 0;
             this.tabPageMain.Text = "Main";
             this.tabPageMain.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox6.AutoSize = true;
+            this.groupBox6.Controls.Add(this.tabLogs);
+            this.groupBox6.Location = new System.Drawing.Point(8, 148);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(548, 216);
+            this.groupBox6.TabIndex = 97;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Logs";
+            // 
+            // tabLogs
+            // 
+            this.tabLogs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabLogs.Controls.Add(this.tabAll);
+            this.tabLogs.Location = new System.Drawing.Point(9, 19);
+            this.tabLogs.Name = "tabLogs";
+            this.tabLogs.SelectedIndex = 0;
+            this.tabLogs.Size = new System.Drawing.Size(527, 191);
+            this.tabLogs.TabIndex = 91;
+            // 
+            // tabAll
+            // 
+            this.tabAll.Controls.Add(this.txtConsole);
+            this.tabAll.Location = new System.Drawing.Point(4, 22);
+            this.tabAll.Name = "tabAll";
+            this.tabAll.Padding = new System.Windows.Forms.Padding(3);
+            this.tabAll.Size = new System.Drawing.Size(519, 165);
+            this.tabAll.TabIndex = 0;
+            this.tabAll.Text = "All";
+            this.tabAll.UseVisualStyleBackColor = true;
+            // 
+            // txtConsole
+            // 
+            this.txtConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtConsole.Location = new System.Drawing.Point(0, 0);
+            this.txtConsole.Name = "txtConsole";
+            this.txtConsole.ReadOnly = true;
+            this.txtConsole.Size = new System.Drawing.Size(516, 163);
+            this.txtConsole.TabIndex = 90;
+            this.txtConsole.Text = "";
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(209, 11);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(43, 13);
+            this.label35.TabIndex = 96;
+            this.label35.Text = "Opacity";
+            // 
+            // hsOpacity
+            // 
+            this.hsOpacity.Location = new System.Drawing.Point(255, 10);
+            this.hsOpacity.Minimum = 50;
+            this.hsOpacity.Name = "hsOpacity";
+            this.hsOpacity.Size = new System.Drawing.Size(80, 17);
+            this.hsOpacity.SmallChange = 5;
+            this.hsOpacity.TabIndex = 95;
+            this.hsOpacity.Value = 100;
+            this.hsOpacity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hsOpacity_Scroll);
+            // 
+            // cbStayOnTop
+            // 
+            this.cbStayOnTop.AutoSize = true;
+            this.cbStayOnTop.Location = new System.Drawing.Point(105, 10);
+            this.cbStayOnTop.Name = "cbStayOnTop";
+            this.cbStayOnTop.Size = new System.Drawing.Size(86, 17);
+            this.cbStayOnTop.TabIndex = 93;
+            this.cbStayOnTop.Text = "Stay On Top";
+            this.cbStayOnTop.UseVisualStyleBackColor = true;
+            this.cbStayOnTop.CheckedChanged += new System.EventHandler(this.cbStayOnTop_CheckedChanged);
             // 
             // groupBox5
             // 
@@ -282,16 +367,16 @@
             this.groupBox5.Controls.Add(this.tbScript);
             this.groupBox5.Controls.Add(this.btnStopBot);
             this.groupBox5.Controls.Add(this.btnStartBot);
-            this.groupBox5.Location = new System.Drawing.Point(290, 35);
+            this.groupBox5.Location = new System.Drawing.Point(301, 35);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(263, 197);
+            this.groupBox5.Size = new System.Drawing.Size(257, 107);
             this.groupBox5.TabIndex = 92;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Script";
             // 
             // btnResetBot
             // 
-            this.btnResetBot.Location = new System.Drawing.Point(51, 103);
+            this.btnResetBot.Location = new System.Drawing.Point(132, 45);
             this.btnResetBot.Name = "btnResetBot";
             this.btnResetBot.Size = new System.Drawing.Size(75, 23);
             this.btnResetBot.TabIndex = 18;
@@ -358,7 +443,7 @@
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Location = new System.Drawing.Point(8, 35);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(276, 197);
+            this.groupBox1.Size = new System.Drawing.Size(289, 107);
             this.groupBox1.TabIndex = 91;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Profile";
@@ -377,14 +462,14 @@
             this.tbProfile.Location = new System.Drawing.Point(46, 13);
             this.tbProfile.Name = "tbProfile";
             this.tbProfile.ReadOnly = true;
-            this.tbProfile.Size = new System.Drawing.Size(215, 20);
+            this.tbProfile.Size = new System.Drawing.Size(179, 20);
             this.tbProfile.TabIndex = 7;
             // 
             // tbProfileName
             // 
             this.tbProfileName.Location = new System.Drawing.Point(46, 43);
             this.tbProfileName.Name = "tbProfileName";
-            this.tbProfileName.Size = new System.Drawing.Size(215, 20);
+            this.tbProfileName.Size = new System.Drawing.Size(179, 20);
             this.tbProfileName.TabIndex = 11;
             this.tbProfileName.TextChanged += new System.EventHandler(this.tbProfileName_TextChanged);
             // 
@@ -393,7 +478,7 @@
             this.tbProfileDescription.Location = new System.Drawing.Point(46, 70);
             this.tbProfileDescription.Multiline = true;
             this.tbProfileDescription.Name = "tbProfileDescription";
-            this.tbProfileDescription.Size = new System.Drawing.Size(215, 83);
+            this.tbProfileDescription.Size = new System.Drawing.Size(235, 27);
             this.tbProfileDescription.TabIndex = 12;
             this.tbProfileDescription.TextChanged += new System.EventHandler(this.tbProfileDescription_TextChanged);
             // 
@@ -408,9 +493,9 @@
             // 
             // btnSaveProfile
             // 
-            this.btnSaveProfile.Location = new System.Drawing.Point(126, 159);
+            this.btnSaveProfile.Location = new System.Drawing.Point(231, 39);
             this.btnSaveProfile.Name = "btnSaveProfile";
-            this.btnSaveProfile.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveProfile.Size = new System.Drawing.Size(50, 23);
             this.btnSaveProfile.TabIndex = 10;
             this.btnSaveProfile.Text = "Save";
             this.btnSaveProfile.UseVisualStyleBackColor = true;
@@ -418,9 +503,9 @@
             // 
             // btnLoadProfile
             // 
-            this.btnLoadProfile.Location = new System.Drawing.Point(45, 159);
+            this.btnLoadProfile.Location = new System.Drawing.Point(231, 10);
             this.btnLoadProfile.Name = "btnLoadProfile";
-            this.btnLoadProfile.Size = new System.Drawing.Size(75, 23);
+            this.btnLoadProfile.Size = new System.Drawing.Size(50, 23);
             this.btnLoadProfile.TabIndex = 9;
             this.btnLoadProfile.Text = "Load";
             this.btnLoadProfile.UseVisualStyleBackColor = true;
@@ -434,15 +519,6 @@
             this.label9.Size = new System.Drawing.Size(35, 13);
             this.label9.TabIndex = 14;
             this.label9.Text = "Desc:";
-            // 
-            // txtConsole
-            // 
-            this.txtConsole.Location = new System.Drawing.Point(6, 242);
-            this.txtConsole.Name = "txtConsole";
-            this.txtConsole.ReadOnly = true;
-            this.txtConsole.Size = new System.Drawing.Size(558, 122);
-            this.txtConsole.TabIndex = 90;
-            this.txtConsole.Text = "";
             // 
             // btnRun
             // 
@@ -466,7 +542,7 @@
             this.tabPageWayPoints.Location = new System.Drawing.Point(4, 22);
             this.tabPageWayPoints.Name = "tabPageWayPoints";
             this.tabPageWayPoints.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWayPoints.Size = new System.Drawing.Size(572, 370);
+            this.tabPageWayPoints.Size = new System.Drawing.Size(564, 370);
             this.tabPageWayPoints.TabIndex = 2;
             this.tabPageWayPoints.Text = "WayPoints";
             this.tabPageWayPoints.UseVisualStyleBackColor = true;
@@ -698,7 +774,7 @@
             this.tabPagePlayer.Location = new System.Drawing.Point(4, 22);
             this.tabPagePlayer.Name = "tabPagePlayer";
             this.tabPagePlayer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePlayer.Size = new System.Drawing.Size(572, 370);
+            this.tabPagePlayer.Size = new System.Drawing.Size(564, 370);
             this.tabPagePlayer.TabIndex = 3;
             this.tabPagePlayer.Text = "Player";
             this.tabPagePlayer.UseVisualStyleBackColor = true;
@@ -897,7 +973,7 @@
             this.tabPageEnemies.Location = new System.Drawing.Point(4, 22);
             this.tabPageEnemies.Name = "tabPageEnemies";
             this.tabPageEnemies.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageEnemies.Size = new System.Drawing.Size(572, 370);
+            this.tabPageEnemies.Size = new System.Drawing.Size(564, 370);
             this.tabPageEnemies.TabIndex = 5;
             this.tabPageEnemies.Text = "Enemies";
             this.tabPageEnemies.UseVisualStyleBackColor = true;
@@ -1007,7 +1083,7 @@
             this.tabPageDebug.Location = new System.Drawing.Point(4, 22);
             this.tabPageDebug.Name = "tabPageDebug";
             this.tabPageDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDebug.Size = new System.Drawing.Size(572, 370);
+            this.tabPageDebug.Size = new System.Drawing.Size(564, 370);
             this.tabPageDebug.TabIndex = 1;
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
@@ -1341,7 +1417,7 @@
             this.tabPageDebug2.Location = new System.Drawing.Point(4, 22);
             this.tabPageDebug2.Name = "tabPageDebug2";
             this.tabPageDebug2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDebug2.Size = new System.Drawing.Size(572, 370);
+            this.tabPageDebug2.Size = new System.Drawing.Size(564, 370);
             this.tabPageDebug2.TabIndex = 4;
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
@@ -1458,7 +1534,7 @@
             this.tabPageScript.Location = new System.Drawing.Point(4, 22);
             this.tabPageScript.Name = "tabPageScript";
             this.tabPageScript.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageScript.Size = new System.Drawing.Size(572, 370);
+            this.tabPageScript.Size = new System.Drawing.Size(564, 370);
             this.tabPageScript.TabIndex = 6;
             this.tabPageScript.Text = "Script";
             this.tabPageScript.UseVisualStyleBackColor = true;
@@ -1476,62 +1552,31 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 414);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 416);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(580, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(572, 22);
+            this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // statusLabel
             // 
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(62, 17);
-            this.statusLabel.Text = "statusLabel";
-            // 
-            // cbStayOnTop
-            // 
-            this.cbStayOnTop.AutoSize = true;
-            this.cbStayOnTop.Location = new System.Drawing.Point(105, 10);
-            this.cbStayOnTop.Name = "cbStayOnTop";
-            this.cbStayOnTop.Size = new System.Drawing.Size(86, 17);
-            this.cbStayOnTop.TabIndex = 93;
-            this.cbStayOnTop.Text = "Stay On Top";
-            this.cbStayOnTop.UseVisualStyleBackColor = true;
-            this.cbStayOnTop.CheckedChanged += new System.EventHandler(this.cbStayOnTop_CheckedChanged);
-            // 
-            // hsOpacity
-            // 
-            this.hsOpacity.Location = new System.Drawing.Point(255, 10);
-            this.hsOpacity.Minimum = 50;
-            this.hsOpacity.Name = "hsOpacity";
-            this.hsOpacity.Size = new System.Drawing.Size(80, 17);
-            this.hsOpacity.SmallChange = 5;
-            this.hsOpacity.TabIndex = 95;
-            this.hsOpacity.Value = 100;
-            this.hsOpacity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hsOpacity_Scroll);
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(209, 11);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(43, 13);
-            this.label35.TabIndex = 96;
-            this.label35.Text = "Opacity";
+            this.statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(580, 436);
+            this.ClientSize = new System.Drawing.Size(572, 438);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControlMain);
             this.Controls.Add(this.msMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.msMain;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(588, 470);
-            this.MinimumSize = new System.Drawing.Size(588, 470);
+            this.MaximumSize = new System.Drawing.Size(580, 472);
+            this.MinimumSize = new System.Drawing.Size(580, 472);
             this.Name = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -1540,6 +1585,9 @@
             this.tabControlMain.ResumeLayout(false);
             this.tabPageMain.ResumeLayout(false);
             this.tabPageMain.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.tabLogs.ResumeLayout(false);
+            this.tabAll.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -1709,6 +1757,9 @@
         private System.Windows.Forms.CheckBox cbStayOnTop;
         private System.Windows.Forms.Label label35;
         private System.Windows.Forms.HScrollBar hsOpacity;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.TabControl tabLogs;
+        private System.Windows.Forms.TabPage tabAll;
     }
 }
 

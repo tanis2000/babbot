@@ -27,6 +27,7 @@ using BabBot.Bot;
 using BabBot.Common;
 using BabBot.Manager;
 using BabBot.Wow;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,6 +35,8 @@ namespace BabBot.Forms
 {
     public partial class MainForm : Form
     {
+        private Hashtable LogFS = new Hashtable();
+
         public MainForm()
         {
             InitializeComponent();
@@ -46,17 +49,13 @@ namespace BabBot.Forms
 
             // Load the configuration file
             Output.OutputEvent += LogOutput;
-            Output.DebugEvent += LogDebug;
-            Output.ScriptEvent += LogScript;
-            Output.Instance.LogDebug = true; // We force logging of debug messages for now (it should become an option)
-            Output.Instance.LogScript = true; // We force logging of script messages for debugging purpouses
-            Output.Instance.Log("Initializing..");
+            Output.Instance.Log("char", "Initializing..");
             
 
             // Custom initialization of some components
             Initialize();
 
-            Output.Instance.Log("Initialization done.");
+            Output.Instance.Log("char", "Initialization done.");
 
             // ProcessManager events binding
             ProcessManager.WoWProcessStarted += wow_ProcessStarted;
@@ -676,57 +675,49 @@ namespace BabBot.Forms
 
         #region Logging
 
-        internal void LogDebug(string message)
-        {
-            if (txtConsole.InvokeRequired)
-            {
-                Output.OutputEventHandler handler = LogDebug;
-                Invoke(handler, new object[] { message });
-            }
-            else
-            {
-                txtConsole.AppendText(String.Format(CultureInfo.CurrentCulture, "[{0}] ",
-                                                    DateTime.Now.ToShortTimeString()));
-                txtConsole.SelectionColor = Color.Red;
-                txtConsole.AppendText(String.Format(CultureInfo.CurrentCulture, "{0}{1}", message, Environment.NewLine));
-                txtConsole.ScrollToCaret();
-            }
-        }
-
-        internal void LogOutput(string message)
+        internal void LogOutput(string facility, string time, string message, Color color)
         {
             if (txtConsole.InvokeRequired)
             {
                 Output.OutputEventHandler handler = LogOutput;
-                Invoke(handler, new object[] { message });
+                Invoke(handler, new object[] { facility, time, message, color });
             }
             else
             {
-                txtConsole.SelectionColor = Color.Black;
-                // Bug: Font color would stay red when it shouldn't. This fixes it.
-                txtConsole.AppendText(String.Format(CultureInfo.CurrentCulture, "[{0}] {1}{2}",
-                                                    DateTime.Now.ToShortTimeString(), message,
-                                                    Environment.NewLine));
+                // Check if facility exists
+
+                RichTextBox rt = (RichTextBox) LogFS[facility];
+                if (rt == null)
+                {
+                    TabPage tab = new TabPage(facility);
+                    rt = new RichTextBox();
+                    rt.Size = txtConsole.Size;
+                    rt.BackColor = txtConsole.BackColor;
+
+                    tab.Controls.Add(rt);
+                    LogFS.Add(facility, rt);
+                    tabLogs.Controls.Add(tab);
+                }
+
+                string text = String.Format(CultureInfo.CurrentCulture, "[{0}] {1}{2}",
+                                                    time, message, Environment.NewLine);
+                rt.SelectionColor = color;
+                rt.AppendText(text);
+
+                // Append to All logs
+                // Need to change color b4 each output or it remember last selection
+                txtConsole.SelectionColor = color;
+                txtConsole.AppendText(text);
                 txtConsole.ScrollToCaret();
+
+                // Check if limit exceed
+                if (txtComputedFacing.Lines.Length > 5000) {
+                    // TODO Remove extra lines
+                    // txtConsole.
+                }
             }
         }
 
-        internal void LogScript(string message)
-        {
-            if (txtScript.InvokeRequired)
-            {
-                Output.OutputEventHandler handler = LogScript;
-                Invoke(handler, new object[] { message });
-            }
-            else
-            {
-                txtScript.SelectionColor = Color.Black;
-                txtScript.AppendText(String.Format(CultureInfo.CurrentCulture, "[{0}] {1}{2}",
-                                                    DateTime.Now.ToShortTimeString(), message,
-                                                    Environment.NewLine));
-                txtScript.ScrollToCaret();
-            }
-        }
         #endregion
 
         private void btnLoadScript_Click(object sender, EventArgs e)
