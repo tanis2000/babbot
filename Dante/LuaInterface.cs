@@ -241,6 +241,10 @@ namespace Dante
             {
                 LoggingInterface.Log("DoStringInputHandler() exception: " + e.ToString());
             }
+            catch (Exception e)
+            {
+                LoggingInterface.Log("DoStringInputHandler() exception: " + e.ToString());
+            }
         }
 
         public static int InputHandler(uint luaState)
@@ -260,8 +264,7 @@ namespace Dante
                         Values.Add(res);
                     }
                 }
-                
-            } catch (SEHException e)
+            } catch (Exception e)
             {
                 LoggingInterface.Log("InputHandler() exception: " + e.ToString());                
             }
