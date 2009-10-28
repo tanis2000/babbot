@@ -1,0 +1,241 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer>
+      <setting name="UsedSolutionBuilderID">0</setting>
+    </integer>
+    <boolean>
+      <setting name="SolutionAnalysisEnabled">False</setting>
+    </boolean>
+  </SettingsComponent>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <RecentFiles>
+    <RecentFiles>
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:Common.cs" caret="1847" scrollPosition="0|7" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.Designer.cs" caret="0" scrollPosition="0|0" />
+      <File id="ACE0B729-FF56-4AC6-AA40-818784412B92/f:IProvider.cs" caret="0" scrollPosition="0|0" />
+      <File id="ACE0B729-FF56-4AC6-AA40-818784412B92/f:IFactory.cs" caret="0" scrollPosition="0|0" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:Program.cs" caret="250" scrollPosition="0|0" />
+      <File id="ACE0B729-FF56-4AC6-AA40-818784412B92/f:SystemLog.cs" caret="1013" scrollPosition="0|13" />
+      <File id="64E43D3D-74BD-4B4C-8068-F2794298AADB/f:IPCInterface.cs" caret="103" scrollPosition="0|0" />
+      <File id="66025456-3EC1-4770-A883-D7F58CBD4789/f:Prompt.cs" caret="3203" scrollPosition="0|93" />
+      <File id="64E43D3D-74BD-4B4C-8068-F2794298AADB/f:Main.cs" caret="358" scrollPosition="0|21" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="705" scrollPosition="0|24" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|22" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|22" />
+      <File id="ACE0B729-FF56-4AC6-AA40-818784412B92/f:IProvider.cs" caret="409" scrollPosition="0|17" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|0" />
+      <File id="ACE0B729-FF56-4AC6-AA40-818784412B92/f:SystemLog.cs" caret="1078" scrollPosition="0|0" />
+      <File id="ACE0B729-FF56-4AC6-AA40-818784412B92/f:SystemLog.cs" caret="51" scrollPosition="0|4" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|39" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|28" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:Program.cs" caret="562" scrollPosition="0|3" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|0" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|30" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|48" />
+      <File id="ACE0B729-FF56-4AC6-AA40-818784412B92/f:SystemLog.cs" caret="517" scrollPosition="0|3" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|57" />
+      <File id="ACE0B729-FF56-4AC6-AA40-818784412B92/f:SystemLog.cs" caret="1013" scrollPosition="0|13" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|63" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|63" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|75" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|86" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|77" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|73" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|73" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|61" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|68" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|59" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|76" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|0" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="4357" scrollPosition="0|36" />
+      <File id="5F502645-0962-4C3A-A448-D978E0FDFD95/f:FrmMain.cs" caret="1949" scrollPosition="0|36" />
+      <File id="64E43D3D-74BD-4B4C-8068-F2794298AADB/f:Main.cs" caret="358" scrollPosition="0|0" />
+    </RecentEdits>
+  </RecentFiles>
+  <UnitTestRunner>
+    <CustomStartDirectory>
+    </CustomStartDirectory>
+    <UseShadowCopy>True</UseShadowCopy>
+    <UseCustomFolder>False</UseCustomFolder>
+    <EnableUnitTesting>True</EnableUnitTesting>
+    <Providers />
+  </UnitTestRunner>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="Default">
+      <Item value="public" priority="7" />
+      <Item value="static" priority="6" />
+      <Item value="SystemLog" priority="8" />
+      <Item value="if" priority="6" />
+      <Item value="InContext" priority="0" />
+      <Item value="Logger" priority="7" />
+      <Item value="private" priority="9" />
+      <Item value="void" priority="6" />
+      <Item value="string" priority="13" />
+      <Item value="LogMessage" priority="3" />
+      <Item value="Message" priority="7" />
+      <Item value="while" priority="0" />
+      <Item value="ThreadStaticAttribute" priority="0" />
+      <Item value="try" priority="1" />
+      <Item value="e" priority="13" />
+      <Item value="Config" priority="0" />
+      <Item value="InjectLUAHost" priority="1" />
+      <Item value="RemoteHooking" priority="3" />
+      <Item value="NativeAPI" priority="1" />
+      <Item value="this" priority="0" />
+      <Item value="LocalHook" priority="0" />
+      <Item value="WoWHelper" priority="2" />
+      <Item value="int" priority="0" />
+      <Item value="out" priority="0" />
+      <Item value="outprocessid" priority="0" />
+      <Item value="logChannelName" priority="0" />
+      <Item value="MarshalByRefObject" priority="1" />
+      <Item value="IPCInterface" priority="2" />
+      <Item value="Console" priority="3" />
+      <Item value="cmd" priority="4" />
+      <Item value="true" priority="1" />
+      <Item value="switch" priority="0" />
+      <Item value="command" priority="0" />
+      <Item value="case" priority="3" />
+      <Item value="break" priority="4" />
+      <Item value="default" priority="0" />
+      <Item value="res" priority="3" />
+      <Item value="return" priority="1" />
+      <Item value="bool" priority="0" />
+      <Item value="IsInjected" priority="3" />
+      <Item value="IDataGridEditingService" priority="0" />
+      <Item value="ProcessDialogChar" priority="0" />
+      <Item value="Process" priority="1" />
+      <Item value="foreach" priority="0" />
+      <Item value="in" priority="0" />
+      <Item value="processes" priority="0" />
+      <Item value="false" priority="0" />
+      <Item value="p" priority="2" />
+      <Item value="ipcLogChannel" priority="1" />
+      <Item value="remoteLog" priority="16" />
+      <Item value="delegate" priority="2" />
+      <Item value="event" priority="0" />
+      <Item value="protected" priority="0" />
+      <Item value="OnLogMessageDelegate" priority="0" />
+      <Item value="OnLogMessage" priority="0" />
+      <Item value="interface" priority="0" />
+      <Item value="ISystemLog" priority="0" />
+      <Item value="MessageDelivered" priority="1" />
+      <Item value="Serializable" priority="0" />
+      <Item value="messageReceiver" priority="1" />
+      <Item value="null" priority="0" />
+      <Item value="MessageDeliveredEventHandler" priority="2" />
+      <Item value="Instance" priority="0" />
+      <Item value="x" priority="1" />
+      <Item value="MessageReceiver" priority="0" />
+      <Item value="new" priority="2" />
+      <Item value="class" priority="0" />
+      <Item value="OnNewMessage" priority="1" />
+      <Item value="SystemLogCallBack" priority="0" />
+      <Item value="NewMessage" priority="1" />
+      <Item value="_NewMessage" priority="0" />
+      <Item value="IProvider" priority="3" />
+      <Item value="SendServerEvent" priority="0" />
+      <Item value="EventArgs" priority="1" />
+      <Item value="prov" priority="0" />
+      <Item value="LUAHost" priority="0" />
+      <Item value="EventShim" priority="1" />
+      <Item value="object" priority="0" />
+      <Item value="InvokeRequired" priority="0" />
+      <Item value="else" priority="0" />
+      <Item value="OnServerEventDelegate" priority="2" />
+      <Item value="ev" priority="0" />
+      <Item value="sender" priority="1" />
+      <Item value="Invoke" priority="0" />
+      <Item value="parameters" priority="0" />
+      <Item value="lock" priority="0" />
+      <Item value="d" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:LUAHost.SystemLog">
+      <Item value="Log" priority="0" />
+      <Item value="GetHashCode" priority="0" />
+      <Item value="OnLogMessage" priority="0" />
+      <Item value="MessageDelivered" priority="1" />
+      <Item value="messageReceiver" priority="2" />
+      <Item value="OnServerEvent" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.String">
+      <Item value="Format" priority="4" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.DateTime">
+      <Item value="Now" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.DateTime">
+      <Item value="ToLongTimeString" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Threading.Thread">
+      <Item value="Sleep" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Exception">
+      <Item value="Message" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@EasyHook.RemoteHooking">
+      <Item value="CreateAndInject" priority="0" />
+      <Item value="IpcConnectClient" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@EasyHook.NativeAPI">
+      <Item value="RhWakeUpProcess" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@LUAInterface.WoWHelper">
+      <Item value="GetWowInstallationPath" priority="0" />
+      <Item value="CreationFlags" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@LUAInterface.WoWHelper+CreationFlags">
+      <Item value="Suspended" priority="0" />
+      <Item value="NewConsole" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Console">
+      <Item value="WriteLine" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:CommandPrompt.CommandPrompt">
+      <Item value="Text" priority="0" />
+      <Item value="ShowToolTip" priority="0" />
+      <Item value="AddMessage" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.String">
+      <Item value="ToLower" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:CommandPrompt.CommandEventArgs">
+      <Item value="Message" priority="4" />
+      <Item value="Command" priority="1" />
+      <Item value="Cancel" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Diagnostics.Process">
+      <Item value="GetProcessesByName" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Diagnostics.Process">
+      <Item value="Kill" priority="0" />
+      <Item value="Id" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:LUAHost.MessageReceiver">
+      <Item value="MessageDelivered" priority="1" />
+      <Item value="MessageDeliveredHandler" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@LUAHost.SystemLog">
+      <Item value="messageReceiver" priority="1" />
+      <Item value="Instance" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:KnowObjects.MessageReceiver">
+      <Item value="MessageDeliveredHandler" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:LUAHost.ServerEventArgs">
+      <Item value="Message" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:LUAInterface.FrmMain+OnServerEventDelegate">
+      <Item value="Invoke" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:SharedInterface.SystemLog">
+      <Item value="SendServerEvent" priority="0" />
+      <Item value="InjectedDLLChannelName" priority="0" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
+</Configuration>
