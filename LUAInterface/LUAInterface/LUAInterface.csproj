@@ -138,6 +138,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Command Prompt\CommandPrompt.csproj">
+      <Project>{66025456-3EC1-4770-A883-D7F58CBD4789}</Project>
+      <Name>CommandPrompt</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LUAHost\LUAHost.csproj">
       <Project>{64E43D3D-74BD-4B4C-8068-F2794298AADB}</Project>
       <Name>LUAHost</Name>
