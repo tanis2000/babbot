@@ -76,6 +76,15 @@ namespace BabBot.Wow
 		    LoginState.SetValue("eula", 10); // EULA
         }
 
+        /// <summary>
+        /// Execute Auto-Login
+        /// </summary>
+        /// <param name="realm">Realm Name</param>
+        /// <param name="account">WoW account</param>
+        /// <param name="pwd">Account password</param>
+        /// <param name="name">Character name</param>
+        /// <param name="retry"># of retries</param>
+        /// <returns>TRUE if succeed and FALSE if not</returns>
         public static bool AutoLogin(string realm, string account, string pwd, string name, int retry)
         {
 			int RetryCount = 0;
@@ -170,7 +179,12 @@ namespace BabBot.Wow
             return true;
         }
 
-
+        /// <summary>
+        /// Sending account/password
+        /// </summary>
+        /// <param name="realm">Realm name</param>
+        /// <param name="user">Account</param>
+        /// <param name="pwd">Password</param>
         static void SendLogin(string realm, string user, string pwd)
 		{
 			string realm_cmd = "";
@@ -196,7 +210,11 @@ namespace BabBot.Wow
             ProcessManager.Injector.Lua_RegisterInputHandler();
 		}
 		
-		
+		/// <summary>
+		/// Selecting character
+		/// </summary>
+		/// <param name="name">Character name</param>
+		/// <returns>Character index or -1 if character not found on realm</returns>
 		static int SelectCharacter(string name)
 		{
 			ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
@@ -226,6 +244,11 @@ namespace BabBot.Wow
                 return Convert.ToInt32(idx);
 		}
 		
+        /// <summary>
+        /// Set login state
+        /// </summary>
+        /// <param name="state">State ID</param>
+        /// <returns>State ID</returns>
         private static int SetState(int state)
         {
             State = state;
@@ -233,7 +256,10 @@ namespace BabBot.Wow
             return State;
         }
 
-
+        /// <summary>
+        /// Check current Glue window and set login state
+        /// </summary>
+        /// <returns>Login State ID or -1 if Glue Window not found (unknown)</returns>
 		static int SetGlueState()
 		{
             ProcessManager.Injector.Lua_DoString(@"(function()
