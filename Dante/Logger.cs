@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Dante
 {
@@ -25,9 +27,33 @@ namespace Dante
     {
         public string InjectedDLLChannelName { get; set; }
 
+        public Logger()
+        {
+            File.Delete("C:\\Temp\\Dante.txt");
+            File.Delete("C:\\Temp\\EndScene.txt");
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Log(string Message)
         {
-            Console.WriteLine(Message);
+            /// Console.WriteLine(Message);
+            /// System.Diagnostics.Debugger.Log(0, "dante",Message);
+            
+            using (StreamWriter w = new StreamWriter("C:\\Temp\\Dante.txt", true))
+            {
+                w.WriteLine(DateTime.Now.ToLongTimeString() + "," + Message);
+                w.Close();
+            }
+        }
+
+        public void LogEndScene(bool state)
+        {
+            using (StreamWriter w = new StreamWriter("C:\\Temp\\EndScene.txt", true))
+            {
+                w.WriteLine(DateTime.Now.ToLongTimeString() + ", EndScene(): " + 
+                    ((state) ? "IN" : "OUT"));
+                w.Close();
+            }
         }
     }
 }

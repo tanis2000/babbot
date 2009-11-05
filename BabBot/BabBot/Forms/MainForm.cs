@@ -572,27 +572,26 @@ namespace BabBot.Forms
 
         private void btnDoString_Click(object sender, EventArgs e)
         {
-            ProcessManager.Injector.RemoteDoString(tbLuaScript.Text);
+            ProcessManager.Injector.Lua_DoString(tbLuaScript.Text);
         }
 
         private void btnInputHandler_Click(object sender, EventArgs e)
         {
-            ProcessManager.Injector.RemoteInputHandler(tbLuaScript.Text);
+            ProcessManager.Injector.Lua_DoStringEx(tbLuaScript.Text);
         }
 
         private void btnGetLuaText_Click(object sender, EventArgs e)
         {
-            /*
-            string s = ProcessManager.Injector.Lua_GetLocalizedText(tbLuaVariable.Text);
-            tbLuaResult.Text = s;
-             */
             List<string> s = ProcessManager.Injector.RemoteGetValues();
             tbLuaResult.Clear();
-            foreach (string tmp in s)
-            {
-                tbLuaResult.Text += tmp + Environment.NewLine;
-            }
 
+            if (s.Count > 0)
+                foreach (string tmp in s)
+                {
+                    tbLuaResult.Text += tmp + Environment.NewLine;
+                }
+            else
+                tbLuaResult.Text = "null";
         }
 
         #endregion
@@ -753,12 +752,20 @@ namespace BabBot.Forms
                 cbStayOnTop_CheckedChanged(sender, e);
             }
 
+            SetDebugBtns();
+
             if (ProcessManager.AutoRun)
             {
                 // Start wow for now
                 btnRun_Click(sender, e);
             }
 
+        }
+
+        private void SetDebugBtns()
+        {
+            btnRegisterInputHandler.Enabled = !ProcessManager.Injector.IsLuaRegistered;
+            btnUnregisterInputHandler.Enabled = !btnRegisterInputHandler.Enabled;
         }
 
         private void btnResetBot_Click(object sender, EventArgs e)
@@ -811,6 +818,26 @@ namespace BabBot.Forms
         {
             double x = Convert.ToDouble(hsOpacity.Value)/100;
             Opacity = x;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ProcessManager.Injector.Lua_RegisterInputHandler();
+            SetDebugBtns();
+        }
+
+        private void btnUnregisterInputHandler_Click(object sender, EventArgs e)
+        {
+            ProcessManager.Injector.Lua_UnRegisterInputHandler();
+            SetDebugBtns();
+        }
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            ProcessManager.Injector.Lua_RegisterInputHandler();
+            Login.AutoLogin("", ProcessManager.Config.LoginUsername,
+                ProcessManager.Config.getAutoLoginPassword(), 
+                ProcessManager.Config.Character, 5);
         }
     }
 }

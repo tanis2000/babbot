@@ -28,93 +28,124 @@ namespace Dante
         {
             try
             {
-                LuaInterface.LoggingInterface.Log(string.Format("Locking from DoString"));
-                lock (LuaInterface.oLocker)
-                {
-                    LuaInterface.PendingDoString = command;
-                    LuaInterface.DoStringDone = false;
-                }
-                LuaInterface.LoggingInterface.Log(string.Format("Queued DoString(\"{0}\")", command));
-                //LuaInterface.DoString(command);
-                //LuaInterface.LoggingInterface.Log(string.Format("Done with DoString"));
+                LuaInterface.LoggingInterface.Log(string.Format(
+                    "DoString() - State: {0}; Executing: {1} ...", LuaInterface.LuaState, command));
+                LuaInterface.PendingDoString = command;
+
+                LuaInterface.LoggingInterface.Log(string.Format("DoString() - Done"));
+
+                // Always last
+                LuaInterface.LuaState = 1;
+
             }
             catch(Exception e)
             {
-                LuaInterface.LoggingInterface.Log(e.ToString());
+                LuaInterface.LoggingInterface.Log("DoString() - Exception: e.ToString()");
+                LuaInterface.LuaState = 255;
             }
         }
 
-        public void DoStringInputHandler(string command)
+        public void DoStringEx(string command)
         {
             try
             {
-                LuaInterface.LoggingInterface.Log(string.Format("Calling DoStringInputHandler(\"{0}\")", command));
-                LuaInterface.DoStringInputHandler(command);
-                LuaInterface.LoggingInterface.Log(string.Format("Done with DoStringInputHandler"));
+                LuaInterface.LoggingInterface.Log(string.Format(
+                    "DoStringEx() - State: {0}; Executing (\"{1}\") ...", 
+                    LuaInterface.LuaState, command));
+
+                LuaInterface.PendingDoString = command;
+                LuaInterface.LoggingInterface.Log(string.Format("DoStringEx() - Done"));
+
+                LuaInterface.Values.Clear();
+                LuaInterface.ValueReceived = false;
+
+                // Always last
+                LuaInterface.LuaState = 2;
             }
             catch (Exception e)
             {
-                LuaInterface.LoggingInterface.Log(e.ToString());
+                LuaInterface.LoggingInterface.Log(
+                                "DoStringInputHandler() - Exception: " + e.ToString());
             }
         }
 
         public List<string> GetValues()
         {
             try {
-                LuaInterface.LoggingInterface.Log(string.Format("GetValues() called"));
+                bool val = LuaInterface.ValueReceived;
+                LuaInterface.LoggingInterface.Log(string.Format(
+                    "GetValues() - ValueReceived: {0}; Calling ...", val));
 
-                lock (LuaInterface.Values)
+                if (val)
                 {
                     foreach (string s in LuaInterface.Values)
                     {
-                        LuaInterface.LoggingInterface.Log("Value [" + s + "]");
+                        LuaInterface.LoggingInterface.Log("GetValues() Value [" + s + "]");
                     }
+
+                    LuaInterface.LoggingInterface.Log(string.Format(
+                        "GetValues() - Done returned {0} parameters", LuaInterface.Values.Count));
                     return LuaInterface.Values;
-                }
+                } else
+                    LuaInterface.LoggingInterface.Log("GetValues() - Done no value(s) received");
             }
             catch (Exception e)
             {
-                LuaInterface.LoggingInterface.Log("GetValues exception: " + e.ToString());
+                LuaInterface.LoggingInterface.Log("GetValues() exception: " + e.ToString());
             }
+
             return new List<string>();
         }
 
-        public void RegisterLuaHandler()
-        {
-            lock (LuaInterface.oLocker)
-            {
-                Patch();
-                LuaInterface.PendingRegistration = true;
-            }
-        }
-
-        public void Patch()
-        {            
-            LuaInterface.LoggingInterface.Log(string.Format("Patch() - Patching WoW.. CommandHandler: {0:X}", (uint)LuaInterface.CommandHandlerPtr));
-            int bw = LuaInterface.SetFunctionPtr(LuaInterface.CommandHandlerPtr);
-            LuaInterface.LoggingInterface.Log(string.Format("Patch() - Bytes written: {0}", bw));
-        }
-
-        public void RestorePatch()
-        {
-            LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Patching WoW.. restoring patched CommandHandler"));
-            int bw = LuaInterface.RestoreFunctionPtr();
-            LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Bytes written: {0}", bw));
-        }
-
-        public bool DoStringHasCompleted()
+        public bool IsLuaRequestCompleted()
         {
             try
             {
-                LuaInterface.LoggingInterface.Log(string.Format("DoStringHasCompleted() - DoStringDone: {0}", LuaInterface.DoStringDone));
-
-                return LuaInterface.DoStringDone;
+                byte lstate = LuaInterface.LuaState;
+                LuaInterface.LoggingInterface.Log(string.Format(
+                           "IsLuaRequestCompleted() - State: " + lstate));
+                return (lstate == 255);
             }
             catch (Exception e)
             {
-                LuaInterface.LoggingInterface.Log("DoStringHasCompleted() exception: " + e.ToString());
+                LuaInterface.LoggingInterface.Log("IsLuaRequestCompleted() - Exception: " + e.ToString());
+                LuaInterface.LuaState = 255;
+                return true;
             }
-            return false;
+        }
+
+        public bool IsDoStringHasValue()
+        {
+            byte lstate = LuaInterface.LuaState;
+            bool vstate = LuaInterface.ValueReceived;
+            try
+            {
+                LuaInterface.LoggingInterface.Log(string.Format(
+                    "IsDoStringHasValue() - State: {0}:{1}", lstate, vstate));
+
+                return ((lstate == 255) && vstate);
+            }
+            catch (Exception e)
+            {
+                LuaInterface.LoggingInterface.Log("IsDoStringHasValue() - Exception: " + e.ToString());
+                return true;
+            }
+        }
+
+        public bool SetEndSceneState(byte NewState)
+        {
+            byte OldState = LuaInterface.LuaState;
+            LuaInterface.LoggingInterface.Log(string.Format(
+                "SetEndSceneState() - Old: {0}; New: {1}", OldState, NewState));
+            if (OldState == 255)
+            {
+                LuaInterface.LoggingInterface.Log("SetEndSceneState() - Accepted");
+                LuaInterface.LuaState = NewState;
+                return true;
+            } else {
+                LuaInterface.LoggingInterface.Log("SetEndSceneState() - Rejected");
+                return false;
+            }
         }
     }
 }

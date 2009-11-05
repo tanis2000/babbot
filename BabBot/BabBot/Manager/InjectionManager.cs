@@ -42,8 +42,10 @@ namespace BabBot.Manager
             new Dictionary<ulong, Descriptor.eUnitReaction>();
 
         private readonly IDictionary<string, uint> SpellIdCache = new Dictionary<string, uint>();
-        public bool Injected;
+
+        private bool registered;
         private uint state;
+        List<string> values;
 
         #region External function calls
 
@@ -579,6 +581,11 @@ end)()",
         }
         */
 
+        public bool IsLuaRegistered
+        {
+            get { return registered; }
+        }
+
         public void InjectLua()
         {
             InjectLua(wow.ProcessId);
@@ -588,11 +595,6 @@ end)()",
         {
             try
             {
-                if (Injected)
-                {
-                    return;
-                }
-
                 //create IPC log channell for injected dll, so it can log to the console
                 string logChannelName = null;
                 IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<Logger>(ref logChannelName,
@@ -612,10 +614,10 @@ end)()",
                 //get remote object from channel name
                 RemoteObject = RemoteHooking.IpcConnectClient<DanteInterface>(remoteLog.InjectedDLLChannelName);
 
+                // If we're not using autologin we make sure that the LUA hook is off the way until we are logged in
                 //RemoteObject.RegisterLuaHandler();
                 //RemoteObject.Patch();
 
-                Injected = true;
                 Output.Instance.Log("Dante injected");
             }
             catch (Exception ExtInfo)
@@ -627,12 +629,33 @@ end)()",
 
         public void Lua_RegisterInputHandler()
         {
-            RemoteObject.RegisterLuaHandler();
+            if (!registered)
+            {
+                // Register
+                while (!RemoteObject.SetEndSceneState(0))
+                    Thread.Sleep(100);
+
+                // Wait for completion
+                int stime = 100;
+                while (!RemoteObject.IsLuaRequestCompleted())
+                    stime = Sleep(stime);
+
+                registered = true;
+            }
         }
 
         public void Lua_UnRegisterInputHandler()
         {
-            RemoteObject.RestorePatch();
+            // Unregister
+            while (!RemoteObject.SetEndSceneState(3))
+                Thread.Sleep(100);
+
+            // Wait for completion
+            int stime = 100;
+            while (!RemoteObject.IsLuaRequestCompleted())
+                stime = Sleep(stime);
+
+            registered = false;
         }
 
 
@@ -643,50 +666,39 @@ end)()",
         public void Lua_DoString(string command)
         {
             Output.Instance.Debug(command, this);
-            RemoteDoString(command);
-            //RemoteInputHandler(command);
-            while (!RemoteDoStringCompleted())
-            {
-                Thread.Sleep(250); // was 10
-            }
+            RemoteObject.DoString(command);
+
+            // Wait for completion
+            int stime = 100; 
+            while (!RemoteObject.IsLuaRequestCompleted())
+                stime = Sleep(stime);
         }
 
-        public void RemoteDoString(string command)
+        /// <summary>
+        /// Wrapper for the RemoteDoStringInputHandler function.
+        /// </summary>
+        /// <param name="command"></param>
+        public void Lua_DoStringEx(string command)
         {
-            try
-            {
-                RemoteObject.DoString(command);
-            }
-            catch (Exception e)
-            {
-                throw (e);
-            }
+            Output.Instance.Debug(command, this);
+            values = null;
+            RemoteObject.DoStringEx(command);
+
+            // Wait for completion
+            int stime = 100;
+            while (!RemoteObject.IsLuaRequestCompleted())
+                stime = Sleep(stime);
         }
 
-        public void RemoteInputHandler(string command)
+        /// <summary>
+        /// Sleep given number of msec and return doubled time if need another sleep
+        /// </summary>
+        /// <param name="stime">Sleep time</param>
+        /// <returns></returns>
+        private int Sleep(int stime)
         {
-            try
-            {
-                RemoteObject.DoStringInputHandler(command);
-            }
-            catch (Exception e)
-            {
-                throw (e);
-            }
-        }
-
-        public bool RemoteDoStringCompleted()
-        {
-            bool result = false;
-            try
-            {
-                result = RemoteObject.DoStringHasCompleted();
-            }
-            catch (Exception e)
-            {
-                throw (e);
-            }
-            return result;
+            Thread.Sleep(stime);
+            return stime * 2;
         }
 
         // NOTE: tanis - This is no longer calling GetLocalizedText. It's actually retrieving the values
@@ -694,24 +706,29 @@ end)()",
         // function to a better name :-P 
         public string Lua_GetLocalizedText(int position)
         {
-            List<string> values = RemoteGetValues();
+            if (values == null)
+                RemoteGetValues();
+
             if (values.Count > position)
             {
                 if (values[position] == null) return "";
 
                 return values[position];
             }
+
             return "";
         }
 
         public List<string> RemoteGetValues()
         {
-            List<string> l = RemoteObject.GetValues();
-            foreach (string s in l)
+            values = RemoteObject.GetValues();
+
+            foreach (string s in values)
             {
                 Output.Instance.Debug(string.Format("Value[{0}]", s), this);
             }
-            return l;
+
+            return values;
         }
 
         #endregion

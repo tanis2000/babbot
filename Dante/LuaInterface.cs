@@ -41,6 +41,19 @@ namespace Dante
         private static Lua_DoStringDelegate Lua_DoString;
         private static Lua_GetStateDelegate Lua_GetState;
 
+        private static Lua_GetTopDelegate Lua_GetTop;
+        private static Lua_RegisterDelegate Lua_Register;
+        private static Lua_ToStringDelegate Lua_ToString;
+        private static string lua_cmd = "plugin.lua";
+
+        internal static string PendingDoString = string.Empty;
+        public static List<string> Values = new List<string>();
+        internal static bool ValueReceived;
+        internal static byte LuaState = 255;
+
+        #endregion
+
+        #region delegates
 
         /*
             __cdecl: caller pushes and pops args off stack, args passed right to left.
@@ -55,20 +68,6 @@ namespace Dante
 
             naked: caller removes args, no name decoration. Commonly used when writing asm code.
         */
-
-        private static Lua_GetTopDelegate Lua_GetTop;
-        private static Lua_RegisterDelegate Lua_Register;
-        private static Lua_ToStringDelegate Lua_ToString;
-
-        internal static object oLocker = new object();
-        internal static string PendingDoString = string.Empty;
-        internal static bool PendingRegistration;
-        public static List<string> Values = new List<string>();
-        public static bool DoStringDone = false;
-
-        #endregion
-
-        #region delegates
 
         #region Nested type: CommandHandlerDelegate
 
@@ -211,16 +210,29 @@ namespace Dante
 
         #region LUA
 
+        internal static void Patch()
+        {
+            LuaInterface.LoggingInterface.Log(string.Format("Patch() - Patching CommandHandler: {0:X} ...", (uint)LuaInterface.CommandHandlerPtr));
+            int bw = LuaInterface.SetFunctionPtr(LuaInterface.CommandHandlerPtr);
+            LuaInterface.LoggingInterface.Log(string.Format("Patch() - Patched CommandHandler. Bytes written: {0}", bw));
+        }
+
+        internal static void RestorePatch()
+        {
+            LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Restoring patched CommandHandler ... "));
+            int bw = LuaInterface.RestoreFunctionPtr();
+            LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Restored patched CommandHandler. Bytes written: {0}", bw));
+        }
+
         // Calls LUA's DoString directly without using our InputHandler
-        public static void DoString(string command)
+        internal static void DoString(string command)
         {
             try
             {
-                string cmd = string.Format("{0}", command);
-                LoggingInterface.Log(string.Format("DoString() - Calling {0}", cmd));
-                //SuspendThread(WowThreadHandle);
-                Lua_DoString(cmd, "babbot.lua", L);
-                //ResumeThread(WowThreadHandle);
+                LoggingInterface.Log("DoString() - Calling ...");
+                LoggingInterface.Log("DoString() - " + command);
+                Lua_DoString(command, lua_cmd, L);
+                LoggingInterface.Log("DoString() - Done");
             }
             catch (SEHException e)
             {
@@ -229,21 +241,23 @@ namespace Dante
         }
 
         // Calls LUA's DoString encapsulating the command into our InputHandler
-        public static void DoStringInputHandler(string command)
+        public static void DoStringEx(string command)
         {
             try
             {
                 string cmd = string.Format("InputHandler({0})", command);
-                LoggingInterface.Log(string.Format("DoStringInputHandler() - Calling {0}", cmd));
-                Lua_DoString(cmd, "babbot.lua", L);
+                LoggingInterface.Log("DoStringEx() - Calling ...");
+                LoggingInterface.Log("DoStringEx() - " + cmd);
+                Lua_DoString(cmd, lua_cmd, L);
+                LoggingInterface.Log("DoString() - Done");
             }
             catch (SEHException e)
             {
-                LoggingInterface.Log("DoStringInputHandler() exception: " + e.ToString());
+                LoggingInterface.Log("DoStringEx() exception: " + e.ToString());
             }
             catch (Exception e)
             {
-                LoggingInterface.Log("DoStringInputHandler() exception: " + e.ToString());
+                LoggingInterface.Log("DoStringEx() exception: " + e.ToString());
             }
         }
 
@@ -251,28 +265,34 @@ namespace Dante
         {
             try
             {
-                LoggingInterface.Log("InputHandler() called");
-                lock (Values)
+                LoggingInterface.Log("InputHandler() - Calling ...");
+                    
+                Values.Clear();
+                int n = Lua_GetTop(luaState);
+                LoggingInterface.Log(string.Format("InputHandler() - LUA_State: {0:X}", luaState));
+                LoggingInterface.Log("InputHandler() - Vars num: " + n);
+                for (int i = 1; i <= n; i++)
                 {
-                    Values.Clear();
-                    int n = Lua_GetTop(luaState);
-                    LoggingInterface.Log(string.Format("InputHandler() - LUA_State: {0:X}", luaState));
-                    LoggingInterface.Log(string.Format("InputHandler() - Vars num: {0}", n));
-                    for (int i = 1; i <= n; i++)
-                    {
-                        string res = Lua_ToString(luaState, i, 0);
-                        Values.Add(res);
-                    }
+                    string res = Lua_ToString(luaState, i, 0);
+                    LoggingInterface.Log(string.Format(
+                        "InputHandler() - Var[{0}] = {1}", i, res));
+                    Values.Add(res);
                 }
+
+                LoggingInterface.Log("InputHandler() - Done");
             } catch (Exception e)
             {
                 LoggingInterface.Log("InputHandler() exception: " + e.ToString());                
             }
+
+            ValueReceived = true;
+
             return 0;
         }
 
         public static int SetFunctionPtr(IntPtr pointer)
         {
+            LoggingInterface.Log("SetFunctionPtr() - Starting ...");
             bool ReturnVal;
             uint p = (uint) pointer - Functions.Patch_Offset - 5;
             var buf = new byte[4];
@@ -299,15 +319,18 @@ namespace Dante
                                                     out BytesWritten);
             if (!ReturnVal)
             {
-                LoggingInterface.Log(string.Format("SetFunctionPtr() - Error during first WriteProcessMemory"));
+                LoggingInterface.Log(string.Format("SetFunctionPtr() - Error during second WriteProcessMemory"));
             }
             LoggingInterface.Log(string.Format("SetFunctionPtr() - Written {0:d} bytes", BytesWritten));
+
+            LoggingInterface.Log("SetFunctionPtr() - Done");
 
             return BytesWritten;
         }
 
         public static int RestoreFunctionPtr()
         {
+            LoggingInterface.Log("RestoreFunctionPtr() - Starting ...");
             bool ReturnVal;
             var buf = new byte[5];
             buf[0] = buf[1] = buf[2] = buf[3] = buf[4] = 0xCC;
@@ -315,9 +338,14 @@ namespace Dante
             IntPtr hProcess = Kernel32.GetCurrentProcess();
                 // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            LoggingInterface.Log(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", (uint) hProcess));
+            LoggingInterface.Log(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", 
+                                                                            (uint) hProcess));
 
-            ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr) Functions.Patch_Offset, buf, 5, out BytesWritten);
+            ReturnVal = Kernel32.WriteProcessMemory(hProcess, 
+                (IntPtr) Functions.Patch_Offset, buf, 5, out BytesWritten);
+
+            LoggingInterface.Log("RestoreFunctionPtr() - Done");
+
             return BytesWritten;
         }
 
@@ -341,8 +369,7 @@ namespace Dante
 
         private static void InitLUAState()
         {
-            // wrong address???
-            //L = Lua_GetState();
+            L = Lua_GetState();
             LoggingInterface.Log(string.Format("InitLUAState returned {0:X}", L));
         }
 
@@ -351,6 +378,7 @@ namespace Dante
         {
             LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - Registering our InputHandler.."));
             Lua_Register("InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
+            InitLUAState();
             LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - InputHandler Registered"));
         }
 
@@ -364,7 +392,8 @@ namespace Dante
 
             LoggingInterface.Log("Main()");
             Process thisProcess = Process.GetCurrentProcess();
-            LoggingInterface.Log(string.Format("Hooked Into: {0}, {1}", thisProcess.ProcessName, thisProcess.Id));
+            LoggingInterface.Log(string.Format("Hooked Into: {0}, {1}", 
+                                    thisProcess.ProcessName, thisProcess.Id));
         }
 
         public void Run(
@@ -506,6 +535,15 @@ namespace Dante
                 // 3.2.2a
                 Lua_ToString = 0x803850; // 3.1.3: 0x0091ADC0;
 
+            public const uint
+                // 3.2.2 but looks wrong
+                Lua_GetCurrentMapZone = 0x004CDA20;
+                
+            // Also need check if offset correct
+            // ZoneText = 0x113D784
+            // SubZoneText = 0x113D780
+            // InGame = 0x010508A0 (return 1 or 0)
+            // CONTINENT_NAME 0x12dc8e8 //0x12C67F8 //0x10A51F8
             public const uint
                 // 3.2.2a
                 Patch_Offset = 0x00401643; //3.1.3: 0x00401643; // this is our codecave

@@ -223,7 +223,7 @@ namespace BabBot.Wow
 		/// <returns>Character index or -1 if character not found on realm</returns>
 		static int SelectCharacter(string name)
 		{
-			ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
+			ProcessManager.Injector.Lua_DoStringEx(string.Format(@"(function()
 						local found = nill
 
                         local numChars = GetNumCharacters();
@@ -268,7 +268,8 @@ namespace BabBot.Wow
         /// <returns>Login State ID or -1 if Glue Window not found (unknown)</returns>
 		static int SetGlueState()
 		{
-            ProcessManager.Injector.Lua_DoString(@"(function()
+            // We need returning values
+            ProcessManager.Injector.Lua_DoStringEx(@"(function()
               local d1, d2, d3
               if (GlueDialog:IsShown()) then
                 d1 = GlueDialog.which

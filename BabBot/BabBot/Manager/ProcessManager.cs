@@ -152,11 +152,7 @@ namespace BabBot.Manager
         {
             get
             {
-                if (wowProcess != null)
-                {
-                    return wowProcess;
-                }
-                return null;
+                return wowProcess;
             }
         }
 
@@ -205,22 +201,26 @@ namespace BabBot.Manager
                         Thread.Sleep(250);
                     }
 
+                    /* Temp disable 
                     if (config.WowPos != null)
                         BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND,
                               config.WowPos.Pos.Location.X,
                               config.WowPos.Pos.Location.Y,
                               config.WowPos.Pos.Size.Width,
                               config.WowPos.Pos.Size.Height);
-                    else if (config.Resize)
-                        BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND, 0, 0, 328, 274);
+                    else */ if (config.Resize)
+                        BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND,
+                            config.WowPos.Pos.Location.X, config.WowPos.Pos.Location.Y, 328, 274);
 
 
+                            Injector.Lua_RegisterInputHandler();
                     // At this point it should be safe to do any LUA calls
-                    if (config.AutoLogin)
-                          Login.AutoLogin("", config.LoginUsername, config.getAutoLoginPassword(), config.Character, 5);
-                    else
-                        // If we're not using autologin we make sure that the LUA hook is off the way until we are logged in
-                        Injector.Lua_UnRegisterInputHandler();
+                            if (config.AutoLogin)
+                            {
+                                Injector.Lua_RegisterInputHandler();
+                                Login.AutoLogin("", config.LoginUsername, config.getAutoLoginPassword(), config.Character, 5);
+                                Injector.Lua_UnRegisterInputHandler();
+                            }
                 }
             }
             catch (Exception e)
@@ -295,7 +295,9 @@ namespace BabBot.Manager
 
                     //Inject!!!!
                     Injector.InjectLua(process.Id);
-                    Injector.Lua_RegisterInputHandler();
+
+                    // If we're not using autologin we make sure that the LUA hook is off the way until we are logged in
+                    // Injector.Lua_RegisterInputHandler();
 
                     // resume
                     ResumeMainWowThread();
@@ -477,8 +479,7 @@ namespace BabBot.Manager
                 {
                     UpdateStatus("Initializing..");
                 }
-                //FindTLS();
-                //InitializeObjectManager();
+
                 while (!InitializeConnectionManager())
                 {
                     if (UpdateStatus != null)
@@ -505,8 +506,14 @@ namespace BabBot.Manager
 
         public static void InitializeCaronte()
         {
-            Caronte.Init(Player.GetCurrentMapContinent());
-            //Caronte.Init("Azeroth"); // temporary fix to get things running while debugging LUA
+            // string continent = "Azeroth";  // temporary fix to get things running while debugging LUA
+            string continent = Player.GetCurrentMapContinent();
+            
+            Caronte.Init(continent);
+            Output.Instance.Log("char", string.Format(
+                "Caronte initialized with continent '{0}'", continent));
+
+            // Caronte.Init("Azeroth"); 
 
             // We generate a fake path once to initialize the chunk loader stuff
             //Pather.Graph.Path path = ProcessManager.Caronte.CalculatePath(new Pather.Graph.Location(Player.Location.X, Player.Location.Y, Player.Location.Z), 

@@ -1213,7 +1213,7 @@ end)()");
         {
             try
             {
-                ProcessManager.Injector.Lua_DoString(@"(function()
+                ProcessManager.Injector.Lua_DoStringEx(@"(function()
 	SetMapToCurrentZone()
 	local continent = GetCurrentMapContinent()
 	return continent

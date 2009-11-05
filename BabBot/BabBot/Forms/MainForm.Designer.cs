@@ -153,9 +153,11 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
+            this.btnLogin = new System.Windows.Forms.Button();
+            this.btnUnregisterInputHandler = new System.Windows.Forms.Button();
+            this.btnRegisterInputHandler = new System.Windows.Forms.Button();
             this.btnInputHandler = new System.Windows.Forms.Button();
             this.btnGetLuaText = new System.Windows.Forms.Button();
-            this.tbLuaVariable = new System.Windows.Forms.TextBox();
             this.tbLuaResult = new System.Windows.Forms.TextBox();
             this.btnDoString = new System.Windows.Forms.Button();
             this.tbLuaScript = new System.Windows.Forms.TextBox();
@@ -1402,9 +1404,11 @@
             // 
             // tabPageDebug2
             // 
+            this.tabPageDebug2.Controls.Add(this.btnLogin);
+            this.tabPageDebug2.Controls.Add(this.btnUnregisterInputHandler);
+            this.tabPageDebug2.Controls.Add(this.btnRegisterInputHandler);
             this.tabPageDebug2.Controls.Add(this.btnInputHandler);
             this.tabPageDebug2.Controls.Add(this.btnGetLuaText);
-            this.tabPageDebug2.Controls.Add(this.tbLuaVariable);
             this.tabPageDebug2.Controls.Add(this.tbLuaResult);
             this.tabPageDebug2.Controls.Add(this.btnDoString);
             this.tabPageDebug2.Controls.Add(this.tbLuaScript);
@@ -1422,6 +1426,36 @@
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
             // 
+            // btnLogin
+            // 
+            this.btnLogin.Location = new System.Drawing.Point(449, 9);
+            this.btnLogin.Name = "btnLogin";
+            this.btnLogin.Size = new System.Drawing.Size(75, 23);
+            this.btnLogin.TabIndex = 59;
+            this.btnLogin.Text = "Login";
+            this.btnLogin.UseVisualStyleBackColor = true;
+            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
+            // 
+            // btnUnregisterInputHandler
+            // 
+            this.btnUnregisterInputHandler.Location = new System.Drawing.Point(449, 188);
+            this.btnUnregisterInputHandler.Name = "btnUnregisterInputHandler";
+            this.btnUnregisterInputHandler.Size = new System.Drawing.Size(75, 23);
+            this.btnUnregisterInputHandler.TabIndex = 20;
+            this.btnUnregisterInputHandler.Text = "UnRegister";
+            this.btnUnregisterInputHandler.UseVisualStyleBackColor = true;
+            this.btnUnregisterInputHandler.Click += new System.EventHandler(this.btnUnregisterInputHandler_Click);
+            // 
+            // btnRegisterInputHandler
+            // 
+            this.btnRegisterInputHandler.Location = new System.Drawing.Point(368, 188);
+            this.btnRegisterInputHandler.Name = "btnRegisterInputHandler";
+            this.btnRegisterInputHandler.Size = new System.Drawing.Size(75, 23);
+            this.btnRegisterInputHandler.TabIndex = 19;
+            this.btnRegisterInputHandler.Text = "Register";
+            this.btnRegisterInputHandler.UseVisualStyleBackColor = true;
+            this.btnRegisterInputHandler.Click += new System.EventHandler(this.button1_Click);
+            // 
             // btnInputHandler
             // 
             this.btnInputHandler.Location = new System.Drawing.Point(121, 188);
@@ -1434,20 +1468,13 @@
             // 
             // btnGetLuaText
             // 
-            this.btnGetLuaText.Location = new System.Drawing.Point(360, 188);
+            this.btnGetLuaText.Location = new System.Drawing.Point(227, 188);
             this.btnGetLuaText.Name = "btnGetLuaText";
             this.btnGetLuaText.Size = new System.Drawing.Size(75, 23);
             this.btnGetLuaText.TabIndex = 16;
             this.btnGetLuaText.Text = "Get Result";
             this.btnGetLuaText.UseVisualStyleBackColor = true;
             this.btnGetLuaText.Click += new System.EventHandler(this.btnGetLuaText_Click);
-            // 
-            // tbLuaVariable
-            // 
-            this.tbLuaVariable.Location = new System.Drawing.Point(254, 190);
-            this.tbLuaVariable.Name = "tbLuaVariable";
-            this.tbLuaVariable.Size = new System.Drawing.Size(100, 20);
-            this.tbLuaVariable.TabIndex = 15;
             // 
             // tbLuaResult
             // 
@@ -1518,14 +1545,14 @@
             // 
             this.tbOrientation.Location = new System.Drawing.Point(79, 38);
             this.tbOrientation.Name = "tbOrientation";
-            this.tbOrientation.Size = new System.Drawing.Size(301, 20);
+            this.tbOrientation.Size = new System.Drawing.Size(245, 20);
             this.tbOrientation.TabIndex = 7;
             // 
             // tbLocation
             // 
             this.tbLocation.Location = new System.Drawing.Point(79, 6);
             this.tbLocation.Name = "tbLocation";
-            this.tbLocation.Size = new System.Drawing.Size(301, 20);
+            this.tbLocation.Size = new System.Drawing.Size(245, 20);
             this.tbLocation.TabIndex = 6;
             // 
             // tabPageScript
@@ -1730,7 +1757,6 @@
         private System.Windows.Forms.Button btnDoString;
         private System.Windows.Forms.TextBox tbLuaScript;
         private System.Windows.Forms.Button btnGetLuaText;
-        private System.Windows.Forms.TextBox tbLuaVariable;
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.TextBox tbCorpseZ;
@@ -1760,6 +1786,9 @@
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.TabControl tabLogs;
         private System.Windows.Forms.TabPage tabAll;
+        private System.Windows.Forms.Button btnRegisterInputHandler;
+        private System.Windows.Forms.Button btnUnregisterInputHandler;
+        private System.Windows.Forms.Button btnLogin;
     }
 }
 
