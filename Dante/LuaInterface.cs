@@ -36,7 +36,6 @@ namespace Dante
 
         private static int BytesWritten;
         public static IntPtr CommandHandlerPtr = Marshal.GetFunctionPointerForDelegate(CommandHandler);
-        private static uint L;
         public static Logger LoggingInterface;
         private static Lua_DoStringDelegate Lua_DoString;
         private static Lua_GetStateDelegate Lua_GetState;
@@ -231,7 +230,7 @@ namespace Dante
             {
                 LoggingInterface.Log("DoString() - Calling ...");
                 LoggingInterface.Log("DoString() - " + command);
-                Lua_DoString(command, lua_cmd, L);
+                Lua_DoString(command, lua_cmd, Lua_GetState());
                 LoggingInterface.Log("DoString() - Done");
             }
             catch (SEHException e)
@@ -248,7 +247,7 @@ namespace Dante
                 string cmd = string.Format("InputHandler({0})", command);
                 LoggingInterface.Log("DoStringEx() - Calling ...");
                 LoggingInterface.Log("DoStringEx() - " + cmd);
-                Lua_DoString(cmd, lua_cmd, L);
+                Lua_DoString(cmd, lua_cmd, Lua_GetState());
                 LoggingInterface.Log("DoString() - Done");
             }
             catch (SEHException e)
@@ -266,7 +265,7 @@ namespace Dante
             try
             {
                 LoggingInterface.Log("InputHandler() - Calling ...");
-                    
+
                 Values.Clear();
                 int n = Lua_GetTop(luaState);
                 LoggingInterface.Log(string.Format("InputHandler() - LUA_State: {0:X}", luaState));
@@ -275,10 +274,9 @@ namespace Dante
                 {
                     string res = Lua_ToString(luaState, i, 0);
                     LoggingInterface.Log(string.Format(
-                        "InputHandler() - Var[{0}] = {1}", i, res));
+                                             "InputHandler() - Var[{0}] = {1}", i, res));
                     Values.Add(res);
                 }
-
                 LoggingInterface.Log("InputHandler() - Done");
             } catch (Exception e)
             {
@@ -369,8 +367,7 @@ namespace Dante
 
         private static void InitLUAState()
         {
-            L = Lua_GetState();
-            LoggingInterface.Log(string.Format("InitLUAState returned {0:X}", L));
+            LoggingInterface.Log(string.Format("InitLUAState returned {0:X}", Lua_GetState()));
         }
 
 

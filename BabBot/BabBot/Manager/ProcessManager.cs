@@ -406,7 +406,6 @@ namespace BabBot.Manager
 
                 if (TLS == uint.MaxValue)
                 {
-                    //throw new Exception("Could not find WoW's Object Manager.");
                     Output.Instance.Debug("Looking for the TLS returned an invalid value");
                     return false;
                 }
@@ -421,7 +420,6 @@ namespace BabBot.Manager
 
             } catch (Exception ex)
             {
-                //throw new Exception("Cannot find the TLS");
                 Output.Instance.Debug("Cannot find the TLS");
                 return false;
             }
