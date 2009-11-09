@@ -97,6 +97,11 @@ namespace BabBot.Manager
         /// </summary>
         public static event WoWProcessAccessFailedEventHandler WoWProcessAccessFailed;
 
+        /// <summary>
+        /// Fired when player Entered to WoW world
+        /// </summary>
+        public static event PlayerUpdateEventHandler WoWInGame;
+
         public static event PlayerUpdateEventHandler PlayerUpdate;
         public static event PlayerWayPointEventHandler PlayerWayPoint;
 
@@ -464,6 +469,8 @@ namespace BabBot.Manager
         {
             ObjectManager = new ObjectManager();
             Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
+            if (WoWInGame != null)
+                WoWInGame();
         }
 
         /// <summary>

@@ -147,6 +147,10 @@
     <Compile Include="Forms\OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Radar\Radar.cs" />
+    <Compile Include="Forms\Radar\RadarItem.cs" />
+    <Compile Include="Forms\Radar\RadarItems\CircleRadarItem.cs" />
+    <Compile Include="Forms\Radar\RadarItems\TriangleRadarItem.cs" />
     <Compile Include="Manager\BotManager.cs" />
     <Compile Include="Manager\CommandManager.cs" />
     <Compile Include="Manager\InjectionManager.cs" />

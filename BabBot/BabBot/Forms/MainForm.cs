@@ -30,12 +30,14 @@ using BabBot.Wow;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using BabBot.Forms.Radar;
 
 namespace BabBot.Forms
 {
     public partial class MainForm : Form
     {
         private Hashtable LogFS = new Hashtable();
+        private Radar.Radar Radar;
 
         public MainForm()
         {
@@ -62,6 +64,7 @@ namespace BabBot.Forms
             ProcessManager.WoWProcessEnded += wow_ProcessEnded;
             ProcessManager.WoWProcessFailed += wow_ProcessFailed;
             ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
+            ProcessManager.WoWInGame += wow_InGame;
 
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
@@ -181,11 +184,16 @@ namespace BabBot.Forms
                 {
                     //Misc info updates for the "Player" tab
 
-                    tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", ProcessManager.Player.Location.X,
-                                                    ProcessManager.Player.Location.Y, ProcessManager.Player.Location.Z,
-                                                    ProcessManager.Player.CurTargetGuid);
+                    WowPlayer Player = ProcessManager.Player;
+
+                    tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", Player.Location.X,
+                                            Player.Location.Y, Player.Location.Z, Player.CurTargetGuid);
+                    Radar.AddCenter(Player.Guid, Player.Location, Player.Orientation);
+
+                    
+
                     tbOrientation.Text = String.Format("Or.: {0}", ProcessManager.Player.Orientation);
-                    tbPlayerHp.Text = ProcessManager.Player.Hp.ToString();
+                    tbPlayerHp.Text = Player.Hp.ToString();
                     tbPlayerMaxHp.Text = ProcessManager.Player.MaxHp.ToString();
                     tbPlayerMp.Text = ProcessManager.Player.Mp.ToString();
                     tbPlayerMaxMp.Text = ProcessManager.Player.MaxMp.ToString();
@@ -198,6 +206,33 @@ namespace BabBot.Forms
                                                Environment.NewLine +
                                                "===========" + Environment.NewLine +
                                                ProcessManager.Player.NearMobsAsTextList;
+
+                    List<WowObject> AllObj = Player.GetNearObjects();
+
+                    // Add Mobs
+                    foreach (WowObject wobj in AllObj)
+                    {
+                        switch (wobj.Type)
+                        {
+                            case Descriptor.eObjType.OT_UNIT:
+                                // Add mob
+                                WowUnit unit = (WowUnit)wobj;
+                                Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
+                                    ((unit.IsAggro) ? Color.Red : ((unit.IsNpc) ?
+                                    Color.Yellow : Color.Blue)));
+                                break;
+
+                            case Descriptor.eObjType.OT_PLAYER:
+                                // Add Player
+                                unit = (WowUnit)wobj;
+                                if (unit.Guid != Player.Guid)
+                                    Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
+                                        ((unit.IsAggro) ? Color.Red : Color.Green));
+
+                                break;
+                        }
+                    }
+                    Radar.Update();
 
                     tbCorpseX.Text = ProcessManager.Player.CorpseLocation.X.ToString();
                     tbCorpseY.Text = ProcessManager.Player.CorpseLocation.Y.ToString();
@@ -239,11 +274,22 @@ namespace BabBot.Forms
             else
             {
                 // Main Thread
-                btnRun.Enabled = true;
+               SetCtrlBtns(true);
 
                 // Stop the reading thread
                 ProcessManager.BotManager.Stop();
             }
+        }
+
+        private void SetCtrlBtns(bool Enabled)
+        {
+            btnRun.Enabled = Enabled;
+            btnLogin.Enabled = !Enabled;
+        }
+
+        private void wow_InGame()
+        {
+            btnLogin.Enabled = false;
         }
 
         private static void wow_ProcessFailed(string error)
@@ -253,7 +299,7 @@ namespace BabBot.Forms
 
         private void wow_ProcessStarted(int process)
         {
-            btnRun.Enabled = false;
+            SetCtrlBtns(false);
 
             // Start the reading thread
             ProcessManager.BotManager.Start();
@@ -752,6 +798,7 @@ namespace BabBot.Forms
                 cbStayOnTop_CheckedChanged(sender, e);
             }
 
+            Radar = new Radar.Radar(imgRadar);
             SetDebugBtns();
 
             if (ProcessManager.AutoRun)
@@ -838,6 +885,36 @@ namespace BabBot.Forms
             Login.AutoLogin("", ProcessManager.Config.LoginUsername,
                 ProcessManager.Config.getAutoLoginPassword(), 
                 ProcessManager.Config.Character, 5);
+        }
+
+        private void btnUp_KeyDown(object sender, KeyEventArgs e)
+        {
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up);
+        }
+
+        private void btnLeft_KeyDown(object sender, KeyEventArgs e)
+        {
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Left);
+        }
+
+        private void btnDown_KeyDown(object sender, KeyEventArgs e)
+        {
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Down);
+        }
+
+        private void btnRight_KeyDown(object sender, KeyEventArgs e)
+        {
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Right);
+        }
+
+        private void btnUp_Click(object sender, EventArgs e)
+        {
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up);
+        }
+
+        private void tbZoom_Scroll(object sender, EventArgs e)
+        {
+            Radar.Zoom = tbZoom.Value;
         }
     }
 }

@@ -84,6 +84,19 @@
             this.tbCountNormal = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPagePlayer = new System.Windows.Forms.TabPage();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tbZoom = new System.Windows.Forms.TrackBar();
+            this.label37 = new System.Windows.Forms.Label();
+            this.label36 = new System.Windows.Forms.Label();
+            this.btnDown = new System.Windows.Forms.Button();
+            this.btnRight = new System.Windows.Forms.Button();
+            this.label22 = new System.Windows.Forms.Label();
+            this.btnLeft = new System.Windows.Forms.Button();
+            this.btnUp = new System.Windows.Forms.Button();
+            this.imgRadar = new System.Windows.Forms.PictureBox();
             this.label33 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
             this.tbCorpseZ = new System.Windows.Forms.TextBox();
@@ -93,8 +106,6 @@
             this.tbCorpseX = new System.Windows.Forms.TextBox();
             this.tbPlayerIsSitting = new System.Windows.Forms.TextBox();
             this.label28 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
             this.tbPlayerMaxMp = new System.Windows.Forms.TextBox();
             this.tbPlayerMaxHp = new System.Windows.Forms.TextBox();
             this.tbPlayerXp = new System.Windows.Forms.TextBox();
@@ -171,6 +182,7 @@
             this.txtScript = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.label38 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -185,6 +197,11 @@
             this.groupBox2.SuspendLayout();
             this.gbNormalWaypoints.SuspendLayout();
             this.tabPagePlayer.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgRadar)).BeginInit();
             this.tabPageEnemies.SuspendLayout();
             this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
@@ -752,6 +769,7 @@
             // 
             // tabPagePlayer
             // 
+            this.tabPagePlayer.Controls.Add(this.tabControl1);
             this.tabPagePlayer.Controls.Add(this.label33);
             this.tabPagePlayer.Controls.Add(this.label30);
             this.tabPagePlayer.Controls.Add(this.tbCorpseZ);
@@ -761,8 +779,6 @@
             this.tabPagePlayer.Controls.Add(this.tbCorpseX);
             this.tabPagePlayer.Controls.Add(this.tbPlayerIsSitting);
             this.tabPagePlayer.Controls.Add(this.label28);
-            this.tabPagePlayer.Controls.Add(this.label22);
-            this.tabPagePlayer.Controls.Add(this.tbPlayerNearObjects);
             this.tabPagePlayer.Controls.Add(this.tbPlayerMaxMp);
             this.tabPagePlayer.Controls.Add(this.tbPlayerMaxHp);
             this.tabPagePlayer.Controls.Add(this.tbPlayerXp);
@@ -781,10 +797,156 @@
             this.tabPagePlayer.Text = "Player";
             this.tabPagePlayer.UseVisualStyleBackColor = true;
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(-4, 81);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(572, 293);
+            this.tabControl1.TabIndex = 46;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.tbPlayerNearObjects);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(564, 267);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Near";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tbPlayerNearObjects
+            // 
+            this.tbPlayerNearObjects.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbPlayerNearObjects.Location = new System.Drawing.Point(0, 0);
+            this.tbPlayerNearObjects.Multiline = true;
+            this.tbPlayerNearObjects.Name = "tbPlayerNearObjects";
+            this.tbPlayerNearObjects.ReadOnly = true;
+            this.tbPlayerNearObjects.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbPlayerNearObjects.Size = new System.Drawing.Size(564, 267);
+            this.tbPlayerNearObjects.TabIndex = 14;
+            this.tbPlayerNearObjects.WordWrap = false;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.label38);
+            this.tabPage2.Controls.Add(this.tbZoom);
+            this.tabPage2.Controls.Add(this.label37);
+            this.tabPage2.Controls.Add(this.label36);
+            this.tabPage2.Controls.Add(this.btnDown);
+            this.tabPage2.Controls.Add(this.btnRight);
+            this.tabPage2.Controls.Add(this.label22);
+            this.tabPage2.Controls.Add(this.btnLeft);
+            this.tabPage2.Controls.Add(this.btnUp);
+            this.tabPage2.Controls.Add(this.imgRadar);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(564, 267);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Radar";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // tbZoom
+            // 
+            this.tbZoom.BackColor = System.Drawing.SystemColors.Control;
+            this.tbZoom.Location = new System.Drawing.Point(326, 72);
+            this.tbZoom.Maximum = 5;
+            this.tbZoom.Minimum = 1;
+            this.tbZoom.Name = "tbZoom";
+            this.tbZoom.Size = new System.Drawing.Size(131, 45);
+            this.tbZoom.TabIndex = 241;
+            this.tbZoom.Value = 1;
+            this.tbZoom.Scroll += new System.EventHandler(this.tbZoom_Scroll);
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(323, 120);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(18, 13);
+            this.label37.TabIndex = 240;
+            this.label37.Text = "1x";
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(287, 72);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(34, 13);
+            this.label36.TabIndex = 239;
+            this.label36.Text = "Zoom";
+            // 
+            // btnDown
+            // 
+            this.btnDown.Location = new System.Drawing.Point(382, 33);
+            this.btnDown.Name = "btnDown";
+            this.btnDown.Size = new System.Drawing.Size(31, 23);
+            this.btnDown.TabIndex = 69;
+            this.btnDown.Text = "DN";
+            this.btnDown.UseVisualStyleBackColor = true;
+            this.btnDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnDown_KeyDown);
+            // 
+            // btnRight
+            // 
+            this.btnRight.Location = new System.Drawing.Point(419, 33);
+            this.btnRight.Name = "btnRight";
+            this.btnRight.Size = new System.Drawing.Size(31, 23);
+            this.btnRight.TabIndex = 68;
+            this.btnRight.Text = "R";
+            this.btnRight.UseVisualStyleBackColor = true;
+            this.btnRight.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnRight_KeyDown);
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(287, 11);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(45, 13);
+            this.label22.TabIndex = 67;
+            this.label22.Text = "Controls";
+            // 
+            // btnLeft
+            // 
+            this.btnLeft.Location = new System.Drawing.Point(345, 33);
+            this.btnLeft.Name = "btnLeft";
+            this.btnLeft.Size = new System.Drawing.Size(31, 23);
+            this.btnLeft.TabIndex = 66;
+            this.btnLeft.Text = "L";
+            this.btnLeft.UseVisualStyleBackColor = true;
+            this.btnLeft.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnLeft_KeyDown);
+            // 
+            // btnUp
+            // 
+            this.btnUp.Location = new System.Drawing.Point(382, 6);
+            this.btnUp.Name = "btnUp";
+            this.btnUp.Size = new System.Drawing.Size(31, 23);
+            this.btnUp.TabIndex = 65;
+            this.btnUp.Text = "UP";
+            this.btnUp.UseVisualStyleBackColor = true;
+            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+            this.btnUp.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnUp_KeyDown);
+            // 
+            // imgRadar
+            // 
+            this.imgRadar.Location = new System.Drawing.Point(0, 0);
+            this.imgRadar.Name = "imgRadar";
+            this.imgRadar.Size = new System.Drawing.Size(267, 267);
+            this.imgRadar.TabIndex = 0;
+            this.imgRadar.TabStop = false;
+            // 
             // label33
             // 
             this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(346, 110);
+            this.label33.Location = new System.Drawing.Point(300, 6);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(40, 13);
             this.label33.TabIndex = 45;
@@ -793,7 +955,7 @@
             // label30
             // 
             this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(239, 91);
+            this.label30.Location = new System.Drawing.Point(344, 58);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(17, 13);
             this.label30.TabIndex = 44;
@@ -801,7 +963,7 @@
             // 
             // tbCorpseZ
             // 
-            this.tbCorpseZ.Location = new System.Drawing.Point(240, 107);
+            this.tbCorpseZ.Location = new System.Drawing.Point(367, 55);
             this.tbCorpseZ.Name = "tbCorpseZ";
             this.tbCorpseZ.ReadOnly = true;
             this.tbCorpseZ.Size = new System.Drawing.Size(100, 20);
@@ -810,7 +972,7 @@
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(133, 91);
+            this.label31.Location = new System.Drawing.Point(346, 32);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(17, 13);
             this.label31.TabIndex = 42;
@@ -818,7 +980,7 @@
             // 
             // tbCorpseY
             // 
-            this.tbCorpseY.Location = new System.Drawing.Point(134, 107);
+            this.tbCorpseY.Location = new System.Drawing.Point(369, 29);
             this.tbCorpseY.Name = "tbCorpseY";
             this.tbCorpseY.ReadOnly = true;
             this.tbCorpseY.Size = new System.Drawing.Size(100, 20);
@@ -827,7 +989,7 @@
             // label32
             // 
             this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(27, 91);
+            this.label32.Location = new System.Drawing.Point(346, 6);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(17, 13);
             this.label32.TabIndex = 40;
@@ -835,7 +997,7 @@
             // 
             // tbCorpseX
             // 
-            this.tbCorpseX.Location = new System.Drawing.Point(28, 107);
+            this.tbCorpseX.Location = new System.Drawing.Point(369, 3);
             this.tbCorpseX.Name = "tbCorpseX";
             this.tbCorpseX.ReadOnly = true;
             this.tbCorpseX.Size = new System.Drawing.Size(100, 20);
@@ -844,7 +1006,7 @@
             // tbPlayerIsSitting
             // 
             this.tbPlayerIsSitting.Enabled = false;
-            this.tbPlayerIsSitting.Location = new System.Drawing.Point(335, 3);
+            this.tbPlayerIsSitting.Location = new System.Drawing.Point(185, 55);
             this.tbPlayerIsSitting.Name = "tbPlayerIsSitting";
             this.tbPlayerIsSitting.Size = new System.Drawing.Size(100, 20);
             this.tbPlayerIsSitting.TabIndex = 17;
@@ -852,36 +1014,16 @@
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(290, 6);
+            this.label28.Location = new System.Drawing.Point(131, 58);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(39, 13);
             this.label28.TabIndex = 16;
             this.label28.Text = "Sitting:";
             // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(3, 162);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(33, 13);
-            this.label22.TabIndex = 15;
-            this.label22.Text = "Near:";
-            // 
-            // tbPlayerNearObjects
-            // 
-            this.tbPlayerNearObjects.Location = new System.Drawing.Point(37, 159);
-            this.tbPlayerNearObjects.Multiline = true;
-            this.tbPlayerNearObjects.Name = "tbPlayerNearObjects";
-            this.tbPlayerNearObjects.ReadOnly = true;
-            this.tbPlayerNearObjects.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbPlayerNearObjects.Size = new System.Drawing.Size(430, 98);
-            this.tbPlayerNearObjects.TabIndex = 14;
-            this.tbPlayerNearObjects.WordWrap = false;
-            // 
             // tbPlayerMaxMp
             // 
             this.tbPlayerMaxMp.Enabled = false;
-            this.tbPlayerMaxMp.Location = new System.Drawing.Point(186, 32);
+            this.tbPlayerMaxMp.Location = new System.Drawing.Point(185, 29);
             this.tbPlayerMaxMp.Name = "tbPlayerMaxMp";
             this.tbPlayerMaxMp.Size = new System.Drawing.Size(88, 20);
             this.tbPlayerMaxMp.TabIndex = 9;
@@ -897,7 +1039,7 @@
             // tbPlayerXp
             // 
             this.tbPlayerXp.Enabled = false;
-            this.tbPlayerXp.Location = new System.Drawing.Point(37, 62);
+            this.tbPlayerXp.Location = new System.Drawing.Point(37, 55);
             this.tbPlayerXp.Name = "tbPlayerXp";
             this.tbPlayerXp.Size = new System.Drawing.Size(88, 20);
             this.tbPlayerXp.TabIndex = 7;
@@ -905,7 +1047,7 @@
             // tbPlayerMp
             // 
             this.tbPlayerMp.Enabled = false;
-            this.tbPlayerMp.Location = new System.Drawing.Point(37, 35);
+            this.tbPlayerMp.Location = new System.Drawing.Point(37, 29);
             this.tbPlayerMp.Name = "tbPlayerMp";
             this.tbPlayerMp.Size = new System.Drawing.Size(88, 20);
             this.tbPlayerMp.TabIndex = 6;
@@ -921,7 +1063,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(6, 65);
+            this.label18.Location = new System.Drawing.Point(6, 58);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(24, 13);
             this.label18.TabIndex = 4;
@@ -939,7 +1081,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(131, 35);
+            this.label16.Location = new System.Drawing.Point(131, 32);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(49, 13);
             this.label16.TabIndex = 2;
@@ -948,7 +1090,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 35);
+            this.label15.Location = new System.Drawing.Point(6, 32);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(26, 13);
             this.label15.TabIndex = 1;
@@ -1428,7 +1570,8 @@
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(449, 9);
+            this.btnLogin.Enabled = false;
+            this.btnLogin.Location = new System.Drawing.Point(249, 65);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 59;
@@ -1591,6 +1734,15 @@
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(439, 120);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(18, 13);
+            this.label38.TabIndex = 242;
+            this.label38.Text = "5x";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1631,6 +1783,13 @@
             this.gbNormalWaypoints.PerformLayout();
             this.tabPagePlayer.ResumeLayout(false);
             this.tabPagePlayer.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imgRadar)).EndInit();
             this.tabPageEnemies.ResumeLayout(false);
             this.tabPageEnemies.PerformLayout();
             this.tabPageDebug.ResumeLayout(false);
@@ -1708,7 +1867,6 @@
         private System.Windows.Forms.TextBox tbWndHandle;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Button btnMovementTest;
-        private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TextBox tbPlayerNearObjects;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox txtZ;
@@ -1789,6 +1947,19 @@
         private System.Windows.Forms.Button btnRegisterInputHandler;
         private System.Windows.Forms.Button btnUnregisterInputHandler;
         private System.Windows.Forms.Button btnLogin;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.PictureBox imgRadar;
+        private System.Windows.Forms.Button btnDown;
+        private System.Windows.Forms.Button btnRight;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Button btnLeft;
+        private System.Windows.Forms.Button btnUp;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.TrackBar tbZoom;
+        private System.Windows.Forms.Label label38;
     }
 }
 
