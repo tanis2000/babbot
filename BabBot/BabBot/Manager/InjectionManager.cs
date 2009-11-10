@@ -665,6 +665,8 @@ end)()",
         /// <param name="command"></param>
         public void Lua_DoString(string command)
         {
+            Lua_DoStringEx(command);
+            /*
             Output.Instance.Debug(command, this);
             RemoteObject.DoString(command);
 
@@ -672,6 +674,7 @@ end)()",
             int stime = 100; 
             while (!RemoteObject.IsLuaRequestCompleted())
                 stime = Sleep(stime);
+             */
         }
 
         /// <summary>

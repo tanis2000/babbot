@@ -662,16 +662,16 @@ namespace BabBot.Forms
                 }
 
                 // Decrypt auto-login password
-                if (!string.IsNullOrEmpty(ProcessManager.Config.LoginPassword))
+                if (!string.IsNullOrEmpty(ProcessManager.Config.Account.LoginPassword))
                 {
                     try
                     {
-                        ProcessManager.Config.DecryptPassword(ProcessManager.Config.LoginPassword);
+                        ProcessManager.Config.Account.DecryptPassword(ProcessManager.Config.Account.LoginPassword);
                     }
                     catch (Exception e)
                     {
                         // We couldn't decrypt the password for some reason. We reset it to blank.
-                        ProcessManager.Config.LoginPassword = "";
+                        ProcessManager.Config.Account.LoginPassword = "";
                     }
                 }
             }
@@ -882,8 +882,8 @@ namespace BabBot.Forms
         private void btnLogin_Click(object sender, EventArgs e)
         {
             ProcessManager.Injector.Lua_RegisterInputHandler();
-            Login.AutoLogin("", ProcessManager.Config.LoginUsername,
-                ProcessManager.Config.getAutoLoginPassword(), 
+            Login.AutoLogin("", ProcessManager.Config.Account.LoginUsername,
+                ProcessManager.Config.Account.getAutoLoginPassword(), 
                 ProcessManager.Config.Character, 5);
         }
 

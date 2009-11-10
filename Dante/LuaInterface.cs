@@ -78,7 +78,7 @@ namespace Dante
         #region Nested type: Lua_DoStringDelegate
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void Lua_DoStringDelegate(string command, string fileName, uint luaState);
+        private delegate void Lua_DoStringDelegate(string command, string fileName, uint hwEvent); // hwEvent should always be passed as zero
 
         #endregion
 
@@ -230,7 +230,7 @@ namespace Dante
             {
                 LoggingInterface.Log("DoString() - Calling ...");
                 LoggingInterface.Log("DoString() - " + command);
-                Lua_DoString(command, lua_cmd, Lua_GetState());
+                Lua_DoString(command, lua_cmd, 0);
                 LoggingInterface.Log("DoString() - Done");
             }
             catch (SEHException e)
@@ -247,7 +247,7 @@ namespace Dante
                 string cmd = string.Format("InputHandler({0})", command);
                 LoggingInterface.Log("DoStringEx() - Calling ...");
                 LoggingInterface.Log("DoStringEx() - " + cmd);
-                Lua_DoString(cmd, lua_cmd, Lua_GetState());
+                Lua_DoString(cmd, lua_cmd, 0);
                 LoggingInterface.Log("DoString() - Done");
             }
             catch (SEHException e)
@@ -267,12 +267,13 @@ namespace Dante
                 LoggingInterface.Log("InputHandler() - Calling ...");
 
                 Values.Clear();
-                int n = Lua_GetTop(luaState);
-                LoggingInterface.Log(string.Format("InputHandler() - LUA_State: {0:X}", luaState));
+                int n = Lua_GetTop(Lua_GetState());
+                LoggingInterface.Log(string.Format("InputHandler() - Passed LUA_State (ignored): {0:X}", luaState));
+                LoggingInterface.Log(string.Format("InputHandler() - Our own LUA_State: {0:X}", Lua_GetState()));
                 LoggingInterface.Log("InputHandler() - Vars num: " + n);
                 for (int i = 1; i <= n; i++)
                 {
-                    string res = Lua_ToString(luaState, i, 0);
+                    string res = Lua_ToString(Lua_GetState(), i, 0);
                     LoggingInterface.Log(string.Format(
                                              "InputHandler() - Var[{0}] = {1}", i, res));
                     Values.Add(res);
