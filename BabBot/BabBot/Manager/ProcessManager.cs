@@ -223,7 +223,8 @@ namespace BabBot.Manager
                             if (config.AutoLogin)
                             {
                                 Injector.Lua_RegisterInputHandler();
-                                Login.AutoLogin("", config.LoginUsername, config.getAutoLoginPassword(), config.Character, 5);
+                                Login.AutoLogin(config.Account.Realm, config.Account.LoginUsername, 
+                                    config.Account.getAutoLoginPassword(), config.Character, 5);
                                 Injector.Lua_UnRegisterInputHandler();
                             }
                 }

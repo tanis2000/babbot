@@ -45,9 +45,10 @@ namespace BabBot.Wow
         private static string CurrentGlueScreen;
         private static string CurrentGlueDialog;
         private static DateTime StateChangeTime;
+        private static string DInfo;
 
         // Login States
-		static Array LoginState = Array.CreateInstance( typeof(String), 11);
+		static Array LoginState = Array.CreateInstance( typeof(String), 12);
 		
 		// Login progress
 		static string LOGIN_SERVER_DOWN = "Login Server Down";
@@ -77,6 +78,7 @@ namespace BabBot.Wow
 		    LoginState.SetValue("options", 8); // "OptionsFrame";
 		    LoginState.SetValue("tos", 9); // "TOS Dialog";
 		    LoginState.SetValue("eula", 10); // EULA
+            LoginState.SetValue("realmselect", 11); // Suggest Realm
         }
 
         /// <summary>
@@ -94,7 +96,7 @@ namespace BabBot.Wow
 
             do
             {
-                if (SetGlueState() == -1)
+                if (SetGlueState(realm) == -1)
                     return false;
 
                 switch (State)
@@ -123,8 +125,13 @@ namespace BabBot.Wow
                             return false;
                         break;
 
-                    // case 2: // Realm Wiz
-                        // break;
+                    /*
+                    case 2: // Realm Suggestion
+                        break
+                        
+                    case 4: // Patch Download
+                        break
+                    */
                         
                     case 6: // Movie
                         // Ohhh, cmon
@@ -141,7 +148,26 @@ namespace BabBot.Wow
                             AccountLogin_ShowUserAgreements()
                         end)()", CurrentGlueDialog.ToUpper()));
                         break;
-                        
+                    
+                    case 11: // Realm suggestion
+                        if (DInfo.Equals("ok"))
+                        {
+                            // Desired realm selected and it active. Accept selection
+                            Output.Instance.Log(LogFS, string.Format("Selecting '{0}' realm", realm));
+                            ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
+                        } else if (DInfo.Equals("down"))
+                        {
+                            // Go to realm selection
+                            Output.Instance.Log(LogFS, string.Format(
+                                "Realm '{0}' down. Checking again in 10 sec ...", realm));
+                            Thread.Sleep(10000);
+                        } else if (DInfo.Equals("not_found"))
+                        {
+                            Output.Instance.Log(LogFS, string.Format(
+                                "Realm '{0}' not found. Canceling login", realm));
+                            return false;
+                        }
+                        break;
                     case 99: // disconnect
                         ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
                         break;
@@ -195,9 +221,10 @@ namespace BabBot.Wow
 		{
 			string realm_cmd = "";
 			if (!realm.Equals(""))
-				realm_cmd = string.Format(@"local realm = AccountLoginRealmName:SetText(serverName);
-                    if (realm != {0})
-                    AccountLoginRealmName:SetText({0})", realm);
+				realm_cmd = string.Format(@"local realm = AccountLoginRealmName:GetText(serverName);
+                    if (realm ~= '{0}') then
+                        AccountLoginRealmName:SetText('{0}')
+                    end", realm);
 			
 			ProcessManager.Injector.Lua_DoString(string.Format(@"(function()
 						{0}
@@ -266,17 +293,17 @@ namespace BabBot.Wow
         /// Check current Glue window and set login state
         /// </summary>
         /// <returns>Login State ID or -1 if Glue Window not found (unknown)</returns>
-		static int SetGlueState()
+		static int SetGlueState(string realm)
 		{
             // We need returning values
-            ProcessManager.Injector.Lua_DoStringEx(@"(function()
+            string cmd = string.Format(@"(function()
               local d1, d2, d3
               if (GlueDialog:IsShown()) then
                 d1 = GlueDialog.which
                 d2 = GlueDialogText:GetText()
                 if (GlueDialogHTML:IsShown()) then
                     d3 = 'html'
-                 end
+                end
               else 
                 if (TOSFrame:IsShown()) then
                     d1 = string.lower(TOSFrame.noticeType)
@@ -285,24 +312,52 @@ namespace BabBot.Wow
 					    local min, max = scrollbar:GetMinMaxValues()
 					    scrollbar:SetValue(max)
                     end
+                else
+                  if (RealmList:IsShown()) then
+                    d1 = 'realmselect'
+                    d3 = 'not_found'
+	                for i=1, MAX_REALMS_DISPLAYED, 1 do
+		                realmIndex = RealmList.offset + i
+		                name, numCharacters, invalidRealm, realmDown = GetRealmInfo(1, realmIndex);
+		                if (name == '{0}') then
+                            if (realmDown) then
+                                d3 = 'down'
+                            else 
+                                if (RealmList.currentRealm ~= realmIndex) then
+                                    RealmList.refreshTime = 5
+				                    old_realm = _G['RealmListRealmButton'..RealmList.currentRealm]
+				                    old_realm:UnlockHighlight();
+				                
+                                    new_realm = _G['RealmListRealmButton'..i]
+				                    new_realm:LockHighlight();
+				                    RealmListHighlight:SetPoint('TOPLEFT', new_realm, 'TOPLEFT', 0, 0);
+			                    end
+                                d3 = 'ok'
+                            end
+
+			                break;
+		                end
+                    end
+	              end
                 end
               end
               return CURRENT_GLUE_SCREEN, CURRENT_GLUE_PENDING, d1, d2, d3, IsConnectedToServer()
-            end)()");
+            end)()", realm);
 
+            ProcessManager.Injector.Lua_DoStringEx(cmd);
             CurrentGlueScreen = ProcessManager.Injector.Lua_GetLocalizedText(0);
             string PendingScreen = ProcessManager.Injector.Lua_GetLocalizedText(1);
             CurrentGlueDialog = ProcessManager.Injector.Lua_GetLocalizedText(2);
             string DialogText = ProcessManager.Injector.Lua_GetLocalizedText(3);
-            string d3 = ProcessManager.Injector.Lua_GetLocalizedText(4);
+            DInfo = ProcessManager.Injector.Lua_GetLocalizedText(4);
             string Connected = ProcessManager.Injector.Lua_GetLocalizedText(5);
 
-            bool IsDialogText = (!((DialogText == null) || DialogText.Equals("")));
-            bool IsHtml = ((d3 != null) && !d3.Equals(""));
+            bool IsDialogText = (!((DialogText == null) || DialogText.Equals("")) && (DialogText.Equals("html")));
+            bool IsHtml = ((DInfo != null) && !DInfo.Equals(""));
 
             Output.Instance.Debug(LogFS, string.Format("Screen: {0}; Pending: {1};" +
-                " Dialog: {2}; DialogText: {3}; Html: {4}; Connected: {5}",
-                CurrentGlueScreen, PendingScreen, CurrentGlueDialog, DialogText, IsHtml, Connected));
+                " Dialog: {2}; DialogText: {3}; DInfo: {4}; Connected: {5}",
+                CurrentGlueScreen, PendingScreen, CurrentGlueDialog, DialogText, DInfo, Connected));
 
             if (!((PendingScreen == null) || PendingScreen.Equals("")))
             {
@@ -352,6 +407,8 @@ namespace BabBot.Wow
                  Output.Instance.Log(LogFS, s);
                  return SetState(100);
              }
+             
+             // Check for realm suggest
              
             if (CurrentGlueDialog.Equals("DISCONNECT"))
                 return SetState(99);

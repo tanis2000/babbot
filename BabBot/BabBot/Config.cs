@@ -31,15 +31,21 @@ namespace BabBot
         public string WowExePath = "";
         public string LogPath = ".\\Log";
         public bool AutoLogin = false;
-        public string LoginUsername = "";
-        public string LoginPassword = "";
+        public LoginInfo Account = new LoginInfo();
         public bool NoSound = false;
         public bool Windowed = false;
         public bool Resize = false;
         public string Character = "";
         public WinPos WowPos;
         public WinPos BotPos;
+    }
 
+    [Serializable]
+    public class LoginInfo
+    {
+        public string LoginUsername = "";
+        public string LoginPassword = "";
+        public string Realm = "";
         // Private fields not included into serializer
         private string AutoLoginPassword = "";
 
@@ -55,7 +61,8 @@ namespace BabBot
             AutoLoginPassword = BabBot.Common.Security.Decrypt(ComplexText);
         }
 
-        public string getAutoLoginPassword() {
+        public string getAutoLoginPassword()
+        {
             return AutoLoginPassword;
         }
     }

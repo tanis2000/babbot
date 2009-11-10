@@ -20,12 +20,16 @@ namespace BabBot.Forms
             cbDebugMode.Checked = ProcessManager.Config.DebugMode;
             tbLogsPath.Text = ProcessManager.Config.LogPath;
             cbAutoLogin.Checked = ProcessManager.Config.AutoLogin;
-            tbLoginUsername.Text = ProcessManager.Config.LoginUsername;
+            
 			tbCharacter.Text = ProcessManager.Config.Character;
-            tbLoginPassword.Text = ProcessManager.Config.getAutoLoginPassword();
+            
             cbNoSound.Checked = ProcessManager.Config.NoSound;
             cbWindowed.Checked = ProcessManager.Config.Windowed;
             cbResize.Checked = ProcessManager.Config.Resize;
+
+            tbRealm.Text = ProcessManager.Config.Account.Realm;
+            tbLoginUsername.Text = ProcessManager.Config.Account.LoginUsername;
+            tbLoginPassword.Text = ProcessManager.Config.Account.getAutoLoginPassword();
 
             cbAutoLogin_CheckedChanged(sender, e);
         }
@@ -37,13 +41,16 @@ namespace BabBot.Forms
             ProcessManager.Config.GuestPassword = tbGuestPassword.Text;
             ProcessManager.Config.DebugMode = cbDebugMode.Checked;
             ProcessManager.Config.LogPath = tbLogsPath.Text;
-            ProcessManager.Config.AutoLogin = cbAutoLogin.Checked;
-            ProcessManager.Config.LoginUsername = tbLoginUsername.Text;
-            ProcessManager.Config.EncryptPassword(tbLoginPassword.Text);
+            
 			ProcessManager.Config.Character = tbCharacter.Text;
             ProcessManager.Config.NoSound = cbNoSound.Checked;
             ProcessManager.Config.Windowed = cbWindowed.Checked;
             ProcessManager.Config.Resize = cbResize.Checked;
+
+            ProcessManager.Config.AutoLogin = cbAutoLogin.Checked;
+            ProcessManager.Config.Account.Realm = tbRealm.Text;
+            ProcessManager.Config.Account.LoginUsername = tbLoginUsername.Text;
+            ProcessManager.Config.Account.EncryptPassword(tbLoginPassword.Text);
         }
 
         private void btnBrowseWowExec_Click(object sender, EventArgs e)
@@ -84,9 +91,11 @@ namespace BabBot.Forms
 
         private void cbAutoLogin_CheckedChanged(object sender, EventArgs e)
         {
+            tbRealm.Enabled = cbAutoLogin.Checked;
             tbLoginUsername.Enabled = cbAutoLogin.Checked;
             tbLoginPassword.Enabled = cbAutoLogin.Checked;
 			tbCharacter.Enabled = cbAutoLogin.Checked;
+            labelRealm.Enabled = cbAutoLogin.Checked;
             labelUser.Enabled = cbAutoLogin.Checked;
             labelPwd.Enabled = cbAutoLogin.Checked;
 			labelCharacter.Enabled = cbAutoLogin.Checked;
