@@ -116,7 +116,11 @@ namespace Dante
                     case 0: // Need registration
                         LuaInterface.LoggingInterface.Log("EndScene() - Lua registering ...");
                         LuaInterface.Patch();
-                        LuaInterface.RegisterLuaInputHandler();
+                        if (!LuaInterface.InputHandlerRegistered)
+                        {
+                            LuaInterface.RegisterLuaInputHandler();
+                            LuaInterface.InputHandlerRegistered = true;
+                        }
                         LuaInterface.LoggingInterface.Log("EndScene() - Lua registered");
 
                         // Always last

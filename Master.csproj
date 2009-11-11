@@ -32,13 +32,15 @@
     <DefaultExclude Include="**\.*" />
   </ItemGroup>
   <ItemGroup>
-    <ZipFiles Include="BabBot\BabBot\bin\Release\BabBot.exe" Exclude="@(DefaultExclude)" />
     <ZipFiles Include="BabBot\BabBot\bin\Release\*.dll" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\*.sys" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\*.exe" Exclude="@(DefaultExclude)" />
     <ZipFiles Include="BabBot\BabBot\bin\Release\Scripts\*.*" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\Scripts\Paladin\*.*" Exclude="@(DefaultExclude)" />
     <ZipFiles Include="BabBot\BabBot\bin\Release\Doc\README.TXT" Exclude="@(DefaultExclude)" />
     <ZipFiles Include="BabBot\BabBot\bin\Release\Doc\COPYING.TXT" Exclude="@(DefaultExclude)" />
     <ZipFiles Include="BabBot\BabBot\bin\Release\Doc\ChangeLog.txt" Exclude="@(DefaultExclude)" />
-    <ZipFiles Include="BabBot\BabBot\bin\Release\PPather\*" Exclude="@(DefaultExclude)" />
+    <ZipFiles Include="BabBot\BabBot\bin\Release\PPather\*.dll" Exclude="@(DefaultExclude)" />
   </ItemGroup>
   <Target Name="Version">
     <SvnVersion LocalPath="$(MSBuildProjectDirectory)" ToolPath="C:\programmi\CollabNet Subversion Client">

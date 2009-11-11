@@ -79,11 +79,11 @@ namespace BabBot
             try
             {
 #if !DEBUG
-                AppHelper.StartHideProcess(); // comment this line if you have problem
+                //Common.AppHelper.StartHideProcess(); // comment this line if you have problem
 #endif
                 Application.Run(mainForm);
 #if !DEBUG
-                AppHelper.StopHideProcess(); // comment this line if you have problem
+                //Common.AppHelper.StopHideProcess(); // comment this line if you have problem
 #endif
             }
             catch (Exception ex)

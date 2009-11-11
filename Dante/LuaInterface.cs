@@ -49,6 +49,7 @@ namespace Dante
         public static List<string> Values = new List<string>();
         internal static bool ValueReceived;
         internal static byte LuaState = 255;
+        internal static bool InputHandlerRegistered = false;
 
         #endregion
 

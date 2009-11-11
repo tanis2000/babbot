@@ -712,11 +712,14 @@ end)()",
             if (values == null)
                 RemoteGetValues();
 
-            if (values.Count > position)
+            if (values != null)
             {
-                if (values[position] == null) return "";
+                if (values.Count > position)
+                {
+                    if (values[position] == null) return "";
 
-                return values[position];
+                    return values[position];
+                }
             }
 
             return "";

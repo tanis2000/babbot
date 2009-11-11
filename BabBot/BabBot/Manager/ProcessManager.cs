@@ -217,7 +217,7 @@ namespace BabBot.Manager
                                     (IntPtr)WowHWND, 0, 0, 328, 274);
 
 
-                            Injector.Lua_RegisterInputHandler();
+                            //Injector.Lua_RegisterInputHandler();
                     // At this point it should be safe to do any LUA calls
                             if (config.AutoLogin)
                             {
