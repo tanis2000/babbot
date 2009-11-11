@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using BabBot.Manager;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace BabBot.Common
 {
@@ -66,6 +67,7 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
+        [MethodImpl(MethodImplOptions.Synchronized)]
         internal void Log(string facility, string message, Color color)
         {
             string fs = char.ToUpper(facility[0]) + facility.Substring(1);
