@@ -72,28 +72,33 @@ namespace Dante
         public List<string> GetValues()
         {
             try {
-                bool val = LuaInterface.ValueReceived;
-                LuaInterface.LoggingInterface.Log(string.Format(
-                    "GetValues() - ValueReceived: {0}; Calling ...", val));
-
-                if (val)
+                lock (LuaInterface.Values)
                 {
-                    foreach (string s in LuaInterface.Values)
-                    {
-                        LuaInterface.LoggingInterface.Log("GetValues() Value [" + s + "]");
-                    }
-
+                    bool val = LuaInterface.ValueReceived;
                     LuaInterface.LoggingInterface.Log(string.Format(
-                        "GetValues() - Done returned {0} parameters", LuaInterface.Values.Count));
-                    return LuaInterface.Values;
-                } else
-                    LuaInterface.LoggingInterface.Log("GetValues() - Done no value(s) received");
+                                                          "GetValues() - ValueReceived: {0}; Calling ...", val));
+
+                    if (val)
+                    {
+                        foreach (string s in LuaInterface.Values)
+                        {
+                            LuaInterface.LoggingInterface.Log("GetValues() Value [" + s + "]");
+                        }
+
+                        LuaInterface.LoggingInterface.Log(string.Format(
+                                                              "GetValues() - Done returned {0} parameters",
+                                                              LuaInterface.Values.Count));
+                        return LuaInterface.Values;
+                    }
+                    else
+                        LuaInterface.LoggingInterface.Log("GetValues() - Done no value(s) received");
+                }
             }
             catch (Exception e)
             {
                 LuaInterface.LoggingInterface.Log("GetValues() exception: " + e.ToString());
             }
-
+            
             return new List<string>();
         }
 

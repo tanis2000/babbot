@@ -284,7 +284,7 @@ namespace Dante
             {
                 LoggingInterface.Log("InputHandler() exception: " + e.ToString());                
             }
-
+            
             ValueReceived = true;
 
             return 0;

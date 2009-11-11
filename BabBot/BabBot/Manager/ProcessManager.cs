@@ -511,7 +511,7 @@ namespace BabBot.Manager
 
         public static void InitializeCaronte()
         {
-            // string continent = "Azeroth";  // temporary fix to get things running while debugging LUA
+            //string continent = "Azeroth";  // temporary fix to get things running while debugging LUA
             string continent = Player.GetCurrentMapContinent();
             
             Caronte.Init(continent);
