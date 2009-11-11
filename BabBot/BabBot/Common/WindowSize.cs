@@ -49,6 +49,20 @@ namespace BabBot.Common
         {
             SetWindowPos(hwnd, (IntPtr)null, x, y, width, height, 0u);
         }
+
+        public static Rectangle GetPositionSize(IntPtr hwnd)
+        {
+            var info = new tagWINDOWINFO();
+            info.cbSize = (uint)Marshal.SizeOf(info);
+            GetWindowInfo(hwnd, ref info);
+
+            var rect = new Rectangle();
+            rect.X = info.rcWindow.left;
+            rect.Y = info.rcWindow.top;
+            rect.Width = info.rcWindow.right - info.rcWindow.left;
+            rect.Height = info.rcWindow.bottom - info.rcWindow.top;
+            return rect;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]

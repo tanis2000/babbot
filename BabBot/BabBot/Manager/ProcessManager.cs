@@ -206,16 +206,15 @@ namespace BabBot.Manager
                         Thread.Sleep(250);
                     }
 
-                    /* Temp disable 
                     if (config.WowPos != null)
                         BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND,
-                              config.WowPos.Pos.Location.X,
-                              config.WowPos.Pos.Location.Y,
-                              config.WowPos.Pos.Size.Width,
-                              config.WowPos.Pos.Size.Height);
-                    else */ if (config.Resize)
-                        BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND,
-                            config.WowPos.Pos.Location.X, config.WowPos.Pos.Location.Y, 328, 274);
+                              config.WowPos.Pos.X,
+                              config.WowPos.Pos.Y,
+                              config.WowPos.Pos.Width,
+                              config.WowPos.Pos.Height);
+                    else if (config.Resize)
+                        BabBot.Common.WindowSize.SetPositionSize(
+                                    (IntPtr)WowHWND, 0, 0, 328, 274);
 
 
                             Injector.Lua_RegisterInputHandler();

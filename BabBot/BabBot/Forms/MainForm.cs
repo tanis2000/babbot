@@ -428,7 +428,7 @@ namespace BabBot.Forms
             ProcessManager.Config.BotPos = new WinPos(Location, Size, TopMost, Opacity);
             if (ProcessManager.WowHWND != 0)
                 ProcessManager.Config.WowPos = new WinPos(BabBot.Common.WindowSize.
-                                    GetSize((IntPtr)ProcessManager.WowHWND));
+                                    GetPositionSize((IntPtr)ProcessManager.WowHWND));
             
             SaveConfig();
         }
