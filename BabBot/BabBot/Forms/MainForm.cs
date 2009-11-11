@@ -186,10 +186,9 @@ namespace BabBot.Forms
 
                     WowPlayer Player = ProcessManager.Player;
 
+#if DEBUG
                     tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", Player.Location.X,
                                             Player.Location.Y, Player.Location.Z, Player.CurTargetGuid);
-                    Radar.AddCenter(Player.Guid, Player.Location, Player.Orientation);
-
                     
 
                     tbOrientation.Text = String.Format("Or.: {0}", ProcessManager.Player.Orientation);
@@ -206,6 +205,9 @@ namespace BabBot.Forms
                                                Environment.NewLine +
                                                "===========" + Environment.NewLine +
                                                ProcessManager.Player.NearMobsAsTextList;
+#endif
+                    // Update radar
+                    Radar.AddCenter(Player.Guid, Player.Location, Player.Orientation);
 
                     List<WowObject> AllObj = Player.GetNearObjects();
 
@@ -217,9 +219,16 @@ namespace BabBot.Forms
                             case Descriptor.eObjType.OT_UNIT:
                                 // Add mob
                                 WowUnit unit = (WowUnit)wobj;
-                                Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
-                                    ((unit.IsAggro) ? Color.Red : ((unit.IsNpc) ?
-                                    Color.Yellow : Color.Blue)));
+                                if (unit.IsDead)
+                                    // Draw as a circle
+                                    Radar.AddItem(unit.Guid, unit.Location,
+                                    ((unit.IsLootable) ? Color.Gray : ((unit.IsSkinnable) ?
+                                    Color.LightSteelBlue : Color.Silver)));
+                                else
+                                    // Draw as triangle with orientation
+                                    Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
+                                        ((unit.IsAggro) ? Color.Red : ((unit.IsNpc) ?
+                                        Color.Yellow : Color.Blue)));
                                 break;
 
                             case Descriptor.eObjType.OT_PLAYER:
@@ -227,9 +236,15 @@ namespace BabBot.Forms
                                 unit = (WowUnit)wobj;
                                 if (unit.Guid != Player.Guid)
                                     Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
-                                        ((unit.IsAggro) ? Color.Red : Color.Green));
+                                        ((unit.IsAggro) ? Color.Red : 
+                                        ((unit.IsDead) ? Color.Silver : 
+                                          ((unit.IsGhost ? Color.Gray :  Color.Green)))));
 
                                 break;
+
+                            // Resources - fish, herb, vein
+                            /* case Descriptor.eObjType.
+                             */
                         }
                     }
                     Radar.Update();
@@ -666,7 +681,8 @@ namespace BabBot.Forms
                 {
                     try
                     {
-                        ProcessManager.Config.Account.DecryptPassword(ProcessManager.Config.Account.LoginPassword);
+                        ProcessManager.Config.Account.DecryptPassword(
+                                ProcessManager.Config.Account.LoginPassword);
                     }
                     catch (Exception e)
                     {
@@ -881,10 +897,10 @@ namespace BabBot.Forms
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            LoginInfo Account = ProcessManager.Config.Account;
             ProcessManager.Injector.Lua_RegisterInputHandler();
-            Login.AutoLogin("", ProcessManager.Config.Account.LoginUsername,
-                ProcessManager.Config.Account.getAutoLoginPassword(), 
-                ProcessManager.Config.Character, 5);
+            Login.AutoLogin(Account.Realm, Account.LoginUsername,
+                Account.getAutoLoginPassword(), ProcessManager.Config.Character, 5);
         }
 
         private void btnUp_KeyDown(object sender, KeyEventArgs e)
