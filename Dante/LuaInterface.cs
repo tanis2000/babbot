@@ -265,24 +265,27 @@ namespace Dante
         {
             try
             {
-                LoggingInterface.Log("InputHandler() - Calling ...");
+                //LoggingInterface.Log("InputHandler() - Calling ...");
 
                 Values.Clear();
+                
                 int n = Lua_GetTop(Lua_GetState());
-                LoggingInterface.Log(string.Format("InputHandler() - Passed LUA_State (ignored): {0:X}", luaState));
-                LoggingInterface.Log(string.Format("InputHandler() - Our own LUA_State: {0:X}", Lua_GetState()));
-                LoggingInterface.Log("InputHandler() - Vars num: " + n);
+                //LoggingInterface.Log(string.Format("InputHandler() - Passed LUA_State (ignored): {0:X}", luaState));
+                //LoggingInterface.Log(string.Format("InputHandler() - Our own LUA_State: {0:X}", Lua_GetState()));
+                //LoggingInterface.Log("InputHandler() - Vars num: " + n);
+
                 for (int i = 1; i <= n; i++)
                 {
                     string res = Lua_ToString(Lua_GetState(), i, 0);
-                    LoggingInterface.Log(string.Format(
-                                             "InputHandler() - Var[{0}] = {1}", i, res));
+                    //LoggingInterface.Log(string.Format(
+                    //                         "InputHandler() - Var[{0}] = {1}", i, res));
                     Values.Add(res);
                 }
-                LoggingInterface.Log("InputHandler() - Done");
+                 
+                //LoggingInterface.Log("InputHandler() - Done");
             } catch (Exception e)
             {
-                LoggingInterface.Log("InputHandler() exception: " + e.ToString());                
+                //LoggingInterface.Log("InputHandler() exception: " + e.ToString());                
             }
             
             ValueReceived = true;
