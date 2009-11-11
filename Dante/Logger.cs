@@ -29,8 +29,8 @@ namespace Dante
 
         public Logger()
         {
-            File.Delete("C:\\Temp\\Dante.txt");
-            File.Delete("C:\\Temp\\EndScene.txt");
+            File.Delete(Environment.CurrentDirectory+"\\Dante.txt");
+            File.Delete(Environment.CurrentDirectory+"\\EndScene.txt");
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -39,7 +39,7 @@ namespace Dante
             /// Console.WriteLine(Message);
             /// System.Diagnostics.Debugger.Log(0, "dante",Message);
             
-            using (StreamWriter w = new StreamWriter("C:\\Temp\\Dante.txt", true))
+            using (StreamWriter w = new StreamWriter(Environment.CurrentDirectory+"\\Dante.txt", true))
             {
                 w.WriteLine(DateTime.Now.ToLongTimeString() + "," + Message);
                 w.Close();
@@ -48,7 +48,7 @@ namespace Dante
 
         public void LogEndScene(bool state)
         {
-            using (StreamWriter w = new StreamWriter("C:\\Temp\\EndScene.txt", true))
+            using (StreamWriter w = new StreamWriter(Environment.CurrentDirectory+"\\EndScene.txt", true))
             {
                 w.WriteLine(DateTime.Now.ToLongTimeString() + ", EndScene(): " + 
                     ((state) ? "IN" : "OUT"));
