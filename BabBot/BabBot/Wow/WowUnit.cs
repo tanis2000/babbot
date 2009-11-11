@@ -165,7 +165,15 @@ namespace BabBot.Wow
                 return (ReadDescriptor<int>((uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS) & 8) != 0;
             }
         }
-        
+
+        public bool IsSkinnable
+        {
+            get
+            {
+                return (ReadDescriptor<int>((uint)Descriptor.eUnitFields.UNIT_DYNAMIC_FLAGS) & (int)Descriptor.eUnitFlags.UF_SKINNABLE) != 0;
+            }
+        }
+
         public bool IsGhost
         {
             get

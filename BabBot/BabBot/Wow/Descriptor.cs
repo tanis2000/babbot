@@ -16,6 +16,8 @@
   
     Copyright 2009 BabBot Team
 */
+using System;
+
 namespace BabBot.Wow
 {
 #pragma warning disable 1591
@@ -792,12 +794,43 @@ namespace BabBot.Wow
 
         #region eUnitFlags enum
 
+        [Flags]
         public enum eUnitFlags : uint
         {
-            UF_SITTING = 0x01,
-            UF_ELITE = 0x40,
-            UF_DEAD = 0x40000,
-            UF_FLYING = 0x100000
+            None = 0,
+            UF_SITTING = 0x1,
+            //UF_SelectableNotAttackable_1 = 0x2,
+            UF_INFLUENCED = 0x4, // Stops movement packets
+            UF_PLAYERCONTROLLED = 0x8, // 2.4.2
+            UF_TOTEM = 0x10,
+            UF_PREPARATION = 0x20, // 3.0.3
+            UF_ELITE = 0x40, // 3.0.2
+            //SelectableNotAttackable_2 = 0x80,
+            UF_NOTATTACKABLE = 0x100,
+            //Flag_0x200 = 0x200,
+            UF_LOOTING = 0x400,
+            UF_PETINCOMBAT = 0x800, // 3.0.2
+            UF_PVPFLAGGED = 0x1000,
+            UF_SILENCED = 0x2000, //3.0.3
+            //Flag_14_0x4000 = 0x4000,
+            //Flag_15_0x8000 = 0x8000,
+            //SelectableNotAttackable_3 = 0x10000,
+            UF_PACIFIED = 0x20000, //3.0.3
+            UF_STUNNED = 0x40000,
+            UF_CanPerformAction_Mask1 = 0x60000,
+            UF_COMBAT = 0x80000, // 3.1.1
+            UF_TAXIFLIGHT = 0x100000, // 3.1.1
+            UF_DISARMED = 0x200000, // 3.1.1
+            UF_CONFUSED = 0x400000, //  3.0.3
+            UF_FLEEING = 0x800000,
+            UF_POSSESSED = 0x1000000, // 3.1.1
+            UF_NOTSELECTABLE = 0x2000000,
+            UF_SKINNABLE = 0x4000000,
+            UF_MOUNTED = 0x8000000,
+            //Flag_28_0x10000000 = 0x10000000,
+            UF_DAZED = 0x20000000,
+            UF_SHEATHE = 0x40000000,
+            //Flag_31_0x80000000 = 0x80000000,
         } ;
 
         #endregion
