@@ -68,11 +68,14 @@ namespace BabBot.Manager
 
         public void Stop()
         {
+            Output.Instance.Log("char", "Stopping bot ...");
             if (workerThread != null)
             {
                 workerThread.Stop();
                 workerThread = null;
-            }
+                Output.Instance.Log("char", "Bot stopped");
+            } else
+                Output.Instance.Log("char", "Bot not running.");
         }
 
         #region Thread Events
@@ -84,7 +87,7 @@ namespace BabBot.Manager
 
         private void OnBeforeStop()
         {
-            //Output.Instance.Debug("OnBeforeStop", this);
+            Output.Instance.Debug("char", "OnBeforeStop", this);
         }
 
         private void OnBeforeStart()
