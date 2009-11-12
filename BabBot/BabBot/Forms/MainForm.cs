@@ -304,7 +304,17 @@ namespace BabBot.Forms
 
         private void wow_InGame()
         {
-            btnLogin.Enabled = false;
+            // Cross-Thread operation
+            if (InvokeRequired)
+            {
+                // Setup the cross-thread call
+                InGameDelegate del = wow_InGame;
+                Invoke(del);
+            }
+            else
+            {
+                btnLogin.Enabled = false;
+            }
         }
 
         private static void wow_ProcessFailed(string error)
@@ -731,6 +741,7 @@ namespace BabBot.Forms
         #region Nested type: ProcessEndedDelegate
 
         private delegate void ProcessEndedDelegate(int process);
+        private delegate void InGameDelegate();
 
         #endregion
 
