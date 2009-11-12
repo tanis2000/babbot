@@ -133,6 +133,7 @@ namespace BabBot.Common
             // Eseguo lo stop solo se il thread esiste ed è vivo  
             if ((m_thread == null) || (!m_thread.IsAlive) || (!m_running))
             {
+                Output.Instance.Log("char", "Bot not running.");
                 return;
             }
 
@@ -151,6 +152,7 @@ namespace BabBot.Common
             {
                 if ((m_forceStop) && (m_thread.ThreadState == ThreadState.WaitSleepJoin))
                 {
+                    Output.Instance.Debug("char", "Forcing bot stop");
                     m_thread.Interrupt();
                 }
             }
@@ -159,7 +161,9 @@ namespace BabBot.Common
             }
 
             // Metto in attesa il thread chiamante dell'effettivo stop del thread dell'oggetto corrente  
+            Output.Instance.Debug("char", "Waiting bot termination ...");
             m_evStop.WaitOne();
+            Output.Instance.Debug("char", "Bot terminated");
 
             m_thread = null;
         }
