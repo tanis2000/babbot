@@ -128,7 +128,12 @@ namespace BabBot.Common
         // Added for compatibility
         internal void Debug(string message, object sender)
         {
-            Debug(Format("[{0}] {1}", sender.GetType().Name, message));
+            Debug("misc", message, sender);
+        }
+
+        internal void Debug(string facility, string message, object sender)
+        {
+            Debug(facility, Format("[{0}] {1}", sender.GetType().Name, message));
         }
 
         // Added for compatibility
