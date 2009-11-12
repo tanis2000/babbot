@@ -273,8 +273,8 @@ namespace BabBot.Wow
             /// We check the list of mobs around us and if any of them has us as target and has aggro
             /// it means that we are being attacked by that mob. It can be more than one mob
             /// but we don't care. As long as one is attacking us, this will return true.
-            if (GetCurTarget() == null) return false;
-            else return true;
+            if (GetCurAttacker() == null) return false;
+            return true;
         }
 
         public WowUnit GetCurAttacker()
@@ -324,7 +324,7 @@ end)()");
             //Thread.Sleep(2000);
             Output.Instance.Debug("AddLastTargetToLootList() - Adding our last target to the list of lootable mobs", this);
             ProcessManager.Injector.Lua_DoString("TargetLastTarget()");
-            //Thread.Sleep(2000);
+            Thread.Sleep(2000);
             if (HasTarget)
             {
                 if (CurTarget.IsLootable)
@@ -512,7 +512,7 @@ end)()");
             {
                 foreach (WowUnit obj in l)
                 {
-                    if (obj.Name == enemy.Name)
+                    if ((obj.Name == enemy.Name) && (!obj.IsDead))
                     {
                         if (closest == null)
                         {
@@ -533,6 +533,9 @@ end)()");
             {
                 // We have him somewhere around us
                 // Let's turn to face him so that we can tab-search
+                Face(closest.Location);
+
+                // Tab-target it
                 if (SelectMob(closest))
                 {
                     // We managed to tab-target it

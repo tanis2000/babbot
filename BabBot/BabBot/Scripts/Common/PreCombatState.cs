@@ -59,7 +59,7 @@ namespace BabBot.Scripts.Common
                     Entity.FaceClosestEnemy();
 
                     // Let's check if we actually got it as our target
-                    if (Entity.HasTarget)
+                    if ((Entity.HasTarget) && (!Entity.IsTargetDead()))
                     {
                         Output.Instance.Script("OnPreCombat() - Affirmative. We have a target", this);
                         /// Ok, we have the target, it's time to start attacking,
@@ -67,7 +67,8 @@ namespace BabBot.Scripts.Common
                     }
                     else
                     {
-                        // Let's try moving closer
+                        // Let's try moving closer. We should already be facing our wanted target
+                        Entity.MoveForward(1000);
                         Output.Instance.Script("OnPreCombat() - Can't target. This should not happen :-P", this);
                     }
                 }

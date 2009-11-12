@@ -71,8 +71,9 @@ namespace Dante
 
         public List<string> GetValues()
         {
-            try {
-                lock (LuaInterface.Values)
+            lock (LuaInterface.dataLock)
+            {
+                try
                 {
                     bool val = LuaInterface.ValueReceived;
                     LuaInterface.LoggingInterface.Log(string.Format(
@@ -90,15 +91,15 @@ namespace Dante
                                                               LuaInterface.Values.Count));
                         return LuaInterface.Values;
                     }
-                    else
-                        LuaInterface.LoggingInterface.Log("GetValues() - Done no value(s) received");
+
+                    LuaInterface.LoggingInterface.Log("GetValues() - Done no value(s) received");
+
+                }
+                catch (Exception e)
+                {
+                    LuaInterface.LoggingInterface.Log("GetValues() exception: " + e.ToString());
                 }
             }
-            catch (Exception e)
-            {
-                LuaInterface.LoggingInterface.Log("GetValues() exception: " + e.ToString());
-            }
-            
             return new List<string>();
         }
 

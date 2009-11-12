@@ -35,16 +35,11 @@ namespace BabBot.Scripts.Common
         protected override void DoExecute(WowPlayer Entity)
         {
             Output.Instance.Script("OnPostCombat()", this);
-            /*
-            // We reset all actions listed as toggle
-            foreach (var pair in Actions)
-            {
-                if (pair.Value.Toggle)
-                {
-                    pair.Value.Active = false;
-                }
-            }
-             */
+
+            // If we're being attacked by some hotile mob we switch back to the combat state
+            if (Entity.IsBeingAttacked()) return;
+
+            // We should be free to do what we want, so we check for lootable mobs nearby
             Output.Instance.Script("OnPostCombat() - Adding last target to loot list", this);
             Entity.AddLastTargetToLootList();
             Output.Instance.Script("OnPostCombat() Looting closest lootable mob", this);

@@ -497,7 +497,7 @@ namespace BabBot.Scripts.Common
                 Output.Instance.Script("Checking if we no longer have a target after a fight", this);
                 if (!Entity.HasTarget || Entity.IsTargetDead())
                 {
-                    Output.Instance.Script("We no longer have a target, thus we enter PostCombatState", this);
+                    Output.Instance.Script("We no longer have a target or our target is dead, thus we enter PostCombatState", this);
                     CallChangeStateEvent(Entity, postCombatState, true, false);
                     return;
                 }
@@ -505,6 +505,13 @@ namespace BabBot.Scripts.Common
 
             if (Entity.StateMachine.IsInState(postCombatState.GetType()))
             {
+                // If there's a mob attacking us we go directly back to the PreCombatState
+                if (Entity.IsBeingAttacked())
+                {
+                    CallChangeStateEvent(Entity, preCombatState, true, false);
+                    return;
+                }
+
                 if (NeedRest(Entity))
                 {
                     CallChangeStateEvent(Entity, restState, true, false);

@@ -176,7 +176,7 @@ namespace BabBot.Forms
             if (InvokeRequired)
             {
                 PlayerUpdateDelegate del = PlayerUpdate;
-                Invoke(del);
+                BeginInvoke(del);
             }
             else
             {
@@ -386,7 +386,7 @@ namespace BabBot.Forms
 
         private void btnLoadProfile_Click(object sender, EventArgs e)
         {
-            var dlg = new OpenFileDialog {Multiselect = false, Filter = "BabBot Profile (*.xml)|*.xml"};
+            var dlg = new OpenFileDialog {Multiselect = false, RestoreDirectory=true, Filter = "BabBot Profile (*.xml)|*.xml"};
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 var serializer = new Serializer<Profile>();
@@ -407,7 +407,7 @@ namespace BabBot.Forms
 
         private void btnSaveProfile_Click(object sender, EventArgs e)
         {
-            var dlg = new SaveFileDialog {Filter = "BabBot Profile (*.xml)|*.xml"};
+            var dlg = new SaveFileDialog { RestoreDirectory = true, Filter = "BabBot Profile (*.xml)|*.xml" };
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 ProcessManager.Profile.FileName = dlg.FileName;
@@ -757,6 +757,7 @@ namespace BabBot.Forms
             else
             {
                 // Check if facility exists
+                // TODO: if we log something and we're terminating the process, rt will throw an exception!
 
                 RichTextBox rt = (RichTextBox) LogFS[facility];
                 if (rt == null)
@@ -800,17 +801,21 @@ namespace BabBot.Forms
                 return;
             }
 
-            var dlg = new OpenFileDialog { Multiselect = false, Filter = "BabBot Script (*.cs)|*.cs" };
+            Output.Instance.Log("Path before load: " + Environment.CurrentDirectory);
+            var dlg = new OpenFileDialog { RestoreDirectory = true, Multiselect = false, Filter = "BabBot Script (*.cs)|*.cs" };
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 // Make sure the State Machine is stopped
                 ProcessManager.Player.StateMachine.IsRunning = false;
-                
+
+                Output.Instance.Log("Path before host start: " + Environment.CurrentDirectory);
                 ProcessManager.ScriptHost.Start(dlg.FileName);
+                Output.Instance.Log("Path after host start: " + Environment.CurrentDirectory);
 
                 // UI Stuff
                 tbScript.Text = dlg.FileName;
             }
+            Output.Instance.Log("Path after load: " + Environment.CurrentDirectory);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
