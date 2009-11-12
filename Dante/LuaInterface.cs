@@ -52,6 +52,8 @@ namespace Dante
         internal static bool InputHandlerRegistered = false;
         internal static object dataLock = new object();
 
+        private static uint state = 0;
+
         #endregion
 
         #region delegates
@@ -248,6 +250,14 @@ namespace Dante
             {
                 string cmd = string.Format("InputHandler({0})", command);
                 LoggingInterface.Log("DoStringEx() - Calling ...");
+                uint new_state = Lua_GetState();
+                if (new_state != state)
+                {
+                    LoggingInterface.Log(string.Format(
+                        "Detected new lua state {0:X} different from old {1:X}", 
+                        new_state, state));
+                    RegisterLuaInputHandler();
+                }
                 LoggingInterface.Log("DoStringEx() - " + cmd);
                 Lua_DoString(cmd, lua_cmd, 0);
                 LoggingInterface.Log("DoString() - Done");
@@ -376,7 +386,8 @@ namespace Dante
 
         private static void InitLUAState()
         {
-            LoggingInterface.Log(string.Format("InitLUAState returned {0:X}", Lua_GetState()));
+            state = Lua_GetState();
+            LoggingInterface.Log(string.Format("InitLUAState returned {0:X}", state));
         }
 
 
