@@ -174,7 +174,9 @@ namespace BabBot.Manager
 
         private static void afterProcessStart()
         {
-            if (WoWProcessStarted != null && process != null)
+            Output.Instance.Debug("char", "Executing AfterStart ...");
+
+            if (WoWProcessStarted != null)
             {
                 WoWProcessStarted(process.Id);
             }
@@ -182,51 +184,47 @@ namespace BabBot.Manager
             {
                 ProcessRunning = false;
 
-                if (process != null)
-                {
-                    // Set before using any BlackMagic methods
-                    process.EnableRaisingEvents = true;
-                    process.Exited += exitProcess;
+                // Set before using any BlackMagic methods
+                process.EnableRaisingEvents = true;
+                process.Exited += exitProcess;
 
-                    WowHWND = AppHelper.WaitForWowWindow();
-                    CommandManager.WowHWND = WowHWND;
+                WowHWND = AppHelper.WaitForWowWindow();
+                CommandManager.WowHWND = WowHWND;
 
-                    //verify we haven't already opened it, like when we do the injection
-                    if(!wowProcess.IsProcessOpen)
+                //verify we haven't already opened it, like when we do the injection
+                if(!wowProcess.IsProcessOpen)
                     ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
 
-                    // We don't let anyone do anything until wow has finished launching
-                    // We look for the TLS first
-                    while (!FindTLS())
-                    {
-                        if (UpdateStatus != null)
-                        {
-                            UpdateStatus("Looking for the TLS..");
-                        }
-                        Thread.Sleep(250);
-                    }
+                // We don't let anyone do anything until wow has finished launching
+                // We look for the TLS first
+                while (!FindTLS())
+                {
+                   if (UpdateStatus != null)
+                   {
+                       UpdateStatus("Looking for the TLS ...");
+                   }
+                   Thread.Sleep(250);
+                }
 
-                    if (config.WowPos != null)
-                        BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND,
-                              config.WowPos.Pos.X,
-                              config.WowPos.Pos.Y,
-                              config.WowPos.Pos.Width,
-                              config.WowPos.Pos.Height);
-                    else if (config.Resize)
-                        BabBot.Common.WindowSize.SetPositionSize(
+                if (config.WowPos != null)
+                    BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND,
+                        config.WowPos.Pos.X, config.WowPos.Pos.Y,
+                        config.WowPos.Pos.Width, config.WowPos.Pos.Height);
+                else if (config.Resize)
+                    BabBot.Common.WindowSize.SetPositionSize(
                                     (IntPtr)WowHWND, 0, 0, 328, 274);
 
 
-                            //Injector.Lua_RegisterInputHandler();
-                    // At this point it should be safe to do any LUA calls
-                            if (config.AutoLogin)
-                            {
-                                Injector.Lua_RegisterInputHandler();
-                                Login.AutoLogin(config.Account.Realm, config.Account.LoginUsername, 
+                // At this point it should be safe to do any LUA calls
+                if (config.AutoLogin)
+                {
+                   Injector.Lua_RegisterInputHandler();
+                   Login.AutoLogin(config.Account.Realm, config.Account.LoginUsername, 
                                     config.Account.getAutoLoginPassword(), config.Character, 5);
-                                Injector.Lua_UnRegisterInputHandler();
-                            }
+                   Injector.Lua_UnRegisterInputHandler();
                 }
+
+                Output.Instance.Debug("char", "AfterStart completed.");
             }
             catch (Exception e)
             {
@@ -239,14 +237,24 @@ namespace BabBot.Manager
 
         private static void exitProcess(object sender, EventArgs e)
         {
-            // TODO: clean everything here...
+            // Do it first
             ProcessRunning = false;
+
+            // Blah blah blah after
+            Output.Instance.Log("char", "WoW termination detected");
+            Output.Instance.Debug("char", "Executing After WoW termination ...");
+
+            // Cleaning
             WowHWND = 0;
+            Initialized = false;
+            wowProcess.CloseProcess();
 
             if (WoWProcessEnded != null)
             {
                 WoWProcessEnded(((Process) sender).Id);
             }
+
+            Output.Instance.Debug("char", "WoW termination completed");
         }
 
         #endregion
@@ -269,6 +277,8 @@ namespace BabBot.Manager
 
                 if (!string.IsNullOrEmpty(wowPath))
                 {
+                    Output.Instance.Log("char", "Starting WoW ...");
+
                     // Guest account might not be enabled
                     try
                     {
@@ -306,7 +316,16 @@ namespace BabBot.Manager
 
                     // resume
                     ResumeMainWowThread();
-                    afterProcessStart();
+
+                    if (process != null)
+                    {
+                        afterProcessStart();
+                        Output.Instance.Log("char", "WoW started.");
+                    }
+                    else
+                    {
+                        Output.Instance.Log("char", "Failed start WoW.");
+                    }
                 }
                 else
                 {
