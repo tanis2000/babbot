@@ -752,7 +752,7 @@ namespace BabBot.Forms
             if (txtConsole.InvokeRequired)
             {
                 Output.OutputEventHandler handler = LogOutput;
-                Invoke(handler, new object[] { facility, time, message, color });
+                BeginInvoke(handler, new object[] { facility, time, message, color });
             }
             else
             {

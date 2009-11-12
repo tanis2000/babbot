@@ -4,12 +4,13 @@ using System.IO;
 using System.Windows.Forms;
 using BabBot.Manager;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 
 namespace BabBot.Common
 {
     public sealed class Output
     {
+
+        private object Obj = new Object();
 
         private static readonly Output instance = new Output();
          
@@ -67,20 +68,30 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         internal void Log(string facility, string message, Color color)
         {
-            string fs = char.ToUpper(facility[0]) + facility.Substring(1);
-
-            using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-Log-{2}.txt", 
-                    DateString, ProcessManager.Config.LogPath, fs), true))
+            lock (Obj)
             {
-                w.WriteLine(Format("{0},{1}", BTimeString, message));
-            }
+                string fs = char.ToUpper(facility[0]) + facility.Substring(1);
 
-            if (OutputEvent != null)
-            {
-                OutputEvent(fs, BTimeString, message, color);
+                try
+                {
+                    using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-Log-{2}.txt",
+                        DateString, ProcessManager.Config.LogPath, fs), true))
+                    {
+                        w.WriteLine(Format("{0},{1}", BTimeString, message));
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Disk migh full
+                    // Keep working
+                }
+
+                if (OutputEvent != null)
+                {
+                    OutputEvent(fs, BTimeString, message, color);
+                }
             }
         }
 

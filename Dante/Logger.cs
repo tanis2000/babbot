@@ -19,12 +19,13 @@
 
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace Dante
 {
     public class Logger : MarshalByRefObject
     {
+        private object Obj = new Object();
+
         public string InjectedDLLChannelName { get; set; }
 
         public Logger()
@@ -33,16 +34,21 @@ namespace Dante
             File.Delete(Environment.CurrentDirectory+"\\EndScene.txt");
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Log(string Message)
         {
             /// Console.WriteLine(Message);
             /// System.Diagnostics.Debugger.Log(0, "dante",Message);
-            
-            using (StreamWriter w = new StreamWriter(Environment.CurrentDirectory+"\\Dante.txt", true))
+            lock (Obj)
             {
-                w.WriteLine(DateTime.Now.ToLongTimeString() + "," + Message);
-                w.Close();
+                try
+                {
+                    using (StreamWriter w = new StreamWriter(Environment.CurrentDirectory + "\\Dante.txt", true))
+                    {
+                        w.WriteLine(DateTime.Now.ToLongTimeString() + "," + Message);
+                        w.Close();
+                    }
+                }
+                catch (Exception e) { }
             }
         }
 
