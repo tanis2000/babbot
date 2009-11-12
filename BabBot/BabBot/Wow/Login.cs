@@ -183,7 +183,7 @@ namespace BabBot.Wow
                             Output.Instance.Log(LogFS, "Retrying " + RetryCount + " of " + retry);
                             StateChangeTime = DateTime.Now;
                         } else 
-                            Thread.Sleep(1000);
+                            Thread.Sleep(5000);
 
                         break;
                     
