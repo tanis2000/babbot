@@ -756,37 +756,47 @@ namespace BabBot.Forms
             }
             else
             {
-                // Check if facility exists
-                // TODO: if we log something and we're terminating the process, rt will throw an exception!
-
-                RichTextBox rt = (RichTextBox) LogFS[facility];
-                if (rt == null)
+                try
                 {
-                    TabPage tab = new TabPage(facility);
-                    rt = new RichTextBox();
-                    rt.Size = txtConsole.Size;
-                    rt.BackColor = txtConsole.BackColor;
+                    // Check if facility exists
+                    // TODO: if we log something and we're terminating the process, rt will throw an exception!
 
-                    tab.Controls.Add(rt);
-                    LogFS.Add(facility, rt);
-                    tabLogs.Controls.Add(tab);
-                }
+                    RichTextBox rt = (RichTextBox) LogFS[facility];
+                    if (rt == null)
+                    {
+                        TabPage tab = new TabPage(facility);
+                        rt = new RichTextBox();
+                        rt.Size = txtConsole.Size;
+                        rt.BackColor = txtConsole.BackColor;
 
-                string text = String.Format(CultureInfo.CurrentCulture, "[{0}] {1}{2}",
-                                                    time, message, Environment.NewLine);
-                rt.SelectionColor = color;
-                rt.AppendText(text);
+                        tab.Controls.Add(rt);
+                        LogFS.Add(facility, rt);
+                        tabLogs.Controls.Add(tab);
+                    }
 
-                // Append to All logs
-                // Need to change color b4 each output or it remember last selection
-                txtConsole.SelectionColor = color;
-                txtConsole.AppendText(text);
-                txtConsole.ScrollToCaret();
+                    string text = String.Format(CultureInfo.CurrentCulture, "[{0}] {1}{2}",
+                                                time, message, Environment.NewLine);
+                    rt.SelectionColor = color;
+                    rt.AppendText(text);
 
-                // Check if limit exceed
-                if (txtComputedFacing.Lines.Length > 5000) {
-                    // TODO Remove extra lines
-                    // txtConsole.
+                    // Append to All logs
+                    // Need to change color b4 each output or it remember last selection
+                    txtConsole.SelectionColor = color;
+                    txtConsole.AppendText(text);
+                    txtConsole.ScrollToCaret();
+
+                    // Check if limit exceed
+                    if (txtConsole.Lines.Length > 5000)
+                    {
+                        // TODO Remove extra lines
+                        txtConsole.SelectionStart = 0;
+                        txtConsole.SelectionLength = txtConsole.Text.IndexOf(Environment.NewLine, 0, 5000);
+                        txtConsole.SelectedText = "";
+                    }
+                } 
+                catch(Exception e)
+                {
+                    
                 }
             }
         }

@@ -167,8 +167,6 @@ namespace BabBot.Scripts.Common
                 {
                     float currentDistance = distance;
 
-                    distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
-                                                     Entity.Location, false);
                     Output.Instance.Script(string.Format("Distance: {0}", distance));
                     Thread.Sleep(50);
                     Application.DoEvents();
@@ -177,6 +175,8 @@ namespace BabBot.Scripts.Common
                     TimeSpan tsTravelTime = end - start;
 
 
+                    distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
+                                                     Entity.Location, false);
                     angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
                                       Entity.Location);
                     Entity.FaceUsingMemoryWrite(angle, true);

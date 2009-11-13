@@ -52,7 +52,7 @@ namespace BabBot.Scripts.Common
                 Output.Instance.Script("OnRoaming() -- We have a last waypoint. Checking if we reached it");
 
                 float distanceFromLast = MathFuncs.GetDistance(_lastWayPoint.Location, Entity.Location, false);
-                if (distanceFromLast <= 2.0f)
+                if (distanceFromLast <= 3.0f)
                 {
                     Output.Instance.Script("OnRoaming() -- We reached the last waypoint. Let's get a new one");
                     wp = WayPointManager.Instance.GetNextWayPoint(WayPointType.Normal);

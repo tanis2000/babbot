@@ -161,8 +161,9 @@ namespace BabBot.Common
             }
 
             // Metto in attesa il thread chiamante dell'effettivo stop del thread dell'oggetto corrente  
+            // NOTE: tanis - I'm not that sure that blocking this thread waiting for the main one to finish is a good idea. Most of the time it just hangs everything.
             Output.Instance.Debug("char", "Waiting bot termination ...");
-            m_evStop.WaitOne();
+            //m_evStop.WaitOne();
             Output.Instance.Debug("char", "Bot terminated");
 
             m_thread = null;

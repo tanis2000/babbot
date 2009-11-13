@@ -988,7 +988,7 @@ end)()");
         {
             for (int i = 0; i < iTime/100; i++)
             {
-                PlayerCM.SendKeys("d");
+                PlayerCM.SendKeys("e");
                 Thread.Sleep(100);
             }
         }
@@ -1001,7 +1001,7 @@ end)()");
         {
             for (int i = 0; i < iTime/100; i++)
             {
-                PlayerCM.SendKeys("a");
+                PlayerCM.SendKeys("q");
                 Thread.Sleep(100);
             }
         }
