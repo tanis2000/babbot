@@ -184,6 +184,7 @@ namespace Dante
             if (EndSceneDebug)
                 LuaInterface.LoggingInterface.LogEndScene(false);
 
+            //LuaInterface.LoggingInterface.Log(string.Format("Device:{0} RealEndScene:{1}", Device, RealEndScene));
             return RealEndScene(Device);
         }
     }

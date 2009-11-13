@@ -47,25 +47,28 @@ namespace Dante
 
         public void DoStringEx(string command)
         {
-            try
+            lock (LuaInterface.dataLock)
             {
-                LuaInterface.LoggingInterface.Log(string.Format(
-                    "DoStringEx() - State: {0}; Executing (\"{1}\") ...", 
-                    LuaInterface.LuaState, command));
+                try
+                {
+                    LuaInterface.LoggingInterface.Log(string.Format(
+                                                          "DoStringEx() - State: {0}; Executing (\"{1}\") ...",
+                                                          LuaInterface.LuaState, command));
 
-                LuaInterface.PendingDoString = command;
-                LuaInterface.LoggingInterface.Log(string.Format("DoStringEx() - Done"));
+                    LuaInterface.PendingDoString = command;
+                    LuaInterface.LoggingInterface.Log(string.Format("DoStringEx() - Done"));
 
-                LuaInterface.Values.Clear();
-                LuaInterface.ValueReceived = false;
+                    LuaInterface.Values.Clear();
+                    LuaInterface.ValueReceived = false;
 
-                // Always last
-                LuaInterface.LuaState = 2;
-            }
-            catch (Exception e)
-            {
-                LuaInterface.LoggingInterface.Log(
-                                "DoStringInputHandler() - Exception: " + e.ToString());
+                    // Always last
+                    LuaInterface.LuaState = 2;
+                }
+                catch (Exception e)
+                {
+                    LuaInterface.LoggingInterface.Log(
+                        "DoStringInputHandler() - Exception: " + e.ToString());
+                }
             }
         }
 
@@ -81,15 +84,17 @@ namespace Dante
 
                     if (val)
                     {
+                        List<string> retValues = new List<string>();
                         foreach (string s in LuaInterface.Values)
                         {
                             LuaInterface.LoggingInterface.Log("GetValues() Value [" + s + "]");
+                            retValues.Add(s);
                         }
 
                         LuaInterface.LoggingInterface.Log(string.Format(
                                                               "GetValues() - Done returned {0} parameters",
                                                               LuaInterface.Values.Count));
-                        return LuaInterface.Values;
+                        return retValues;
                     }
 
                     LuaInterface.LoggingInterface.Log("GetValues() - Done no value(s) received");

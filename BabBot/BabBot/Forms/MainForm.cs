@@ -50,7 +50,8 @@ namespace BabBot.Forms
             LoadConfig();
 
             // Load the configuration file
-            Output.OutputEvent += LogOutput;
+            // NOTE: tanis - temporarily disabled as it eats way too much memory as it is now
+            //Output.OutputEvent += LogOutput;
             Output.Instance.Log("char", "Initializing..");
             
 
@@ -786,14 +787,14 @@ namespace BabBot.Forms
                     txtConsole.ScrollToCaret();
 
                     // Check if limit exceed
-                    if (txtConsole.Lines.Length > 1000)
+                    if (txtConsole.Lines.Length > 500)
                     {
                         // TODO Remove extra lines
-                        int count = txtConsole.Lines.Length - 1000;
+                        int count = txtConsole.Lines.Length - 500;
                         for (int i = 0; i < count; i++ )
                         {
                             txtConsole.SelectionStart = 0;
-                            txtConsole.SelectionLength = txtConsole.Text.IndexOf(Environment.NewLine, 0);
+                            txtConsole.SelectionLength = txtConsole.Rtf.IndexOf(Environment.NewLine, 0);
                             txtConsole.SelectedText = "";
                         }
                     }

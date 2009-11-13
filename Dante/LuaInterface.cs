@@ -434,7 +434,8 @@ namespace Dante
                 RegisterLUADelegate();
 
                 // Init LUA state
-                InitLUAState();
+                // NOTE: AAAARGH!! No LUA function calls when not in wow's main thread please! ;)
+                //InitLUAState();
 
                 // Install the first hook...
                 try
