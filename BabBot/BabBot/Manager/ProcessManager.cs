@@ -218,10 +218,21 @@ namespace BabBot.Manager
                 // At this point it should be safe to do any LUA calls
                 if (config.AutoLogin)
                 {
-                   Injector.Lua_RegisterInputHandler();
-                   Login.AutoLogin(config.Account.Realm, config.Account.LoginUsername, 
+                    Injector.Lua_RegisterInputHandler();
+                    try
+                    {
+                        Login.AutoLogin(config.Account.Realm, config.Account.LoginUsername,
                                     config.Account.getAutoLoginPassword(), config.Character, 5);
-                   Injector.Lua_UnRegisterInputHandler();
+                    }
+                    catch (Exception e)
+                    {
+                        // Login exception means new patch
+                        // Exit bot
+                        if (WoWProcessFailed != null)
+                            WoWProcessFailed(e.Message);
+                        Environment.Exit(5);
+                    }
+                    Injector.Lua_UnRegisterInputHandler();
                 }
 
                 Output.Instance.Debug("char", "AfterStart completed.");

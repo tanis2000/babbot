@@ -65,6 +65,9 @@ namespace BabBot.Wow
         // Log facility
         private static string LogFS = "char";
 
+        // Default waiting time if some process pending
+        private static int psleepTime = 5000; // msec, as usual
+
         static Login()
         {
             LoginState.SetValue("login", 0); // "AccountLogin";
@@ -79,6 +82,16 @@ namespace BabBot.Wow
 		    LoginState.SetValue("tos", 9); // "TOS Dialog";
 		    LoginState.SetValue("eula", 10); // EULA
             LoginState.SetValue("realmselect", 11); // Suggest Realm
+        }
+
+        private static void Log(String msg)
+        {
+            Output.Instance.Log(LogFS, msg);
+        }
+
+        private static void Debug(String msg)
+        {
+            Output.Instance.Debug(LogFS, msg);
         }
 
         /// <summary>
@@ -109,7 +122,7 @@ namespace BabBot.Wow
                         int idx = SelectCharacter(name);
                         if (idx > 0)
                         {
-                            Output.Instance.Log(LogFS, "Found " + name + " as id:" + idx);
+                            Log("Found " + name + " as id:" + idx);
                             ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
                             
                             // We done. World loading
@@ -117,7 +130,7 @@ namespace BabBot.Wow
                         }
                         else if (idx == -1)
                         {
-                            Output.Instance.Log(LogFS, "Character '" + name +
+                            Log("Character '" + name +
                                 "' not found in list for realm '" + realm + "'");
                             return false;
                         }
@@ -126,12 +139,30 @@ namespace BabBot.Wow
                         break;
 
                     /*
-                    case 2: // Realm Suggestion
-                        break
-                        
-                    case 4: // Patch Download
+                    case 2: // Realm Wizard
                         break
                     */
+    
+                    case 4: // Patch Download
+                        if (string.IsNullOrEmpty(DInfo))
+                        {
+                            // Exit bot
+                            throw new Exception("Unable download patch");
+                        } else {
+
+                            if (DInfo.Equals("100%"))
+                            {
+                                // Download completed. Can't continue bot without patch verification
+                                ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
+                                throw new Exception("New patch just arrived.");
+                            } else {
+                                // Keep waiting
+                                Log(string.Format("{0} downloaded. Keep waiting ...", DInfo));
+                                Thread.Sleep(psleepTime);
+                            }
+                        }
+
+                        break;
                         
                     case 6: // Movie
                         // Ohhh, cmon
@@ -153,17 +184,17 @@ namespace BabBot.Wow
                         if (DInfo.Equals("ok"))
                         {
                             // Desired realm selected and it active. Accept selection
-                            Output.Instance.Log(LogFS, string.Format("Selecting '{0}' realm", realm));
+                            Log(string.Format("Selecting '{0}' realm", realm));
                             ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
                         } else if (DInfo.Equals("down"))
                         {
                             // Go to realm selection
-                            Output.Instance.Log(LogFS, string.Format(
+                            Log(string.Format(
                                 "Realm '{0}' down. Checking again in 10 sec ...", realm));
                             Thread.Sleep(10000);
                         } else if (DInfo.Equals("not_found"))
                         {
-                            Output.Instance.Log(LogFS, string.Format(
+                            Log(string.Format(
                                 "Realm '{0}' not found. Canceling login", realm));
                             return false;
                         }
@@ -176,14 +207,14 @@ namespace BabBot.Wow
                         if (DateTime.Now.Millisecond - StateChangeTime.Millisecond > MaxScreenWaitTime) {
                             // Cancel current process and retry
                             RetryCount++;
-                            Output.Instance.Log(LogFS, "Session stack. Canceling ...");
+                            Log("Session stack. Canceling ...");
                             ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
                             Thread.Sleep(10000);
 
-                            Output.Instance.Log(LogFS, "Retrying " + RetryCount + " of " + retry);
+                            Log("Retrying " + RetryCount + " of " + retry);
                             StateChangeTime = DateTime.Now;
-                        } else 
-                            Thread.Sleep(5000);
+                        } else
+                            Thread.Sleep(psleepTime);
 
                         break;
                     
@@ -191,12 +222,12 @@ namespace BabBot.Wow
                         RetryCount++;
                         Thread.Sleep(10000);
 
-                        Output.Instance.Log(LogFS, "Retrying " + RetryCount + " of " + retry);
+                        Log("Retrying " + RetryCount + " of " + retry);
                         StateChangeTime = DateTime.Now;
                         break;
 
                     default:
-                        Output.Instance.Log(LogFS, "'" + LoginState.GetValue(State) + 
+                        Log("'" + LoginState.GetValue(State) + 
                                                                   "' not implemented yet");
                         return false;
                 }
@@ -271,7 +302,7 @@ namespace BabBot.Wow
 
             if ((idx == null) || idx.Equals(""))
             {
-                Output.Instance.Log(LogFS, "Unable found character name '" + name + "'");
+                Log("Unable found character name '" + name + "'");
                 return -1;
             } else
                 return Convert.ToInt32(idx);
@@ -338,6 +369,10 @@ namespace BabBot.Wow
 			                break;
 		                end
                     end
+                  else
+                    if (PatchDownloadUI:IsShown()) then
+                        d3 = PatchProgressText:GetText()
+                    end
 	              end
                 end
               end
@@ -355,19 +390,19 @@ namespace BabBot.Wow
             bool IsDialogText = (!((DialogText == null) || DialogText.Equals("")) && (DialogText.Equals("html")));
             bool IsHtml = ((DInfo != null) && !DInfo.Equals(""));
 
-            Output.Instance.Debug(LogFS, string.Format("Screen: {0}; Pending: {1};" +
+            Debug(string.Format("Screen: {0}; Pending: {1};" +
                 " Dialog: {2}; DialogText: {3}; DInfo: {4}; Connected: {5}",
                 CurrentGlueScreen, PendingScreen, CurrentGlueDialog, DialogText, DInfo, Connected));
 
             if (!((PendingScreen == null) || PendingScreen.Equals("")))
             {
-                Output.Instance.Log(LogFS, "'" + PendingScreen + "' coming ...");
+                Log("'" + PendingScreen + "' coming ...");
                 return SetState(100);
             }
 
             if (CurrentGlueScreen == null)
             {
-                Output.Instance.Log(LogFS, "Not on login page");
+                Log("Not on login page");
                 // not on login page
                 return -1;
             }
@@ -375,7 +410,7 @@ namespace BabBot.Wow
             int idx = Array.IndexOf(LoginState, CurrentGlueScreen);
             if (idx < 0)
             {
-                Output.Instance.Log(LogFS, "Unknown GlueScreen '" + CurrentGlueScreen + "'");
+                Log("Unknown GlueScreen '" + CurrentGlueScreen + "'");
                 return -1;
             }
 
@@ -404,7 +439,7 @@ namespace BabBot.Wow
                 if (IsDialogText) 
                     s += " '" + DialogText + "'";
                  s += " ...";
-                 Output.Instance.Log(LogFS, s);
+                 Log(s);
                  return SetState(100);
              }
              
@@ -416,24 +451,24 @@ namespace BabBot.Wow
             if (IsHtml) {
                 if (CurrentGlueDialog.Equals("CONNECTION_HELP_HTML") && IsHtml)
                 {
-                    Output.Instance.Log(LogFS, "Networking problem. Retrying in 10 sec");
+                    Log("Networking problem. Retrying in 10 sec");
                     // Connection problem
                     ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
                     return SetState(101);
                 } else {
-                    Output.Instance.Log(LogFS, "Received Blizz. message. Interrupting login");
+                    Log("Received Blizz. message. Interrupting login");
                     return -1;
                 }
             }
 
             if (IsDialogText)
             {
-                Output.Instance.Log(LogFS, "Received" + DialogText);
+                Log("Received" + DialogText);
                 return SetState(100);
             }
 
             // If we still here than something wrong
-            Output.Instance.Log(string.Format(LogFS, @"Unknow state detected for GlueScreen: {0}; 
+            Log(string.Format(@"Unknow state detected for GlueScreen: {0}; 
                     GlueDialog: {1}", CurrentGlueScreen, CurrentGlueDialog));
             return -1;
         }
