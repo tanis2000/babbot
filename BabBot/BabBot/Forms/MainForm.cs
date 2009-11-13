@@ -786,12 +786,16 @@ namespace BabBot.Forms
                     txtConsole.ScrollToCaret();
 
                     // Check if limit exceed
-                    if (txtConsole.Lines.Length > 5000)
+                    if (txtConsole.Lines.Length > 1000)
                     {
                         // TODO Remove extra lines
-                        txtConsole.SelectionStart = 0;
-                        txtConsole.SelectionLength = txtConsole.Text.IndexOf(Environment.NewLine, 0, 5000);
-                        txtConsole.SelectedText = "";
+                        int count = txtConsole.Lines.Length - 1000;
+                        for (int i = 0; i < count; i++ )
+                        {
+                            txtConsole.SelectionStart = 0;
+                            txtConsole.SelectionLength = txtConsole.Text.IndexOf(Environment.NewLine, 0);
+                            txtConsole.SelectedText = "";
+                        }
                     }
                 } 
                 catch(Exception e)
