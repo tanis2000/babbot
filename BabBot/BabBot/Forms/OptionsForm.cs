@@ -27,6 +27,8 @@ namespace BabBot.Forms
             cbWindowed.Checked = ProcessManager.Config.Windowed;
             cbResize.Checked = ProcessManager.Config.Resize;
 
+            tbRealmLocation.Text = ProcessManager.Config.Account.RealmLocation;
+            cbxGameType.Text = ProcessManager.Config.Account.GameType;
             tbRealm.Text = ProcessManager.Config.Account.Realm;
             tbLoginUsername.Text = ProcessManager.Config.Account.LoginUsername;
             tbLoginPassword.Text = ProcessManager.Config.Account.getAutoLoginPassword();
@@ -48,6 +50,8 @@ namespace BabBot.Forms
             ProcessManager.Config.Resize = cbResize.Checked;
 
             ProcessManager.Config.AutoLogin = cbAutoLogin.Checked;
+            ProcessManager.Config.Account.RealmLocation = tbRealmLocation.Text;
+            ProcessManager.Config.Account.GameType = cbxGameType.Text;
             ProcessManager.Config.Account.Realm = tbRealm.Text;
             ProcessManager.Config.Account.LoginUsername = tbLoginUsername.Text;
             ProcessManager.Config.Account.EncryptPassword(tbLoginPassword.Text);
@@ -91,15 +95,21 @@ namespace BabBot.Forms
 
         private void cbAutoLogin_CheckedChanged(object sender, EventArgs e)
         {
+            tbRealmLocation.Enabled = cbAutoLogin.Checked;
+            cbxGameType.Enabled = cbAutoLogin.Checked;
             tbRealm.Enabled = cbAutoLogin.Checked;
             tbLoginUsername.Enabled = cbAutoLogin.Checked;
             tbLoginPassword.Enabled = cbAutoLogin.Checked;
 			tbCharacter.Enabled = cbAutoLogin.Checked;
+
+            labelRealmLocation.Enabled = cbAutoLogin.Checked;
+            labelGameType.Enabled = cbAutoLogin.Checked;
             labelRealm.Enabled = cbAutoLogin.Checked;
             labelUser.Enabled = cbAutoLogin.Checked;
             labelPwd.Enabled = cbAutoLogin.Checked;
 			labelCharacter.Enabled = cbAutoLogin.Checked;
-			
+			labelComment.Enabled = cbAutoLogin.Checked;
         }
+
     }
 }

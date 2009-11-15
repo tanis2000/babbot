@@ -46,6 +46,9 @@ namespace BabBot
         public string LoginUsername = "";
         public string LoginPassword = "";
         public string Realm = "";
+        public string RealmLocation = "";
+        public string GameType = "";
+
         // Private fields not included into serializer
         private string AutoLoginPassword = "";
 

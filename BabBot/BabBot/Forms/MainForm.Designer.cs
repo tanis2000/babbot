@@ -88,6 +88,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label38 = new System.Windows.Forms.Label();
             this.tbZoom = new System.Windows.Forms.TrackBar();
             this.label37 = new System.Windows.Forms.Label();
             this.label36 = new System.Windows.Forms.Label();
@@ -182,7 +183,6 @@
             this.txtScript = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.label38 = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -854,6 +854,15 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Radar";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(439, 120);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(18, 13);
+            this.label38.TabIndex = 242;
+            this.label38.Text = "5x";
             // 
             // tbZoom
             // 
@@ -1571,7 +1580,7 @@
             // btnLogin
             // 
             this.btnLogin.Enabled = false;
-            this.btnLogin.Location = new System.Drawing.Point(249, 65);
+            this.btnLogin.Location = new System.Drawing.Point(252, 32);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 59;
@@ -1581,7 +1590,7 @@
             // 
             // btnUnregisterInputHandler
             // 
-            this.btnUnregisterInputHandler.Location = new System.Drawing.Point(449, 188);
+            this.btnUnregisterInputHandler.Location = new System.Drawing.Point(449, 222);
             this.btnUnregisterInputHandler.Name = "btnUnregisterInputHandler";
             this.btnUnregisterInputHandler.Size = new System.Drawing.Size(75, 23);
             this.btnUnregisterInputHandler.TabIndex = 20;
@@ -1591,7 +1600,7 @@
             // 
             // btnRegisterInputHandler
             // 
-            this.btnRegisterInputHandler.Location = new System.Drawing.Point(368, 188);
+            this.btnRegisterInputHandler.Location = new System.Drawing.Point(368, 222);
             this.btnRegisterInputHandler.Name = "btnRegisterInputHandler";
             this.btnRegisterInputHandler.Size = new System.Drawing.Size(75, 23);
             this.btnRegisterInputHandler.TabIndex = 19;
@@ -1601,7 +1610,7 @@
             // 
             // btnInputHandler
             // 
-            this.btnInputHandler.Location = new System.Drawing.Point(121, 188);
+            this.btnInputHandler.Location = new System.Drawing.Point(121, 222);
             this.btnInputHandler.Name = "btnInputHandler";
             this.btnInputHandler.Size = new System.Drawing.Size(100, 23);
             this.btnInputHandler.TabIndex = 18;
@@ -1611,7 +1620,7 @@
             // 
             // btnGetLuaText
             // 
-            this.btnGetLuaText.Location = new System.Drawing.Point(227, 188);
+            this.btnGetLuaText.Location = new System.Drawing.Point(227, 222);
             this.btnGetLuaText.Name = "btnGetLuaText";
             this.btnGetLuaText.Size = new System.Drawing.Size(75, 23);
             this.btnGetLuaText.TabIndex = 16;
@@ -1621,7 +1630,7 @@
             // 
             // tbLuaResult
             // 
-            this.tbLuaResult.Location = new System.Drawing.Point(15, 218);
+            this.tbLuaResult.Location = new System.Drawing.Point(15, 251);
             this.tbLuaResult.Multiline = true;
             this.tbLuaResult.Name = "tbLuaResult";
             this.tbLuaResult.ReadOnly = true;
@@ -1630,7 +1639,7 @@
             // 
             // btnDoString
             // 
-            this.btnDoString.Location = new System.Drawing.Point(15, 188);
+            this.btnDoString.Location = new System.Drawing.Point(15, 222);
             this.btnDoString.Name = "btnDoString";
             this.btnDoString.Size = new System.Drawing.Size(100, 23);
             this.btnDoString.TabIndex = 13;
@@ -1640,15 +1649,16 @@
             // 
             // tbLuaScript
             // 
-            this.tbLuaScript.Location = new System.Drawing.Point(15, 94);
+            this.tbLuaScript.Location = new System.Drawing.Point(15, 61);
             this.tbLuaScript.Multiline = true;
             this.tbLuaScript.Name = "tbLuaScript";
-            this.tbLuaScript.Size = new System.Drawing.Size(507, 87);
+            this.tbLuaScript.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbLuaScript.Size = new System.Drawing.Size(507, 155);
             this.tbLuaScript.TabIndex = 12;
             // 
             // btnInteract
             // 
-            this.btnInteract.Location = new System.Drawing.Point(154, 64);
+            this.btnInteract.Location = new System.Drawing.Point(157, 31);
             this.btnInteract.Name = "btnInteract";
             this.btnInteract.Size = new System.Drawing.Size(75, 23);
             this.btnInteract.TabIndex = 11;
@@ -1658,7 +1668,7 @@
             // 
             // btnDumpBagsToConsole
             // 
-            this.btnDumpBagsToConsole.Location = new System.Drawing.Point(15, 64);
+            this.btnDumpBagsToConsole.Location = new System.Drawing.Point(18, 31);
             this.btnDumpBagsToConsole.Name = "btnDumpBagsToConsole";
             this.btnDumpBagsToConsole.Size = new System.Drawing.Size(133, 23);
             this.btnDumpBagsToConsole.TabIndex = 10;
@@ -1669,7 +1679,7 @@
             // lblOrientation
             // 
             this.lblOrientation.AutoSize = true;
-            this.lblOrientation.Location = new System.Drawing.Point(12, 41);
+            this.lblOrientation.Location = new System.Drawing.Point(333, 9);
             this.lblOrientation.Name = "lblOrientation";
             this.lblOrientation.Size = new System.Drawing.Size(61, 13);
             this.lblOrientation.TabIndex = 9;
@@ -1686,16 +1696,16 @@
             // 
             // tbOrientation
             // 
-            this.tbOrientation.Location = new System.Drawing.Point(79, 38);
+            this.tbOrientation.Location = new System.Drawing.Point(400, 6);
             this.tbOrientation.Name = "tbOrientation";
-            this.tbOrientation.Size = new System.Drawing.Size(245, 20);
+            this.tbOrientation.Size = new System.Drawing.Size(122, 20);
             this.tbOrientation.TabIndex = 7;
             // 
             // tbLocation
             // 
             this.tbLocation.Location = new System.Drawing.Point(79, 6);
             this.tbLocation.Name = "tbLocation";
-            this.tbLocation.Size = new System.Drawing.Size(245, 20);
+            this.tbLocation.Size = new System.Drawing.Size(248, 20);
             this.tbLocation.TabIndex = 6;
             // 
             // tabPageScript
@@ -1733,15 +1743,6 @@
             // 
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(0, 17);
-            // 
-            // label38
-            // 
-            this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(439, 120);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(18, 13);
-            this.label38.TabIndex = 242;
-            this.label38.Text = "5x";
             // 
             // MainForm
             // 

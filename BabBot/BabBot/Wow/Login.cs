@@ -73,7 +73,7 @@ namespace BabBot.Wow
             LoginState.SetValue("login", 0); // "AccountLogin";
 		    LoginState.SetValue("charselect", 1); // "CharacterSelect";
 		    LoginState.SetValue("realmwizard", 2); // "RealmWizard";
-		    LoginState.SetValue("charcreate", 3); // "CharacterCreate";
+		    LoginState.SetValue("realmsuggest", 3); // "Realm Suggestion";
 		    LoginState.SetValue("patchdownload", 4); // "PatchDownload";
 		    LoginState.SetValue("trialconvert", 5); // "TrialConvert";
 		    LoginState.SetValue("movie", 6); // "MovieFrame";
@@ -81,7 +81,7 @@ namespace BabBot.Wow
 		    LoginState.SetValue("options", 8); // "OptionsFrame";
 		    LoginState.SetValue("tos", 9); // "TOS Dialog";
 		    LoginState.SetValue("eula", 10); // EULA
-            LoginState.SetValue("realmselect", 11); // Suggest Realm
+            LoginState.SetValue("realmselect", 11); // Realm Selection
         }
 
         private static void Log(String msg)
@@ -103,13 +103,14 @@ namespace BabBot.Wow
         /// <param name="name">Character name</param>
         /// <param name="retry"># of retries</param>
         /// <returns>TRUE if succeed and FALSE if not</returns>
-        public static bool AutoLogin(string realm, string account, string pwd, string name, int retry)
+        public static bool AutoLogin(string location, string type, 
+                string realm, string account, string pwd, string name, int retry)
         {
 			int RetryCount = 0;
 
             do
             {
-                if (SetGlueState(realm) == -1)
+                if (SetGlueState(location, type, realm) == -1)
                     return false;
 
                 switch (State)
@@ -138,11 +139,43 @@ namespace BabBot.Wow
                             return false;
                         break;
 
-                    /*
                     case 2: // Realm Wizard
-                        break
-                    */
-    
+                        if (string.IsNullOrEmpty(DInfo))
+                        {
+                            Log("Unable retrive information from RealmWizard screen");
+                            return false;
+                        } else if (DInfo.Equals("ok")) {
+                            Log(string.Format(
+                                "Selected Realm Location: '{0}'; Type: '{1}'", location, type));
+                            ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
+                            Thread.Sleep(psleepTime);
+                        } else if (DInfo.Equals("location_not_found")) {
+                            Log(string.Format("Realm Location '{0}' not found", location));
+                        } else if (DInfo.Equals("")) {
+                            Log(string.Format("Realm Type '{0}' not found", type));
+                        } else {
+                            Log(string.Format("Unknown response '{0}' from lua script", DInfo));
+                            return false;
+                        }
+                        break;
+                    
+                    case 3: // Realm Suggestion
+                        if (DInfo.Equals("accept"))
+                        {
+                            Log(string.Format(
+                                "Accepting Realm '{0}' suggestion", realm));
+                            ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
+                        }
+                        else
+                        {
+                            Log(string.Format(
+                                "Realm '{0} not suggested. Looking realm list ...", realm));
+                            ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
+                        }
+                            
+                        Thread.Sleep(psleepTime);
+                        break;
+
                     case 4: // Patch Download
                         if (string.IsNullOrEmpty(DInfo))
                         {
@@ -324,60 +357,115 @@ namespace BabBot.Wow
         /// Check current Glue window and set login state
         /// </summary>
         /// <returns>Login State ID or -1 if Glue Window not found (unknown)</returns>
-		static int SetGlueState(string realm)
+		static int SetGlueState(string location, string type, string realm)
 		{
             // We need returning values
             string cmd = string.Format(@"(function()
-              local d1, d2, d3
-              if (GlueDialog:IsShown()) then
-                d1 = GlueDialog.which
-                d2 = GlueDialogText:GetText()
-                if (GlueDialogHTML:IsShown()) then
-                    d3 = 'html'
+    local d1, d2, d3
+    local found = false
+
+    if (GlueDialog:IsShown()) then
+        d1 = GlueDialog.which
+        d2 = GlueDialogText:GetText()
+        if (GlueDialogHTML:IsShown()) then
+            d3 = 'html'
+        end
+    else
+        -- TOS/EULA
+        if (TOSFrame:IsShown()) then
+            d1 = string.lower(TOSFrame.noticeType)
+            local scrollbar = _G[TOSFrame.noticeType .. 'ScrollFrameScrollBar'];
+            if (scrollbar:IsShown()) then
+                local min, max = scrollbar:GetMinMaxValues()
+                scrollbar:SetValue(max)
+            end
+        else
+            -- Realm Selection
+            if (RealmList:IsShown()) then
+                d1 = 'realmselect'
+                d3 = 'not_found'
+                for i=1, MAX_REALMS_DISPLAYED, 1 do
+                    realmIndex = RealmList.offset + i
+                    name, numCharacters, invalidRealm, realmDown = GetRealmInfo(1, realmIndex);
+                
+                    if (name == '{0}') then
+                        if (realmDown) then
+                            d3 = 'down'
+                        else 
+                            if (RealmList.currentRealm ~= realmIndex) then
+                                RealmList.refreshTime = {3}
+
+                                prealm = _G['RealmListRealmButton'..RealmList.currentRealm]
+                                prealm:UnlockHighlight();
+
+                                realm = _G['RealmListRealmButton'..realmIndex]
+                                RealmList.currentRealm = realm:GetID()
+		                        RealmList.selectedName = realm.name
+
+                                realm:LockHighlight()
+						        RealmListHighlight:SetPoint('TOPLEFT', realm, 'TOPLEFT', 0, 0)
+                                RealmListHighlight:Show()
+                            end
+                        
+                            d3 = 'ok'
+                        end
+
+                        break;
+                    end
                 end
-              else 
-                if (TOSFrame:IsShown()) then
-                    d1 = string.lower(TOSFrame.noticeType)
-                    local scrollbar = _G[TOSFrame.noticeType .. 'ScrollFrameScrollBar'];
-                    if (scrollbar:IsShown()) then
-					    local min, max = scrollbar:GetMinMaxValues()
-					    scrollbar:SetValue(max)
+            else
+                -- Realm Wizard
+                if (RealmWizard:IsShown()) then
+                    found = false
+                    for i = 1, 8 do
+                        chkLocationBox = _G['RealmWizardLocationButton' .. i]
+                        chkLocationLabel = _G['RealmWizardLocationButton' .. i .. 'Text']
+                        chkLocationText = chkLocationLabel:GetText()
+                        if (chkLocationText == '{1}') then
+                            chkLocationBox:SetChecked(1)
+                            RealmWizardLocationButton_OnClick(chkLocationBox.categoryIndex)
+            
+                            found = true
+                        end
+                    end
+
+                    if (found) then
+                        found = false
+                            
+                        for i = 1, 4 do
+                            checkBox = _G['RealmWizardGameTypeButton'..i]
+                            checkLabel = _G['RealmWizardGameTypeButton' .. i .. 'Text']
+                            checkText = checkLabel:GetText()
+                            if (checkText ~= {2}) then
+                                checkBox:SetChecked(0);
+                            else
+                                checkBox:SetChecked(1);
+                                RealmWizardGametypeLabel:SetText(checkText);
+                                d3 = 'ok'
+                                found = true
+                                    
+                                break
+                            end
+                        end
+
+                        if (not found) then
+                            d3 = 'type_not_found'
+                        end
+                    else
+                        d3 = 'location_not_found'
                     end
                 else
-                  if (RealmList:IsShown()) then
-                    d1 = 'realmselect'
-                    d3 = 'not_found'
-	                for i=1, MAX_REALMS_DISPLAYED, 1 do
-		                realmIndex = RealmList.offset + i
-		                name, numCharacters, invalidRealm, realmDown = GetRealmInfo(1, realmIndex);
-		                if (name == '{0}') then
-                            if (realmDown) then
-                                d3 = 'down'
-                            else 
-                                if (RealmList.currentRealm ~= realmIndex) then
-                                    RealmList.refreshTime = 5
-				                    old_realm = _G['RealmListRealmButton'..RealmList.currentRealm]
-				                    old_realm:UnlockHighlight();
-				                
-                                    new_realm = _G['RealmListRealmButton'..i]
-				                    new_realm:LockHighlight();
-				                    RealmListHighlight:SetPoint('TOPLEFT', new_realm, 'TOPLEFT', 0, 0);
-			                    end
-                                d3 = 'ok'
-                            end
-
-			                break;
-		                end
-                    end
-                  else
+                    -- Patch download
                     if (PatchDownloadUI:IsShown()) then
                         d3 = PatchProgressText:GetText()
                     end
-	              end
                 end
-              end
-              return CURRENT_GLUE_SCREEN, CURRENT_GLUE_PENDING, d1, d2, d3, IsConnectedToServer()
-            end)()", realm);
+            end
+        end
+    end
+
+    return CURRENT_GLUE_SCREEN, CURRENT_GLUE_PENDING, d1, d2, d3, IsConnectedToServer()
+end)()", realm, location, type, (int)((psleepTime/1000) * 2));
 
             ProcessManager.Injector.Lua_DoStringEx(cmd);
             CurrentGlueScreen = ProcessManager.Injector.Lua_GetLocalizedText(0);
@@ -443,8 +531,18 @@ namespace BabBot.Wow
                  return SetState(100);
              }
              
-             // Check for realm suggest
-             
+            // Check for realm suggest
+            if (CurrentGlueDialog.Equals("SUGGEST_REALM"))
+            {
+                // See what suggested
+                if (DialogText.IndexOf(realm) >= 0)
+                    DInfo = "accept";
+                else
+                    DInfo = "change";
+
+                return SetState(3);
+            }
+                
             if (CurrentGlueDialog.Equals("DISCONNECT"))
                 return SetState(99);
 

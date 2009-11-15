@@ -221,8 +221,10 @@ namespace BabBot.Manager
                     Injector.Lua_RegisterInputHandler();
                     try
                     {
-                        Login.AutoLogin(config.Account.Realm, config.Account.LoginUsername,
+                        Login.AutoLogin(config.Account.RealmLocation, config.Account.GameType,
+                                config.Account.Realm, config.Account.LoginUsername,
                                     config.Account.getAutoLoginPassword(), config.Character, 5);
+
                     }
                     catch (Exception e)
                     {
