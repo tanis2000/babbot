@@ -59,13 +59,15 @@ namespace BabBot.Wow
         public static int UnitNameLen = 0x40;
 
         public static uint ClickToMoveBase = 0x01297920; //3.2.2a
+        public static uint ClickToMoveUnknown = ClickToMoveBase + 0x0; //3.2.2a
         public static uint ClickToMoveTurnScale = ClickToMoveBase + 0x4; //3.2.2a
+        public static uint ClickToMoveUnknown2 = ClickToMoveBase + 0x8; //3.2.2a
         public static uint ClickToMoveInteractDistance = ClickToMoveBase + 0xc; //3.2.2a
         public static uint ClickToMoveActionType = ClickToMoveBase + 0x1c; //3.2.2a
         public static uint ClickToMoveTarget = ClickToMoveBase + 0x20; //3.2.2a
-        public static uint ClickToMoveDestX = ClickToMoveBase + 0x74; //3.2.2a
-        public static uint ClickToMoveDestY = ClickToMoveBase + 0x78; //3.2.2a
-        public static uint ClickToMoveDestZ = ClickToMoveBase + 0x7c; //3.2.2a
+        public static uint ClickToMoveDestX = ClickToMoveBase + 0x8c; //3.2.2a
+        public static uint ClickToMoveDestY = ClickToMoveBase + 0x90; //3.2.2a
+        public static uint ClickToMoveDestZ = ClickToMoveBase + 0x94; //3.2.2a
 
         public static uint PlayerBaseOffset
         {

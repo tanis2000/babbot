@@ -154,16 +154,23 @@ namespace BabBot.Scripts.Common
 
             Output.Instance.Script(string.Format("Entity Location: X:{0} Y:{1} Z:{2}", Entity.Location.X, Entity.Location.Y, Entity.Location.Z), this);
             Output.Instance.Script(string.Format("Current Waypoint: X:{0} Y:{1} Z:{2}", CurrentWaypoint.X, CurrentWaypoint.Y, CurrentWaypoint.Z), this);
-            //Entity.FaceUsingMemoryWrite(angle, true);
+            Entity.FaceUsingMemoryWrite(angle, true);
 
             // Start profiler for WayPointTimeOut
             DateTime start = DateTime.Now;
+            Output.Instance.Script(string.Format("First ClickToMove(X:{0} Y:{1} Z:{2})", CurrentWaypoint.X, CurrentWaypoint.Y, CurrentWaypoint.Z), this);
+            Entity.ClickToMove(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint));
+            Finish(Entity);
+            Exit(Entity);
+            return;
 
             do
             {
                 float currentDistance = distance;
                 while (distance > Tolerance)
                 {
+                    distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
+                                                     Entity.Location, false);
                     if (Math.Abs(currentDistance - distance) < 0.1f)
                     {
                         DoExit(Entity);
@@ -173,8 +180,6 @@ namespace BabBot.Scripts.Common
                     }
                     Thread.Sleep(250);
                     currentDistance = distance;
-                    distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
-                                                     Entity.Location, false);
                 }
 
                     Output.Instance.Script(string.Format("Distance: {0}", distance));
