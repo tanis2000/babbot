@@ -1332,7 +1332,7 @@ end)()", iName));
 
             const string luaScript =
             @"
-              function BabBotFindContainerItem(item)
+              (function()
                   for bag = 0,4 do
                     for slot = 1,GetContainerNumSlots(bag) do
                       babbot_item = GetContainerItemLink(bag,slot);
@@ -1342,11 +1342,7 @@ end)()", iName));
                     end
                   end
                   return false
-              end
-              babbot_found = BabBotFindContainerItem(""{0}"");
-               if (babbot_found) then
-                 SendChatMessage(babbot_item, ""WHISPER"", ""Common"", ""Sam"");
-               end
+              end)()
             ";
 
             ProcessManager.Injector.Lua_DoString(string.Format(luaScript, item));
@@ -1384,6 +1380,7 @@ end)()", iName));
 
             const string luaScript = 
             @"
+              (function()
               for bag = 0,4 do
                 for slot = 1,GetContainerNumSlots(bag) do
                   local item = GetContainerItemLink(bag,slot)
@@ -1391,7 +1388,7 @@ end)()", iName));
                     UseContainerItem(bag,slot)
                   end
                 end
-              end
+              end)()
             ";
 
             ProcessManager.Injector.Lua_DoString(string.Format(luaScript, item));
