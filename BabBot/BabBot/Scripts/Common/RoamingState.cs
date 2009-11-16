@@ -75,9 +75,9 @@ namespace BabBot.Scripts.Common
                 Output.Instance.Script(string.Format("WayPoint: X:{0} Y:{1} Z:{2}", wp.Location.X, wp.Location.Y, wp.Location.Z), this);
                 //MoveTo(wp.Location);
                 float distance = MathFuncs.GetDistance(wp.Location, Entity.Location, false);
-                if (distance > 2.0f)
+                if (distance > 3.0f)
                 {
-                    var mtsTarget = new MoveToState(wp.Location, 1.5f);
+                    var mtsTarget = new MoveToState(wp.Location, 3.0f);
 
                     //request that we move to this location
                     CallChangeStateEvent(Entity, mtsTarget, true, false);

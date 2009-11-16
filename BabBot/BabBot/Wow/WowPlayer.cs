@@ -642,6 +642,18 @@ end)()");
             }
         }
 
+        public void ClickToMove(Vector3D dest)
+        {
+            ProcessManager.WowProcess.SuspendThread();
+            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveInteractDistance, 0.5f);
+            ProcessManager.WowProcess.WriteUInt(Globals.ClickToMoveActionType, (uint)Descriptor.eClickToMoveActionType.WalkTo);
+            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveTurnScale, 13.962634f);
+            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveDestX, dest.X);
+            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveDestY, dest.Y);
+            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveDestZ, dest.Z);
+            ProcessManager.WowProcess.ResumeThread();
+        }
+
         /// <summary>
         /// Makes the player walk from the current location to the location of "dest" with 
         /// a default tolerance of 1 yard.

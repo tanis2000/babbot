@@ -463,7 +463,7 @@ namespace BabBot.Forms
                 destPos.X = float.Parse(txtX.Text);
                 destPos.Y = float.Parse(txtY.Text);
                 destPos.Z = float.Parse(txtZ.Text);
-                ProcessManager.Player.MoveTo(destPos);
+                ProcessManager.Player.ClickToMove(destPos);
             }
             catch
             {

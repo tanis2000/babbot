@@ -907,6 +907,27 @@ namespace BabBot.Wow
         }
 
         #endregion
+
+        #region eClickToMoveActionType enum
+        public enum eClickToMoveActionType : uint
+        {
+            FaceTarget = 0x1,
+            FaceDestination = 0x2,
+            Stop = 0x3,
+            WalkTo = 0x4,
+            InteractNpc = 0x5,
+            Loot = 0x6,
+            InteractObject = 0x7,
+            FaceOther = 0x8,
+            Skin = 0x9,
+            Attack = 0x10,
+            Idle = 0x13,
+            AttackPos = 0xA,
+            AttackGuid = 0xB,
+            WalkAndRotate = 0xC,
+            None = 0xD
+        }
+        #endregion
     }
 #pragma warning restore 1591
 }

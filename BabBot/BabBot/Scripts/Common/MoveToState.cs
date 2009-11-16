@@ -123,16 +123,13 @@ namespace BabBot.Scripts.Common
                 _LastDistance = WaypointVector3DHelper.Vector3DToLocation(Entity.Location).GetDistanceTo(CurrentWaypoint);
 
                 //if the distance to the next waypoint is less then 1f, use the get next waypoint method
-                if (_LastDistance < 3f)
+                while ((_LastDistance < 5f) && (CurrentWaypoint != null))
                 {
                     CurrentWaypoint = GetNextWayPoint();
                     _LastDistance =
                         WaypointVector3DHelper.Vector3DToLocation(Entity.Location).GetDistanceTo(CurrentWaypoint);
                 }
             }
-
-
-
 
 
             //on execute, first verify we have a waypoit to follow, else exit
@@ -142,30 +139,43 @@ namespace BabBot.Scripts.Common
                 return;
             }
 
-            const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
+            //const CommandManager.ArrowKey key = CommandManager.ArrowKey.Up;
 
 
             // Move on...
             float distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
                                                    Entity.Location, false);
-            Entity.PlayerCM.ArrowKeyDown(key);
+            //Entity.PlayerCM.ArrowKeyDown(key);
 
             /// We face our destination waypoint while we are already moving, so that it looks 
             /// more human-like
             float angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
                                                   Entity.Location);
 
+            Output.Instance.Script(string.Format("Entity Location: X:{0} Y:{1} Z:{2}", Entity.Location.X, Entity.Location.Y, Entity.Location.Z), this);
             Output.Instance.Script(string.Format("Current Waypoint: X:{0} Y:{1} Z:{2}", CurrentWaypoint.X, CurrentWaypoint.Y, CurrentWaypoint.Z), this);
-            Entity.FaceUsingMemoryWrite(angle, true);
+            //Entity.FaceUsingMemoryWrite(angle, true);
 
             // Start profiler for WayPointTimeOut
             DateTime start = DateTime.Now;
 
             do
             {
+                float currentDistance = distance;
                 while (distance > Tolerance)
                 {
-                    float currentDistance = distance;
+                    if (Math.Abs(currentDistance - distance) < 0.1f)
+                    {
+                        DoExit(Entity);
+                        return;
+                        //Output.Instance.Script(string.Format("Stuck, ClickToMove(X:{0} Y:{1} Z:{2})", CurrentWaypoint.X, CurrentWaypoint.Y, CurrentWaypoint.Z), this);
+                        //Entity.ClickToMove(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint));
+                    }
+                    Thread.Sleep(250);
+                    currentDistance = distance;
+                    distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
+                                                     Entity.Location, false);
+                }
 
                     Output.Instance.Script(string.Format("Distance: {0}", distance));
                     Thread.Sleep(50);
@@ -179,7 +189,10 @@ namespace BabBot.Scripts.Common
                                                      Entity.Location, false);
                     angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
                                       Entity.Location);
-                    Entity.FaceUsingMemoryWrite(angle, true);
+                    //Entity.FaceUsingMemoryWrite(angle, true);
+                    Output.Instance.Script(string.Format("ClickToMove(X:{0} Y:{1} Z:{2})", CurrentWaypoint.X, CurrentWaypoint.Y, CurrentWaypoint.Z), this);
+                    Entity.ClickToMove(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint));
+                    Thread.Sleep(1000);
                     // we take as granted that we should move at least 0.1 yards per cycle (might be a good idea to get this routine synchronized so that 
                     // we can actually know exactly how much we move "per-tick")
                     
@@ -187,7 +200,7 @@ namespace BabBot.Scripts.Common
                     if (Math.Abs(currentDistance - distance) < 0.1f)
                     {
                         Output.Instance.Script(string.Format("Stuck! Distance difference: {0}", Math.Abs(currentDistance - distance)), this);
-                        Entity.Unstuck();
+                        //Entity.Unstuck();
                     }
                 
                     //repoint at the waypoint if we are getting off course
@@ -198,7 +211,7 @@ namespace BabBot.Scripts.Common
                     //}
 
                     // We release every 250 ms
-                    
+                    /*
                     if (tsTravelTime.TotalMilliseconds > 250)
                     {
                         Output.Instance.Script(string.Format("Releasing after 250ms"), this);
@@ -207,15 +220,24 @@ namespace BabBot.Scripts.Common
                         //Entity.PlayerCM.ArrowKeyUp(key);
                         return;
                     }
-                
-                }
+                */
+                //}
+
+
+
                 Output.Instance.Script("Getting next waypoint", this);
                 CurrentWaypoint = GetNextWayPoint();
+                if (CurrentWaypoint == null) break;
+                Output.Instance.Script(string.Format("Entity Location: X:{0} Y:{1} Z:{2}", Entity.Location.X, Entity.Location.Y, Entity.Location.Z), this);
+                Output.Instance.Script(string.Format("Current Waypoint: X:{0} Y:{1} Z:{2}", CurrentWaypoint.X, CurrentWaypoint.Y, CurrentWaypoint.Z), this);
                 distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
                                  Entity.Location, false);
                 angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
                                       Entity.Location);
-                Entity.FaceUsingMemoryWrite(angle, true);
+                //Entity.FaceUsingMemoryWrite(angle, true);
+                Output.Instance.Script(string.Format("ClickToMove(X:{0} Y:{1} Z:{2})", CurrentWaypoint.X, CurrentWaypoint.Y, CurrentWaypoint.Z), this);
+                Entity.ClickToMove(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint));
+                Thread.Sleep(3000);
             } while (CurrentWaypoint != null);
    
             //get next waypoint (may be null)
