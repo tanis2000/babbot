@@ -119,28 +119,49 @@ namespace BabBot.Manager
         public static CommandManager CommandManager;
         public static InjectionManager Injector;
         private static Config config;
-        public static bool InGame;
-        public static bool Initialized;
+        // public static bool InGame;
+        // public static bool Initialized;
         public static ObjectManager ObjectManager;
         public static WowPlayer Player;
         private static Process process;
-        public static bool ProcessRunning;
+        // public static bool ProcessRunning;
         public static Profile Profile;
         public static Host ScriptHost;
         public static uint TLS;
         public static int WowHWND;
         private static bool arun = false;
 
+        public enum ProcessStatuses : byte
+        {
+            IDLE = 0,
+            STARTING = 1,
+            RUNNING = 2,
+            CLOSED = 3,
+            CRUSHED = 255,
+        }
+
+        public enum GameStatuses : byte
+        {
+            INIT = 0,
+            TLS = 1,
+            LOGGING = 2,
+            IN_WORLD = 3,
+            INITIALIZED = 4,
+            DISCONNECTED = 255,
+        }
+
+        private static GameStatuses _gstatus;
+        private static ProcessStatuses _pstatus;
+
         static ProcessManager()
         {
             config = new Config();
             wowProcess = new BlackMagic();
-            ProcessRunning = false;
+            _pstatus = ProcessStatuses.IDLE;
+            _gstatus = GameStatuses.INIT;
             CommandManager = new CommandManager();
             Injector = new InjectionManager();
-            InGame = false;
             TLS = 0x0;
-            Initialized = false;
             Profile = new Profile();
             WowHWND = 0;
             BotManager = new BotManager();
@@ -182,7 +203,7 @@ namespace BabBot.Manager
             }
             try
             {
-                ProcessRunning = false;
+                _pstatus = ProcessStatuses.STARTING;
 
                 // Set before using any BlackMagic methods
                 process.EnableRaisingEvents = true;
@@ -192,11 +213,15 @@ namespace BabBot.Manager
                 CommandManager.WowHWND = WowHWND;
 
                 //verify we haven't already opened it, like when we do the injection
-                if(!wowProcess.IsProcessOpen)
-                    ProcessRunning = wowProcess.OpenProcessAndThread(process.Id);
+                if ((!wowProcess.IsProcessOpen &&
+                        wowProcess.OpenProcessAndThread(process.Id)))
+                {
+                    // We don't let anyone do anything until wow has finished launching
+                    // We look for the TLS first
+                    _gstatus = GameStatuses.INIT;
+                    _pstatus = ProcessStatuses.RUNNING;
+                }
 
-                // We don't let anyone do anything until wow has finished launching
-                // We look for the TLS first
                 while (!FindTLS())
                 {
                    if (UpdateStatus != null)
@@ -251,7 +276,8 @@ namespace BabBot.Manager
         private static void exitProcess(object sender, EventArgs e)
         {
             // Do it first
-            ProcessRunning = false;
+            _pstatus = ProcessStatuses.CLOSED;
+            _gstatus = GameStatuses.INIT;
 
             // Blah blah blah after
             Output.Instance.Log("char", "WoW termination detected");
@@ -259,8 +285,10 @@ namespace BabBot.Manager
 
             // Cleaning
             WowHWND = 0;
-            Initialized = false;
+            Injector.IsLuaRegistered = false;
             wowProcess.CloseProcess();
+
+            // TODO Check for crush
 
             if (WoWProcessEnded != null)
             {
@@ -273,10 +301,24 @@ namespace BabBot.Manager
         #endregion
 
         /// <summary>
+        /// Start Bot Thread
+        /// </summary>
+        public static void StartBot()
+        {
+            // Reset process state so bot will pick it up
+            _pstatus = ProcessStatuses.IDLE;
+
+            // Start bot thread
+            ProcessManager.BotManager.Start();
+        }
+
+        /// <summary>
         /// Try to run the WoW process 
         /// </summary>
         public static void StartWow()
         {
+            _pstatus = ProcessStatuses.STARTING;
+
             try
             {
                 // Perry style = paranoid ;-)
@@ -380,7 +422,7 @@ namespace BabBot.Manager
         /// </summary>
         public static void UpdatePlayer()
         {
-            if (!Initialized)
+            if (_gstatus != GameStatuses.INITIALIZED)
             {
                 return;
             }
@@ -415,16 +457,22 @@ namespace BabBot.Manager
             {
                 WowProcess.ReadUInt(WowProcess.ReadUInt(WowProcess.ReadUInt(Globals.GameOffset) +
                                                         Globals.PlayerBaseOffset1) + Globals.PlayerBaseOffset2);
-                InGame = true;
-                if (!Initialized)
+                // Read successful. Check if we need initialize
+                if (_gstatus != GameStatuses.INITIALIZED)
                 {
+                    _gstatus = GameStatuses.IN_WORLD;
                     Initialize();
                 }
             }
             catch(Exception ex)
             {
-                InGame = false;
-                Initialized = false;
+                Output.Instance.Debug("char", "CheckInGame() - caugth exception: " + ex.Message);
+
+                if (_gstatus == GameStatuses.IN_WORLD)
+                    _gstatus = GameStatuses.DISCONNECTED;
+                else
+                    _gstatus = GameStatuses.INIT;
+                
             }
         }
 
@@ -532,8 +580,8 @@ namespace BabBot.Manager
                 InitializeCaronte();
                 //ScriptHost.Start();
                 //StateManager.Instance.Stop();
-                
-                Initialized = true;
+
+                _gstatus = GameStatuses.INITIALIZED;
             }
             catch (Exception ex)
             {
@@ -582,6 +630,35 @@ namespace BabBot.Manager
         public static void SetAutoRun()
         {
             arun = true;
+        }
+
+        /// <summary>
+        /// Return true when WoW.exe successfully started & dante injected
+        /// </summary>
+        public static bool ProcessRunning
+        {
+            get { return _pstatus == ProcessStatuses.RUNNING; }
+        }
+        
+        /// <summary>
+        /// Return Process Status
+        /// </summary>
+        public static ProcessStatuses ProcessState
+        {
+            get { return _pstatus; }
+        }
+
+        public static GameStatuses GameStatus
+        {
+            get { return _gstatus; }
+        }
+
+        /// <summary>
+        /// Reset game status after disconnect or exception
+        /// </summary>
+        public static void ResetGameStatus()
+        {
+            _gstatus = GameStatuses.INIT;
         }
      }
 }

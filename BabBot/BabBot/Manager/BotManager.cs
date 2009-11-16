@@ -108,20 +108,50 @@ namespace BabBot.Manager
 
         private void OnRun()
         {
-            if (ProcessManager.ProcessRunning)
+            switch (ProcessManager.ProcessState)
             {
-                ProcessManager.CheckInGame();
-                if (ProcessManager.InGame)
-                {
-                    ProcessManager.UpdatePlayer();
-                    //State Machien now in player object
-                    //stateManager.UpdateState();
-                    //Update Player State Machine
-                    ProcessManager.Player.StateMachine.Update();
+                case ProcessManager.ProcessStatuses.IDLE:
+                    // Start Wow
+                    ProcessManager.StartWow();
+                    break;
 
-                    //ProcessManager.ScriptHost.Update();
-                }
+                case ProcessManager.ProcessStatuses.RUNNING:
+                    // Analyze game status
+                    ProcessManager.CheckInGame();
+
+                    switch (ProcessManager.GameStatus)
+                    {
+                        case ProcessManager.GameStatuses.INITIALIZED:
+                            ProcessManager.UpdatePlayer();
+                            ProcessManager.Player.StateMachine.Update();
+
+                            break;
+
+                        // TODO implement rest of game statuses
+
+                    }
+
+                    break;
+
+                // TODO
+                // CLOSED = 3,
+                // CRUSHED = 255,
+
+                default:
+                    // For now stop thread
+                    Output.Instance.Log("Status: " + 
+                        ProcessManager.ProcessState + " not implemented yet");
+                    Stop();
+
+                    // After all implemented no surprises
+                    /*
+                    Output.Instance.Log("Internal bug - Unknown bot status: " + 
+                                    ProcessManager.ProcessState + ". Terminate execution");
+                    Environment.Exit(2); */
+
+                    break;
             }
+
             Thread.Sleep(250);
         }
 

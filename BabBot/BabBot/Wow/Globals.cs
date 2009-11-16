@@ -79,7 +79,7 @@ namespace BabBot.Wow
                     }
                     catch
                     {
-                        ProcessManager.InGame = false;
+                        ProcessManager.ResetGameStatus();
                         throw new Exception("Cannot read PlayerBaseOffset. Have we quit the game?");
                     }
                 }

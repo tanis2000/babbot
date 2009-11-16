@@ -298,9 +298,6 @@ namespace BabBot.Forms
             {
                 // Main Thread
                SetCtrlBtns(true);
-
-                // Stop the reading thread
-                ProcessManager.BotManager.Stop();
             }
         }
 
@@ -332,10 +329,16 @@ namespace BabBot.Forms
 
         private void wow_ProcessStarted(int process)
         {
-            SetCtrlBtns(false);
-
-            // Start the reading thread
-            ProcessManager.BotManager.Start();
+            if (InvokeRequired)
+            {
+                ProcessManager.WoWProcessStartedEventHandler del = wow_ProcessStarted;
+                object[] parameters = {process};
+                BeginInvoke(del, parameters);
+            }
+            else
+            {
+                SetCtrlBtns(false);
+            }
         }
 
         private void UpdateStatus(string iStatus)
@@ -365,7 +368,8 @@ namespace BabBot.Forms
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            ProcessManager.StartWow();
+            // Run wow.exe via bot thread
+            ProcessManager.StartBot();
         }
 
         private void btnFindTLS_Click(object sender, EventArgs e)

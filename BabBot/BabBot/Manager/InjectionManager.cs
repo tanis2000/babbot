@@ -584,6 +584,7 @@ end)()",
         public bool IsLuaRegistered
         {
             get { return registered; }
+            set { registered = value; }
         }
 
         public void InjectLua()
