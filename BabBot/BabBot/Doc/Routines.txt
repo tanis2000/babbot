@@ -1,0 +1,20 @@
+- Idle. What do we do? Check for enemies, (gathering nodes), grinding spots, (quest areas)
+- Priority to grinding spots? Let's move to our next grinding spot
+- Priority to enemies? Let's kill them right away
+
+== Grinding routine ==
+
+Requirements:
+- Must have a list of mobs to hunt down
+
+- Must have a set of waypoints to grind through
+OR
+- Must have a database of mobs and corresponding areas to grind through
+
+Actions:
+- Get the list of waypoints and read the next one available that we want to cycle through
+- Build a path to our currently selected waypoint and store it
+- Cycle through the new path we just calculated by calling MoveToState at each FSM tick (waypoints should be pretty close, 3-5 yards between each)
+- Check for interesting mobs
+- If an interesting mob is found go to the kill routine
+
