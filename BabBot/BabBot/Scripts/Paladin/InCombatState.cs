@@ -72,7 +72,6 @@ namespace BabBot.Scripts.Paladin
                 //player.MoveToTarget(Core.MinMeleeDistance);
                 var mts = new MoveToState(player.CurTarget.Location, Core.MinMeleeDistance);
                 CallChangeStateEvent(player, mts, true, false);
-                player.Stop();
                 return;
             }
 

@@ -110,52 +110,63 @@ namespace Dante
 
         public bool IsLuaRequestCompleted()
         {
-            try
+            lock (LuaInterface.dataLock)
             {
-                byte lstate = LuaInterface.LuaState;
-                LuaInterface.LoggingInterface.Log(string.Format(
-                           "IsLuaRequestCompleted() - State: " + lstate));
-                return (lstate == 255);
-            }
-            catch (Exception e)
-            {
-                LuaInterface.LoggingInterface.Log("IsLuaRequestCompleted() - Exception: " + e.ToString());
-                LuaInterface.LuaState = 255;
-                return true;
+                try
+                {
+                    byte lstate = LuaInterface.LuaState;
+                    LuaInterface.LoggingInterface.Log(string.Format(
+                                                          "IsLuaRequestCompleted() - State: " + lstate));
+                    return (lstate == 255);
+                }
+                catch (Exception e)
+                {
+                    LuaInterface.LoggingInterface.Log("IsLuaRequestCompleted() - Exception: " + e.ToString());
+                    LuaInterface.LuaState = 255;
+                    return true;
+                }
             }
         }
 
         public bool IsDoStringHasValue()
         {
-            byte lstate = LuaInterface.LuaState;
-            bool vstate = LuaInterface.ValueReceived;
-            try
+            lock (LuaInterface.dataLock)
             {
-                LuaInterface.LoggingInterface.Log(string.Format(
-                    "IsDoStringHasValue() - State: {0}:{1}", lstate, vstate));
+                byte lstate = LuaInterface.LuaState;
+                bool vstate = LuaInterface.ValueReceived;
+                try
+                {
+                    LuaInterface.LoggingInterface.Log(string.Format(
+                                                          "IsDoStringHasValue() - State: {0}:{1}", lstate, vstate));
 
-                return ((lstate == 255) && vstate);
-            }
-            catch (Exception e)
-            {
-                LuaInterface.LoggingInterface.Log("IsDoStringHasValue() - Exception: " + e.ToString());
-                return true;
+                    return ((lstate == 255) && vstate);
+                }
+                catch (Exception e)
+                {
+                    LuaInterface.LoggingInterface.Log("IsDoStringHasValue() - Exception: " + e.ToString());
+                    return true;
+                }
             }
         }
 
         public bool SetEndSceneState(byte NewState)
         {
-            byte OldState = LuaInterface.LuaState;
-            LuaInterface.LoggingInterface.Log(string.Format(
-                "SetEndSceneState() - Old: {0}; New: {1}", OldState, NewState));
-            if (OldState == 255)
+            lock (LuaInterface.dataLock)
             {
-                LuaInterface.LoggingInterface.Log("SetEndSceneState() - Accepted");
-                LuaInterface.LuaState = NewState;
-                return true;
-            } else {
-                LuaInterface.LoggingInterface.Log("SetEndSceneState() - Rejected");
-                return false;
+                byte OldState = LuaInterface.LuaState;
+                LuaInterface.LoggingInterface.Log(string.Format(
+                                                      "SetEndSceneState() - Old: {0}; New: {1}", OldState, NewState));
+                if (OldState == 255)
+                {
+                    LuaInterface.LoggingInterface.Log("SetEndSceneState() - Accepted");
+                    LuaInterface.LuaState = NewState;
+                    return true;
+                }
+                else
+                {
+                    LuaInterface.LoggingInterface.Log("SetEndSceneState() - Rejected");
+                    return false;
+                }
             }
         }
     }

@@ -101,91 +101,96 @@ namespace Dante
 
         public uint EndScene(D3D9.IDirect3DDevice9 Device)
         {
-            if (EndSceneDebug)
-                LuaInterface.LoggingInterface.LogEndScene(true);
-
-            try
+            lock (LuaInterface.dataLock)
             {
-                switch (LuaInterface.LuaState)
+
+                if (EndSceneDebug)
+                    LuaInterface.LoggingInterface.LogEndScene(true);
+
+                try
                 {
-                    case 255:
-                        // NOTE: disabled logging of each EndScene message as it was driving me mad during debug ;)
-                        //LuaInterface.LoggingInterface.Log("EndScene()");
-                        break;
+                    switch (LuaInterface.LuaState)
+                    {
+                        case 255:
+                            // NOTE: disabled logging of each EndScene message as it was driving me mad during debug ;)
+                            //LuaInterface.LoggingInterface.Log("EndScene()");
+                            break;
 
-                    case 0: // Need registration
-                        LuaInterface.LoggingInterface.Log("EndScene() - Lua registering ...");
-                        LuaInterface.Patch();
-                        if (!LuaInterface.InputHandlerRegistered)
-                        {
-                            LuaInterface.RegisterLuaInputHandler();
-                            LuaInterface.InputHandlerRegistered = true;
-                        }
-                        LuaInterface.LoggingInterface.Log("EndScene() - Lua registered");
+                        case 0: // Need registration
+                            LuaInterface.LoggingInterface.Log("EndScene() - Lua registering ...");
+                            LuaInterface.Patch();
+                            if (!LuaInterface.InputHandlerRegistered)
+                            {
+                                LuaInterface.RegisterLuaInputHandler();
+                                LuaInterface.InputHandlerRegistered = true;
+                            }
+                            LuaInterface.LoggingInterface.Log("EndScene() - Lua registered");
 
-                        // Always last
-                        LuaInterface.LuaState = 255;
-                        break;
+                            // Always last
+                            LuaInterface.LuaState = 255;
+                            break;
 
-                    case 1:
-                        //check for pending do_string's
-                        LuaInterface.LoggingInterface.Log("EndScene() - DoString Starting ...");
+                        case 1:
+                            //check for pending do_string's
+                            LuaInterface.LoggingInterface.Log("EndScene() - DoString Starting ...");
 
-                        //LuaInterface.DoString(LuaInterface.PendingDoString);
-                        LuaInterface.DoString(LuaInterface.PendingDoString);
-                        LuaInterface.LoggingInterface.Log("EndScene() - LuaDoString Done");
+                            //LuaInterface.DoString(LuaInterface.PendingDoString);
+                            LuaInterface.DoString(LuaInterface.PendingDoString);
+                            LuaInterface.LoggingInterface.Log("EndScene() - LuaDoString Done");
 
-                        // Always last
-                        LuaInterface.LuaState = 255;
-                        break;
+                            // Always last
+                            LuaInterface.LuaState = 255;
+                            break;
 
-                    case 2:
-                        //check for pending do_string's with registered callback
-                        LuaInterface.LoggingInterface.Log(
-                            string.Format("EndScene() - DoStringEx Starting ...",
-                                                    LuaInterface.PendingDoString));
+                        case 2:
+                            //check for pending do_string's with registered callback
+                            LuaInterface.LoggingInterface.Log(
+                                string.Format("EndScene() - DoStringEx Starting ...",
+                                              LuaInterface.PendingDoString));
 
-                        //LuaInterface.DoString(LuaInterface.PendingDoString);
-                        LuaInterface.DoStringEx(LuaInterface.PendingDoString);
-                        LuaInterface.LoggingInterface.Log("EndScene() - DoStringEx done");
+                            //LuaInterface.DoString(LuaInterface.PendingDoString);
+                            LuaInterface.DoStringEx(LuaInterface.PendingDoString);
+                            LuaInterface.LoggingInterface.Log("EndScene() - DoStringEx done");
 
-                        // Always last
-                        LuaInterface.LuaState = 255;
-                        break;
+                            // Always last
+                            LuaInterface.LuaState = 255;
+                            break;
 
-                    case 3: // Unregister handle
-                        LuaInterface.LoggingInterface.Log("EndScene() - Lua un-registering ...");
-                        LuaInterface.RestorePatch();
-                        LuaInterface.LoggingInterface.Log("EndScene() - Lua un-registered");
+                        case 3: // Unregister handle
+                            LuaInterface.LoggingInterface.Log("EndScene() - Lua un-registering ...");
+                            LuaInterface.RestorePatch();
+                            LuaInterface.LoggingInterface.Log("EndScene() - Lua un-registered");
 
-                        // Always last
-                        LuaInterface.LuaState = 255;
-                        break;
+                            // Always last
+                            LuaInterface.LuaState = 255;
+                            break;
 
-                    default: // Unknown state throw exception
-                        throw new Exception("Unknown EndScene State: " + LuaInterface.LuaState);
-                        
+                        default: // Unknown state throw exception
+                            throw new Exception("Unknown EndScene State: " + LuaInterface.LuaState);
+
+                    }
+
+                    LuaInterface.LoggingInterface.Log(string.Format("{0:X} Device", (uint)&Device));
+                    LuaInterface.LoggingInterface.Log(string.Format("{0:X} EndScene()", (uint)OriginalEndScene));
+
                 }
-                    
-                    //LuaInterface.LoggingInterface.Log(string.Format("{0:X} Device", (uint)&Device));
-                    //LuaInterface.LoggingInterface.Log(string.Format("{0:X} EndScene()", (uint)OriginalEndScene));
+                catch (Exception e)
+                {
+                    LuaInterface.LoggingInterface.Log(string.Format("EndScene() - Exception: {0}",
+                                                                    e.ToString()));
+                    LuaInterface.LuaState = 255;
+                }
+                // NativeIDirect3DDevice9->VFTable[0][42] = Marshal.GetFunctionPointerForDelegate(MyEndScene);
 
-            } catch (Exception e)
-            {
-                LuaInterface.LoggingInterface.Log(string.Format("EndScene() - Exception: {0}",
-                                                                        e.ToString()));
-                LuaInterface.LuaState = 255;
+
+                // LuaInterface.LoggingInterface.Log("EndScene " + LuaInterface.LuaState + " done");
+
+                if (EndSceneDebug)
+                    LuaInterface.LoggingInterface.LogEndScene(false);
+
+                //LuaInterface.LoggingInterface.Log(string.Format("Device:{0} RealEndScene:{1}", Device, RealEndScene));
+                return RealEndScene(Device);
             }
-            // NativeIDirect3DDevice9->VFTable[0][42] = Marshal.GetFunctionPointerForDelegate(MyEndScene);
-
-
-            // LuaInterface.LoggingInterface.Log("EndScene " + LuaInterface.LuaState + " done");
-
-            if (EndSceneDebug)
-                LuaInterface.LoggingInterface.LogEndScene(false);
-
-            //LuaInterface.LoggingInterface.Log(string.Format("Device:{0} RealEndScene:{1}", Device, RealEndScene));
-            return RealEndScene(Device);
         }
     }
 

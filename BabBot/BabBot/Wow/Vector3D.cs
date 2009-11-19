@@ -62,6 +62,19 @@ namespace BabBot.Wow
 
         public static bool operator ==(Vector3D v1, Vector3D v2)
         {
+            // If both are null, or both are same instance, return true.
+            if (ReferenceEquals(v1, v2))
+            {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if (((object)v1 == null) || ((object)v2 == null))
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
             return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z;
         }
 
@@ -132,6 +145,14 @@ namespace BabBot.Wow
                 result = (result*397) ^ Z.GetHashCode();
                 return result;
             }
+        }
+
+        public float GetDistanceTo(Vector3D l)
+        {
+            float dx = X - l.X;
+            float dy = Y - l.Y;
+            float dz = Z - l.Z;
+            return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
     }
 }

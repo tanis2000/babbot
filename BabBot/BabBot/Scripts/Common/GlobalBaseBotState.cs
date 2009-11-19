@@ -473,6 +473,12 @@ namespace BabBot.Scripts.Common
 
             if (Entity.StateMachine.IsInState(preCombatState.GetType()))
             {
+                if (((PreCombatState) preCombatState).HasMobToAttack())
+                {
+                    CallChangeStateEvent(Entity, preCombatState, true, false);
+                    return;
+                }
+
                 if ((Entity.IsBeingAttacked()) || (Entity.HasTarget))
                 {
                     CallChangeStateEvent(Entity, inCombatState, true, false);

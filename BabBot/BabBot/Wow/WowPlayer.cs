@@ -503,6 +503,132 @@ end)()");
             return false;
         }
 
+        public WowUnit GetClosestEnemyInSight()
+        {
+            List<WowUnit> l = GetNearMobs();
+            WowUnit closest = null;
+
+            foreach (Enemy enemy in ProcessManager.Profile.Enemies)
+            {
+                foreach (WowUnit obj in l)
+                {
+                    if ((obj.Name == enemy.Name) && (!obj.IsDead))
+                    {
+                        if (closest == null)
+                        {
+                            closest = obj;
+                        }
+                        else
+                        {
+                            if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(obj.Location, Location, false))
+                            {
+                                closest = obj;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return closest;
+        }
+
+        public bool IsTargetInEnemyList()
+        {
+            if (!HasTarget) return false;
+            if (IsTargetDead()) return false;
+
+            foreach (Enemy enemy in ProcessManager.Profile.Enemies)
+            {
+                if (CurTarget.Name == enemy.Name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AttackClosestEnemyWithCTM()
+        {
+            List<WowUnit> l = GetNearMobs();
+            WowUnit closest = null;
+
+            foreach (Enemy enemy in ProcessManager.Profile.Enemies)
+            {
+                foreach (WowUnit obj in l)
+                {
+                    if ((obj.Name == enemy.Name) && (!obj.IsDead))
+                    {
+                        if (closest == null)
+                        {
+                            closest = obj;
+                        }
+                        else
+                        {
+                            if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(obj.Location, Location, false))
+                            {
+                                closest = obj;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (closest != null)
+            {
+                // We have him somewhere around us
+                // Let's turn to face him so that we can tab-search
+                Face(closest.Location);
+
+                // Attack it with CTM
+                ClickToMoveAttack(closest.Guid);
+            }
+        }
+
+        public void AttackMobWithCTM(WowUnit mob)
+        {
+            if (mob == null) return;
+
+            Face(mob.Location);
+            ClickToMoveAttack(mob.Guid);
+        }
+
+        public void MoveToClosestEnemy()
+        {
+            List<WowUnit> l = GetNearMobs();
+            WowUnit closest = null;
+
+            foreach (Enemy enemy in ProcessManager.Profile.Enemies)
+            {
+                foreach (WowUnit obj in l)
+                {
+                    if ((obj.Name == enemy.Name) && (!obj.IsDead))
+                    {
+                        if (closest == null)
+                        {
+                            closest = obj;
+                        }
+                        else
+                        {
+                            if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(obj.Location, Location, false))
+                            {
+                                closest = obj;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (closest != null)
+            {
+                // We have him somewhere around us
+                // Let's turn to face him so that we can tab-search
+                Face(closest.Location);
+
+                // Move to it with CTM
+                ClickToMove(closest.Location);
+            }
+        }
+
         public void FaceClosestEnemy()
         {
             List<WowUnit> l = GetNearMobs();
@@ -656,6 +782,18 @@ end)()");
             ProcessManager.WowProcess.ResumeThread();
         }
 
+        public void ClickToMoveAttack(ulong guid)
+        {
+            ProcessManager.WowProcess.SuspendThread();
+            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveUnknown, 9.0f);
+            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveTurnScale, 13.962634f);
+            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveUnknown2, 14.0f);
+            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveInteractDistance, 0.366f);
+            ProcessManager.WowProcess.WriteUInt(Globals.ClickToMoveActionType, (uint)Descriptor.eClickToMoveActionType.AttackGuid);
+            ProcessManager.WowProcess.ResumeThread();
+        }
+
+        
         /// <summary>
         /// Makes the player walk from the current location to the location of "dest" with 
         /// a default tolerance of 1 yard.

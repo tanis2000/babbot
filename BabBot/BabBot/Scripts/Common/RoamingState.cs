@@ -38,36 +38,32 @@ namespace BabBot.Scripts.Common
         /// </summary>
         protected override void DoExecute(WowPlayer Entity)
         {
-            /// This is where we should walk through the waypoints and 
-            /// check what happens around us (like if there's anything to
-            /// attack or anything attacking us, or if we run out of mana/health,
-            /// or if we should rebuff something)
-            /// 
-            /// Right now we only walk through the waypoints as a proof of concept
-            Output.Instance.Script("OnRoaming() -- Walking to the next waypoint");
-            //Entity.WalkToNextWayPoint(WayPointType.Normal);
             WayPoint wp = null;
+
+            Output.Instance.Script("Checking if we have a last waypoint defined", this);
             if (_lastWayPoint != null)
             {
-                Output.Instance.Script("OnRoaming() -- We have a last waypoint. Checking if we reached it");
+                Output.Instance.Script("We have a last waypoint. Checking if we reached it", this);
 
                 float distanceFromLast = MathFuncs.GetDistance(_lastWayPoint.Location, Entity.Location, false);
                 if (distanceFromLast <= 3.0f)
                 {
-                    Output.Instance.Script("OnRoaming() -- We reached the last waypoint. Let's get a new one");
+                    Output.Instance.Script("We reached the last waypoint. Let's get a new one", this);
                     wp = WayPointManager.Instance.GetNextWayPoint(WayPointType.Normal);
                 }
                 else
                 {
-                    Output.Instance.Script("OnRoaming() -- We still need to reach the last waypoint. We reuse the last one.");
+                    Output.Instance.Script("We still need to reach the last waypoint. We reuse the last one.", this);
                     wp = _lastWayPoint;
                 }
             }
             else
             {
-                Output.Instance.Script("OnRoaming() -- This is the first waypoint. We try to get a new one.");
+                Output.Instance.Script("This is the first waypoint. We try to get a new one.", this);
                 wp = WayPointManager.Instance.GetNextWayPoint(WayPointType.Normal);
             }
+
+            // Id we do have a waypoint we actually move
             if (wp != null)
             {
                 _lastWayPoint = wp;

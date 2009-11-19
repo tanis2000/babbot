@@ -25,6 +25,15 @@ namespace BabBot.Scripts.Common
 {
     public class PreCombatState : State<WowPlayer>
     {
+        protected static WowUnit _MobToAttack;
+
+        public bool HasMobToAttack()
+        {
+            if (_MobToAttack == null) return false;
+
+            return true;
+        }
+
         protected override void DoEnter(WowPlayer Entity)
         {
         }
@@ -52,14 +61,46 @@ namespace BabBot.Scripts.Common
             else
             {
                 Output.Instance.Script("OnPreCombat() - We are going to attack someone", this);
+                
+                // Check if we already have a valid Unit to attack from a previous state
+                if (_MobToAttack == null)
+                {
+                    Output.Instance.Script("Looking for a new enemy to attack", this);
+                    // Find a new mob to attack
+                    if (Entity.EnemyInSight())
+                    {
+                        Output.Instance.Script("We have something", this);
+                        _MobToAttack = Entity.GetClosestEnemyInSight();
+                        Output.Instance.Script(string.Format("The mob we're going to attack is a {0} with GUID {1:X}", _MobToAttack.Name, _MobToAttack.Guid), this);
+                    }
+                }
+
+                // Check if this is good
+                if (_MobToAttack != null)
+                {
+                    Output.Instance.Script("We have a mob, checking if it's dead", this);
+                    if (!_MobToAttack.IsDead)
+                    {
+                        Output.Instance.Script("Attacking it with CTM", this);
+                        Entity.AttackMobWithCTM(_MobToAttack);
+                    }
+                }
+
+                /*
                 if (Entity.EnemyInSight())
                 {
                     // Face the closest enemy
                     Output.Instance.Script("OnPreCombat() - Facing closest enemy (we should get a target this way)", this);
-                    Entity.FaceClosestEnemy();
+                    //Entity.FaceClosestEnemy();
+                    //Entity.AttackClosestEnemyWithCTM();
+                    // Get the enemy unit and save it
+                    // Check that it's not dead or anything like that
+                    // Move to it
+
+                    Entity.MoveToClosestEnemy();
 
                     // Let's check if we actually got it as our target
-                    if ((Entity.HasTarget) && (!Entity.IsTargetDead()))
+                    if ((Entity.HasTarget) && (!Entity.IsTargetDead()) && (Entity.IsTargetInEnemyList()))
                     {
                         Output.Instance.Script("OnPreCombat() - Affirmative. We have a target", this);
                         /// Ok, we have the target, it's time to start attacking,
@@ -68,10 +109,12 @@ namespace BabBot.Scripts.Common
                     else
                     {
                         // Let's try moving closer. We should already be facing our wanted target
+                        // TODO: Change this so that we use clicktomove instead
                         Entity.MoveForward(1000);
                         Output.Instance.Script("OnPreCombat() - Can't target. This should not happen :-P", this);
                     }
                 }
+                 * */
             }
         }
 

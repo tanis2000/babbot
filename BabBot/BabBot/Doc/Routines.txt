@@ -9,7 +9,7 @@ Requirements:
 
 - Must have a set of waypoints to grind through
 OR
-- Must have a database of mobs and corresponding areas to grind through
+- (Must have a database of mobs and corresponding areas to grind through)
 
 Actions:
 - Get the list of waypoints and read the next one available that we want to cycle through
