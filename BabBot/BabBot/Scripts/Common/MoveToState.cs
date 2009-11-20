@@ -82,8 +82,8 @@ namespace BabBot.Scripts.Common
 
             if (_LastDestination != null)
             {
-                float distance = Entity.Location.GetDistanceTo(_LastDestination);
-                if (distance > 3f)
+                _LastDistance = Entity.Location.GetDistanceTo(_LastDestination);
+                if (_LastDistance > 3f)
                 {
                     CurrentWaypoint = WaypointVector3DHelper.Vector3DToLocation(_LastDestination);
                 }
@@ -125,7 +125,10 @@ namespace BabBot.Scripts.Common
             // Move on...
             float distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
                                                    Entity.Location, false);
-
+            if (Math.Abs(distance - _LastDistance) < 1.0)
+            {
+                TravelPath = null;
+            }
             /// We face our destination waypoint while we are already moving, so that it looks 
             /// more human-like
             //float angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),

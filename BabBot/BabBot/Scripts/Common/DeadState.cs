@@ -31,10 +31,14 @@ namespace BabBot.Scripts.Common
         {
             //on enter, get location of corpose
             _CorpseLocation = Entity.CorpseLocation;
+            Entity.RepopMe();
         }
 
         protected override void DoExecute(WowPlayer Entity)
         {
+            if (!Entity.IsGhost) return;
+
+            _CorpseLocation = Entity.CorpseLocation;
             //on execute, if the distance to our corpose is more than xx yards, we need to get there
             Output.Instance.Script(string.Format("Distance from corpse: {0}", Entity.DistanceFromCorpse()), this);
             if (Entity.DistanceFromCorpse() > GlobalBaseBotState.MinDistanceFromCorpse)

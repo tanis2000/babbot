@@ -354,6 +354,27 @@ end)()");
             return new Vector3D(0, 0, 0);
         }
 
+        public bool SelectWhoIsAttackingUsWithCTM()
+        {
+            WowUnit u = GetCurAttacker();
+            if (u != null)
+            {
+                // if we already have a target we'd better check if it's the one we want so
+                // we avoid tabbing around uselessly
+                if (HasTarget)
+                {
+                    if (CurTargetGuid == u.Guid)
+                    {
+                        // we are already on the target, that's fine
+                        LastTargetedMob = u;
+                        return true;
+                    }
+                }
+                ClickToMoveAttack(u.Guid);
+            }
+            return false;
+        }
+
         public bool SelectWhoIsAttackingUs()
         {
             WowUnit u = GetCurAttacker();
@@ -789,6 +810,7 @@ end)()");
             ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveTurnScale, 13.962634f);
             ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveUnknown2, 14.0f);
             ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveInteractDistance, 0.366f);
+            ProcessManager.WowProcess.WriteUInt64(Globals.ClickToMoveTarget, guid);
             ProcessManager.WowProcess.WriteUInt(Globals.ClickToMoveActionType, (uint)Descriptor.eClickToMoveActionType.AttackGuid);
             ProcessManager.WowProcess.ResumeThread();
         }

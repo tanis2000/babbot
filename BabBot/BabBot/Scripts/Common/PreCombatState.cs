@@ -26,6 +26,7 @@ namespace BabBot.Scripts.Common
     public class PreCombatState : State<WowPlayer>
     {
         protected static WowUnit _MobToAttack;
+        protected static DateTime _LastCTMCheck = DateTime.Now;
 
         public bool HasMobToAttack()
         {
@@ -45,17 +46,20 @@ namespace BabBot.Scripts.Common
         protected override void DoExecute(WowPlayer Entity)
         {
             Output.Instance.Script("OnPreCombat() Begin", this);
-            Entity.Stop();
+
+            DateTime start = DateTime.Now;
+            
             if (Entity.IsBeingAttacked())
             {
                 Output.Instance.Script("OnPreCombat() - We are being attacked", this);
                 /// We are being attacked by a Mob. That means that we should fight back
                 /// by finding the mob first of all
-                if (Entity.SelectWhoIsAttackingUs())
+                if (Entity.SelectWhoIsAttackingUsWithCTM())
                 {
                     /// We found who is attacking us and we fight back (no rebuffing now)
                     /// (If everything is correct at this point the StateManager will take care
                     /// of switching to the OnCombat state)
+                    _MobToAttack = Entity.CurTarget;
                 }
             }
             else
@@ -71,7 +75,15 @@ namespace BabBot.Scripts.Common
                     {
                         Output.Instance.Script("We have something", this);
                         _MobToAttack = Entity.GetClosestEnemyInSight();
-                        Output.Instance.Script(string.Format("The mob we're going to attack is a {0} with GUID {1:X}", _MobToAttack.Name, _MobToAttack.Guid), this);
+                        if (_MobToAttack != null)
+                        {
+                            Output.Instance.Script(
+                                string.Format("The mob we're going to attack is a {0} with GUID {1:X}",
+                                              _MobToAttack.Name, _MobToAttack.Guid), this);
+                        } else
+                        {
+                            Output.Instance.Script("Couldn't find the closest enemy in sight", this);
+                        }
                     }
                 }
 
@@ -82,7 +94,16 @@ namespace BabBot.Scripts.Common
                     if (!_MobToAttack.IsDead)
                     {
                         Output.Instance.Script("Attacking it with CTM", this);
-                        Entity.AttackMobWithCTM(_MobToAttack);
+                        TimeSpan timeDiff = start - _LastCTMCheck;
+                        if (timeDiff.TotalMilliseconds > 2000) 
+                        {
+                            Entity.AttackMobWithCTM(_MobToAttack);
+                        }
+                        _LastCTMCheck = DateTime.Now;
+                    } else
+                    {
+                        Output.Instance.Script("The mob we were looking for is dead :(", this);
+                        _MobToAttack = null;
                     }
                 }
 

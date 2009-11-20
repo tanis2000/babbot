@@ -473,24 +473,24 @@ namespace BabBot.Scripts.Common
 
             if (Entity.StateMachine.IsInState(preCombatState.GetType()))
             {
-                if (((PreCombatState) preCombatState).HasMobToAttack())
-                {
-                    CallChangeStateEvent(Entity, preCombatState, true, false);
-                    return;
-                }
-
-                if ((Entity.IsBeingAttacked()) || (Entity.HasTarget))
+                if ((Entity.IsBeingAttacked()) || (Entity.HasTarget) && (Entity.IsTargetInEnemyList()))
                 {
                     CallChangeStateEvent(Entity, inCombatState, true, false);
                     return;
                 }
 
-                if (!Entity.HasTarget)
+                if (((PreCombatState)preCombatState).HasMobToAttack())
                 {
-                    CallChangeStateEvent(Entity, roamingState, true, false);
+                    CallChangeStateEvent(Entity, preCombatState, true, false);
                     return;
-
                 }
+
+                //if (!Entity.HasTarget)
+                //{
+                    CallChangeStateEvent(Entity, roamingState, true, false);
+                //    return;
+
+                //}
             }
 
 
