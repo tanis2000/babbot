@@ -71,6 +71,8 @@ namespace BabBot.Forms
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
             ProcessManager.UpdateStatus += UpdateStatus;
 
+            // Configuration must be loaded first of all. 
+            // We need it even for logging (the log path is in there)
             ProcessManager.LoadConfig();
 
         }

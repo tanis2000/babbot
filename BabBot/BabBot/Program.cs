@@ -57,10 +57,6 @@ namespace BabBot
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Configuration must be loaded first of all. 
-            // We need it even for logging (the log path is in there)
-            ProcessManager.LoadConfig();
-
             // Create log directory if doesn't existst
             if (!Directory.Exists(ProcessManager.Config.LogPath))
                 Directory.CreateDirectory(ProcessManager.Config.LogPath);
