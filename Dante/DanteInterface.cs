@@ -169,5 +169,10 @@ namespace Dante
                 }
             }
         }
+
+        public void SetPatchOffset(uint poffset)
+        {
+            LuaInterface.PatchOffset = poffset;
+        }
     }
 }

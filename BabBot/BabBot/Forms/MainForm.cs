@@ -18,7 +18,6 @@
 */
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using System.Globalization;
@@ -38,16 +37,15 @@ namespace BabBot.Forms
     {
         private Hashtable LogFS = new Hashtable();
         private Radar.Radar Radar;
+        private Form AppOptionsForm;
+        private Form BotOptionsForm;
+        private Form TalentsForm;
 
         public MainForm()
         {
             InitializeComponent();
 
             Process.EnterDebugMode();
-
-            // Configuration must be loaded first of all. 
-            // We need it even for logging (the log path is in there)
-            LoadConfig();
 
             // Load the configuration file
             // NOTE: tanis - temporarily disabled as it eats way too much memory as it is now
@@ -66,11 +64,14 @@ namespace BabBot.Forms
             ProcessManager.WoWProcessFailed += wow_ProcessFailed;
             ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
             ProcessManager.WoWInGame += wow_InGame;
+            ProcessManager.FirstTimeRun += OnFirstTimeRun;
 
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
             ProcessManager.UpdateStatus += UpdateStatus;
+
+            ProcessManager.LoadConfig();
 
         }
 
@@ -341,6 +342,11 @@ namespace BabBot.Forms
             }
         }
 
+        private void OnFirstTimeRun()
+        {
+            optionsToolStripMenuItem_Click(null, null);
+        }
+
         private void UpdateStatus(string iStatus)
         {
             statusLabel.Text = iStatus;
@@ -452,7 +458,7 @@ namespace BabBot.Forms
                 ProcessManager.Config.WowPos = new WinPos(BabBot.Common.WindowSize.
                                     GetPositionSize((IntPtr)ProcessManager.WowHWND));
             
-            SaveConfig();
+            ProcessManager.SaveConfig();
         }
 
         private void btnMovementTest_Click(object sender, EventArgs e)
@@ -519,13 +525,35 @@ namespace BabBot.Forms
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = new OptionsForm();
-            DialogResult res;
-            res = form.ShowDialog();
+            if (AppOptionsForm == null)
+                AppOptionsForm = new AppOptionsForm();
+
+            DialogResult res = AppOptionsForm.ShowDialog();
+
             if (res == DialogResult.OK)
             {
-                SaveConfig();
+                ProcessManager.SaveConfig();
+                Text = ProcessManager.Config.WinTitle;
+                ProcessManager.Injector.SetPatchOffset(
+                    Convert.ToUInt32(ProcessManager.Config.LuaCallback, 16));
+
+                if (ProcessManager.Config.DebugMode)
+                    ActivateDebugMode();
+                else
+                    DeactivateDebugMode();
             }
+        }
+
+
+        private void botOptionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (BotOptionsForm == null)
+                BotOptionsForm = new OptionsForm();
+
+            DialogResult res = BotOptionsForm.ShowDialog();
+
+            if (res == DialogResult.OK)
+                ProcessManager.SaveConfig();
         }
 
         private void btnStartBot_Click(object sender, EventArgs e)
@@ -679,65 +707,6 @@ namespace BabBot.Forms
 
         #endregion
 
-        #region Load/Save Config
-
-        private void LoadConfig()
-        {
-            string fileName = "config.xml";
-            var serializer = new Serializer<Config>();
-
-            try
-            {
-                ProcessManager.Config = serializer.Load(fileName);
-                if (ProcessManager.Config.DebugMode)
-                {
-                    ActivateDebugMode();
-                }
-                else
-                {
-                    DeactivateDebugMode();
-                }
-
-                // Decrypt auto-login password
-                if (!string.IsNullOrEmpty(ProcessManager.Config.Account.LoginPassword))
-                {
-                    try
-                    {
-                        ProcessManager.Config.Account.DecryptPassword(
-                                ProcessManager.Config.Account.LoginPassword);
-                    }
-                    catch (Exception e)
-                    {
-                        // We couldn't decrypt the password for some reason. We reset it to blank.
-                        ProcessManager.Config.Account.LoginPassword = "";
-                    }
-                }
-            }
-            catch (FileNotFoundException ex)
-            {
-                // No configuration file, don't worry
-            }
-        }
-
-        private void SaveConfig()
-        {
-            string fileName = "config.xml";
-            var serializer = new Serializer<Config>();
-
-            serializer.Save(fileName, ProcessManager.Config);
-
-            if (ProcessManager.Config.DebugMode)
-            {
-                ActivateDebugMode();
-            }
-            else
-            {
-                DeactivateDebugMode();
-            }
-        }
-
-        #endregion
-
         #region Nested type: PlayerUpdateDelegate
 
         private delegate void PlayerUpdateDelegate();
@@ -846,6 +815,8 @@ namespace BabBot.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            Text = ProcessManager.Config.WinTitle;
+
             if (ProcessManager.Config.BotPos != null)
             {
                 Location = ProcessManager.Config.BotPos.Pos.Location;
@@ -859,6 +830,12 @@ namespace BabBot.Forms
             Radar = new Radar.Radar(imgRadar);
             SetDebugBtns();
 
+            if (ProcessManager.Config.DebugMode)
+                ActivateDebugMode();
+            else
+                DeactivateDebugMode();
+
+            // Always last
             if (ProcessManager.AutoRun)
             {
                 // Start wow for now
@@ -974,6 +951,14 @@ namespace BabBot.Forms
         private void tbZoom_Scroll(object sender, EventArgs e)
         {
             Radar.Zoom = tbZoom.Value;
+        }
+
+        private void talentTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TalentsForm == null)
+                TalentsForm = new TalentsForm();
+
+            TalentsForm.Show();
         }
     }
 }

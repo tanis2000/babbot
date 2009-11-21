@@ -28,43 +28,39 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Wave");
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Smile");
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Cry");
-            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Fart");
-            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Pat");
-            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Friend", new System.Windows.Forms.TreeNode[] {
-            treeNode21,
-            treeNode22,
-            treeNode23,
-            treeNode24,
-            treeNode25});
-            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Wave");
-            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Smile");
-            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Cry");
-            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Fart");
-            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Pat");
-            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Foe", new System.Windows.Forms.TreeNode[] {
-            treeNode27,
-            treeNode28,
-            treeNode29,
-            treeNode30,
-            treeNode31});
-            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Follower City Table");
-            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Chat City Table");
-            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("PVP City Ignore Table");
-            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Invite Group Table");
-            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Invite Guild Table");
-            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Invite Trade Table");
-            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Invite Duel Table");
-            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Scripts");
+            System.Windows.Forms.TreeNode treeNode81 = new System.Windows.Forms.TreeNode("Wave");
+            System.Windows.Forms.TreeNode treeNode82 = new System.Windows.Forms.TreeNode("Smile");
+            System.Windows.Forms.TreeNode treeNode83 = new System.Windows.Forms.TreeNode("Cry");
+            System.Windows.Forms.TreeNode treeNode84 = new System.Windows.Forms.TreeNode("Fart");
+            System.Windows.Forms.TreeNode treeNode85 = new System.Windows.Forms.TreeNode("Pat");
+            System.Windows.Forms.TreeNode treeNode86 = new System.Windows.Forms.TreeNode("Friend", new System.Windows.Forms.TreeNode[] {
+            treeNode81,
+            treeNode82,
+            treeNode83,
+            treeNode84,
+            treeNode85});
+            System.Windows.Forms.TreeNode treeNode87 = new System.Windows.Forms.TreeNode("Wave");
+            System.Windows.Forms.TreeNode treeNode88 = new System.Windows.Forms.TreeNode("Smile");
+            System.Windows.Forms.TreeNode treeNode89 = new System.Windows.Forms.TreeNode("Cry");
+            System.Windows.Forms.TreeNode treeNode90 = new System.Windows.Forms.TreeNode("Fart");
+            System.Windows.Forms.TreeNode treeNode91 = new System.Windows.Forms.TreeNode("Pat");
+            System.Windows.Forms.TreeNode treeNode92 = new System.Windows.Forms.TreeNode("Foe", new System.Windows.Forms.TreeNode[] {
+            treeNode87,
+            treeNode88,
+            treeNode89,
+            treeNode90,
+            treeNode91});
+            System.Windows.Forms.TreeNode treeNode93 = new System.Windows.Forms.TreeNode("Follower City Table");
+            System.Windows.Forms.TreeNode treeNode94 = new System.Windows.Forms.TreeNode("Chat City Table");
+            System.Windows.Forms.TreeNode treeNode95 = new System.Windows.Forms.TreeNode("PVP City Ignore Table");
+            System.Windows.Forms.TreeNode treeNode96 = new System.Windows.Forms.TreeNode("Invite Group Table");
+            System.Windows.Forms.TreeNode treeNode97 = new System.Windows.Forms.TreeNode("Invite Guild Table");
+            System.Windows.Forms.TreeNode treeNode98 = new System.Windows.Forms.TreeNode("Invite Trade Table");
+            System.Windows.Forms.TreeNode treeNode99 = new System.Windows.Forms.TreeNode("Invite Duel Table");
+            System.Windows.Forms.TreeNode treeNode100 = new System.Windows.Forms.TreeNode("Scripts");
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.btnBrowseLogPath = new System.Windows.Forms.Button();
-            this.label85 = new System.Windows.Forms.Label();
-            this.tbLogsPath = new System.Windows.Forms.TextBox();
-            this.ChkBoxLogOutput = new System.Windows.Forms.CheckBox();
             this.ChkBoxUseMount = new System.Windows.Forms.CheckBox();
             this.ChkBoxPullElites = new System.Windows.Forms.CheckBox();
             this.ChkBoxIgnoreMaxLevel = new System.Windows.Forms.CheckBox();
@@ -84,16 +80,8 @@
             this.hScrollAddDetectionRadius = new System.Windows.Forms.HScrollBar();
             this.hScrollMaxAllowsAdds = new System.Windows.Forms.HScrollBar();
             this.hScrollCorpseCamped = new System.Windows.Forms.HScrollBar();
-            this.cbDebugMode = new System.Windows.Forms.CheckBox();
-            this.btnFindWowExePath = new System.Windows.Forms.Button();
-            this.btnBrowseWowExec = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tbGuestPassword = new System.Windows.Forms.TextBox();
-            this.tbGuestUsername = new System.Windows.Forms.TextBox();
-            this.tbWowExePath = new System.Windows.Forms.TextBox();
             this.tabPage24 = new System.Windows.Forms.TabPage();
+            this.labelComment = new System.Windows.Forms.Label();
             this.cbxGameType = new System.Windows.Forms.ComboBox();
             this.labelRealmLocation = new System.Windows.Forms.Label();
             this.tbRealmLocation = new System.Windows.Forms.TextBox();
@@ -102,10 +90,6 @@
             this.tbRealm = new System.Windows.Forms.TextBox();
             this.tbCharacter = new System.Windows.Forms.TextBox();
             this.labelCharacter = new System.Windows.Forms.Label();
-            this.label86 = new System.Windows.Forms.Label();
-            this.cbResize = new System.Windows.Forms.CheckBox();
-            this.cbNoSound = new System.Windows.Forms.CheckBox();
-            this.cbWindowed = new System.Windows.Forms.CheckBox();
             this.tbLoginPassword = new System.Windows.Forms.TextBox();
             this.labelPwd = new System.Windows.Forms.Label();
             this.labelUser = new System.Windows.Forms.Label();
@@ -507,7 +491,6 @@
             this.CobBoxEOTSGuardSpot = new System.Windows.Forms.ComboBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
-            this.labelComment = new System.Windows.Forms.Label();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -623,10 +606,6 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.btnBrowseLogPath);
-            this.tabPage1.Controls.Add(this.label85);
-            this.tabPage1.Controls.Add(this.tbLogsPath);
-            this.tabPage1.Controls.Add(this.ChkBoxLogOutput);
             this.tabPage1.Controls.Add(this.ChkBoxUseMount);
             this.tabPage1.Controls.Add(this.ChkBoxPullElites);
             this.tabPage1.Controls.Add(this.ChkBoxIgnoreMaxLevel);
@@ -646,15 +625,6 @@
             this.tabPage1.Controls.Add(this.hScrollAddDetectionRadius);
             this.tabPage1.Controls.Add(this.hScrollMaxAllowsAdds);
             this.tabPage1.Controls.Add(this.hScrollCorpseCamped);
-            this.tabPage1.Controls.Add(this.cbDebugMode);
-            this.tabPage1.Controls.Add(this.btnFindWowExePath);
-            this.tabPage1.Controls.Add(this.btnBrowseWowExec);
-            this.tabPage1.Controls.Add(this.label3);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.tbGuestPassword);
-            this.tabPage1.Controls.Add(this.tbGuestUsername);
-            this.tabPage1.Controls.Add(this.tbWowExePath);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -662,42 +632,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // btnBrowseLogPath
-            // 
-            this.btnBrowseLogPath.Location = new System.Drawing.Point(357, 97);
-            this.btnBrowseLogPath.Name = "btnBrowseLogPath";
-            this.btnBrowseLogPath.Size = new System.Drawing.Size(75, 23);
-            this.btnBrowseLogPath.TabIndex = 257;
-            this.btnBrowseLogPath.Text = "Browse..";
-            this.btnBrowseLogPath.UseVisualStyleBackColor = true;
-            this.btnBrowseLogPath.Click += new System.EventHandler(this.btnBrowseLogPath_Click);
-            // 
-            // label85
-            // 
-            this.label85.AutoSize = true;
-            this.label85.Location = new System.Drawing.Point(8, 102);
-            this.label85.Name = "label85";
-            this.label85.Size = new System.Drawing.Size(55, 13);
-            this.label85.TabIndex = 256;
-            this.label85.Text = "Logs Path";
-            // 
-            // tbLogsPath
-            // 
-            this.tbLogsPath.Location = new System.Drawing.Point(105, 99);
-            this.tbLogsPath.Name = "tbLogsPath";
-            this.tbLogsPath.Size = new System.Drawing.Size(241, 20);
-            this.tbLogsPath.TabIndex = 255;
-            // 
-            // ChkBoxLogOutput
-            // 
-            this.ChkBoxLogOutput.AutoSize = true;
-            this.ChkBoxLogOutput.Location = new System.Drawing.Point(148, 158);
-            this.ChkBoxLogOutput.Name = "ChkBoxLogOutput";
-            this.ChkBoxLogOutput.Size = new System.Drawing.Size(79, 17);
-            this.ChkBoxLogOutput.TabIndex = 254;
-            this.ChkBoxLogOutput.Text = "Log Output";
-            this.ChkBoxLogOutput.UseVisualStyleBackColor = true;
             // 
             // ChkBoxUseMount
             // 
@@ -884,84 +818,6 @@
             this.hScrollCorpseCamped.TabIndex = 235;
             this.hScrollCorpseCamped.Value = 5;
             // 
-            // cbDebugMode
-            // 
-            this.cbDebugMode.AutoSize = true;
-            this.cbDebugMode.Location = new System.Drawing.Point(11, 158);
-            this.cbDebugMode.Name = "cbDebugMode";
-            this.cbDebugMode.Size = new System.Drawing.Size(88, 17);
-            this.cbDebugMode.TabIndex = 8;
-            this.cbDebugMode.Text = "Debug Mode";
-            this.cbDebugMode.UseVisualStyleBackColor = true;
-            // 
-            // btnFindWowExePath
-            // 
-            this.btnFindWowExePath.Location = new System.Drawing.Point(435, 9);
-            this.btnFindWowExePath.Name = "btnFindWowExePath";
-            this.btnFindWowExePath.Size = new System.Drawing.Size(75, 23);
-            this.btnFindWowExePath.TabIndex = 7;
-            this.btnFindWowExePath.Text = "Auto-Find";
-            this.btnFindWowExePath.UseVisualStyleBackColor = true;
-            this.btnFindWowExePath.Click += new System.EventHandler(this.btnFindWowExePath_Click);
-            // 
-            // btnBrowseWowExec
-            // 
-            this.btnBrowseWowExec.Location = new System.Drawing.Point(357, 9);
-            this.btnBrowseWowExec.Name = "btnBrowseWowExec";
-            this.btnBrowseWowExec.Size = new System.Drawing.Size(75, 23);
-            this.btnBrowseWowExec.TabIndex = 6;
-            this.btnBrowseWowExec.Text = "Browse..";
-            this.btnBrowseWowExec.UseVisualStyleBackColor = true;
-            this.btnBrowseWowExec.Click += new System.EventHandler(this.btnBrowseWowExec_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 76);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Guest password";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 44);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(84, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Guest username";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "WoW Executable";
-            // 
-            // tbGuestPassword
-            // 
-            this.tbGuestPassword.Location = new System.Drawing.Point(105, 73);
-            this.tbGuestPassword.Name = "tbGuestPassword";
-            this.tbGuestPassword.Size = new System.Drawing.Size(170, 20);
-            this.tbGuestPassword.TabIndex = 2;
-            // 
-            // tbGuestUsername
-            // 
-            this.tbGuestUsername.Location = new System.Drawing.Point(105, 41);
-            this.tbGuestUsername.Name = "tbGuestUsername";
-            this.tbGuestUsername.Size = new System.Drawing.Size(170, 20);
-            this.tbGuestUsername.TabIndex = 1;
-            // 
-            // tbWowExePath
-            // 
-            this.tbWowExePath.Location = new System.Drawing.Point(105, 11);
-            this.tbWowExePath.Name = "tbWowExePath";
-            this.tbWowExePath.Size = new System.Drawing.Size(241, 20);
-            this.tbWowExePath.TabIndex = 0;
-            // 
             // tabPage24
             // 
             this.tabPage24.Controls.Add(this.labelComment);
@@ -973,10 +829,6 @@
             this.tabPage24.Controls.Add(this.tbRealm);
             this.tabPage24.Controls.Add(this.tbCharacter);
             this.tabPage24.Controls.Add(this.labelCharacter);
-            this.tabPage24.Controls.Add(this.label86);
-            this.tabPage24.Controls.Add(this.cbResize);
-            this.tabPage24.Controls.Add(this.cbNoSound);
-            this.tabPage24.Controls.Add(this.cbWindowed);
             this.tabPage24.Controls.Add(this.tbLoginPassword);
             this.tabPage24.Controls.Add(this.labelPwd);
             this.tabPage24.Controls.Add(this.labelUser);
@@ -989,6 +841,16 @@
             this.tabPage24.TabIndex = 7;
             this.tabPage24.Text = "Account";
             this.tabPage24.UseVisualStyleBackColor = true;
+            // 
+            // labelComment
+            // 
+            this.labelComment.AutoSize = true;
+            this.labelComment.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelComment.Location = new System.Drawing.Point(11, 193);
+            this.labelComment.Name = "labelComment";
+            this.labelComment.Size = new System.Drawing.Size(90, 12);
+            this.labelComment.TabIndex = 18;
+            this.labelComment.Text = "*All fields mandatory";
             // 
             // cbxGameType
             // 
@@ -1067,46 +929,6 @@
             this.labelCharacter.Size = new System.Drawing.Size(56, 13);
             this.labelCharacter.TabIndex = 9;
             this.labelCharacter.Text = "Character:";
-            // 
-            // label86
-            // 
-            this.label86.AutoSize = true;
-            this.label86.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label86.Location = new System.Drawing.Point(273, 11);
-            this.label86.Name = "label86";
-            this.label86.Size = new System.Drawing.Size(103, 13);
-            this.label86.TabIndex = 8;
-            this.label86.Text = "Start Up options:";
-            // 
-            // cbResize
-            // 
-            this.cbResize.AutoSize = true;
-            this.cbResize.Location = new System.Drawing.Point(289, 83);
-            this.cbResize.Name = "cbResize";
-            this.cbResize.Size = new System.Drawing.Size(92, 17);
-            this.cbResize.TabIndex = 7;
-            this.cbResize.Text = "Resize to min.";
-            this.cbResize.UseVisualStyleBackColor = true;
-            // 
-            // cbNoSound
-            // 
-            this.cbNoSound.AutoSize = true;
-            this.cbNoSound.Location = new System.Drawing.Point(289, 60);
-            this.cbNoSound.Name = "cbNoSound";
-            this.cbNoSound.Size = new System.Drawing.Size(72, 17);
-            this.cbNoSound.TabIndex = 6;
-            this.cbNoSound.Text = "No sound";
-            this.cbNoSound.UseVisualStyleBackColor = true;
-            // 
-            // cbWindowed
-            // 
-            this.cbWindowed.AutoSize = true;
-            this.cbWindowed.Location = new System.Drawing.Point(289, 37);
-            this.cbWindowed.Name = "cbWindowed";
-            this.cbWindowed.Size = new System.Drawing.Size(99, 17);
-            this.cbWindowed.TabIndex = 5;
-            this.cbWindowed.Text = "Windows mode";
-            this.cbWindowed.UseVisualStyleBackColor = true;
             // 
             // tbLoginPassword
             // 
@@ -2821,34 +2643,34 @@
             this.TreeEmote.HotTracking = true;
             this.TreeEmote.Location = new System.Drawing.Point(3, 16);
             this.TreeEmote.Name = "TreeEmote";
-            treeNode21.Name = "Node1";
-            treeNode21.Text = "Wave";
-            treeNode22.Name = "Node2";
-            treeNode22.Text = "Smile";
-            treeNode23.Name = "Node3";
-            treeNode23.Text = "Cry";
-            treeNode24.Name = "Node4";
-            treeNode24.Text = "Fart";
-            treeNode25.Name = "Node5";
-            treeNode25.Text = "Pat";
-            treeNode26.Checked = true;
-            treeNode26.Name = "";
-            treeNode26.Text = "Friend";
-            treeNode27.Name = "Node9";
-            treeNode27.Text = "Wave";
-            treeNode28.Name = "Node10";
-            treeNode28.Text = "Smile";
-            treeNode29.Name = "Node11";
-            treeNode29.Text = "Cry";
-            treeNode30.Name = "Node12";
-            treeNode30.Text = "Fart";
-            treeNode31.Name = "Node13";
-            treeNode31.Text = "Pat";
-            treeNode32.Name = "Node0";
-            treeNode32.Text = "Foe";
+            treeNode81.Name = "Node1";
+            treeNode81.Text = "Wave";
+            treeNode82.Name = "Node2";
+            treeNode82.Text = "Smile";
+            treeNode83.Name = "Node3";
+            treeNode83.Text = "Cry";
+            treeNode84.Name = "Node4";
+            treeNode84.Text = "Fart";
+            treeNode85.Name = "Node5";
+            treeNode85.Text = "Pat";
+            treeNode86.Checked = true;
+            treeNode86.Name = "";
+            treeNode86.Text = "Friend";
+            treeNode87.Name = "Node9";
+            treeNode87.Text = "Wave";
+            treeNode88.Name = "Node10";
+            treeNode88.Text = "Smile";
+            treeNode89.Name = "Node11";
+            treeNode89.Text = "Cry";
+            treeNode90.Name = "Node12";
+            treeNode90.Text = "Fart";
+            treeNode91.Name = "Node13";
+            treeNode91.Text = "Pat";
+            treeNode92.Name = "Node0";
+            treeNode92.Text = "Foe";
             this.TreeEmote.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode26,
-            treeNode32});
+            treeNode86,
+            treeNode92});
             this.TreeEmote.Size = new System.Drawing.Size(142, 274);
             this.TreeEmote.TabIndex = 4;
             // 
@@ -3343,31 +3165,31 @@
             this.TreeTables.HotTracking = true;
             this.TreeTables.Location = new System.Drawing.Point(3, 16);
             this.TreeTables.Name = "TreeTables";
-            treeNode33.Name = "Node0";
-            treeNode33.Text = "Follower City Table";
-            treeNode34.Name = "Node1";
-            treeNode34.Text = "Chat City Table";
-            treeNode35.Name = "Node6";
-            treeNode35.Text = "PVP City Ignore Table";
-            treeNode36.Name = "Node2";
-            treeNode36.Text = "Invite Group Table";
-            treeNode37.Name = "Node3";
-            treeNode37.Text = "Invite Guild Table";
-            treeNode38.Name = "Node4";
-            treeNode38.Text = "Invite Trade Table";
-            treeNode39.Name = "Node5";
-            treeNode39.Text = "Invite Duel Table";
-            treeNode40.Name = "Node7";
-            treeNode40.Text = "Scripts";
+            treeNode93.Name = "Node0";
+            treeNode93.Text = "Follower City Table";
+            treeNode94.Name = "Node1";
+            treeNode94.Text = "Chat City Table";
+            treeNode95.Name = "Node6";
+            treeNode95.Text = "PVP City Ignore Table";
+            treeNode96.Name = "Node2";
+            treeNode96.Text = "Invite Group Table";
+            treeNode97.Name = "Node3";
+            treeNode97.Text = "Invite Guild Table";
+            treeNode98.Name = "Node4";
+            treeNode98.Text = "Invite Trade Table";
+            treeNode99.Name = "Node5";
+            treeNode99.Text = "Invite Duel Table";
+            treeNode100.Name = "Node7";
+            treeNode100.Text = "Scripts";
             this.TreeTables.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode33,
-            treeNode34,
-            treeNode35,
-            treeNode36,
-            treeNode37,
-            treeNode38,
-            treeNode39,
-            treeNode40});
+            treeNode93,
+            treeNode94,
+            treeNode95,
+            treeNode96,
+            treeNode97,
+            treeNode98,
+            treeNode99,
+            treeNode100});
             this.TreeTables.Size = new System.Drawing.Size(156, 344);
             this.TreeTables.TabIndex = 4;
             // 
@@ -5429,9 +5251,7 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            // 
             // btnOk
-            // 
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOk.Location = new System.Drawing.Point(362, 6);
             this.btnOk.Name = "btnOk";
@@ -5440,16 +5260,6 @@
             this.btnOk.Text = "OK";
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
-            // 
-            // labelComment
-            // 
-            this.labelComment.AutoSize = true;
-            this.labelComment.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelComment.Location = new System.Drawing.Point(11, 193);
-            this.labelComment.Name = "labelComment";
-            this.labelComment.Size = new System.Drawing.Size(90, 12);
-            this.labelComment.TabIndex = 18;
-            this.labelComment.Text = "*All fields mandatory";
             // 
             // OptionsForm
             // 
@@ -5574,15 +5384,6 @@
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.Button btnBrowseWowExec;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox tbGuestPassword;
-        private System.Windows.Forms.TextBox tbGuestUsername;
-        private System.Windows.Forms.TextBox tbWowExePath;
-        private System.Windows.Forms.Button btnFindWowExePath;
-        private System.Windows.Forms.CheckBox cbDebugMode;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage tabPage3;
@@ -5892,7 +5693,6 @@
         private System.Windows.Forms.Label LblAgilityMod;
         private System.Windows.Forms.Label label55;
         private System.Windows.Forms.HScrollBar hScrollAgilityMod;
-        private System.Windows.Forms.CheckBox ChkBoxLogOutput;
         private System.Windows.Forms.CheckBox ChkBoxUseMount;
         private System.Windows.Forms.CheckBox ChkBoxPullElites;
         private System.Windows.Forms.CheckBox ChkBoxIgnoreMaxLevel;
@@ -5997,19 +5797,12 @@
         private System.Windows.Forms.Button ButtonFelReaverRuins;
         private System.Windows.Forms.Button ButtonMageTower;
         internal System.Windows.Forms.ComboBox CobBoxEOTSGuardSpot;
-        private System.Windows.Forms.Button btnBrowseLogPath;
-        private System.Windows.Forms.Label label85;
-        private System.Windows.Forms.TextBox tbLogsPath;
         private System.Windows.Forms.TabPage tabPage24;
         private System.Windows.Forms.TextBox tbLoginPassword;
         private System.Windows.Forms.Label labelPwd;
         private System.Windows.Forms.Label labelUser;
         private System.Windows.Forms.TextBox tbLoginUsername;
         private System.Windows.Forms.CheckBox cbAutoLogin;
-        private System.Windows.Forms.CheckBox cbNoSound;
-        private System.Windows.Forms.CheckBox cbWindowed;
-        private System.Windows.Forms.CheckBox cbResize;
-        private System.Windows.Forms.Label label86;
         private System.Windows.Forms.TextBox tbCharacter;
         private System.Windows.Forms.Label labelCharacter;
         private System.Windows.Forms.Label labelRealm;

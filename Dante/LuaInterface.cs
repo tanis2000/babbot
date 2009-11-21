@@ -51,6 +51,7 @@ namespace Dante
         internal static byte LuaState = 255;
         internal static bool InputHandlerRegistered = false;
         internal static object dataLock = new object();
+        internal static uint PatchOffset;
 
         private static uint state = 0;
 
@@ -311,7 +312,7 @@ namespace Dante
         {
             LoggingInterface.Log("SetFunctionPtr() - Starting ...");
             bool ReturnVal;
-            uint p = (uint) pointer - Functions.Patch_Offset - 5;
+            uint p = (uint)pointer - PatchOffset - 5;
             var buf = new byte[4];
             var buf2 = new byte[1];
             buf2[0] = 0xE9;
@@ -325,14 +326,14 @@ namespace Dante
 
             LoggingInterface.Log(string.Format("SetFunctionPtr() - hProcess = {0:X}", (uint) hProcess));
 
-            ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr) Functions.Patch_Offset, buf2, 1, out BytesWritten);
+            ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr)PatchOffset, buf2, 1, out BytesWritten);
             if (!ReturnVal)
             {
                 LoggingInterface.Log(string.Format("SetFunctionPtr() - Error during first WriteProcessMemory"));
             }
             LoggingInterface.Log(string.Format("SetFunctionPtr() - Written {0:d} bytes", BytesWritten));
 
-            ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr) (Functions.Patch_Offset + 1), buf, 4,
+            ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr)(PatchOffset + 1), buf, 4,
                                                     out BytesWritten);
             if (!ReturnVal)
             {
@@ -358,8 +359,8 @@ namespace Dante
             LoggingInterface.Log(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", 
                                                                             (uint) hProcess));
 
-            ReturnVal = Kernel32.WriteProcessMemory(hProcess, 
-                (IntPtr) Functions.Patch_Offset, buf, 5, out BytesWritten);
+            ReturnVal = Kernel32.WriteProcessMemory(hProcess,
+                (IntPtr)PatchOffset, buf, 5, out BytesWritten);
 
             LoggingInterface.Log("RestoreFunctionPtr() - Done");
 
@@ -394,7 +395,7 @@ namespace Dante
         public static void RegisterLuaInputHandler()
         {
             LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - Registering our InputHandler.."));
-            Lua_Register("InputHandler", (IntPtr) Functions.Patch_Offset); // This is the code hole we want to use
+            Lua_Register("InputHandler", (IntPtr) PatchOffset); // This is the code hole we want to use
             InitLUAState();
             LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - InputHandler Registered"));
         }
@@ -562,9 +563,6 @@ namespace Dante
             // SubZoneText = 0x113D780
             // InGame = 0x010508A0 (return 1 or 0)
             // CONTINENT_NAME 0x12dc8e8 //0x12C67F8 //0x10A51F8
-            public const uint
-                // 3.2.2a
-                Patch_Offset = 0x00401643; //3.1.3: 0x00401643; // this is our codecave
         }
 
         #endregion

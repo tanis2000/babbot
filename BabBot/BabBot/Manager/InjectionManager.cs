@@ -619,6 +619,9 @@ end)()",
                 //RemoteObject.RegisterLuaHandler();
                 //RemoteObject.Patch();
 
+                // Set our codecave offset
+                SetPatchOffset(Convert.ToUInt32(ProcessManager.Config.LuaCallback, 16));
+
                 Output.Instance.Log("Dante injected");
             }
             catch (Exception ExtInfo)
@@ -626,6 +629,12 @@ end)()",
                 Output.Instance.Log("There was an error while connecting to the target DLL");
                 Output.Instance.LogError(ExtInfo);
             }
+        }
+
+        public void SetPatchOffset(uint poffset)
+        {
+            if (RemoteObject != null)
+                RemoteObject.SetPatchOffset(poffset);
         }
 
         public void Lua_RegisterInputHandler()

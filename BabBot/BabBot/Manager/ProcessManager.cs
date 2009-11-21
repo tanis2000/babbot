@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using Pather.Graph;
 using System.Linq;
 using System.Threading;
+using System.IO;
 
 namespace BabBot.Manager
 {
@@ -71,6 +72,11 @@ namespace BabBot.Manager
         /// <param name="iStatus">what to write in the statusbar</param>
         public delegate void UpdateStatusEventHandler(string iStatus);
 
+        /// <summary>
+        /// First time run event
+        /// </summary>
+        public delegate void FirstTimeRunHandler();
+
         #endregion
 
         #region WOWApplication Events
@@ -107,6 +113,7 @@ namespace BabBot.Manager
 
         public static event UpdateStatusEventHandler UpdateStatus;
 
+        public static event FirstTimeRunHandler FirstTimeRun;
         #endregion
 
         #region Player Events
@@ -119,17 +126,16 @@ namespace BabBot.Manager
         public static CommandManager CommandManager;
         public static InjectionManager Injector;
         private static Config config;
-        // public static bool InGame;
-        // public static bool Initialized;
         public static ObjectManager ObjectManager;
         public static WowPlayer Player;
         private static Process process;
-        // public static bool ProcessRunning;
         public static Profile Profile;
         public static Host ScriptHost;
         public static uint TLS;
         public static int WowHWND;
         private static bool arun = false;
+
+        private static string ConfigFileName = "config.xml";
 
         public enum ProcessStatuses : byte
         {
@@ -168,6 +174,54 @@ namespace BabBot.Manager
             ScriptHost = new Host();
             WayPointManager.Instance.Init();
             Caronte = new Caronte.Caronte();
+        }
+
+        /// <summary>
+        /// Load Application config file
+        /// </summary>
+        public static void LoadConfig()
+        {
+            var serializer = new Serializer<Config>();
+
+            try
+            {
+                ProcessManager.Config = serializer.Load(ConfigFileName);
+
+                // Decrypt auto-login password
+                if (!string.IsNullOrEmpty(ProcessManager.Config.Account.LoginPassword))
+                {
+                    try
+                    {
+                        ProcessManager.Config.Account.DecryptPassword(
+                                ProcessManager.Config.Account.LoginPassword);
+                    }
+                    catch (Exception e)
+                    {
+                        // We couldn't decrypt the password for some reason. We reset it to blank.
+                        ProcessManager.Config.Account.LoginPassword = "";
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                // Show App configuration window for the first time run
+                if (FirstTimeRun != null)
+                    FirstTimeRun();
+                else
+                    Environment.Exit(1);
+
+            }
+
+        }
+
+        /// <summary>
+        /// Save application config file
+        /// </summary>
+        public static void SaveConfig()
+        {
+            var serializer = new Serializer<Config>();
+
+            serializer.Save(ConfigFileName, ProcessManager.Config);
         }
 
         /// <summary>

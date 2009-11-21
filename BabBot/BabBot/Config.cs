@@ -29,7 +29,7 @@ namespace BabBot
         public string GuestUsername = "Guest";
         public string InteractKey = "{SHIFTD}ì{SHIFTU}";
         public string WowExePath = "";
-        public string LogPath = Environment.CurrentDirectory+@"\Log";
+        public string LogPath = Environment.CurrentDirectory + @"\Log";
         public bool AutoLogin = false;
         public LoginInfo Account = new LoginInfo();
         public bool NoSound = false;
@@ -38,6 +38,10 @@ namespace BabBot
         public string Character = "";
         public WinPos WowPos;
         public WinPos BotPos;
+
+        // Bot Customization
+        public string LuaCallback;
+        public string WinTitle;
     }
 
     [Serializable]
