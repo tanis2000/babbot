@@ -278,6 +278,7 @@
     <Compile Include="Wow\Vector3D.cs" />
     <Compile Include="Wow\WowContainer.cs" />
     <Compile Include="Wow\WowCorpse.cs" />
+    <Compile Include="Wow\WoWData.cs" />
     <Compile Include="Wow\WowDynamicObject.cs" />
     <Compile Include="Wow\WowGameObject.cs" />
     <Compile Include="Wow\WowItem.cs" />
@@ -304,6 +305,7 @@
     <Content Include="Doc\README.TXT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Lib\WoWData.xml" />
     <None Include="Lib\BlackMagic.dll" />
     <None Include="Lib\BlackMagic.XML" />
     <None Include="Lib\CSScriptLibrary.dll" />
@@ -357,7 +359,12 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>copy "$(ProjectDir)Lib\*" "$(TargetDir)"</PreBuildEvent>
+    <PreBuildEvent>copy "$(ProjectDir)Lib\*" "$(TargetDir)"
+mkdir "$(TargetDir)\Profiles\Accounts"
+mkdir "$(TargetDir)\Profiles\Characters"
+mkdir "$(TargetDir)\Profiles\Talents"
+copy "$(ProjectDir)Lib\Profiles\Talents\*" "$(TargetDir)\Profiles\Talents"
+</PreBuildEvent>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.cbTalentTemplates = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.labelAssignment = new System.Windows.Forms.Label();
@@ -43,20 +43,23 @@
             this.btnApply = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
             this.labelURL = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbTalentURL = new System.Windows.Forms.TextBox();
             this.btnRemove = new System.Windows.Forms.Button();
+            this.cbClass = new System.Windows.Forms.ComboBox();
+            this.labelClass = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudLevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTalent)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTab)).BeginInit();
             this.SuspendLayout();
             // 
-            // comboBox1
+            // cbTalentTemplates
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(105, 6);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(164, 21);
-            this.comboBox1.TabIndex = 0;
+            this.cbTalentTemplates.FormattingEnabled = true;
+            this.cbTalentTemplates.Location = new System.Drawing.Point(105, 6);
+            this.cbTalentTemplates.Name = "cbTalentTemplates";
+            this.cbTalentTemplates.Size = new System.Drawing.Size(164, 21);
+            this.cbTalentTemplates.TabIndex = 0;
+            this.cbTalentTemplates.DropDown += new System.EventHandler(this.cbTalentTemplates_DropDown);
             // 
             // label1
             // 
@@ -70,16 +73,16 @@
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(12, 144);
+            this.listBox1.Location = new System.Drawing.Point(12, 140);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
-            this.listBox1.Size = new System.Drawing.Size(146, 225);
+            this.listBox1.Size = new System.Drawing.Size(146, 238);
             this.listBox1.TabIndex = 3;
             // 
             // labelAssignment
             // 
             this.labelAssignment.AutoSize = true;
-            this.labelAssignment.Location = new System.Drawing.Point(9, 118);
+            this.labelAssignment.Location = new System.Drawing.Point(9, 124);
             this.labelAssignment.Name = "labelAssignment";
             this.labelAssignment.Size = new System.Drawing.Size(146, 13);
             this.labelAssignment.TabIndex = 4;
@@ -87,7 +90,7 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(194, 386);
+            this.btnClose.Location = new System.Drawing.Point(193, 397);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 5;
@@ -97,7 +100,7 @@
             // btnSave
             // 
             this.btnSave.Enabled = false;
-            this.btnSave.Location = new System.Drawing.Point(105, 386);
+            this.btnSave.Location = new System.Drawing.Point(104, 397);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 6;
@@ -107,7 +110,7 @@
             // labelLevel
             // 
             this.labelLevel.AutoSize = true;
-            this.labelLevel.Location = new System.Drawing.Point(185, 146);
+            this.labelLevel.Location = new System.Drawing.Point(185, 142);
             this.labelLevel.Name = "labelLevel";
             this.labelLevel.Size = new System.Drawing.Size(36, 13);
             this.labelLevel.TabIndex = 7;
@@ -115,15 +118,30 @@
             // 
             // nudLevel
             // 
-            this.nudLevel.Location = new System.Drawing.Point(227, 144);
+            this.nudLevel.Location = new System.Drawing.Point(227, 140);
+            this.nudLevel.Maximum = new decimal(new int[] {
+            80,
+            0,
+            0,
+            0});
+            this.nudLevel.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             this.nudLevel.Name = "nudLevel";
             this.nudLevel.Size = new System.Drawing.Size(42, 20);
             this.nudLevel.TabIndex = 8;
+            this.nudLevel.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             // 
             // labelTab
             // 
             this.labelTab.AutoSize = true;
-            this.labelTab.Location = new System.Drawing.Point(185, 172);
+            this.labelTab.Location = new System.Drawing.Point(185, 168);
             this.labelTab.Name = "labelTab";
             this.labelTab.Size = new System.Drawing.Size(29, 13);
             this.labelTab.TabIndex = 9;
@@ -132,7 +150,7 @@
             // labelTalent
             // 
             this.labelTalent.AutoSize = true;
-            this.labelTalent.Location = new System.Drawing.Point(185, 198);
+            this.labelTalent.Location = new System.Drawing.Point(185, 194);
             this.labelTalent.Name = "labelTalent";
             this.labelTalent.Size = new System.Drawing.Size(40, 13);
             this.labelTalent.TabIndex = 10;
@@ -140,21 +158,36 @@
             // 
             // numTalent
             // 
-            this.numTalent.Location = new System.Drawing.Point(227, 196);
+            this.numTalent.Location = new System.Drawing.Point(227, 192);
             this.numTalent.Name = "numTalent";
             this.numTalent.Size = new System.Drawing.Size(42, 20);
             this.numTalent.TabIndex = 11;
             // 
             // numTab
             // 
-            this.numTab.Location = new System.Drawing.Point(227, 170);
+            this.numTab.Location = new System.Drawing.Point(227, 166);
+            this.numTab.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numTab.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numTab.Name = "numTab";
             this.numTab.Size = new System.Drawing.Size(42, 20);
             this.numTab.TabIndex = 12;
+            this.numTab.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // btnApply
             // 
-            this.btnApply.Location = new System.Drawing.Point(193, 222);
+            this.btnApply.Location = new System.Drawing.Point(193, 218);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 13;
@@ -163,12 +196,14 @@
             // 
             // btnImport
             // 
+            this.btnImport.Enabled = false;
             this.btnImport.Location = new System.Drawing.Point(206, 77);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(63, 23);
             this.btnImport.TabIndex = 14;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // labelURL
             // 
@@ -179,29 +214,51 @@
             this.labelURL.TabIndex = 15;
             this.labelURL.Text = "WoW Armory URL:";
             // 
-            // textBox1
+            // tbTalentURL
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 51);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(257, 20);
-            this.textBox1.TabIndex = 16;
+            this.tbTalentURL.Location = new System.Drawing.Point(12, 51);
+            this.tbTalentURL.Name = "tbTalentURL";
+            this.tbTalentURL.Size = new System.Drawing.Size(257, 20);
+            this.tbTalentURL.TabIndex = 16;
+            this.tbTalentURL.Text = "http://www.wowarmory.com/talent-calc.xml?cid=6&tal=200000000000000000000000000000" +
+                "0000000000000000000000000000000000000000000000000000000000";
+            this.tbTalentURL.TextChanged += new System.EventHandler(this.tbTalentURL_TextChanged);
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(192, 280);
+            this.btnRemove.Location = new System.Drawing.Point(192, 276);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(75, 23);
             this.btnRemove.TabIndex = 17;
             this.btnRemove.Text = "Remove";
             this.btnRemove.UseVisualStyleBackColor = true;
             // 
+            // cbClass
+            // 
+            this.cbClass.FormattingEnabled = true;
+            this.cbClass.Location = new System.Drawing.Point(50, 91);
+            this.cbClass.Name = "cbClass";
+            this.cbClass.Size = new System.Drawing.Size(108, 21);
+            this.cbClass.TabIndex = 18;
+            // 
+            // labelClass
+            // 
+            this.labelClass.AutoSize = true;
+            this.labelClass.Location = new System.Drawing.Point(9, 94);
+            this.labelClass.Name = "labelClass";
+            this.labelClass.Size = new System.Drawing.Size(35, 13);
+            this.labelClass.TabIndex = 19;
+            this.labelClass.Text = "Class:";
+            // 
             // TalentsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(280, 421);
+            this.ClientSize = new System.Drawing.Size(280, 432);
+            this.Controls.Add(this.labelClass);
+            this.Controls.Add(this.cbClass);
             this.Controls.Add(this.btnRemove);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.tbTalentURL);
             this.Controls.Add(this.labelURL);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnApply);
@@ -216,9 +273,10 @@
             this.Controls.Add(this.labelAssignment);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.cbTalentTemplates);
             this.Name = "TalentsForm";
             this.Text = "Talents";
+            this.Load += new System.EventHandler(this.TalentsForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTalent)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTab)).EndInit();
@@ -229,7 +287,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cbTalentTemplates;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label labelAssignment;
@@ -244,7 +302,9 @@
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Label labelURL;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tbTalentURL;
         private System.Windows.Forms.Button btnRemove;
+        private System.Windows.Forms.ComboBox cbClass;
+        private System.Windows.Forms.Label labelClass;
     }
 }

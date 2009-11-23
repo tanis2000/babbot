@@ -20,41 +20,52 @@ namespace BabBot.Forms
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            try
+            if (tbLuaCallback.Text.Equals(""))
             {
-                ProcessManager.Config.WowExePath = tbWowExePath.Text;
-                ProcessManager.Config.GuestUsername = tbGuestUsername.Text;
-                ProcessManager.Config.GuestPassword = tbGuestPassword.Text;
-                ProcessManager.Config.DebugMode = cbDebugMode.Checked;
-                ProcessManager.Config.LogPath = tbLogsPath.Text;
+                MessageBox.Show(this, "Lua Callback Address is empty");
+            } else {
+                try
+                {
+                    ProcessManager.Config.WowExePath = tbWowExePath.Text;
+                    ProcessManager.Config.GuestUsername = tbGuestUsername.Text;
+                    ProcessManager.Config.GuestPassword = tbGuestPassword.Text;
+                    ProcessManager.Config.DebugMode = cbDebugMode.Checked;
+                    ProcessManager.Config.LogPath = tbLogsPath.Text;
+                    ProcessManager.Config.LogOutput = chkLogOutput.Checked;
+                    ProcessManager.Config.NoSound = cbNoSound.Checked;
+                    ProcessManager.Config.Windowed = cbWindowed.Checked;
+                    ProcessManager.Config.Resize = cbResize.Checked;
 
-                ProcessManager.Config.NoSound = cbNoSound.Checked;
-                ProcessManager.Config.Windowed = cbWindowed.Checked;
-                ProcessManager.Config.Resize = cbResize.Checked;
+                    ProcessManager.Config.LuaCallback = tbLuaCallback.Text;
+                    ProcessManager.Config.WinTitle = tbWinTitle.Text;
 
-                ProcessManager.Config.LuaCallback = tbLuaCallback.Text;
-                ProcessManager.Config.WinTitle = tbWinTitle.Text;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 
         private void AppOptionsForm_Load(object sender, EventArgs e)
         {
-            tbWowExePath.Text = ProcessManager.Config.WowExePath;
-            tbGuestUsername.Text = ProcessManager.Config.GuestUsername;
-            tbGuestPassword.Text = ProcessManager.Config.GuestPassword;
-            cbDebugMode.Checked = ProcessManager.Config.DebugMode;
-            tbLogsPath.Text = ProcessManager.Config.LogPath;
+            Config config = ProcessManager.Config;
 
-            cbNoSound.Checked = ProcessManager.Config.NoSound;
-            cbWindowed.Checked = ProcessManager.Config.Windowed;
-            cbResize.Checked = ProcessManager.Config.Resize;
+            tbWowExePath.Text = config.WowExePath;
+            tbGuestUsername.Text = config.GuestUsername;
+            tbGuestPassword.Text = config.GuestPassword;
+            cbDebugMode.Checked = config.DebugMode;
+            tbLogsPath.Text = config.LogPath;
+            chkLogOutput.Checked = config.LogOutput;
 
-            tbLuaCallback.Text = ProcessManager.Config.LuaCallback;
-            tbWinTitle.Text = ProcessManager.Config.WinTitle;
+            cbNoSound.Checked = config.NoSound;
+            cbWindowed.Checked = config.Windowed;
+            cbResize.Checked = config.Resize;
+
+            tbLuaCallback.Text = config.LuaCallback;
+            tbWinTitle.Text = config.WinTitle;
         }
 
         private void btnBrowseWowExec_Click(object sender, EventArgs e)

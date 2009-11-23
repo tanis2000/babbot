@@ -52,7 +52,7 @@
             this.label85 = new System.Windows.Forms.Label();
             this.tbLogsPath = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.ChkBoxLogOutput = new System.Windows.Forms.CheckBox();
+            this.chkLogOutput = new System.Windows.Forms.CheckBox();
             this.cbDebugMode = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -62,7 +62,6 @@
             // btnOk
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOk.Location = new System.Drawing.Point(342, 279);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
@@ -283,7 +282,7 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.ChkBoxLogOutput);
+            this.groupBox3.Controls.Add(this.chkLogOutput);
             this.groupBox3.Controls.Add(this.label85);
             this.groupBox3.Controls.Add(this.tbLogsPath);
             this.groupBox3.Controls.Add(this.btnBrowseLogPath);
@@ -294,15 +293,15 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Log Options";
             // 
-            // ChkBoxLogOutput
+            // chkLogOutput
             // 
-            this.ChkBoxLogOutput.AutoSize = true;
-            this.ChkBoxLogOutput.Location = new System.Drawing.Point(8, 76);
-            this.ChkBoxLogOutput.Name = "ChkBoxLogOutput";
-            this.ChkBoxLogOutput.Size = new System.Drawing.Size(79, 17);
-            this.ChkBoxLogOutput.TabIndex = 269;
-            this.ChkBoxLogOutput.Text = "Log Output";
-            this.ChkBoxLogOutput.UseVisualStyleBackColor = true;
+            this.chkLogOutput.AutoSize = true;
+            this.chkLogOutput.Location = new System.Drawing.Point(8, 76);
+            this.chkLogOutput.Name = "chkLogOutput";
+            this.chkLogOutput.Size = new System.Drawing.Size(81, 17);
+            this.chkLogOutput.TabIndex = 269;
+            this.chkLogOutput.Text = "Display Log";
+            this.chkLogOutput.UseVisualStyleBackColor = true;
             // 
             // cbDebugMode
             // 
@@ -367,7 +366,7 @@
         private System.Windows.Forms.CheckBox cbNoSound;
         private System.Windows.Forms.CheckBox cbWindowed;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.CheckBox ChkBoxLogOutput;
+        private System.Windows.Forms.CheckBox chkLogOutput;
         private System.Windows.Forms.CheckBox cbDebugMode;
     }
 }

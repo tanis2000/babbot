@@ -1,0 +1,212 @@
+<wow_data>
+  <version num="3.2.2.10505">
+    <lua>
+      <function name="SetGlueState">
+        <parameters>
+          1 - realm
+          2 - location (US, EU)
+          3 - realm type (NORMAL_PVE or others
+          3 - Sleeping time if some process pending
+        </parameters>
+        <return>
+          1 - Current Glue Screen
+          2 - Pending Glue Screen
+          3 - Current Glue Dialog
+          4 - Text for Glue Dialog (if any)
+          5 - Glue Dialog Parameters (depends of dialog type)
+          6 - Is Connected to server
+        </return>
+        <text>
+          <![CDATA[(function()
+    local d1, d2, d3
+    local found = false
+
+    if (GlueDialog:IsShown()) then
+        d1 = GlueDialog.which
+        d2 = GlueDialogText:GetText()
+        if (GlueDialogHTML:IsShown()) then
+            d3 = 'html'
+        end
+    else
+        -- TOS/EULA
+        if (TOSFrame:IsShown()) then
+            d1 = string.lower(TOSFrame.noticeType)
+            local scrollbar = _G[TOSFrame.noticeType .. 'ScrollFrameScrollBar'];
+            if (scrollbar:IsShown()) then
+                local min, max = scrollbar:GetMinMaxValues()
+                scrollbar:SetValue(max)
+            end
+        else
+            -- Realm Selection
+            if (RealmList:IsShown()) then
+                d1 = 'realmselect'
+                d3 = 'not_found'
+                for i=1, MAX_REALMS_DISPLAYED, 1 do
+                    realmIndex = RealmList.offset + i
+                    name, numCharacters, invalidRealm, realmDown = GetRealmInfo(1, realmIndex);
+                
+                    if (name == '{0}') then
+                        if (realmDown) then
+                            d3 = 'down'
+                        else 
+                            if (RealmList.currentRealm ~= realmIndex) then
+                                RealmList.refreshTime = {3}
+
+                                prealm = _G['RealmListRealmButton'..RealmList.currentRealm]
+                                prealm:UnlockHighlight();
+
+                                realm = _G['RealmListRealmButton'..realmIndex]
+                                RealmList.currentRealm = realm:GetID()
+		                        RealmList.selectedName = realm.name
+
+                                realm:LockHighlight()
+						        RealmListHighlight:SetPoint('TOPLEFT', realm, 'TOPLEFT', 0, 0)
+                                RealmListHighlight:Show()
+                            end
+                        
+                            d3 = 'ok'
+                        end
+
+                        break;
+                    end
+                end
+            else
+                -- Realm Wizard
+                if (RealmWizard:IsShown()) then
+                    found = false
+                    for i = 1, 8 do
+                        chkLocationBox = _G['RealmWizardLocationButton' .. i]
+                        chkLocationLabel = _G['RealmWizardLocationButton' .. i .. 'Text']
+                        chkLocationText = chkLocationLabel:GetText()
+                        if (chkLocationText == '{1}') then
+                            chkLocationBox:SetChecked(1)
+                            RealmWizardLocationButton_OnClick(chkLocationBox.categoryIndex)
+            
+                            found = true
+                        end
+                    end
+
+                    if (found) then
+                        found = false
+                            
+                        for i = 1, 4 do
+                            checkBox = _G['RealmWizardGameTypeButton'..i]
+                            checkLabel = _G['RealmWizardGameTypeButton' .. i .. 'Text']
+                            checkText = checkLabel:GetText()
+                            if (checkText ~= {2}) then
+                                checkBox:SetChecked(0);
+                            else
+                                checkBox:SetChecked(1);
+                                RealmWizardGametypeLabel:SetText(checkText);
+                                d3 = 'ok'
+                                found = true
+                                    
+                                break
+                            end
+                        end
+
+                        if (not found) then
+                            d3 = 'type_not_found'
+                        end
+                    else
+                        d3 = 'location_not_found'
+                    end
+                else
+                    -- Patch download
+                    if (PatchDownloadUI:IsShown()) then
+                        d3 = PatchProgressText:GetText()
+                    end
+                end
+            end
+        end
+    end
+
+    return CURRENT_GLUE_SCREEN, CURRENT_GLUE_PENDING, d1, d2, d3, IsConnectedToServer()
+end)()]]>
+        </text>
+      </function>
+      <function name="SelectCharacter">
+        <parameters>
+          1 - Character Name
+        </parameters>
+        <return>
+          1 - Character ID in list or null if not found
+        </return>
+        <text>
+          <![CDATA[(function()
+  local found = nill
+  local numChars = GetNumCharacters();
+  for i=1, numChars, 1 do
+    local name = GetCharacterInfo(i);
+    if (name == '{0}') then
+      found = i
+      break
+    end
+  end
+  
+  if (found) then
+    CharacterSelect_SelectCharacter(found)
+  end
+  return found
+end)()]]>
+        </text>
+      </function>
+      <function name="SendLogin">
+        <parameters>
+          1 - realm
+          2 - user
+          3 - password
+        </parameters>
+        <return />
+        <text>
+          <![CDATA[(function()
+  local realm = AccountLoginRealmName:GetText(serverName);
+  if (realm ~= '{0}') then
+    AccountLoginRealmName:SetText('{0}')
+  end
+  
+  AccountLoginAccountEdit:SetText('{1}')
+  AccountLoginPasswordEdit:SetText('{2}')
+  DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText())
+end)()]]></text>
+      </function>
+      <function name="GetCurrentMapContinentId">
+        <parameters />
+        <return>
+          1 - Continent ID
+        </return>
+        <text>
+          <![CDATA[(function()
+	SetMapToCurrentZone()
+	local continent = GetCurrentMapContinent()
+	return continent
+end)()]]></text>
+      </function>
+      <!-- Template for new function 
+      <function name="">
+        <parameters>
+        </parameters>
+        <return>
+        </return>
+        <text><![CDATA[...]]></text>
+      </function>
+      -->
+    </lua>
+    <!--
+    <talents>
+      <classes>
+        <class id="1" name="Warrior" />
+        <class id="2" name="Palladin" />
+        <class id="3" name="Hunter" />
+        <class id="4" name="Rogue" />
+        <class id="5" name="Priest" />
+        <class id="6" name="Death Knight" />
+        <class id="7" name="Shaman" />
+        <class id="8" name="Mage" />
+        <class id="9" name="Warlock" />
+        <class id="11" name="Druid" />
+      </classes>
+    </talents>
+    -->
+  </version>
+</wow_data>

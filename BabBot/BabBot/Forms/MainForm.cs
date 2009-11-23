@@ -48,10 +48,13 @@ namespace BabBot.Forms
             Process.EnterDebugMode();
 
             // Load the configuration file
-            // NOTE: tanis - temporarily disabled as it eats way too much memory as it is now
-            //Output.OutputEvent += LogOutput;
+            // Configuration must be loaded first of all. 
+            ProcessManager.FirstTimeRun += OnFirstTimeRun;
+            ProcessManager.LoadConfig();
+
+            // Log Output controlled by Config.LogOutput parameter
+            Output.OutputEvent += LogOutput;
             Output.Instance.Log("char", "Initializing..");
-            
 
             // Custom initialization of some components
             Initialize();
@@ -64,17 +67,12 @@ namespace BabBot.Forms
             ProcessManager.WoWProcessFailed += wow_ProcessFailed;
             ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
             ProcessManager.WoWInGame += wow_InGame;
-            ProcessManager.FirstTimeRun += OnFirstTimeRun;
+            
 
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
             ProcessManager.UpdateStatus += UpdateStatus;
-
-            // Configuration must be loaded first of all. 
-            // We need it even for logging (the log path is in there)
-            ProcessManager.LoadConfig();
-
         }
 
         #region Exception Handler
@@ -732,6 +730,8 @@ namespace BabBot.Forms
 
         internal void LogOutput(string facility, string time, string message, Color color)
         {
+            if (!ProcessManager.Config.LogOutput) return;
+
             if (txtConsole.InvokeRequired)
             {
                 Output.OutputEventHandler handler = LogOutput;

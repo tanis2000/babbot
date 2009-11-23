@@ -1,6 +1,4 @@
-<talents>
-  <description>BeastMaster build</description>
-  <template></template>
+<talents description="BeastMaster build" template="" url="">
   <!--
   <levels>
     <level num="" talent_tab="" talent_id="">

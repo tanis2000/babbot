@@ -29,6 +29,7 @@ using Pather.Graph;
 using System.Linq;
 using System.Threading;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace BabBot.Manager
 {
@@ -120,12 +121,16 @@ namespace BabBot.Manager
 
         #endregion
 
+        #region Public Properties
+
         private static readonly BlackMagic wowProcess;
         public static BotManager BotManager;
         public static Caronte.Caronte Caronte;
         public static CommandManager CommandManager;
         public static InjectionManager Injector;
         private static Config config;
+        private static WoWData wdata;
+        private static WoWVersion wversion;
         public static ObjectManager ObjectManager;
         public static WowPlayer Player;
         private static Process process;
@@ -136,6 +141,11 @@ namespace BabBot.Manager
         private static bool arun = false;
 
         private static string ConfigFileName = "config.xml";
+
+        public static WoWVersion CurVersion
+        {
+            get { return wversion; }
+        }
 
         public enum ProcessStatuses : byte
         {
@@ -212,6 +222,8 @@ namespace BabBot.Manager
 
             }
 
+            // After load config completed load WoW data 
+            LoadWowData();
         }
 
         /// <summary>
@@ -245,11 +257,36 @@ namespace BabBot.Manager
             set { config = value; }
         }
 
+        #endregion
+
         #region Private Methods
+
+        private static void LoadWowData()
+        {
+            XmlSerializer s = new XmlSerializer(typeof(WoWData));
+
+            /// Test
+            /*
+            WoWData wd = new WoWData(new WoWVersion[] {
+                new WoWVersion("11", new LuaProc[] {
+                    new LuaProc(new LuaFunction("test", "xxx"))})
+            });
+            
+
+            TextWriter w = new StreamWriter("WoWData1.xml");
+            s.Serialize(w, wd);
+            w.Close();
+            */
+            /// Test
+
+            TextReader r = new StreamReader("WoWData.xml");
+            wdata = (WoWData)s.Deserialize(r);
+            r.Close();
+        }
 
         private static void afterProcessStart()
         {
-            Output.Instance.Debug("char", "Executing AfterStart ...");
+            Debug("char", "Executing AfterStart ...");
 
             if (WoWProcessStarted != null)
             {
@@ -316,7 +353,7 @@ namespace BabBot.Manager
                     Injector.Lua_UnRegisterInputHandler();
                 }
 
-                Output.Instance.Debug("char", "AfterStart completed.");
+                Debug("char", "AfterStart completed.");
             }
             catch (Exception e)
             {
@@ -334,12 +371,13 @@ namespace BabBot.Manager
             _gstatus = GameStatuses.INIT;
 
             // Blah blah blah after
-            Output.Instance.Log("char", "WoW termination detected");
-            Output.Instance.Debug("char", "Executing After WoW termination ...");
+            Log("char", "WoW termination detected");
+            Debug("char", "Executing After WoW termination ...");
 
             // Cleaning
             WowHWND = 0;
             Injector.IsLuaRegistered = false;
+            Injector.ClearLuaInjection();
             wowProcess.CloseProcess();
 
             // TODO Check for crush
@@ -349,10 +387,22 @@ namespace BabBot.Manager
                 WoWProcessEnded(((Process) sender).Id);
             }
 
-            Output.Instance.Debug("char", "WoW termination completed");
+            Debug("char", "WoW termination completed");
+        }
+
+        private static void Log(string facility, string msg)
+        {
+            Output.Instance.Log(facility, msg);
+        }
+
+        private static void Debug(string facility, string msg)
+        {
+            Output.Instance.Debug(facility, msg);
         }
 
         #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Start Bot Thread
@@ -386,7 +436,24 @@ namespace BabBot.Manager
 
                 if (!string.IsNullOrEmpty(wowPath))
                 {
-                    Output.Instance.Log("char", "Starting WoW ...");
+                    Log("char", "Checking WoW version ...");
+                    // Get WoW.exe version and convert to form x.x.x.x
+                    string version = 
+                        FileVersionInfo.GetVersionInfo(wowPath).FileVersion.
+                            Replace(",", ".").Replace(" ", ""); ;
+
+                    wversion = wdata.FindVersion(version);
+                    if (wversion == null)
+                    {
+                        Log("char", "Unable find data in a file 'WoWData.xml'" + 
+                            " for WoW version " + version);
+                        return;
+                    } else
+                        Log("char", "Successfully located data in WoWData.xml for version " + version);
+
+                    Injector.InitLuaCalls(wversion);
+
+                    Log("char", "Starting WoW ...");
 
                     // Guest account might not be enabled
                     try
@@ -429,11 +496,11 @@ namespace BabBot.Manager
                     if (process != null)
                     {
                         afterProcessStart();
-                        Output.Instance.Log("char", "WoW started.");
+                        Log("char", "WoW started.");
                     }
                     else
                     {
-                        Output.Instance.Log("char", "Failed start WoW.");
+                        Log("char", "Failed start WoW.");
                     }
                 }
                 else
@@ -520,7 +587,7 @@ namespace BabBot.Manager
             }
             catch(Exception ex)
             {
-                Output.Instance.Debug("char", "CheckInGame() - caugth exception: " + ex.Message);
+                Debug("char", "CheckInGame() - caugth exception: " + ex.Message);
 
                 if (_gstatus == GameStatuses.IN_WORLD)
                     _gstatus = GameStatuses.DISCONNECTED;
@@ -545,21 +612,21 @@ namespace BabBot.Manager
 
                 if (TLS == uint.MaxValue)
                 {
-                    Output.Instance.Debug("Looking for the TLS returned an invalid value");
+                    Debug("char", "Looking for the TLS returned an invalid value");
                     return false;
                 }
 
                 if (UpdateStatus != null)
                 {
                     UpdateStatus("TLS found");
-                    Output.Instance.Debug("TLS found");
+                    Debug("char", "TLS found");
                 }
 
                 return true;
 
             } catch (Exception ex)
             {
-                Output.Instance.Debug("Cannot find the TLS");
+                Debug("char", "Cannot find the TLS");
                 return false;
             }
         }
@@ -572,29 +639,29 @@ namespace BabBot.Manager
                 Globals.ClientConnection = wowProcess.ReadUInt(Globals.ClientConnectionPointer);
                 if (Globals.ClientConnection == 0)
                 {
-                    Output.Instance.Debug("ClientConnection not yet available");
+                    Debug("char", "ClientConnection not yet available");
                     return false;
                 }
                 Globals.ClientConnectionOffset = wowProcess.ReadUInt(TLS + 0x1C);
                 if (Globals.ClientConnectionOffset == 0)
                 {
-                    Output.Instance.Debug("ClientConnectionOffset not yet available");
+                    Debug("char", "ClientConnectionOffset not yet available");
                     return false;
                 }
                 Globals.CurMgr = wowProcess.ReadUInt(Globals.ClientConnection + Globals.ClientConnectionOffset);
                 if (Globals.CurMgr == 0)
                 {
-                    Output.Instance.Debug("ConnectionManager not yet available");
+                    Debug("char", "ConnectionManager not yet available");
                     return false;
                 }
                 //ObjectManager = new ObjectManager();
                 //Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
-                Output.Instance.Debug("ConnectionManager found");
+                Debug("char", "Found ConnectionManager");
                 return true;
             }
             catch(Exception e)
             {
-                Output.Instance.Debug("ConnectionManager not found");
+                Debug("char", "ConnectionManager not found");
                 return false;
             }
         }
@@ -649,7 +716,7 @@ namespace BabBot.Manager
             string continent = Player.GetCurrentMapContinent();
             
             Caronte.Init(continent);
-            Output.Instance.Log("char", string.Format(
+            Log("char", string.Format(
                 "Caronte initialized with continent '{0}'", continent));
 
             // Caronte.Init("Azeroth"); 
@@ -714,5 +781,17 @@ namespace BabBot.Manager
         {
             _gstatus = GameStatuses.INIT;
         }
-     }
+
+        public static Talents ReadTalents(string fname)
+        {
+            XmlSerializer s = new XmlSerializer(typeof(Talents));
+            TextReader r = new StreamReader(fname);
+            Talents talents = (Talents)s.Deserialize(r);
+            r.Close();
+
+            return talents;
+        }
+
+        #endregion
+    }
 }

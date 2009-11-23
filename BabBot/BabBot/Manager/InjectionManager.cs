@@ -58,6 +58,11 @@ namespace BabBot.Manager
         [DllImport("kernel32", CharSet = CharSet.Ansi)]
         private static extern IntPtr GetProcAddress(IntPtr hLibModule, string procName);
 
+        private static string fSetGlueState;
+        private static string fSendLogin;
+        private static string fSelectCharacter;
+        private static string fGetCurrentMapContinentId;
+
         #endregion
 
         #region Common Assembly
@@ -631,6 +636,11 @@ end)()",
             }
         }
 
+        public void ClearLuaInjection()
+        {
+            RemoteObject = null;
+        }
+
         public void SetPatchOffset(uint poffset)
         {
             if (RemoteObject != null)
@@ -749,6 +759,39 @@ end)()",
 
         #endregion
 
+        #region Lua Calls
+
+        public void InitLuaCalls(WoWVersion wversion)
+        {
+            // Get lua functions
+            fSetGlueState = wversion.FindLuaFunction("SetGlueState");
+            fSelectCharacter = wversion.FindLuaFunction("SelectCharacter");
+            fSendLogin = wversion.FindLuaFunction("SendLogin");
+            fGetCurrentMapContinentId = wversion.FindLuaFunction("GetCurrentMapContinentId");
+        }
+
+        public void SetGlueState(string location, string type, string realm, int sleep)
+        {
+            Lua_DoStringEx(string.Format(fSetGlueState,
+                                realm, location, type, sleep));
+        }
+
+        public void SelectCharacter(string name)
+        {
+            Lua_DoStringEx(string.Format(fSelectCharacter, name));
+        }
+
+        public void SendLogin(string realm, string user, string pwd)
+        {
+            Lua_DoStringEx(string.Format(fSendLogin, realm, user, pwd));
+        }
+
+        public void GetCurrentMapContinentId()
+        {
+            Lua_DoStringEx(fGetCurrentMapContinentId);
+        }
+
+        #endregion
         #region FindPattern
 
         /// <summary>

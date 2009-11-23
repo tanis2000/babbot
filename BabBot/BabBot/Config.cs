@@ -24,7 +24,7 @@ namespace BabBot
     [Serializable]
     public class Config
     {
-        public bool DebugMode;
+        public bool DebugMode = false;
         public string GuestPassword = "";
         public string GuestUsername = "Guest";
         public string InteractKey = "{SHIFTD}ì{SHIFTU}";
@@ -38,10 +38,11 @@ namespace BabBot
         public string Character = "";
         public WinPos WowPos;
         public WinPos BotPos;
+        public bool LogOutput = true;
 
         // Bot Customization
         public string LuaCallback;
-        public string WinTitle;
+        public string WinTitle = "";
     }
 
     [Serializable]

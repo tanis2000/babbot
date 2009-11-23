@@ -7,55 +7,87 @@ using System.Xml.Serialization;
 namespace BabBot.Wow
 {
     // Talents list which will be serialized
-    [XmlRoot("shoppingList")]
-    class Talents
+    [XmlRoot("talents")]
+    public class Talents
     {
         // List with talent build
         private ArrayList _list;
 
         public Talents()
         {
+            Init();
+        }
+
+        public Talents(string pattern, string url, string descr, Level[] levels)
+        {
+            Init();
+
+            Pattern = pattern;
+            URL = url;
+            Description = descr;
+            LevelList = levels;
+        }
+
+        private void Init()
+        {
             _list = new ArrayList();
         }
+
+        [XmlAttribute("pattern")]
+        public string Pattern = null;
+
+        [XmlAttribute("url")]
+        public string URL = null;
+
+        [XmlAttribute("description")]
+        public string Description;
         
-        [XmlElement("item")]
-        public Talent[] TalentList {
-        get {
-            Talent[] tlist = new Talent[ _list.Count ];
-            _list.CopyTo( tlist );
-            return tlist;
-        }
-        set {
-            if( value == null ) return;
-            Talent[] tlist = (Talent[])value;
-            _list.Clear();
-            foreach( Talent t in tlist )
-                _list.Add( t );
+        [XmlElement("levels")]
+        public Level[] LevelList
+        {
+            get {
+                Level[] tlist = new Level[_list.Count];
+                _list.CopyTo( tlist );
+                return tlist;
+            }
+            set {
+                if( value == null ) return;
+                Level[] tlist = (Level[])value;
+                _list.Clear();
+                foreach (Level t in tlist)
+                    _list.Add( t );
             }
         }
         
         // [XmlIgnore]
-        
-        public int AddTalent( Talent t ) {
+
+        public int AddTalent(Level t)
+        {
             return _list.Add( t );
         }
+
+        public override string ToString()
+        {
+            return Description;
+        }
+        
     }
     
     // Items in the shopping list
-    public class Talent
+    public class Level
     {
-        [XmlAttribute("level")] public byte Level;
+        [XmlAttribute("level")] public byte Num;
         [XmlAttribute("tab")] public byte TabId;
         [XmlAttribute("id")] public int TalentId;
 
-        public Talent() {}
-
-        public Talent(byte level, byte tab, int id)
-        {
-        Level = level;
-        TabId = tab;
-        TalentId = id;
+        public Level() {}
+        
+        public Level(byte num, byte tab, int tid) {
+            Num = num;
+            TabId = tab;
+            TalentId = tid;
         }
+
     }
 /*
 Talents tlist = new Talents();

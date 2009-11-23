@@ -1390,11 +1390,7 @@ end)()");
         {
             try
             {
-                ProcessManager.Injector.Lua_DoStringEx(@"(function()
-	SetMapToCurrentZone()
-	local continent = GetCurrentMapContinent()
-	return continent
-end)()");
+                ProcessManager.Injector.GetCurrentMapContinentId();
                 string sId = ProcessManager.Injector.Lua_GetLocalizedText(0);
                 return Convert.ToInt32(sId);
             }
