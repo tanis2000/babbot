@@ -128,6 +128,8 @@ namespace BabBot.Scripts.Common
             if (Math.Abs(distance - _LastDistance) < 1.0)
             {
                 TravelPath = null;
+                // TODO: Fix the stuck detection code
+                //Entity.Unstuck();
             }
             /// We face our destination waypoint while we are already moving, so that it looks 
             /// more human-like

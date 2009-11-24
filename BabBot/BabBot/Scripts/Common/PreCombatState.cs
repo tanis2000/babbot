@@ -27,6 +27,8 @@ namespace BabBot.Scripts.Common
     {
         protected static WowUnit _MobToAttack;
         protected static DateTime _LastCTMCheck = DateTime.Now;
+        /// <summary> Time elapsed trying to attack the same mob (used to blacklist a mob that is evading/inside solids) </summary>
+        protected static DateTime _AttackTimeStart = DateTime.Now;
 
         public bool HasMobToAttack()
         {
@@ -60,6 +62,7 @@ namespace BabBot.Scripts.Common
                     /// (If everything is correct at this point the StateManager will take care
                     /// of switching to the OnCombat state)
                     _MobToAttack = Entity.CurTarget;
+                    _AttackTimeStart = DateTime.Now; // Reset the time check for blacklisting mobs
                 }
             }
             else
@@ -80,7 +83,9 @@ namespace BabBot.Scripts.Common
                             Output.Instance.Script(
                                 string.Format("The mob we're going to attack is a {0} with GUID {1:X}",
                                               _MobToAttack.Name, _MobToAttack.Guid), this);
-                        } else
+                            _AttackTimeStart = DateTime.Now; // Reset the time check for blacklisting mobs
+                        }
+                        else
                         {
                             Output.Instance.Script("Couldn't find the closest enemy in sight", this);
                         }
@@ -93,13 +98,35 @@ namespace BabBot.Scripts.Common
                     Output.Instance.Script("We have a mob, checking if it's dead", this);
                     if (!_MobToAttack.IsDead)
                     {
+                        TimeSpan attackTimeDiff = start - _AttackTimeStart;
+                        if (attackTimeDiff.TotalMilliseconds > 10000)
+                        {
+                            Output.Instance.Script("We spent more than 10 seconds trying to attack the same mob without reaching it. Moving on and blacklisting it.", this);
+                            Entity.MobBlackList.Add(_MobToAttack);
+                            _MobToAttack = null;
+                            return;
+                        }
+                            
+                        Output.Instance.Script("Checking distance", this);
+                        float distance = MathFuncs.GetDistance(_MobToAttack.Location, Entity.Location, false);
+                        if (distance > 10.0f)
+                        {
+                            Output.Instance.Script("We're too far to CTM it, moving closer first", this);
+                            var mtsTarget = new MoveToState(_MobToAttack.Location, 3.0f);
+
+                            //request that we move to this location
+                            CallChangeStateEvent(Entity, mtsTarget, true, false);
+
+                            return;
+                        }
+
                         Output.Instance.Script("Attacking it with CTM", this);
                         TimeSpan timeDiff = start - _LastCTMCheck;
                         if (timeDiff.TotalMilliseconds > 2000) 
                         {
                             Entity.AttackMobWithCTM(_MobToAttack);
+                            _LastCTMCheck = DateTime.Now;
                         }
-                        _LastCTMCheck = DateTime.Now;
                     } else
                     {
                         Output.Instance.Script("The mob we were looking for is dead :(", this);

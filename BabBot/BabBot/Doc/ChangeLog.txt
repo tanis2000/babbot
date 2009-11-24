@@ -1,4 +1,14 @@
-Current (1.0.0.140)
+Current (1.0.0.307)
+===================
+We have made way too many changes since the last release to list them all here.
+The main new features are:
+- Updated for 3.2.2a
+- Finite State Machine engine that manages all of the scripts functionalities
+- Complete in-game LUA support
+- Example script for end users to tweak and start working from
+
+
+1.0.0.140
 ===================
 - Fixed bug #3: Player information now correctly updates in the main form.
 - Basic bindings (actionbar/slot stuff only for now) and test combat code for

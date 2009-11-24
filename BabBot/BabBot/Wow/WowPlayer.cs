@@ -42,7 +42,7 @@ namespace BabBot.Wow
         private WowUnit LastTargetedMob;
         private bool StopMovement;
         public int TravelTime;
-        //private bool isMoving;
+        public readonly List<WowUnit> MobBlackList;
 
         /// <summary>
         /// Constructor
@@ -59,6 +59,7 @@ namespace BabBot.Wow
             TravelTime = 0;
             LootableList = new List<WowUnit>();
             //isMoving = false;
+            MobBlackList = new List<WowUnit>();
 
             //create state machine for player
             StateMachine = new StateMachine<WowPlayer>(this);
@@ -533,7 +534,7 @@ end)()");
             {
                 foreach (WowUnit obj in l)
                 {
-                    if ((obj.Name == enemy.Name) && (!obj.IsDead))
+                    if ((obj.Name == enemy.Name) && (!obj.IsDead) && !IsInMobBlackList(obj))
                     {
                         if (closest == null)
                         {
@@ -568,6 +569,18 @@ end)()");
             return false;
         }
 
+        public bool IsInMobBlackList(WowUnit mob)
+        {
+            foreach (var ent in MobBlackList)
+            {
+                if (ent.Guid == mob.Guid)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void AttackClosestEnemyWithCTM()
         {
             List<WowUnit> l = GetNearMobs();
@@ -577,7 +590,7 @@ end)()");
             {
                 foreach (WowUnit obj in l)
                 {
-                    if ((obj.Name == enemy.Name) && (!obj.IsDead))
+                    if ((obj.Name == enemy.Name) && (!obj.IsDead) && !IsInMobBlackList(obj))
                     {
                         if (closest == null)
                         {
@@ -622,7 +635,7 @@ end)()");
             {
                 foreach (WowUnit obj in l)
                 {
-                    if ((obj.Name == enemy.Name) && (!obj.IsDead))
+                    if ((obj.Name == enemy.Name) && (!obj.IsDead) && !IsInMobBlackList(obj))
                     {
                         if (closest == null)
                         {
