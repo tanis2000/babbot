@@ -1,7 +1,5 @@
-<talents description="BeastMaster build" template="" url="">
-  <!--
-  <levels>
-    <level num="" talent_tab="" talent_id="">
-  </levels>
-  -->
+<talents description="BeastMaster build" template="" url="" class="hunter">
+  <level num="10" tab_id="1" talent_id="1" />
+  <level num="11" tab_id="1" talent_id="2" />
+  <level num="12" tab_id="1" talent_id="3" />
 </talents>
