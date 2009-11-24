@@ -787,6 +787,7 @@ namespace BabBot.Manager
             XmlSerializer s = new XmlSerializer(typeof(Talents));
             TextReader r = new StreamReader(fname);
             Talents talents = (Talents)s.Deserialize(r);
+            talents.FileName = System.IO.Path.GetFileName(fname);
             r.Close();
 
             return talents;

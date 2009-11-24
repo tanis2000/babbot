@@ -844,6 +844,8 @@ namespace BabBot.Forms
                 btnRun_Click(sender, e);
             }
 
+            /// Test
+            /// talentTemplatesToolStripMenuItem_Click(sender, e);
         }
 
         private void SetDebugBtns()
@@ -960,7 +962,7 @@ namespace BabBot.Forms
             if (TalentsForm == null)
                 TalentsForm = new TalentsForm();
 
-            TalentsForm.Show();
+            TalentsForm.ShowDialog();
         }
     }
 }

@@ -41,8 +41,14 @@ namespace BabBot.Wow
 
         [XmlAttribute("description")]
         public string Description;
-        
-        [XmlElement("levels")]
+
+        [XmlAttribute("class")]
+        public string Class;
+
+        [XmlIgnore]
+        public string FileName;
+
+        [XmlElement("level")]
         public Level[] LevelList
         {
             get {
@@ -58,17 +64,15 @@ namespace BabBot.Wow
                     _list.Add( t );
             }
         }
-        
-        // [XmlIgnore]
 
-        public int AddTalent(Level t)
+        public int AddLevel(Level t)
         {
             return _list.Add( t );
         }
 
         public override string ToString()
         {
-            return Description;
+            return FileName;
         }
         
     }
@@ -76,16 +80,26 @@ namespace BabBot.Wow
     // Items in the shopping list
     public class Level
     {
-        [XmlAttribute("level")] public byte Num;
-        [XmlAttribute("tab")] public byte TabId;
-        [XmlAttribute("id")] public int TalentId;
-
+        [XmlAttribute("num")] public byte Num;
+        [XmlAttribute("tab_id")] public byte TabId;
+        [XmlAttribute("talent_id")] public int TalentId;
+        
         public Level() {}
         
         public Level(byte num, byte tab, int tid) {
+            Update(num, tab, tid);
+        }
+
+        public void Update(byte num, byte tab, int tid) {
             Num = num;
             TabId = tab;
             TalentId = tid;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Level: {0} {1}/{2}",
+                                    Num, TabId, TalentId);
         }
 
     }

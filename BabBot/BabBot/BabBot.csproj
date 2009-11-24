@@ -305,6 +305,7 @@
     <Content Include="Doc\README.TXT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Lib\Profiles\Talents\hunter-bm.xml" />
     <Content Include="Lib\WoWData.xml" />
     <None Include="Lib\BlackMagic.dll" />
     <None Include="Lib\BlackMagic.XML" />

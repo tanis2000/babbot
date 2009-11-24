@@ -16,11 +16,18 @@ namespace BabBot.Forms
 {
     public partial class TalentsForm : Form
     {
+        // Template on URL for wow armory
         Regex trex = new Regex("^http://www.wowarmory.com/talent-calc.xml\\?cid=(\\d)\\&tal=(\\d+)$");
+        // Currently selected talents list
+        Talents CurTalents = null;
+        // Default directory with talents template
+        private string DefaultDir = "Profiles\\Talents";
+        private BindingManagerBase bc;
 
         public TalentsForm()
         {
             InitializeComponent();
+            btnApply.Tag = 1;
         }
 
         private string ReadURL(string url)
@@ -89,11 +96,11 @@ namespace BabBot.Forms
             // Scan Profiles/Talents for list
             try
             {
-                 dir = Directory.GetFiles("Profiles\\Talents", "*.xml");
+                dir = Directory.GetFiles(DefaultDir, "*.xml");
             }
-            catch (System.IO.DirectoryNotFoundException ex)
+            catch (System.IO.DirectoryNotFoundException)
             {
-                MessageBox.Show("Directory Profiles\\Talents not found");
+                MessageBox.Show("Directory '" + DefaultDir + "' not found");
                 return;
             }
             
@@ -109,6 +116,145 @@ namespace BabBot.Forms
                     // Continue 
                 }
             }
+        }
+
+        private void cbTalentTemplates_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CurTalents = (Talents)cbTalentTemplates.SelectedItem;
+
+            cbClass.Text = CurTalents.Class;
+            cbClass.Enabled = false;
+
+            tbDescription.Text = CurTalents.Description;
+
+            lbLevelList.Items.Clear();
+            lbLevelList.DataSource = CurTalents.LevelList;
+            bc = lbLevelList.BindingContext[CurTalents.LevelList];
+            // lbLevelList.Items.AddRange(CurTalents.LevelList);
+
+            lbLevelList.SelectedIndex = 0;
+            CheckSaveBtn();
+        }
+
+        private void CheckSaveBtn()
+        {
+            btnSave.Enabled = ((lbLevelList.Items.Count > 0) &&
+                                        !tbDescription.Text.Equals("") &&
+                                        !cbClass.Text.Equals("") &&
+                                        // Talent template not empty and has .xml extension
+                                        !cbTalentTemplates.Text.Equals("") &&
+                                        (cbTalentTemplates.Text.IndexOf(".xml") == 
+                                                    cbTalentTemplates.Text.Length - 4));
+        }
+
+        private void lbLevelList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Level l = (Level) lbLevelList.SelectedItem;
+
+            if (l == null)
+                SetBtnType(1);
+            else
+            {
+                try
+                {
+                    numLevel.Value = l.Num;
+                    numTab.Value = l.TabId;
+                    numTalent.Value = l.TalentId;
+
+                    SetBtnType(0);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+
+                    // Unselect everything
+                    lbLevelList.SelectedIndex = -1;
+                    btnApply.Enabled = false;
+                    btnRemove.Enabled = false;
+                }
+            }
+        }
+
+        private void numLevel_ValueChanged(object sender, EventArgs e)
+        {
+            // Check if item exists in list
+            int idx = (int) (numLevel.Value - numLevel.Minimum);
+            int d = lbLevelList.Items.Count - idx;
+            if (d > 0)
+                lbLevelList.SelectedIndex = idx;
+            else
+            {
+                lbLevelList.SelectedIndex = -1;
+                // Only allow add levels sequentially
+                if (d < 0)
+                    numLevel.Value += d;
+            }
+        }
+
+        private void SetBtnType(int type)
+        {
+            btnApply.Tag = type;
+            switch (type)
+            {
+                case 0: // Update
+                    btnApply.Text = "Update";
+                    btnApply.Enabled = true;
+                    btnRemove.Enabled = (lbLevelList.SelectedIndex == 
+                                                            (lbLevelList.Items.Count - 1));
+
+                    break;
+
+                case 1:
+                    btnApply.Text = "Add";
+                    btnApply.Enabled = true;
+                    btnRemove.Enabled = false;
+
+                    break;
+            }
+        }
+
+        private void btnApply_Click(object sender, EventArgs e)
+        {
+            Level l;
+
+            switch ((int)btnApply.Tag)
+            {
+                case 0:
+                    l = (Level) lbLevelList.SelectedItem;
+                    l.Update((byte)numLevel.Value, (byte)numTab.Value, (int) numTalent.Value);
+                    break;
+                case 1:
+                    l = new Level((byte)numLevel.Value, (byte)numTab.Value, (int)numTalent.Value);
+                    lbLevelList.Items.Add(l);
+                    lbLevelList.SelectedIndex = lbLevelList.Items.Count - 1;
+
+                    CheckSaveBtn();
+
+                    break;
+            }
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            // Only can remove last item
+            int idx = lbLevelList.Items.Count - 1;
+            lbLevelList.Items.RemoveAt(idx);
+            CheckSaveBtn();
+        }
+
+        private void tbDescription_TextChanged(object sender, EventArgs e)
+        {
+            CheckSaveBtn();
+        }
+
+        private void cbClass_TextChanged(object sender, EventArgs e)
+        {
+            CheckSaveBtn();
+        }
+
+        private void cbTalentTemplates_TextChanged(object sender, EventArgs e)
+        {
+            CheckSaveBtn();
         }
     }
 }
