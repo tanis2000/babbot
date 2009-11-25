@@ -18,40 +18,60 @@
 */
 using System;
 using System.Drawing;
+using System.Xml.Serialization;
 
 namespace BabBot
 {
-    [Serializable]
+    [XmlRoot("config")]
     public class Config
     {
+        [XmlAttribute("version")]
+        public int Version = 0;
+
+        [XmlAttribute("debug")]
         public bool DebugMode = false;
-        public string GuestPassword = "";
-        public string GuestUsername = "Guest";
-        public string InteractKey = "{SHIFTD}ì{SHIFTU}";
-        public string WowExePath = "";
-        public string LogPath = Environment.CurrentDirectory + @"\Log";
-        public bool AutoLogin = false;
+
+        // This parameter is hidden
+        [XmlAttribute("test")]
+        public int Test = 0;
+
+        // Not used
+        // public string InteractKey = "{SHIFTD}ì{SHIFTU}";
+        
+        
+        [XmlElement("account")]
         public LoginInfo Account = new LoginInfo();
-        public bool NoSound = false;
-        public bool Windowed = false;
-        public bool Resize = false;
         public string Character = "";
+
+        [XmlElement("wow_pos")]
         public WinPos WowPos;
+
+        [XmlElement("bot_pos")]
         public WinPos BotPos;
-        public bool LogOutput = true;
+
+        [XmlElement("wow_info")]
+        public WoWInfo WoWInfo = new WoWInfo();
+
+        [XmlElement("log_parameters")]
+        public LogParams LogParams = new LogParams();
 
         // Bot Customization
-        public string LuaCallback;
-        public string WinTitle = "";
+        [XmlElement("custom")]
+        public Custom CustomParams = new Custom();
     }
 
     [Serializable]
     public class LoginInfo
     {
+        [XmlAttribute("username")]
         public string LoginUsername = "";
+        [XmlAttribute("password")]
         public string LoginPassword = "";
+        [XmlAttribute("realm_name")]
         public string Realm = "";
+        [XmlAttribute("realm_location")]
         public string RealmLocation = "";
+        [XmlAttribute("game_type")]
         public string GameType = "";
 
         // Private fields not included into serializer
@@ -78,8 +98,40 @@ namespace BabBot
     [Serializable]
     public class WinPos
     {
+        [XmlIgnore]
         public Rectangle Pos;
+
+        [XmlAttribute("x")]
+        public int X
+        {
+            get { return Pos.X; }
+            set { Pos.X = value; }
+        }
+
+        [XmlAttribute("y")]
+        public int Y
+        {
+            get { return Pos.Y; }
+            set { Pos.Y = value; }
+        }
+
+        [XmlAttribute("h")]
+        public int Height
+        {
+            get { return Pos.Height; }
+            set { Pos.Height = value; }
+        }
+
+        [XmlAttribute("w")]
+        public int W
+        {
+            get { return Pos.Width; }
+            set { Pos.Width = value; }
+        }
+
+        [XmlAttribute("top_most")]
 		public bool TopMost = false;
+        [XmlAttribute("opacity")]
 		public double Opacity = 1.0;
 		
         public WinPos() { }
@@ -95,5 +147,53 @@ namespace BabBot
 			TopMost = top;
 			Opacity = opacity;
         }
+    }
+
+    [Serializable]
+    public class WoWInfo
+    {
+        // Start up info
+        [XmlAttribute("no_sound")]
+        public bool NoSound = false;
+        [XmlAttribute("window_mode")]
+        public bool Windowed = false;
+        [XmlAttribute("min_resize")]
+        public bool Resize = false;
+
+        [XmlAttribute("guest_username")]
+        public string GuestUsername = "Guest";
+        [XmlAttribute("guest_pwd")]
+        public string GuestPassword = "";
+        [XmlAttribute("exe_path")]
+        public string ExePath = "";
+        [XmlAttribute("version")]
+        public string Version;
+        [XmlAttribute("auto-login")]
+        public bool AutoLogin = false;
+
+        public WoWInfo() { }
+    }
+
+    [Serializable]
+    public class LogParams
+    {
+        [XmlAttribute("display_logs")]
+        public bool DisplayLogs = true;
+        [XmlAttribute("dir")]
+        public string Dir = "Log";
+
+        public LogParams() { }
+    }
+
+    [Serializable]
+    public class Custom
+    {
+        [XmlAttribute("lua_callback")]
+        public string LuaCallback;
+
+        [XmlAttribute("win_title")]
+        public string WinTitle = "";
+
+        public Custom() { }
     }
 }

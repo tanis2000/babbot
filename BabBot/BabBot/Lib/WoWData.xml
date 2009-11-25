@@ -182,6 +182,18 @@ end)()]]></text>
 	return continent
 end)()]]></text>
       </function>
+      <function name="LearnTalent">
+        <parameters>
+          1 - TabId
+          2 - TalentId
+        </parameters>
+        <return>
+        </return>
+        <text>
+          <![CDATA[(function()
+  LearnTalent( {0}, {1} );
+end)()]]></text>
+      </function>
       <!-- Template for new function 
       <function name="">
         <parameters>

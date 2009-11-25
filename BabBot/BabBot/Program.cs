@@ -57,10 +57,6 @@ namespace BabBot
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Create log directory if doesn't existst
-            if (!Directory.Exists(ProcessManager.Config.LogPath))
-                Directory.CreateDirectory(ProcessManager.Config.LogPath);
-
             // Check and parse command line parameters before start MainForm
             if (args.Length > 0)
             {
@@ -73,6 +69,9 @@ namespace BabBot
                     }
                 }
             }
+
+            // Load WoWData.xml
+            ProcessManager.LoadWowData();
 
             var mainForm = new MainForm();
             Application.ThreadException += mainForm.UnhandledThreadExceptionHandler;

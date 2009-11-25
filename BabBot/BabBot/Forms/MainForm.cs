@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BabBot.Forms.Radar;
+using System.Runtime.InteropServices;
 
 namespace BabBot.Forms
 {
@@ -37,9 +38,12 @@ namespace BabBot.Forms
     {
         private Hashtable LogFS = new Hashtable();
         private Radar.Radar Radar;
-        private Form AppOptionsForm;
-        private Form BotOptionsForm;
-        private Form TalentsForm;
+        private AppOptionsForm AppOptionsForm;
+        private OptionsForm BotOptionsForm;
+        private TalentsForm TalentsForm;
+
+        [DllImport("user32.dll", EntryPoint = "MessageBox")]
+        public static extern int MessageBoxEx(int hWnd, String text, String caption, uint type);
 
         public MainForm()
         {
@@ -50,6 +54,9 @@ namespace BabBot.Forms
             // Load the configuration file
             // Configuration must be loaded first of all. 
             ProcessManager.FirstTimeRun += OnFirstTimeRun;
+            ProcessManager.ConfigFileChanged += OnConfigFileChanged;
+            ProcessManager.WoWProcessFailed += wow_ProcessFailed;
+
             ProcessManager.LoadConfig();
 
             // Log Output controlled by Config.LogOutput parameter
@@ -64,7 +71,6 @@ namespace BabBot.Forms
             // ProcessManager events binding
             ProcessManager.WoWProcessStarted += wow_ProcessStarted;
             ProcessManager.WoWProcessEnded += wow_ProcessEnded;
-            ProcessManager.WoWProcessFailed += wow_ProcessFailed;
             ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
             ProcessManager.WoWInGame += wow_InGame;
             
@@ -106,6 +112,11 @@ namespace BabBot.Forms
             }
 
             base.WndProc(ref m);
+        }
+
+        public static void ShowTopMostMsg(IWin32Window owner, string msg, string caption)
+        {
+            MessageBoxEx((int) owner.Handle, msg, caption, 0x00040000 /* MB_TOPMOST */);
         }
 
         private void Initialize()
@@ -344,9 +355,14 @@ namespace BabBot.Forms
 
         private void OnFirstTimeRun()
         {
-            optionsToolStripMenuItem_Click(null, null);
+            showAppOptionsForm("First time run detected.\nConfigure application settings and save configuration");
         }
 
+        private void OnConfigFileChanged()
+        {
+            showAppOptionsForm("Configuration file changed.\nCheck and save new configuration");
+        }
+        
         private void UpdateStatus(string iStatus)
         {
             statusLabel.Text = iStatus;
@@ -525,31 +541,44 @@ namespace BabBot.Forms
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            showAppOptionsForm(null);
+        }
+
+        private void showAppOptionsForm(string msg)
+        {
             if (AppOptionsForm == null)
                 AppOptionsForm = new AppOptionsForm();
 
+            AppOptionsForm.Msg = msg;
+            AppOptionsForm.TopMost = this.TopMost;
             DialogResult res = AppOptionsForm.ShowDialog();
 
             if (res == DialogResult.OK)
             {
                 ProcessManager.SaveConfig();
-                Text = ProcessManager.Config.WinTitle;
+                Text = ProcessManager.Config.CustomParams.WinTitle;
                 ProcessManager.Injector.SetPatchOffset(
-                    Convert.ToUInt32(ProcessManager.Config.LuaCallback, 16));
+                    Convert.ToUInt32(ProcessManager.Config.CustomParams.LuaCallback, 16));
 
                 if (ProcessManager.Config.DebugMode)
                     ActivateDebugMode();
                 else
                     DeactivateDebugMode();
             }
+            else
+            {
+                if (msg != null)
+                    // Configuration wasn't saved
+                    Environment.Exit(3);
+            }
         }
-
 
         private void botOptionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (BotOptionsForm == null)
                 BotOptionsForm = new OptionsForm();
 
+            BotOptionsForm.TopMost = this.TopMost;
             DialogResult res = BotOptionsForm.ShowDialog();
 
             if (res == DialogResult.OK)
@@ -730,7 +759,7 @@ namespace BabBot.Forms
 
         internal void LogOutput(string facility, string time, string message, Color color)
         {
-            if (!ProcessManager.Config.LogOutput) return;
+            if (!ProcessManager.Config.LogParams.DisplayLogs) return;
 
             if (txtConsole.InvokeRequired)
             {
@@ -817,7 +846,7 @@ namespace BabBot.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            Text = ProcessManager.Config.WinTitle;
+            Text = ProcessManager.Config.CustomParams.WinTitle;
 
             if (ProcessManager.Config.BotPos != null)
             {
@@ -845,7 +874,8 @@ namespace BabBot.Forms
             }
 
             /// Test
-            /// talentTemplatesToolStripMenuItem_Click(sender, e);
+            if (ProcessManager.Config.Test == 1)
+                talentTemplatesToolStripMenuItem_Click(sender, e);
         }
 
         private void SetDebugBtns()

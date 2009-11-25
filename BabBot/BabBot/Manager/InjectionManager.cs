@@ -625,7 +625,8 @@ end)()",
                 //RemoteObject.Patch();
 
                 // Set our codecave offset
-                SetPatchOffset(Convert.ToUInt32(ProcessManager.Config.LuaCallback, 16));
+                SetPatchOffset(Convert.ToUInt32(
+                    ProcessManager.Config.CustomParams.LuaCallback, 16));
 
                 Output.Instance.Log("Dante injected");
             }
@@ -770,7 +771,7 @@ end)()",
             fGetCurrentMapContinentId = wversion.FindLuaFunction("GetCurrentMapContinentId");
         }
 
-        public void SetGlueState(string location, string type, string realm, int sleep)
+        public void SetGlueState(string realm, string location, string type, int sleep)
         {
             Lua_DoStringEx(string.Format(fSetGlueState,
                                 realm, location, type, sleep));

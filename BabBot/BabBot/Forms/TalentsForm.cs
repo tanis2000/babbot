@@ -11,6 +11,7 @@ using System.Net;
 using System.IO;
 using BabBot.Wow;
 using BabBot.Manager;
+using System.Xml.Serialization;
 
 namespace BabBot.Forms
 {
@@ -129,8 +130,6 @@ namespace BabBot.Forms
 
             lbLevelList.Items.Clear();
             lbLevelList.DataSource = CurTalents.LevelList;
-            bc = lbLevelList.BindingContext[CurTalents.LevelList];
-            // lbLevelList.Items.AddRange(CurTalents.LevelList);
 
             lbLevelList.SelectedIndex = 0;
             CheckSaveBtn();
@@ -157,7 +156,7 @@ namespace BabBot.Forms
             {
                 try
                 {
-                    numLevel.Value = l.Num;
+                    labelLevelNum.Text = Convert.ToString(l.Num);
                     numTab.Value = l.TabId;
                     numTalent.Value = l.TalentId;
 
@@ -172,22 +171,6 @@ namespace BabBot.Forms
                     btnApply.Enabled = false;
                     btnRemove.Enabled = false;
                 }
-            }
-        }
-
-        private void numLevel_ValueChanged(object sender, EventArgs e)
-        {
-            // Check if item exists in list
-            int idx = (int) (numLevel.Value - numLevel.Minimum);
-            int d = lbLevelList.Items.Count - idx;
-            if (d > 0)
-                lbLevelList.SelectedIndex = idx;
-            else
-            {
-                lbLevelList.SelectedIndex = -1;
-                // Only allow add levels sequentially
-                if (d < 0)
-                    numLevel.Value += d;
             }
         }
 
@@ -221,11 +204,16 @@ namespace BabBot.Forms
             {
                 case 0:
                     l = (Level) lbLevelList.SelectedItem;
-                    l.Update((byte)numLevel.Value, (byte)numTab.Value, (int) numTalent.Value);
+                    l.Update((byte)numTab.Value, 
+                                (int) numTalent.Value, (byte) numRank.Value);
+
+                    CurrencyManager cm = (CurrencyManager)BindingContext[CurTalents.LevelList];
+                    cm.Refresh();
                     break;
                 case 1:
-                    l = new Level((byte)numLevel.Value, (byte)numTab.Value, (int)numTalent.Value);
-                    lbLevelList.Items.Add(l);
+                    l = new Level(Convert.ToByte(labelLevelNum.Text), (byte)numTab.Value,
+                                    (int)numTalent.Value, (byte)numRank.Value);
+                    CurTalents.AddLevel(l);
                     lbLevelList.SelectedIndex = lbLevelList.Items.Count - 1;
 
                     CheckSaveBtn();
@@ -255,6 +243,25 @@ namespace BabBot.Forms
         private void cbTalentTemplates_TextChanged(object sender, EventArgs e)
         {
             CheckSaveBtn();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                XmlSerializer s = new XmlSerializer(typeof(Talents));
+                TextWriter w = new StreamWriter(CurTalents.FullPath);
+                s.Serialize(w, CurTalents);
+                w.Close();
+
+                MainForm.ShowTopMostMsg(this, "File " + CurTalents.FullPath +
+                    " successfully saved", "SUCCESS");
+            }
+            catch (Exception ex)
+            {
+                MainForm.ShowTopMostMsg(this, ex.Message, "ERROR");
+
+            }
         }
     }
 }

@@ -12,6 +12,9 @@ namespace BabBot.Wow
     {
         // List with talent build
         private ArrayList _list;
+        // Full path to file
+        private string _path;
+        private string _fname;
 
         public Talents()
         {
@@ -46,7 +49,20 @@ namespace BabBot.Wow
         public string Class;
 
         [XmlIgnore]
-        public string FileName;
+        public string FileName
+        {
+            get { return _fname; }
+        }
+
+        [XmlIgnore]
+        public string FullPath
+        {
+            get { return _path; }
+            set {
+                _path = value;
+                _fname = System.IO.Path.GetFileName(_path);
+            }
+        }
 
         [XmlElement("level")]
         public Level[] LevelList
@@ -70,6 +86,11 @@ namespace BabBot.Wow
             return _list.Add( t );
         }
 
+        public void RemoveLevel(Level l)
+        {
+            _list.Remove(l);
+        }
+
         public override string ToString()
         {
             return FileName;
@@ -83,23 +104,30 @@ namespace BabBot.Wow
         [XmlAttribute("num")] public byte Num;
         [XmlAttribute("tab_id")] public byte TabId;
         [XmlAttribute("talent_id")] public int TalentId;
-        
+        [XmlAttribute("rank")] public byte Rank;
+
         public Level() {}
         
-        public Level(byte num, byte tab, int tid) {
-            Update(num, tab, tid);
+        public Level(byte num, byte tab, int tid, byte rank) {
+            Update(num, tab, tid, rank);
         }
 
-        public void Update(byte num, byte tab, int tid) {
+        public void Update(byte tab, int tid, byte rank)
+        {
+            Update(Num, tab, tid, rank);
+        }
+
+        public void Update(byte num, byte tab, int tid, byte rank) {
             Num = num;
             TabId = tab;
             TalentId = tid;
+            Rank = rank;
         }
 
         public override string ToString()
         {
-            return string.Format("Level: {0} {1}/{2}",
-                                    Num, TabId, TalentId);
+            return string.Format("Level: {0} {1}/{2}/{3}",
+                                    Num, TabId, TalentId, Rank);
         }
 
     }

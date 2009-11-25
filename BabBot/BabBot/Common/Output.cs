@@ -77,7 +77,7 @@ namespace BabBot.Common
                 try
                 {
                     using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-Log-{2}.txt",
-                        DateString, ProcessManager.Config.LogPath, fs), true))
+                        DateString, ProcessManager.Config.LogParams.Dir, fs), true))
                     {
                         w.WriteLine(Format("{0},{1}", BTimeString, message));
                     }

@@ -78,6 +78,11 @@ namespace BabBot.Wow
         {
             return LuaList.FindLuaFunction(name);
         }
+
+        public override string ToString()
+        {
+            return Number;
+        }
     }
 
     public class LuaProc

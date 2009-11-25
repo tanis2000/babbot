@@ -15,7 +15,7 @@ namespace BabBot.Forms
         private void OptionsForm_Load(object sender, EventArgs e)
         {
             
-            cbAutoLogin.Checked = ProcessManager.Config.AutoLogin;
+            cbAutoLogin.Checked = ProcessManager.Config.WoWInfo.AutoLogin;
 			tbCharacter.Text = ProcessManager.Config.Character;
             tbRealmLocation.Text = ProcessManager.Config.Account.RealmLocation;
             cbxGameType.Text = ProcessManager.Config.Account.GameType;
@@ -28,7 +28,7 @@ namespace BabBot.Forms
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            ProcessManager.Config.AutoLogin = cbAutoLogin.Checked;
+            ProcessManager.Config.WoWInfo.AutoLogin = cbAutoLogin.Checked;
             ProcessManager.Config.Character = tbCharacter.Text;
             ProcessManager.Config.Account.RealmLocation = tbRealmLocation.Text;
             ProcessManager.Config.Account.GameType = cbxGameType.Text;

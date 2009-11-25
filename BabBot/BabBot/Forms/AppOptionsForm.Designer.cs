@@ -54,6 +54,8 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkLogOutput = new System.Windows.Forms.CheckBox();
             this.cbDebugMode = new System.Windows.Forms.CheckBox();
+            this.cbWoWVersion = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -138,6 +140,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.cbWoWVersion);
             this.groupBox2.Controls.Add(this.cbResize);
             this.groupBox2.Controls.Add(this.cbNoSound);
             this.groupBox2.Controls.Add(this.cbWindowed);
@@ -209,7 +213,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 74);
+            this.label1.Location = new System.Drawing.Point(14, 101);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(83, 13);
             this.label1.TabIndex = 263;
@@ -218,7 +222,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 48);
+            this.label2.Location = new System.Drawing.Point(13, 75);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(84, 13);
             this.label2.TabIndex = 262;
@@ -235,14 +239,14 @@
             // 
             // tbGuestPassword
             // 
-            this.tbGuestPassword.Location = new System.Drawing.Point(103, 71);
+            this.tbGuestPassword.Location = new System.Drawing.Point(103, 98);
             this.tbGuestPassword.Name = "tbGuestPassword";
             this.tbGuestPassword.Size = new System.Drawing.Size(170, 20);
             this.tbGuestPassword.TabIndex = 260;
             // 
             // tbGuestUsername
             // 
-            this.tbGuestUsername.Location = new System.Drawing.Point(103, 45);
+            this.tbGuestUsername.Location = new System.Drawing.Point(103, 72);
             this.tbGuestUsername.Name = "tbGuestUsername";
             this.tbGuestUsername.Size = new System.Drawing.Size(170, 20);
             this.tbGuestUsername.TabIndex = 259;
@@ -313,6 +317,24 @@
             this.cbDebugMode.Text = "Debug Mode";
             this.cbDebugMode.UseVisualStyleBackColor = true;
             // 
+            // cbWoWVersion
+            // 
+            this.cbWoWVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbWoWVersion.FormattingEnabled = true;
+            this.cbWoWVersion.Location = new System.Drawing.Point(103, 45);
+            this.cbWoWVersion.Name = "cbWoWVersion";
+            this.cbWoWVersion.Size = new System.Drawing.Size(121, 21);
+            this.cbWoWVersion.TabIndex = 272;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(24, 48);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(73, 13);
+            this.label7.TabIndex = 273;
+            this.label7.Text = "WoW Version";
+            // 
             // AppOptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -368,5 +390,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox chkLogOutput;
         private System.Windows.Forms.CheckBox cbDebugMode;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox cbWoWVersion;
     }
 }

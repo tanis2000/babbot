@@ -36,7 +36,6 @@
             this.btnClose = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.labelLevel = new System.Windows.Forms.Label();
-            this.numLevel = new System.Windows.Forms.NumericUpDown();
             this.labelTab = new System.Windows.Forms.Label();
             this.labelTalent = new System.Windows.Forms.Label();
             this.numTalent = new System.Windows.Forms.NumericUpDown();
@@ -50,9 +49,15 @@
             this.labelClass = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.labelDescr = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.numLevel)).BeginInit();
+            this.numRank = new System.Windows.Forms.NumericUpDown();
+            this.labelRank = new System.Windows.Forms.Label();
+            this.labelLevelNum = new System.Windows.Forms.Label();
+            this.btnUp = new System.Windows.Forms.Button();
+            this.btnDown = new System.Windows.Forms.Button();
+            this.btnAdd = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numTalent)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTab)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRank)).BeginInit();
             this.SuspendLayout();
             // 
             // cbTalentTemplates
@@ -118,6 +123,7 @@
             this.btnSave.TabIndex = 6;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // labelLevel
             // 
@@ -128,30 +134,6 @@
             this.labelLevel.Size = new System.Drawing.Size(36, 13);
             this.labelLevel.TabIndex = 7;
             this.labelLevel.Text = "Level:";
-            // 
-            // numLevel
-            // 
-            this.numLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numLevel.Location = new System.Drawing.Point(239, 166);
-            this.numLevel.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.numLevel.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numLevel.Name = "numLevel";
-            this.numLevel.Size = new System.Drawing.Size(42, 20);
-            this.numLevel.TabIndex = 8;
-            this.numLevel.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numLevel.ValueChanged += new System.EventHandler(this.numLevel_ValueChanged);
             // 
             // labelTab
             // 
@@ -222,9 +204,9 @@
             // btnApply
             // 
             this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.Location = new System.Drawing.Point(206, 244);
+            this.btnApply.Location = new System.Drawing.Point(196, 273);
             this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
+            this.btnApply.Size = new System.Drawing.Size(85, 23);
             this.btnApply.TabIndex = 13;
             this.btnApply.Tag = "";
             this.btnApply.Text = "Add";
@@ -268,9 +250,9 @@
             // 
             this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRemove.Enabled = false;
-            this.btnRemove.Location = new System.Drawing.Point(204, 302);
+            this.btnRemove.Location = new System.Drawing.Point(196, 360);
             this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(75, 23);
+            this.btnRemove.Size = new System.Drawing.Size(83, 23);
             this.btnRemove.TabIndex = 17;
             this.btnRemove.Text = "Remove";
             this.btnRemove.UseVisualStyleBackColor = true;
@@ -311,11 +293,85 @@
             this.labelDescr.TabIndex = 21;
             this.labelDescr.Text = "Descr:";
             // 
+            // numRank
+            // 
+            this.numRank.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numRank.Location = new System.Drawing.Point(239, 244);
+            this.numRank.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numRank.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numRank.Name = "numRank";
+            this.numRank.Size = new System.Drawing.Size(42, 20);
+            this.numRank.TabIndex = 23;
+            this.numRank.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // labelRank
+            // 
+            this.labelRank.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelRank.AutoSize = true;
+            this.labelRank.Location = new System.Drawing.Point(192, 246);
+            this.labelRank.Name = "labelRank";
+            this.labelRank.Size = new System.Drawing.Size(36, 13);
+            this.labelRank.TabIndex = 22;
+            this.labelRank.Text = "Rank:";
+            // 
+            // labelLevelNum
+            // 
+            this.labelLevelNum.AutoSize = true;
+            this.labelLevelNum.Location = new System.Drawing.Point(236, 168);
+            this.labelLevelNum.Name = "labelLevelNum";
+            this.labelLevelNum.Size = new System.Drawing.Size(0, 13);
+            this.labelLevelNum.TabIndex = 24;
+            // 
+            // btnUp
+            // 
+            this.btnUp.Location = new System.Drawing.Point(196, 302);
+            this.btnUp.Name = "btnUp";
+            this.btnUp.Size = new System.Drawing.Size(30, 23);
+            this.btnUp.TabIndex = 25;
+            this.btnUp.Text = "Up";
+            this.btnUp.UseVisualStyleBackColor = true;
+            // 
+            // btnDown
+            // 
+            this.btnDown.Location = new System.Drawing.Point(232, 302);
+            this.btnDown.Name = "btnDown";
+            this.btnDown.Size = new System.Drawing.Size(47, 23);
+            this.btnDown.TabIndex = 26;
+            this.btnDown.Text = "Down";
+            this.btnDown.UseVisualStyleBackColor = true;
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Location = new System.Drawing.Point(195, 331);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(84, 23);
+            this.btnAdd.TabIndex = 27;
+            this.btnAdd.Text = "Add";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            // 
             // TalentsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 436);
+            this.Controls.Add(this.btnAdd);
+            this.Controls.Add(this.btnDown);
+            this.Controls.Add(this.btnUp);
+            this.Controls.Add(this.labelLevelNum);
+            this.Controls.Add(this.numRank);
+            this.Controls.Add(this.labelRank);
             this.Controls.Add(this.labelDescr);
             this.Controls.Add(this.tbDescription);
             this.Controls.Add(this.labelClass);
@@ -329,7 +385,6 @@
             this.Controls.Add(this.numTalent);
             this.Controls.Add(this.labelTalent);
             this.Controls.Add(this.labelTab);
-            this.Controls.Add(this.numLevel);
             this.Controls.Add(this.labelLevel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnClose);
@@ -343,9 +398,9 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Talents";
             this.Load += new System.EventHandler(this.TalentsForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.numLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTalent)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTab)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRank)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -360,7 +415,6 @@
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Label labelLevel;
-        private System.Windows.Forms.NumericUpDown numLevel;
         private System.Windows.Forms.Label labelTab;
         private System.Windows.Forms.Label labelTalent;
         private System.Windows.Forms.NumericUpDown numTalent;
@@ -374,5 +428,11 @@
         private System.Windows.Forms.Label labelClass;
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.Label labelDescr;
+        private System.Windows.Forms.NumericUpDown numRank;
+        private System.Windows.Forms.Label labelRank;
+        private System.Windows.Forms.Label labelLevelNum;
+        private System.Windows.Forms.Button btnUp;
+        private System.Windows.Forms.Button btnDown;
+        private System.Windows.Forms.Button btnAdd;
     }
 }

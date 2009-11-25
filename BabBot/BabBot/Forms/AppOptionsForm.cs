@@ -13,9 +13,12 @@ namespace BabBot.Forms
 {
     public partial class AppOptionsForm : Form
     {
+        public string Msg;
+        
         public AppOptionsForm()
         {
             InitializeComponent();
+            cbWoWVersion.DataSource = ProcessManager.WoWVersions;
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -23,21 +26,26 @@ namespace BabBot.Forms
             if (tbLuaCallback.Text.Equals(""))
             {
                 MessageBox.Show(this, "Lua Callback Address is empty");
+            } else if (cbWoWVersion.SelectedIndex < 0) {
+                MessageBox.Show(this, "WoW Version field is empty");
             } else {
                 try
                 {
-                    ProcessManager.Config.WowExePath = tbWowExePath.Text;
-                    ProcessManager.Config.GuestUsername = tbGuestUsername.Text;
-                    ProcessManager.Config.GuestPassword = tbGuestPassword.Text;
-                    ProcessManager.Config.DebugMode = cbDebugMode.Checked;
-                    ProcessManager.Config.LogPath = tbLogsPath.Text;
-                    ProcessManager.Config.LogOutput = chkLogOutput.Checked;
-                    ProcessManager.Config.NoSound = cbNoSound.Checked;
-                    ProcessManager.Config.Windowed = cbWindowed.Checked;
-                    ProcessManager.Config.Resize = cbResize.Checked;
+                    ProcessManager.Config.WoWInfo.ExePath = tbWowExePath.Text;
+                    ProcessManager.Config.WoWInfo.GuestUsername = tbGuestUsername.Text;
+                    ProcessManager.Config.WoWInfo.GuestPassword = tbGuestPassword.Text;
+                    ProcessManager.Config.WoWInfo.NoSound = cbNoSound.Checked;
+                    ProcessManager.Config.WoWInfo.Windowed = cbWindowed.Checked;
+                    ProcessManager.Config.WoWInfo.Resize = cbResize.Checked;
+                    ProcessManager.Config.WoWInfo.Version = cbWoWVersion.Text;
 
-                    ProcessManager.Config.LuaCallback = tbLuaCallback.Text;
-                    ProcessManager.Config.WinTitle = tbWinTitle.Text;
+                    ProcessManager.Config.LogParams.Dir = tbLogsPath.Text;
+                    ProcessManager.Config.LogParams.DisplayLogs = chkLogOutput.Checked;
+                    
+                    ProcessManager.Config.DebugMode = cbDebugMode.Checked;
+
+                    ProcessManager.Config.CustomParams.LuaCallback = tbLuaCallback.Text;
+                    ProcessManager.Config.CustomParams.WinTitle = tbWinTitle.Text;
 
                     this.DialogResult = DialogResult.OK;
                     this.Close();
@@ -53,19 +61,28 @@ namespace BabBot.Forms
         {
             Config config = ProcessManager.Config;
 
-            tbWowExePath.Text = config.WowExePath;
-            tbGuestUsername.Text = config.GuestUsername;
-            tbGuestPassword.Text = config.GuestPassword;
+            tbWowExePath.Text = config.WoWInfo.ExePath;
+            tbGuestUsername.Text = config.WoWInfo.GuestUsername;
+            tbGuestPassword.Text = config.WoWInfo.GuestPassword;
+            cbNoSound.Checked = config.WoWInfo.NoSound;
+            cbWindowed.Checked = config.WoWInfo.Windowed;
+            cbResize.Checked = config.WoWInfo.Resize;
+            cbWoWVersion.Text = config.WoWInfo.Version;
+
+            if (cbWoWVersion.Text.Equals("") && (cbWoWVersion.Items.Count == 1))
+                // Auto Select first
+                cbWoWVersion.SelectedIndex = 0;
+
             cbDebugMode.Checked = config.DebugMode;
-            tbLogsPath.Text = config.LogPath;
-            chkLogOutput.Checked = config.LogOutput;
+            tbLogsPath.Text = config.LogParams.Dir;
+            chkLogOutput.Checked = config.LogParams.DisplayLogs;
 
-            cbNoSound.Checked = config.NoSound;
-            cbWindowed.Checked = config.Windowed;
-            cbResize.Checked = config.Resize;
 
-            tbLuaCallback.Text = config.LuaCallback;
-            tbWinTitle.Text = config.WinTitle;
+            tbLuaCallback.Text = config.CustomParams.LuaCallback;
+            tbWinTitle.Text = config.CustomParams.WinTitle;
+            
+            if (Msg != null)
+                MessageBox.Show(this,Msg);
         }
 
         private void btnBrowseWowExec_Click(object sender, EventArgs e)

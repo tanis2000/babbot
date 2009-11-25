@@ -78,6 +78,11 @@ namespace BabBot.Manager
         /// </summary>
         public delegate void FirstTimeRunHandler();
 
+        /// <summary>
+        /// Configuration file change event
+        /// </summary>
+        public delegate void ConfigFileChangedHandler();
+
         #endregion
 
         #region WOWApplication Events
@@ -115,6 +120,8 @@ namespace BabBot.Manager
         public static event UpdateStatusEventHandler UpdateStatus;
 
         public static event FirstTimeRunHandler FirstTimeRun;
+        public static event ConfigFileChangedHandler ConfigFileChanged;
+
         #endregion
 
         #region Player Events
@@ -139,8 +146,10 @@ namespace BabBot.Manager
         public static uint TLS;
         public static int WowHWND;
         private static bool arun = false;
-
+        // Config file name
         private static string ConfigFileName = "config.xml";
+        // Last version of used config file
+        private static int ConfigVersion = 1;
 
         public static WoWVersion CurVersion
         {
@@ -187,56 +196,6 @@ namespace BabBot.Manager
         }
 
         /// <summary>
-        /// Load Application config file
-        /// </summary>
-        public static void LoadConfig()
-        {
-            var serializer = new Serializer<Config>();
-
-            try
-            {
-                ProcessManager.Config = serializer.Load(ConfigFileName);
-
-                // Decrypt auto-login password
-                if (!string.IsNullOrEmpty(ProcessManager.Config.Account.LoginPassword))
-                {
-                    try
-                    {
-                        ProcessManager.Config.Account.DecryptPassword(
-                                ProcessManager.Config.Account.LoginPassword);
-                    }
-                    catch (Exception e)
-                    {
-                        // We couldn't decrypt the password for some reason. We reset it to blank.
-                        ProcessManager.Config.Account.LoginPassword = "";
-                    }
-                }
-            }
-            catch (FileNotFoundException ex)
-            {
-                // Show App configuration window for the first time run
-                if (FirstTimeRun != null)
-                    FirstTimeRun();
-                else
-                    Environment.Exit(1);
-
-            }
-
-            // After load config completed load WoW data 
-            LoadWowData();
-        }
-
-        /// <summary>
-        /// Save application config file
-        /// </summary>
-        public static void SaveConfig()
-        {
-            var serializer = new Serializer<Config>();
-
-            serializer.Save(ConfigFileName, ProcessManager.Config);
-        }
-
-        /// <summary>
         /// Get the object for the manipulation of memory and general "hacking"
         /// of another process
         /// </summary>
@@ -257,32 +216,14 @@ namespace BabBot.Manager
             set { config = value; }
         }
 
+        public static WoWVersion[] WoWVersions
+        {
+            get { return wdata.Versions; }
+        }
+
         #endregion
 
         #region Private Methods
-
-        private static void LoadWowData()
-        {
-            XmlSerializer s = new XmlSerializer(typeof(WoWData));
-
-            /// Test
-            /*
-            WoWData wd = new WoWData(new WoWVersion[] {
-                new WoWVersion("11", new LuaProc[] {
-                    new LuaProc(new LuaFunction("test", "xxx"))})
-            });
-            
-
-            TextWriter w = new StreamWriter("WoWData1.xml");
-            s.Serialize(w, wd);
-            w.Close();
-            */
-            /// Test
-
-            TextReader r = new StreamReader("WoWData.xml");
-            wdata = (WoWData)s.Deserialize(r);
-            r.Close();
-        }
 
         private static void afterProcessStart()
         {
@@ -326,13 +267,13 @@ namespace BabBot.Manager
                     BabBot.Common.WindowSize.SetPositionSize((IntPtr)WowHWND,
                         config.WowPos.Pos.X, config.WowPos.Pos.Y,
                         config.WowPos.Pos.Width, config.WowPos.Pos.Height);
-                else if (config.Resize)
+                else if (config.WoWInfo.Resize)
                     BabBot.Common.WindowSize.SetPositionSize(
                                     (IntPtr)WowHWND, 0, 0, 328, 274);
 
 
                 // At this point it should be safe to do any LUA calls
-                if (config.AutoLogin)
+                if (config.WoWInfo.AutoLogin)
                 {
                     Injector.Lua_RegisterInputHandler();
                     try
@@ -405,6 +346,17 @@ namespace BabBot.Manager
         #region Public Methods
 
         /// <summary>
+        /// Load content of WoWData.xml
+        /// </summary>
+        public static void LoadWowData()
+        {
+            XmlSerializer s = new XmlSerializer(typeof(WoWData));
+            TextReader r = new StreamReader("WoWData.xml");
+            wdata = (WoWData)s.Deserialize(r);
+            r.Close();
+        }
+
+        /// <summary>
         /// Start Bot Thread
         /// </summary>
         public static void StartBot()
@@ -426,7 +378,7 @@ namespace BabBot.Manager
             try
             {
                 // Perry style = paranoid ;-)
-                string wowPath = Config.WowExePath;
+                string wowPath = Config.WoWInfo.ExePath;
 
                 // Ok, no one configured the path, let's try to find it on our own
                 if (string.IsNullOrEmpty(wowPath))
@@ -442,15 +394,18 @@ namespace BabBot.Manager
                         FileVersionInfo.GetVersionInfo(wowPath).FileVersion.
                             Replace(",", ".").Replace(" ", ""); ;
 
-                    wversion = wdata.FindVersion(version);
-                    if (wversion == null)
+                    if (!wversion.ToString().Equals(version))
                     {
-                        Log("char", "Unable find data in a file 'WoWData.xml'" + 
-                            " for WoW version " + version);
+                        if (WoWProcessFailed != null)
+                            WoWProcessFailed(@"Version of WoW.exe '" + version + 
+                                "' not equal version from config.xml '" + wversion + "'");
+                        else
+                            Environment.Exit(4);
+
                         return;
                     } else
-                        Log("char", "Successfully located data in WoWData.xml for version " + version);
-
+                        Log("char", "Continuing with WoW.exe version '" + version + "'");
+                        
                     Injector.InitLuaCalls(wversion);
 
                     Log("char", "Starting WoW ...");
@@ -459,13 +414,13 @@ namespace BabBot.Manager
                     try
                     {
                         // Process startup options
-                        if (config.NoSound)
+                        if (config.WoWInfo.NoSound)
                             wowPath += " -nosound";
-                        if (config.Windowed)
+                        if (config.WoWInfo.Windowed)
                             wowPath += " -windowed";
 
-                        process = AppHelper.RunAs(Config.GuestUsername, 
-                                            Config.GuestPassword, null, wowPath);
+                        process = AppHelper.RunAs(Config.WoWInfo.GuestUsername,
+                                            Config.WoWInfo.GuestPassword, null, wowPath);
                     }
                     catch (Win32Exception w32e)
                     {
@@ -787,12 +742,117 @@ namespace BabBot.Manager
             XmlSerializer s = new XmlSerializer(typeof(Talents));
             TextReader r = new StreamReader(fname);
             Talents talents = (Talents)s.Deserialize(r);
-            talents.FileName = System.IO.Path.GetFileName(fname);
+            talents.FullPath = fname;
             r.Close();
 
             return talents;
         }
 
+        /// <summary>
+        /// Load Application config file
+        /// </summary>
+        public static void LoadConfig()
+        {
+            var serializer = new Serializer<Config>();
+
+            try
+            {
+                config = serializer.Load(ConfigFileName);
+
+                // Check version of config file
+                if (ProcessManager.ConfigVersion != config.Version)
+                    throw new ConfigFileChangedException();
+
+
+                // Decrypt auto-login password
+                if (!string.IsNullOrEmpty(config.Account.LoginPassword))
+                {
+                    try
+                    {
+                        config.Account.DecryptPassword(
+                                config.Account.LoginPassword);
+                    }
+                    catch (Exception)
+                    {
+                        // We couldn't decrypt the password for some reason. We reset it to blank.
+                        config.Account.LoginPassword = "";
+                    }
+                }
+
+                OnConfigurationChanged();
+            }
+            catch (FileNotFoundException)
+            {
+                // Show App configuration window for the first time run
+                if (FirstTimeRun != null)
+                    FirstTimeRun();
+                else
+                {
+                    Console.WriteLine("Config file config.xml not found");
+                    Environment.Exit(1);
+                }
+
+            }
+            catch (ConfigFileChangedException)
+            {
+                if (ConfigFileChanged != null)
+                    ConfigFileChanged();
+                else
+                {
+                    Console.WriteLine("Config file config.xml has version " +
+                        config.Version + " that different from application version " +
+                        ProcessManager.ConfigVersion);
+                    Environment.Exit(2);
+                }
+            }
+            catch (WoWDataNotFoundException ex)
+            {
+                if (WoWProcessFailed != null)
+                    WoWProcessFailed(ex.Message);
+                else
+                    Console.WriteLine(ex.Message);
+
+                Environment.Exit(3);
+            }
+        }
+
+        /// <summary>
+        /// Save application config file
+        /// </summary>
+        public static void SaveConfig()
+        {
+            var serializer = new Serializer<Config>();
+
+            // Remember current config version
+            config.Version = ConfigVersion;
+            serializer.Save(ConfigFileName, config);
+
+            OnConfigurationChanged();
+        }
+
+        private static void OnConfigurationChanged()
+        {
+            // Create log directory if doesn't existst
+            if (!Directory.Exists(config.LogParams.Dir))
+                Directory.CreateDirectory(config.LogParams.Dir);
+
+            wversion = wdata.FindVersion(config.WoWInfo.Version);
+            if (wversion == null)
+                throw new WoWDataNotFoundException(config.WoWInfo.Version);
+        }
+
         #endregion
+    }
+
+    public class ConfigFileChangedException : Exception
+    {
+        public ConfigFileChangedException() : 
+            base("Configuration file doesn't match application settings") { }
+    }
+
+    public class WoWDataNotFoundException : Exception
+    {
+        public WoWDataNotFoundException(string version) :
+            base("WoWData.xml doesn't contain data for WoW version '" + version + "'") { }
     }
 }
