@@ -579,7 +579,7 @@ namespace BabBot.Manager
 
                 return true;
 
-            } catch (Exception ex)
+            } catch (Exception)
             {
                 Debug("char", "Cannot find the TLS");
                 return false;
@@ -614,7 +614,7 @@ namespace BabBot.Manager
                 Debug("char", "Found ConnectionManager");
                 return true;
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 Debug("char", "ConnectionManager not found");
                 return false;

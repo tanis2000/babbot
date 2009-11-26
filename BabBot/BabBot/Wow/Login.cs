@@ -40,8 +40,6 @@ namespace BabBot.Wow
     {
         private static int State;
         private static int MaxScreenWaitTime = 30000; // 30 sec
-        private static bool NeedRetry;
-        private static bool RetryCount;
         private static string CurrentGlueScreen;
         private static string CurrentGlueDialog;
         private static DateTime StateChangeTime;
@@ -52,6 +50,7 @@ namespace BabBot.Wow
         static Array LoginState = Array.CreateInstance( typeof(String), 12);
 		
 		// Login progress
+        /*
 		static string LOGIN_SERVER_DOWN = "Login Server Down";
 		static string LOGIN_SRP_ERROR = "Authentication Error";
 		static string LOGIN_STATE_AUTHENTICATED = "Success!";
@@ -62,7 +61,7 @@ namespace BabBot.Wow
 		static string LOGIN_STATE_HANDSHAKING = "Handshaking";
 		static string LOGIN_STATE_INITIALIZED = "Initialized";
 		static string LOGIN_STATE_SURVEY = "Submitting non-personal system specification";
-
+        */
         #endregion
 
         // Log facility

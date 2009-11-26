@@ -48,9 +48,10 @@ namespace BabBot
                     BSPath);
                 */
             }
-            catch (ApplicationException ex)
+            catch (ApplicationException)
             {
-                MessageBox.Show("This is an administrative task!", "Permission denied...", MessageBoxButtons.OK);
+                MessageBox.Show("This is an administrative task!", 
+                            "Permission denied...", MessageBoxButtons.OK);
                 Process.GetCurrentProcess().Kill();
             }
 

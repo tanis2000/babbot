@@ -802,7 +802,7 @@ namespace BabBot.Forms
                         }
                     }
                 } 
-                catch(Exception e)
+                catch(Exception)
                 {
                     
                 }

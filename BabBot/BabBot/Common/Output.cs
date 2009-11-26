@@ -82,7 +82,7 @@ namespace BabBot.Common
                         w.WriteLine(Format("{0},{1}", BTimeString, message));
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // Disk migh full
                     // Keep working
