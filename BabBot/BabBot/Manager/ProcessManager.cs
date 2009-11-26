@@ -149,7 +149,7 @@ namespace BabBot.Manager
         // Config file name
         private static string ConfigFileName = "config.xml";
         // Last version of used config file
-        private static int ConfigVersion = 1;
+        private static int ConfigVersion = 2;
 
         public static WoWVersion CurVersion
         {

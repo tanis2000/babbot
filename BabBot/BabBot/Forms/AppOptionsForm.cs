@@ -43,6 +43,7 @@ namespace BabBot.Forms
                     ProcessManager.Config.LogParams.DisplayLogs = chkLogOutput.Checked;
                     
                     ProcessManager.Config.DebugMode = cbDebugMode.Checked;
+                    ProcessManager.Config.ProfilesDir = tbProfilesPath.Text;
 
                     ProcessManager.Config.CustomParams.LuaCallback = tbLuaCallback.Text;
                     ProcessManager.Config.CustomParams.WinTitle = tbWinTitle.Text;
@@ -74,6 +75,8 @@ namespace BabBot.Forms
                 cbWoWVersion.SelectedIndex = 0;
 
             cbDebugMode.Checked = config.DebugMode;
+            tbProfilesPath.Text = config.ProfilesDir;
+
             tbLogsPath.Text = config.LogParams.Dir;
             chkLogOutput.Checked = config.LogParams.DisplayLogs;
 
@@ -111,9 +114,14 @@ namespace BabBot.Forms
         {
             var dlg = new FolderBrowserDialog();
             if (dlg.ShowDialog() == DialogResult.OK)
-            {
                 tbLogsPath.Text = dlg.SelectedPath;
-            }
+        }
+
+        private void btnProfilesPath_Click(object sender, EventArgs e)
+        {
+            var dlg = new FolderBrowserDialog();
+            if (dlg.ShowDialog() == DialogResult.OK)
+                tbProfilesPath.Text = dlg.SelectedPath;
         }
     }
 }

@@ -40,8 +40,8 @@ namespace BabBot
         // public string InteractKey = "{SHIFTD}ì{SHIFTU}";
 
         // Default directory with talents template
-        [XmlIgnore]
-        public string TalentTemplateDir = "Profiles" + Path.DirectorySeparatorChar + "Talents";
+        [XmlAttribute("profiles")]
+        public string ProfilesDir = "Profiles";
         
         [XmlElement("account")]
         public LoginInfo Account = new LoginInfo();

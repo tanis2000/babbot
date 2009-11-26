@@ -57,15 +57,20 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkLogOutput = new System.Windows.Forms.CheckBox();
             this.cbDebugMode = new System.Windows.Forms.CheckBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.tbProfilesPath = new System.Windows.Forms.TextBox();
+            this.btnProfilesPath = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOk
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.Location = new System.Drawing.Point(342, 279);
+            this.btnOk.Location = new System.Drawing.Point(341, 363);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 7;
@@ -77,7 +82,7 @@
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(423, 279);
+            this.button1.Location = new System.Drawing.Point(422, 363);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 8;
@@ -329,19 +334,58 @@
             // cbDebugMode
             // 
             this.cbDebugMode.AutoSize = true;
-            this.cbDebugMode.Location = new System.Drawing.Point(12, 284);
+            this.cbDebugMode.Location = new System.Drawing.Point(9, 50);
             this.cbDebugMode.Name = "cbDebugMode";
             this.cbDebugMode.Size = new System.Drawing.Size(88, 17);
             this.cbDebugMode.TabIndex = 12;
             this.cbDebugMode.Text = "Debug Mode";
             this.cbDebugMode.UseVisualStyleBackColor = true;
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.label8);
+            this.groupBox4.Controls.Add(this.tbProfilesPath);
+            this.groupBox4.Controls.Add(this.btnProfilesPath);
+            this.groupBox4.Controls.Add(this.cbDebugMode);
+            this.groupBox4.Location = new System.Drawing.Point(12, 272);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(485, 73);
+            this.groupBox4.TabIndex = 13;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "General";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 22);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(66, 13);
+            this.label8.TabIndex = 270;
+            this.label8.Text = "Profiles Path";
+            // 
+            // tbProfilesPath
+            // 
+            this.tbProfilesPath.Location = new System.Drawing.Point(78, 19);
+            this.tbProfilesPath.Name = "tbProfilesPath";
+            this.tbProfilesPath.Size = new System.Drawing.Size(318, 20);
+            this.tbProfilesPath.TabIndex = 269;
+            // 
+            // btnProfilesPath
+            // 
+            this.btnProfilesPath.Location = new System.Drawing.Point(402, 17);
+            this.btnProfilesPath.Name = "btnProfilesPath";
+            this.btnProfilesPath.Size = new System.Drawing.Size(75, 23);
+            this.btnProfilesPath.TabIndex = 271;
+            this.btnProfilesPath.Text = "Browse..";
+            this.btnProfilesPath.UseVisualStyleBackColor = true;
+            this.btnProfilesPath.Click += new System.EventHandler(this.btnProfilesPath_Click);
+            // 
             // AppOptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(510, 314);
-            this.Controls.Add(this.cbDebugMode);
+            this.ClientSize = new System.Drawing.Size(510, 398);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -359,8 +403,9 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -394,5 +439,9 @@
         private System.Windows.Forms.CheckBox cbDebugMode;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cbWoWVersion;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox tbProfilesPath;
+        private System.Windows.Forms.Button btnProfilesPath;
     }
 }
