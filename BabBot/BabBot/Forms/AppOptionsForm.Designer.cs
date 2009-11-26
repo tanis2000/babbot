@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AppOptionsForm));
             this.btnOk = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -37,6 +38,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cbWoWVersion = new System.Windows.Forms.ComboBox();
             this.cbResize = new System.Windows.Forms.CheckBox();
             this.cbNoSound = new System.Windows.Forms.CheckBox();
             this.cbWindowed = new System.Windows.Forms.CheckBox();
@@ -54,8 +57,6 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkLogOutput = new System.Windows.Forms.CheckBox();
             this.cbDebugMode = new System.Windows.Forms.CheckBox();
-            this.cbWoWVersion = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -159,6 +160,24 @@
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "WoW Start Options";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(24, 48);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(73, 13);
+            this.label7.TabIndex = 273;
+            this.label7.Text = "WoW Version";
+            // 
+            // cbWoWVersion
+            // 
+            this.cbWoWVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbWoWVersion.FormattingEnabled = true;
+            this.cbWoWVersion.Location = new System.Drawing.Point(103, 45);
+            this.cbWoWVersion.Name = "cbWoWVersion";
+            this.cbWoWVersion.Size = new System.Drawing.Size(121, 21);
+            this.cbWoWVersion.TabIndex = 272;
             // 
             // cbResize
             // 
@@ -317,24 +336,6 @@
             this.cbDebugMode.Text = "Debug Mode";
             this.cbDebugMode.UseVisualStyleBackColor = true;
             // 
-            // cbWoWVersion
-            // 
-            this.cbWoWVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbWoWVersion.FormattingEnabled = true;
-            this.cbWoWVersion.Location = new System.Drawing.Point(103, 45);
-            this.cbWoWVersion.Name = "cbWoWVersion";
-            this.cbWoWVersion.Size = new System.Drawing.Size(121, 21);
-            this.cbWoWVersion.TabIndex = 272;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(24, 48);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(73, 13);
-            this.label7.TabIndex = 273;
-            this.label7.Text = "WoW Version";
-            // 
             // AppOptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -346,6 +347,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnOk);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(253, 188);
             this.Name = "AppOptionsForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

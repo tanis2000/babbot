@@ -17,6 +17,7 @@
     Copyright 2009 BabBot Team
 */
 using System;
+using System.IO;
 using System.Drawing;
 using System.Xml.Serialization;
 
@@ -37,7 +38,10 @@ namespace BabBot
 
         // Not used
         // public string InteractKey = "{SHIFTD}ì{SHIFTU}";
-        
+
+        // Default directory with talents template
+        [XmlIgnore]
+        public string TalentTemplateDir = "Profiles" + Path.DirectorySeparatorChar + "Talents";
         
         [XmlElement("account")]
         public LoginInfo Account = new LoginInfo();

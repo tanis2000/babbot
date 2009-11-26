@@ -40,7 +40,7 @@
             this.labelTalent = new System.Windows.Forms.Label();
             this.numTalent = new System.Windows.Forms.NumericUpDown();
             this.numTab = new System.Windows.Forms.NumericUpDown();
-            this.btnApply = new System.Windows.Forms.Button();
+            this.btnUpdate = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
             this.labelURL = new System.Windows.Forms.Label();
             this.tbTalentURL = new System.Windows.Forms.TextBox();
@@ -92,6 +92,7 @@
             this.lbLevelList.Size = new System.Drawing.Size(153, 212);
             this.lbLevelList.TabIndex = 3;
             this.lbLevelList.SelectedIndexChanged += new System.EventHandler(this.lbLevelList_SelectedIndexChanged);
+            this.lbLevelList.SelectedValueChanged += new System.EventHandler(this.lbLevelList_SelectedValueChanged);
             // 
             // labelAssignment
             // 
@@ -201,17 +202,18 @@
             0,
             0});
             // 
-            // btnApply
+            // btnUpdate
             // 
-            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.Location = new System.Drawing.Point(196, 273);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(85, 23);
-            this.btnApply.TabIndex = 13;
-            this.btnApply.Tag = "";
-            this.btnApply.Text = "Add";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdate.Enabled = false;
+            this.btnUpdate.Location = new System.Drawing.Point(196, 273);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(85, 23);
+            this.btnUpdate.TabIndex = 13;
+            this.btnUpdate.Tag = "";
+            this.btnUpdate.Text = "Update";
+            this.btnUpdate.UseVisualStyleBackColor = true;
+            this.btnUpdate.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // btnImport
             // 
@@ -336,35 +338,42 @@
             // 
             // btnUp
             // 
+            this.btnUp.Enabled = false;
             this.btnUp.Location = new System.Drawing.Point(196, 302);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(30, 23);
             this.btnUp.TabIndex = 25;
             this.btnUp.Text = "Up";
             this.btnUp.UseVisualStyleBackColor = true;
+            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
             // 
             // btnDown
             // 
+            this.btnDown.Enabled = false;
             this.btnDown.Location = new System.Drawing.Point(232, 302);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(47, 23);
             this.btnDown.TabIndex = 26;
             this.btnDown.Text = "Down";
             this.btnDown.UseVisualStyleBackColor = true;
+            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
             // 
             // btnAdd
             // 
+            this.btnAdd.Enabled = false;
             this.btnAdd.Location = new System.Drawing.Point(195, 331);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(84, 23);
             this.btnAdd.TabIndex = 27;
             this.btnAdd.Text = "Add";
             this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // TalentsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(292, 436);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.btnDown);
@@ -380,7 +389,7 @@
             this.Controls.Add(this.tbTalentURL);
             this.Controls.Add(this.labelURL);
             this.Controls.Add(this.btnImport);
-            this.Controls.Add(this.btnApply);
+            this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.numTab);
             this.Controls.Add(this.numTalent);
             this.Controls.Add(this.labelTalent);
@@ -398,6 +407,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Talents";
             this.Load += new System.EventHandler(this.TalentsForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TalentsForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.numTalent)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTab)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRank)).EndInit();
@@ -419,7 +429,7 @@
         private System.Windows.Forms.Label labelTalent;
         private System.Windows.Forms.NumericUpDown numTalent;
         private System.Windows.Forms.NumericUpDown numTab;
-        private System.Windows.Forms.Button btnApply;
+        private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Label labelURL;
         private System.Windows.Forms.TextBox tbTalentURL;

@@ -42,9 +42,6 @@ namespace BabBot.Forms
         private OptionsForm BotOptionsForm;
         private TalentsForm TalentsForm;
 
-        [DllImport("user32.dll", EntryPoint = "MessageBox")]
-        public static extern int MessageBoxEx(int hWnd, String text, String caption, uint type);
-
         public MainForm()
         {
             InitializeComponent();
@@ -112,11 +109,6 @@ namespace BabBot.Forms
             }
 
             base.WndProc(ref m);
-        }
-
-        public static void ShowTopMostMsg(IWin32Window owner, string msg, string caption)
-        {
-            MessageBoxEx((int) owner.Handle, msg, caption, 0x00040000 /* MB_TOPMOST */);
         }
 
         private void Initialize()
@@ -992,6 +984,7 @@ namespace BabBot.Forms
             if (TalentsForm == null)
                 TalentsForm = new TalentsForm();
 
+            TalentsForm.TopMost = this.TopMost;
             TalentsForm.ShowDialog();
         }
     }

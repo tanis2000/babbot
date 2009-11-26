@@ -55,9 +55,23 @@ namespace BabBot.Wow
     [Serializable]
     public class WoWVersion
     {
-        
         private ArrayList _tlist;
 
+        [XmlAttribute("max_lvl")]
+        public int MaxLvl;
+
+        [XmlAttribute("num")]
+        public string Number;
+
+        [XmlElement("lua")]
+        public LuaProc LuaList;
+
+        [XmlElement("talents")]
+        public TalentConfig TalentConfig;
+
+        [XmlElement("classes")]
+        public CharClasses Classes;
+        
         public WoWVersion()
         {
             Init();
@@ -68,12 +82,6 @@ namespace BabBot.Wow
             _tlist = new ArrayList();
         }
 
-        [XmlAttribute("num")]
-        public string Number;
-
-        [XmlElement("lua")]
-        public LuaProc LuaList;
-        
         public string FindLuaFunction(string name)
         {
             return LuaList.FindLuaFunction(name);
@@ -127,7 +135,9 @@ namespace BabBot.Wow
 
     public class LuaFunction
     {
-        [XmlAttribute("name")] public string Name;
+        [XmlAttribute("name")] 
+        public string Name;
+        
         [XmlElement("text", typeof(XmlCDataSection))]
         public XmlCDataSection Text;
 
@@ -148,5 +158,75 @@ namespace BabBot.Wow
             get { return ((Text != null) ? Text.InnerText : null); }
         }
 
+    }
+
+    public class CharClasses
+    {
+        private Hashtable _clist;
+        
+        [XmlElement("class")]
+        public CharClass[] ClassList
+        {
+            get
+            {
+                CharClass[] res = new CharClass[_clist.Count];
+                _clist.Values.CopyTo(res, 0);
+                return res;
+            }
+
+            set
+            {
+                if (value == null) return;
+                CharClass[] items = (CharClass[])value;
+                _clist.Clear();
+                foreach (CharClass item in items)
+                    _clist.Add(item.ArmoryId, item);
+            }
+        }
+
+        public CharClasses () 
+        {
+            _clist = new Hashtable();
+        }
+    }
+    
+    public class CharClass
+    {
+        [XmlAttribute("armory_id")]
+        public byte ArmoryId;
+
+        [XmlAttribute("long_name")]
+        public string LongName;
+
+        [XmlAttribute("short_name")]
+        public string ShortName;
+
+        [XmlAttribute("tab_1_max")]
+        public byte TabMax1;
+
+        [XmlAttribute("tab_2_max")]
+        public byte TabMax2;
+
+        [XmlAttribute("tab_3_max")]
+        public byte TabMax3;
+
+        [XmlIgnore]
+        public byte[] Tabs
+        {
+            get { return new byte[] {TabMax1, TabMax2, TabMax3}; }
+        }
+
+        public CharClass () {}
+    }
+    
+    public class TalentConfig
+    {
+        [XmlAttribute("lvl_start")]
+        public byte StartLevel;
+
+        [XmlAttribute("armory_pattern")]
+        public string ArmoryPattern;
+
+        public TalentConfig() { }
     }
 }

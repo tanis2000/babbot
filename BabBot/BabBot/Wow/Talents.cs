@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using BabBot.Manager;
 
 namespace BabBot.Wow
 {
@@ -16,24 +18,30 @@ namespace BabBot.Wow
         private string _path;
         private string _fname;
 
-        public Talents()
+        [XmlIgnore]
+        public ArrayList Levels
         {
-            Init();
+            get { return _list; }
         }
 
-        public Talents(string pattern, string url, string descr, Level[] levels)
+        public Talents()
         {
-            Init();
+            _list = new ArrayList();
+        }
 
+        public Talents(string fname, string url, string descr) : 
+                                         this("", url, descr, null) {
+            _path = ProcessManager.Config.TalentTemplateDir +
+                            Path.DirectorySeparatorChar + fname;
+        }
+
+        public Talents(string pattern, string url, string descr, 
+                                                    Level[] levels) : this()
+        {
             Pattern = pattern;
             URL = url;
             Description = descr;
             LevelList = levels;
-        }
-
-        private void Init()
-        {
-            _list = new ArrayList();
         }
 
         [XmlAttribute("pattern")]
@@ -67,17 +75,19 @@ namespace BabBot.Wow
         [XmlElement("level")]
         public Level[] LevelList
         {
-            get {
+            get
+            {
                 Level[] tlist = new Level[_list.Count];
-                _list.CopyTo( tlist );
+                _list.CopyTo(tlist);
                 return tlist;
             }
-            set {
-                if( value == null ) return;
+            set
+            {
+                if (value == null) return;
                 Level[] tlist = (Level[])value;
                 _list.Clear();
                 foreach (Level t in tlist)
-                    _list.Add( t );
+                    _list.Add(t);
             }
         }
 
@@ -91,6 +101,11 @@ namespace BabBot.Wow
             _list.Remove(l);
         }
 
+        public Level GetLevel(int num)
+        {
+            return (Level) _list[num];
+        }
+
         public override string ToString()
         {
             return FileName;
@@ -101,10 +116,17 @@ namespace BabBot.Wow
     // Items in the shopping list
     public class Level
     {
-        [XmlAttribute("num")] public byte Num;
-        [XmlAttribute("tab_id")] public byte TabId;
-        [XmlAttribute("talent_id")] public int TalentId;
-        [XmlAttribute("rank")] public byte Rank;
+        [XmlAttribute("num")] 
+        public byte Num;
+        
+        [XmlAttribute("tab_id")] 
+        public byte TabId;
+        
+        [XmlAttribute("talent_id")] 
+        public int TalentId;
+        
+        [XmlAttribute("rank")] 
+        public byte Rank;
 
         public Level() {}
         
@@ -122,6 +144,11 @@ namespace BabBot.Wow
             TabId = tab;
             TalentId = tid;
             Rank = rank;
+        }
+
+        public string InfoStr
+        {
+            get { return ToString(); }
         }
 
         public override string ToString()

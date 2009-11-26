@@ -1,5 +1,17 @@
 <wow_data>
-  <version num="3.2.2.10505">
+  <version num="3.2.2.10505" max_lvl="80">
+    <classes>
+        <class armory_id="1" long_name="Warrior" short_name="war" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="2" long_name="Palladin" short_name="pally" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="3" long_name="Hunter" short_name="hunter" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="4" long_name="Rogue" short_name="rogue" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="5" long_name="Priest" short_name="priest" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="6" long_name="Death Knight" short_name="dk" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="7" long_name="Shaman" short_name="sham" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="8" long_name="Mage" short_name="mage" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="9" long_name="Warlock" short_name="lock" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="11" long_name="Druid" short_name="druid" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+      </classes>
     <lua>
       <function name="SetGlueState">
         <parameters>
@@ -204,21 +216,7 @@ end)()]]></text>
       </function>
       -->
     </lua>
-    <!--
-    <talents>
-      <classes>
-        <class id="1" name="Warrior" />
-        <class id="2" name="Palladin" />
-        <class id="3" name="Hunter" />
-        <class id="4" name="Rogue" />
-        <class id="5" name="Priest" />
-        <class id="6" name="Death Knight" />
-        <class id="7" name="Shaman" />
-        <class id="8" name="Mage" />
-        <class id="9" name="Warlock" />
-        <class id="11" name="Druid" />
-      </classes>
-    </talents>
-    -->
+    
+    <talents lvl_start="10" armory_pattern="^http://www.wowarmory.com/talent-calc.xml\\?cid=(\\d)\\&amp;tal=(\\d+)$" />
   </version>
 </wow_data>
