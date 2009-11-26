@@ -162,8 +162,13 @@ namespace BabBot.Wow
 
     public class CharClasses
     {
+        // Sorted by Armory ID
         private Hashtable _clist;
-        
+        // Sorted by Long Name
+        private SortedList _clist1;
+        // Sorted by Short Name
+        private SortedList _clist2;
+
         [XmlElement("class")]
         public CharClass[] ClassList
         {
@@ -179,14 +184,39 @@ namespace BabBot.Wow
                 if (value == null) return;
                 CharClass[] items = (CharClass[])value;
                 _clist.Clear();
+                _clist1.Clear();
+                _clist2.Clear();
+
                 foreach (CharClass item in items)
+                {
                     _clist.Add(item.ArmoryId, item);
+                    _clist1.Add(item.LongName, item);
+                    _clist2.Add(item.ShortName, item);
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public CharClass[] ClassListByName
+        {
+            get
+            {
+                CharClass[] res = new CharClass[_clist1.Count];
+                _clist1.Values.CopyTo(res, 0);
+                return res;
             }
         }
 
         public CharClasses () 
         {
             _clist = new Hashtable();
+            _clist1 = new SortedList();
+            _clist2 = new SortedList();
+        }
+
+        public int FindClassByShortName(string name)
+        {
+            return _clist2.IndexOfKey(name);
         }
     }
     
@@ -217,6 +247,11 @@ namespace BabBot.Wow
         }
 
         public CharClass () {}
+
+        public override string ToString()
+        {
+            return LongName;
+        }
     }
     
     public class TalentConfig

@@ -836,9 +836,14 @@ namespace BabBot.Manager
             if (!Directory.Exists(config.LogParams.Dir))
                 Directory.CreateDirectory(config.LogParams.Dir);
 
-            wversion = wdata.FindVersion(config.WoWInfo.Version);
+            wversion = FindWoWVersionByName(config.WoWInfo.Version);
             if (wversion == null)
                 throw new WoWDataNotFoundException(config.WoWInfo.Version);
+        }
+
+        public static WoWVersion FindWoWVersionByName(string version)
+        {
+            return wdata.FindVersion(version);
         }
 
         #endregion

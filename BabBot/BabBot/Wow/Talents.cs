@@ -31,8 +31,9 @@ namespace BabBot.Wow
 
         public Talents(string fname, string url, string descr) : 
                                          this("", url, descr, null) {
-            _path = ProcessManager.Config.TalentTemplateDir +
-                            Path.DirectorySeparatorChar + fname;
+            _path = ProcessManager.Config.ProfilesDir +
+                            Path.DirectorySeparatorChar + 
+                            "Talents" + Path.DirectorySeparatorChar + fname;
         }
 
         public Talents(string pattern, string url, string descr, 
@@ -55,6 +56,9 @@ namespace BabBot.Wow
 
         [XmlAttribute("class")]
         public string Class;
+
+        [XmlAttribute("wow_version")]
+        public string WoWVersion;
 
         [XmlIgnore]
         public string FileName
@@ -108,38 +112,41 @@ namespace BabBot.Wow
 
         public override string ToString()
         {
-            return FileName;
+            // Strip extension
+            return Path.GetFileNameWithoutExtension(FileName);
         }
         
     }
     
     // Items in the shopping list
-    public class Level
+    public class Level: ICloneable
     {
         [XmlAttribute("num")] 
-        public byte Num;
+        public int Num;
         
         [XmlAttribute("tab_id")] 
-        public byte TabId;
+        public int TabId;
         
         [XmlAttribute("talent_id")] 
         public int TalentId;
         
         [XmlAttribute("rank")] 
-        public byte Rank;
+        public int Rank;
 
         public Level() {}
-        
-        public Level(byte num, byte tab, int tid, byte rank) {
+
+        public Level(int num, int tab, int tid, int rank)
+        {
             Update(num, tab, tid, rank);
         }
 
-        public void Update(byte tab, int tid, byte rank)
+        public void Update(int tab, int tid, int rank)
         {
             Update(Num, tab, tid, rank);
         }
 
-        public void Update(byte num, byte tab, int tid, byte rank) {
+        public void Update(int num, int tab, int tid, int rank)
+        {
             Num = num;
             TabId = tab;
             TalentId = tid;
@@ -157,6 +164,10 @@ namespace BabBot.Wow
                                     Num, TabId, TalentId, Rank);
         }
 
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 /*
 Talents tlist = new Talents();

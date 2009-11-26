@@ -23,6 +23,8 @@ namespace BabBot.Forms
         Talents CurTalents = null;
         // Change tracking
         private bool _changed = false;
+        // Talents profile dir
+        private string wdir;
 
         public TalentsForm()
         {
@@ -93,9 +95,29 @@ namespace BabBot.Forms
             btnImport.Enabled = !tbTalentURL.Text.Equals("");
         }
 
+        private void BindClasses()
+        {
+            if (cbWoWVersion.SelectedItem != null)
+                cbClass.DataSource = ((WoWVersion)cbWoWVersion.
+                            SelectedItem).Classes.ClassListByName;
+            cbClass.SelectedItem = null;
+        }
+
         private void TalentsForm_Load(object sender, EventArgs e)
         {
-            tbTalentURL_TextChanged(sender, e);
+            wdir = ProcessManager.Config.ProfilesDir +
+                        Path.DirectorySeparatorChar + "Talents";
+
+            cbWoWVersion.DataSource = ProcessManager.WoWVersions;
+            cbWoWVersion.SelectedItem = ProcessManager.CurVersion;
+
+            BindClasses();
+
+            // Test
+            if (ProcessManager.Config.Test == 1)
+                tbTalentURL_TextChanged(sender, e);
+
+            _changed = false;
         }
 
         private void cbTalentTemplates_DropDown(object sender, EventArgs e)
@@ -106,12 +128,11 @@ namespace BabBot.Forms
             // Scan Profiles/Talents for list
             try
             {
-                dir = Directory.GetFiles(ProcessManager.Config.TalentTemplateDir, "*.xml");
+                dir = Directory.GetFiles(wdir, "*.xml");
             }
             catch (System.IO.DirectoryNotFoundException)
             {
-                MessageBox.Show("Directory '" + 
-                    ProcessManager.Config.TalentTemplateDir + "' not found");
+                MessageBox.Show("Directory '" + wdir + "' not found");
                 return;
             }
             
@@ -129,24 +150,44 @@ namespace BabBot.Forms
             }
         }
 
+        private void SelectClass()
+        {
+            if ((cbWoWVersion.SelectedItem != null) && (CurTalents != null))
+            {
+                cbClass.SelectedIndex = ((WoWVersion)cbWoWVersion.SelectedItem).
+                    Classes.FindClassByShortName(CurTalents.Class);
+                cbClass.Enabled = false;
+
+            }
+            else
+                cbClass.SelectedItem = null;
+        }
+
         private void cbTalentTemplates_SelectedIndexChanged(object sender, EventArgs e)
         {
             CurTalents = (Talents)cbTalentTemplates.SelectedItem;
 
-            cbClass.Text = CurTalents.Class;
-            cbClass.Enabled = false;
+            if (CurTalents.WoWVersion != null)
+                cbWoWVersion.SelectedItem =
+                    ProcessManager.FindWoWVersionByName(CurTalents.WoWVersion);
+            else
+                cbWoWVersion.SelectedItem = null;
+
+            SelectClass();
 
             tbDescription.Text = CurTalents.Description;
-
-            lbLevelList.Items.Clear();
 
             // Clear binding
             if (lbLevelList.DataSource != null)
                 lbLevelList.DataSource = null;
 
+            lbLevelList.Items.Clear();
+
             BindLevels();
 
             lbLevelList.SelectedIndex = 0;
+
+            _changed = false;
             CheckSaveBtn();
         }
 
@@ -154,37 +195,37 @@ namespace BabBot.Forms
         {
             bool is_header_set = (!tbDescription.Text.Equals("") &&
                                         !cbClass.Text.Equals("") &&
-                                        // Talent template not empty and has .xml extension
-                                        !cbTalentTemplates.Text.Equals("") &&
-                                        (cbTalentTemplates.Text.IndexOf(".xml") == 
-                                                    cbTalentTemplates.Text.Length - 4));
+                                        // Talent template not empty 
+                                        !cbTalentTemplates.Text.Equals("") );
+            bool not_empty = (lbLevelList.Items.Count > 0);
+            bool is_selected = (lbLevelList.SelectedIndex >= 0);
 
-            btnSave.Enabled = ((lbLevelList.Items.Count > 0) && is_header_set && _changed);
+            btnUpdate.Enabled = is_selected;
+            btnSave.Enabled = (not_empty && is_header_set && _changed);
 
             btnAdd.Enabled = ((LevelLabel < ProcessManager.CurVersion.MaxLvl) && is_header_set);
 
-            btnRemove.Enabled = is_header_set && (lbLevelList.SelectedIndex ==
-                                        (lbLevelList.Items.Count - 1));
-
-            btnUp.Enabled = lbLevelList.Items.Count > 1;
-            btnDown.Enabled = btnUp.Enabled;
+            btnUp.Enabled = (lbLevelList.SelectedIndex > 0);
+            btnDown.Enabled = (lbLevelList.SelectedIndex < (lbLevelList.Items.Count - 1));
+            btnRemove.Enabled = (not_empty && 
+                        (lbLevelList.SelectedIndex ==
+                                        (lbLevelList.Items.Count - 1)));
         }
 
         private void lbLevelList_SelectedIndexChanged(object sender, EventArgs e)
         {
             Level l = (Level) lbLevelList.SelectedItem;
 
-            if (l == null)
-                btnUpdate.Enabled = false;
-            else
+            if (l != null)
             {
                 try
                 {
                     labelLevelNum.Text = Convert.ToString(l.Num);
                     numTab.Value = l.TabId;
                     numTalent.Value = l.TalentId;
+                    numRank.Value = l.Rank;
 
-                    btnUpdate.Enabled = true;
+                    CheckSaveBtn();
                 }
                 catch (Exception ex)
                 {
@@ -192,18 +233,18 @@ namespace BabBot.Forms
 
                     // Unselect everything
                     lbLevelList.SelectedIndex = -1;
-                    btnUpdate.Enabled = false;
-                    btnRemove.Enabled = false;
                 }
             }
+
+            CheckSaveBtn();
         }
 
         private void btnApply_Click(object sender, EventArgs e)
         {
             if (lbLevelList.SelectedValue == null) return;
 
-            ((Level)lbLevelList.SelectedValue).Update((byte)numTab.Value, 
-                (int) numTalent.Value, (byte) numRank.Value);
+            ((Level)lbLevelList.SelectedValue).Update((int) numTab.Value, 
+                (int) numTalent.Value, (int) numRank.Value);
 
             RefreshLevelList();
             RegisterChange();
@@ -217,26 +258,34 @@ namespace BabBot.Forms
 
         private void btnRemove_Click(object sender, EventArgs e)
         {
+            // Select previous item
+            lbLevelList.SelectedIndex = lbLevelList.Items.Count - 2;
+
             // Only can remove last item
             int idx = lbLevelList.Items.Count - 1;
-            lbLevelList.Items.RemoveAt(idx);
+            CurTalents.Levels.RemoveAt(idx);
 
+            RefreshLevelList();
             RegisterChange();
         }
 
         private void tbDescription_TextChanged(object sender, EventArgs e)
         {
-            CheckSaveBtn();
+            RegisterChange();
         }
 
         private void cbClass_TextChanged(object sender, EventArgs e)
         {
-            CheckSaveBtn();
+            RegisterChange();
         }
 
         private void cbTalentTemplates_TextChanged(object sender, EventArgs e)
         {
-            CheckSaveBtn();
+            if (CurTalents != null)
+                CurTalents.FullPath = wdir + Path.DirectorySeparatorChar + 
+                                            cbTalentTemplates.Text + ".xml";
+
+            RegisterChange();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -245,10 +294,19 @@ namespace BabBot.Forms
             {
                 XmlSerializer s = new XmlSerializer(typeof(Talents));
                 TextWriter w = new StreamWriter(CurTalents.FullPath);
+
+                // Save parameters as well
+                CurTalents.URL = tbTalentURL.Text;
+                CurTalents.Description = tbDescription.Text;
+                CurTalents.Class = ((CharClass) cbClass.SelectedItem).ShortName;
+                CurTalents.WoWVersion = cbWoWVersion.Text;
+
                 s.Serialize(w, CurTalents);
                 w.Close();
 
                 _changed = false;
+                btnSave.Enabled = false;
+
                 MessageBox.Show(this, "File " + CurTalents.FullPath +
                     " successfully saved", "SUCCESS", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
@@ -262,14 +320,33 @@ namespace BabBot.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            Level l = new Level((byte) (ProcessManager.CurVersion.TalentConfig.StartLevel + 
-                         lbLevelList.Items.Count),(byte) numTab.Value, 
-                        (int)numTalent.Value, (byte)numRank.Value);
+            int num = 10;
+            int tab = 1;
+            int talent = 1;
+            int rank = 1;
+
+            // Find last item
+            if ((CurTalents != null) && (CurTalents.Levels.Count > 0))
+            {
+                Level last = (Level)CurTalents.Levels[CurTalents.Levels.Count - 1];
+
+                num = last.Num + 1;
+                tab = last.TabId;
+                talent = last.TalentId;
+
+                if (last.Rank < numRank.Maximum)
+                    rank = last.Rank + 1;
+                else
+                    talent++;
+            }
+
+            Level l  = new Level(num , tab, talent, rank);
 
             bool is_new = (CurTalents == null);
             if (is_new)
             {
-                CurTalents = new Talents(cbTalentTemplates.Text,
+                // Don't forget add .xml extension for new file
+                CurTalents = new Talents(cbTalentTemplates.Text + ".xml",
                                         tbTalentURL.Text, tbDescription.Text);
                 BindLevels();
             }
@@ -284,8 +361,7 @@ namespace BabBot.Forms
 
         private void RefreshLevelList()
         {
-            CurrencyManager cm = (CurrencyManager)BindingContext[CurTalents.Levels];
-            cm.Refresh();
+            ((CurrencyManager)BindingContext[CurTalents.Levels]).Refresh();
         }
 
         private void BindLevels()
@@ -293,19 +369,40 @@ namespace BabBot.Forms
             lbLevelList.DataSource = CurTalents.Levels;
         }
 
-        private void lbLevelList_SelectedValueChanged(object sender, EventArgs e)
-        {
-            if (lbLevelList.SelectedIndex != -1)
-                lbLevelList.Text = lbLevelList.SelectedValue.ToString();
-        }
-
         private void btnUp_Click(object sender, EventArgs e)
         {
+            if (lbLevelList.SelectedIndex <= 0) return;
+
+            int idx = lbLevelList.SelectedIndex;
+            SwitchLevels((Level)CurTalents.Levels[idx],
+                        (Level)CurTalents.Levels[idx - 1]);
+            
+            lbLevelList.SelectedIndex = (idx - 1);
+
             RegisterChange();
+        }
+
+        private void SwitchLevels(Level cur, Level prev)
+        {
+            Level saved = (Level)cur.Clone();
+
+            cur.Update(prev.TabId, prev.TalentId, prev.Rank);
+            RefreshLevelList();
+            prev.Update(saved.TabId, saved.TalentId, saved.Rank);
+            RefreshLevelList();
         }
 
         private void btnDown_Click(object sender, EventArgs e)
         {
+            if ((lbLevelList.SelectedIndex < 0) || 
+                    (lbLevelList.SelectedIndex == lbLevelList.Items.Count - 1)) return;
+
+            int idx = lbLevelList.SelectedIndex;
+            SwitchLevels((Level)CurTalents.Levels[idx],
+                        (Level)CurTalents.Levels[idx + 1]);
+
+            lbLevelList.SelectedIndex = (idx + 1);
+
             RegisterChange();
         }
 
@@ -316,6 +413,24 @@ namespace BabBot.Forms
                     "Confirmation", MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button2) != DialogResult.Yes));
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            if (CurTalents != null)
+            {
+                CurTalents.Levels.Clear();
+                RefreshLevelList();
+
+                RegisterChange();
+            }
+        }
+
+        private void cbWoWVersion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Change binding for Class
+            BindClasses();
+            SelectClass();
         }
     }
 }

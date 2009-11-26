@@ -40,7 +40,6 @@ namespace BabBot.Forms
         private Radar.Radar Radar;
         private AppOptionsForm AppOptionsForm;
         private OptionsForm BotOptionsForm;
-        private TalentsForm TalentsForm;
 
         public MainForm()
         {
@@ -981,11 +980,11 @@ namespace BabBot.Forms
 
         private void talentTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (TalentsForm == null)
-                TalentsForm = new TalentsForm();
-
-            TalentsForm.TopMost = this.TopMost;
-            TalentsForm.ShowDialog();
+            // Create every time new dialog. Don't save old editor
+            TalentsForm form = new TalentsForm();
+            form.TopMost = this.TopMost;
+            form.ShowDialog();
+            form = null;
         }
     }
 }
