@@ -15,7 +15,7 @@ using System.Xml.Serialization;
 
 namespace BabBot.Forms
 {
-    public partial class TalentsForm : Form
+    public partial class TalentsForm : GenericDialog
     {
         // Template on WoW Armory URL 
         Regex trex;
@@ -25,8 +25,12 @@ namespace BabBot.Forms
         private bool _changed = false;
         // Talents profile dir
         private string wdir;
+        // Hunter BM
+        // http://www.wowarmory.com/talent-calc.xml?cid=3&tal=05203001525210250130501341 205035200000000000000000000 0300000000000000000000000000
+        // Pally Ret
+        // http://www.wowarmory.com/talent-calc.xml?cid=2&tal=05000000000000000000000000 05000000000000000000000000 50232251223331322133231331
 
-        public TalentsForm()
+        public TalentsForm() : base ("talents")
         {
             InitializeComponent();
 
@@ -68,6 +72,42 @@ namespace BabBot.Forms
 
         private void btnImport_Click(object sender, EventArgs e)
         {
+            if (cbWoWVersion.SelectedItem == null)
+            {
+                ShowErrorMessage("WoW Version not selected");
+                return;
+            }
+            
+            // Check learning order
+            int[] ls = null;
+            if (tbLearningOrder.Text.Equals(""))
+                ls = new int[] {1, 2, 3};
+            else
+            {
+                string[] lorder = tbLearningOrder.Text.Split(',');
+                int ll = lorder.Length;
+                if (ll > 3)
+                {
+                    ShowErrorMessage("Invalid learning sequence '" + tbLearningOrder.Text + 
+                    "'. Number of tabs exceed 3");
+                    return;
+                }
+                
+                // convert each tab to int
+                ls = new int[ll];
+
+                try
+                {
+                    for (int i = 0; i < ll; i++)
+                        ls[i] = Convert.ToInt32(lorder[i]);
+                } catch {
+                    ShowErrorMessage("Invalid Tab Id parameter in learning sequence '" + 
+                        tbLearningOrder.Text + "'");
+                    return;
+                }
+            }
+            
+            // Finally process URL
             try
             {
                 string url = tbTalentURL.Text;
@@ -77,10 +117,76 @@ namespace BabBot.Forms
                 if (m.Success && (m.Groups.Count == 3))
                 {
                     string s = m.Groups[1].ToString();
-                    int cid = Convert.ToInt32(s);
-                    string response = ReadURL(url);
+                    byte cid = Convert.ToByte(s);
+                    string ts = m.Groups[2].ToString();
+                    
+                    // string response = ReadURL(url);
+                    
+                    // Find class
+                    WoWVersion cur_version = (WoWVersion) cbWoWVersion.SelectedItem;
+                    CharClass cc = cur_version.Classes.FindClassByArmoryId(cid);
+                    
+                    // Check if Class defined
+                    if (cc == null)
+                    {
+                        ShowErrorMessage("Unable find class for Armory ID " + cid);
+                        return;
+                    }
+
+                    // Check size of talents
+                    int cc_total = cc.TotalTalentSum;
+                    if (cc_total != ts.Length)
+                    {
+                        ShowErrorMessage("Length of talent's URL parameter " + ts.Length +
+                            " different from class parameter length " + cc_total + 
+                            " configured in WoWData.xml");
+                        return;
+                    }
+                    
+                    
+                    byte[] tabs_len = cc.Tabs;
+
+                    // Convert talent list to byte array
+                    byte[] tlist = new byte[cc_total];
+                    for (int i = 0; i < cc_total; i++)
+                        tlist[i] = Convert.ToByte(ts.Substring(i, 1));
+
+                    byte num = cur_version.TalentConfig.StartLevel;
+                    
+                    // Select class
+                    cbClass.SelectedItem = cc;
+                    cbClass.Enabled = false;
+
+                    // Clear CurTalents
+                    if (CurTalents == null)
+                        CurTalents = new Talents();
+                    else
+                        btnReset_Click(sender, e);
+
+                    BindLevels();
+
+                    for (int i = 0; i < ls.Length; i++)
+                    {
+                        int cur_tab_id = ls[i];
+                        int offset = 0;
+                        for (int j = 0; j < cur_tab_id - 1; j++)
+                            offset += tabs_len[j];
+
+                        int cur_tab_len = tabs_len[cur_tab_id - 1];
+                        for (int j = 0; j < cur_tab_len; j++)
+                        {
+                            byte ct = tlist[offset + j];
+                            // Added current talent with all ranks
+                            for (int k = 1; k <= ct; k++)
+                            {
+                                CurTalents.AddLevel(new Level(num, cur_tab_id, j, k));
+                                num++;
+                                RefreshLevelList();
+                            }
+                        }
+                    }
                 } else {
-                    MessageBox.Show(string.Format(
+                    ShowErrorMessage(string.Format(
                         "Invalid URL. '{0}' excpected", trex.ToString()));
                 }
             }
@@ -152,7 +258,9 @@ namespace BabBot.Forms
 
         private void SelectClass()
         {
-            if ((cbWoWVersion.SelectedItem != null) && (CurTalents != null))
+            if ((cbWoWVersion.SelectedItem != null) && 
+                (CurTalents != null) &&
+                (CurTalents.Class != null))
             {
                 cbClass.SelectedIndex = ((WoWVersion)cbWoWVersion.SelectedItem).
                     Classes.FindClassByShortName(CurTalents.Class);
@@ -201,6 +309,12 @@ namespace BabBot.Forms
             bool is_selected = (lbLevelList.SelectedIndex >= 0);
 
             btnUpdate.Enabled = is_selected;
+
+            labelLevelNum.Visible = btnUpdate.Enabled;
+            numTab.Visible = btnUpdate.Enabled;
+            numTalent.Visible = btnUpdate.Enabled;
+            numRank.Visible = btnUpdate.Enabled;
+
             btnSave.Enabled = (not_empty && is_header_set && _changed);
 
             btnAdd.Enabled = ((LevelLabel < ProcessManager.CurVersion.MaxLvl) && is_header_set);

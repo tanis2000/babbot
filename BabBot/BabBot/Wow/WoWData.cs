@@ -218,6 +218,11 @@ namespace BabBot.Wow
         {
             return _clist2.IndexOfKey(name);
         }
+
+        public CharClass FindClassByArmoryId(byte id)
+        {
+            return (CharClass) _clist[id];
+        }
     }
     
     public class CharClass
@@ -244,6 +249,12 @@ namespace BabBot.Wow
         public byte[] Tabs
         {
             get { return new byte[] {TabMax1, TabMax2, TabMax3}; }
+        }
+
+        [XmlIgnore]
+        public int TotalTalentSum
+        {
+            get { return TabMax1 + TabMax2 + TabMax3; }
         }
 
         public CharClass () {}
