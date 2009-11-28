@@ -12,6 +12,10 @@ using BabBot.Wow;
 using BabBot.Manager;
 using System.Xml.Serialization;
 
+// TODO 
+// 1 - Add Ctrl-S to save talent
+// 2 - Extract Talent Name from URL and use it instead of Talent ID
+
 namespace BabBot.Forms
 {
     public partial class TalentsForm : GenericDialog
@@ -20,8 +24,6 @@ namespace BabBot.Forms
         Regex trex;
         // Currently selected talents list
         Talents CurTalents = null;
-        // Change tracking
-        private bool _changed = false;
         // Talents profile dir
         private string wdir;
         // Hunter BM
@@ -33,7 +35,7 @@ namespace BabBot.Forms
         {
             InitializeComponent();
 
-            trex = new Regex(ProcessManager.CurVersion.TalentConfig.ArmoryPattern);
+            trex = new Regex(ProcessManager.CurWoWVersion.TalentConfig.ArmoryPattern);
         }
 
         private int LevelLabel
@@ -173,7 +175,11 @@ namespace BabBot.Forms
 
         private void tbTalentURL_TextChanged(object sender, EventArgs e)
         {
-            btnImport.Enabled = !tbTalentURL.Text.Equals("");
+            bool empty = tbTalentURL.Text.Equals("");
+            btnImport.Enabled = !empty;
+            btnViewURL.Enabled = !empty;
+
+            RegisterChange();
         }
 
         private void BindClasses()
@@ -190,15 +196,11 @@ namespace BabBot.Forms
                         Path.DirectorySeparatorChar + "Talents";
 
             cbWoWVersion.DataSource = ProcessManager.WoWVersions;
-            cbWoWVersion.SelectedItem = ProcessManager.CurVersion;
+            cbWoWVersion.SelectedItem = ProcessManager.CurWoWVersion;
 
             BindClasses();
 
-            // Test
-            if (ProcessManager.Config.Test == 1)
-                tbTalentURL_TextChanged(sender, e);
-
-            _changed = false;
+            IsChanged = false;
         }
 
         private void cbTalentTemplates_DropDown(object sender, EventArgs e)
@@ -255,6 +257,8 @@ namespace BabBot.Forms
             SelectClass();
 
             tbDescription.Text = CurTalents.Description;
+            tbTalentURL.Text = CurTalents.URL;
+            tbLearningOrder.Text = CurTalents.LearningOrder;
 
             // Clear binding
             if (lbLevelList.DataSource != null)
@@ -266,7 +270,7 @@ namespace BabBot.Forms
 
             lbLevelList.SelectedIndex = 0;
 
-            _changed = false;
+            IsChanged = false;
             CheckSaveBtn();
         }
 
@@ -286,9 +290,10 @@ namespace BabBot.Forms
             numTalent.Visible = btnUpdate.Enabled;
             numRank.Visible = btnUpdate.Enabled;
 
-            btnSave.Enabled = (not_empty && is_header_set && _changed);
+            btnSave.Enabled = (not_empty && is_header_set && IsChanged);
 
-            btnAdd.Enabled = ((LevelLabel < ProcessManager.CurVersion.MaxLvl) && is_header_set);
+            btnAdd.Enabled = ((LevelLabel < ProcessManager.
+                        CurWoWVersion.MaxLvl) && is_header_set);
 
             btnUp.Enabled = (lbLevelList.SelectedIndex > 0);
             btnDown.Enabled = (lbLevelList.SelectedIndex < (lbLevelList.Items.Count - 1));
@@ -335,9 +340,9 @@ namespace BabBot.Forms
             RegisterChange();
         }
 
-        private void RegisterChange()
+        protected void RegisterChange()
         {
-            _changed = true;
+            IsChanged = true;
             CheckSaveBtn();
         }
 
@@ -382,6 +387,7 @@ namespace BabBot.Forms
 
                 // Save parameters as well
                 CurTalents.URL = tbTalentURL.Text;
+                CurTalents.LearningOrder = tbLearningOrder.Text;
                 CurTalents.Description = tbDescription.Text;
                 CurTalents.Class = ((CharClass) cbClass.SelectedItem).ShortName;
                 CurTalents.WoWVersion = cbWoWVersion.Text;
@@ -389,7 +395,7 @@ namespace BabBot.Forms
                 s.Serialize(w, CurTalents);
                 w.Close();
 
-                _changed = false;
+                IsChanged = false;
                 btnSave.Enabled = false;
 
                 MessageBox.Show(this, "File " + CurTalents.FullPath +
@@ -491,15 +497,6 @@ namespace BabBot.Forms
             RegisterChange();
         }
 
-        private void TalentsForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            e.Cancel = (_changed &&
-                (MessageBox.Show(this, "Are you sure you want close and cancel changes ?",
-                    "Confirmation", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2) != DialogResult.Yes));
-        }
-
         private void btnReset_Click(object sender, EventArgs e)
         {
             if (CurTalents != null)
@@ -516,6 +513,16 @@ namespace BabBot.Forms
             // Change binding for Class
             BindClasses();
             SelectClass();
+        }
+
+        private void btnViewURL_Click(object sender, EventArgs e)
+        {
+            OpenURL(tbTalentURL.Text);
+        }
+
+        private void tbLearningOrder_TextChanged(object sender, EventArgs e)
+        {
+            RegisterChange();
         }
     }
 }

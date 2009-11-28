@@ -51,6 +51,9 @@ namespace BabBot.Wow
         [XmlAttribute("url")]
         public string URL = null;
 
+        [XmlAttribute("learn_order")]
+        public string LearningOrder = null;
+
         [XmlAttribute("description")]
         public string Description;
 
@@ -160,7 +163,7 @@ namespace BabBot.Wow
 
         public override string ToString()
         {
-            return string.Format("Level: {0} {1}/{2}/{3}",
+            return string.Format("Level {0}: {1}/{2}/{3}",
                                     Num, TabId, TalentId, Rank);
         }
 

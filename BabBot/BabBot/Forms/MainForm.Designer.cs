@@ -129,6 +129,9 @@
             this.tbPlayerTarget = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
+            this.btnLEarnTemplates = new System.Windows.Forms.Button();
+            this.cbTalentTemplates = new System.Windows.Forms.ComboBox();
+            this.lblTalentTemplates = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.txtTravelTime = new System.Windows.Forms.TextBox();
             this.cbWPRecord = new System.Windows.Forms.CheckBox();
@@ -186,9 +189,6 @@
             this.txtScript = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.lblTalentTemplates = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.btnLEarnTemplates = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -1225,7 +1225,7 @@
             // tabPageDebug
             // 
             this.tabPageDebug.Controls.Add(this.btnLEarnTemplates);
-            this.tabPageDebug.Controls.Add(this.comboBox1);
+            this.tabPageDebug.Controls.Add(this.cbTalentTemplates);
             this.tabPageDebug.Controls.Add(this.lblTalentTemplates);
             this.tabPageDebug.Controls.Add(this.label29);
             this.tabPageDebug.Controls.Add(this.txtTravelTime);
@@ -1272,6 +1272,33 @@
             this.tabPageDebug.TabIndex = 1;
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
+            // 
+            // btnLEarnTemplates
+            // 
+            this.btnLEarnTemplates.Location = new System.Drawing.Point(465, 35);
+            this.btnLEarnTemplates.Name = "btnLEarnTemplates";
+            this.btnLEarnTemplates.Size = new System.Drawing.Size(75, 23);
+            this.btnLEarnTemplates.TabIndex = 59;
+            this.btnLEarnTemplates.Text = "Learn Now";
+            this.btnLEarnTemplates.UseVisualStyleBackColor = true;
+            // 
+            // cbTalentTemplates
+            // 
+            this.cbTalentTemplates.FormattingEnabled = true;
+            this.cbTalentTemplates.Location = new System.Drawing.Point(419, 6);
+            this.cbTalentTemplates.Name = "cbTalentTemplates";
+            this.cbTalentTemplates.Size = new System.Drawing.Size(121, 21);
+            this.cbTalentTemplates.TabIndex = 58;
+            this.cbTalentTemplates.DropDown += new System.EventHandler(this.cbTalentTemplates_DropDown);
+            // 
+            // lblTalentTemplates
+            // 
+            this.lblTalentTemplates.AutoSize = true;
+            this.lblTalentTemplates.Location = new System.Drawing.Point(324, 9);
+            this.lblTalentTemplates.Name = "lblTalentTemplates";
+            this.lblTalentTemplates.Size = new System.Drawing.Size(89, 13);
+            this.lblTalentTemplates.TabIndex = 57;
+            this.lblTalentTemplates.Text = "Talent Templates";
             // 
             // label29
             // 
@@ -1776,32 +1803,6 @@
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
-            // lblTalentTemplates
-            // 
-            this.lblTalentTemplates.AutoSize = true;
-            this.lblTalentTemplates.Location = new System.Drawing.Point(324, 9);
-            this.lblTalentTemplates.Name = "lblTalentTemplates";
-            this.lblTalentTemplates.Size = new System.Drawing.Size(89, 13);
-            this.lblTalentTemplates.TabIndex = 57;
-            this.lblTalentTemplates.Text = "Talent Templates";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(419, 6);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
-            this.comboBox1.TabIndex = 58;
-            // 
-            // btnLEarnTemplates
-            // 
-            this.btnLEarnTemplates.Location = new System.Drawing.Point(465, 35);
-            this.btnLEarnTemplates.Name = "btnLEarnTemplates";
-            this.btnLEarnTemplates.Size = new System.Drawing.Size(75, 23);
-            this.btnLEarnTemplates.TabIndex = 59;
-            this.btnLEarnTemplates.Text = "Learn Now";
-            this.btnLEarnTemplates.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2024,7 +2025,7 @@
         private System.Windows.Forms.ToolStripMenuItem realmListToolStripMenuItem;
         private System.Windows.Forms.Label lblTalentTemplates;
         private System.Windows.Forms.Button btnLEarnTemplates;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cbTalentTemplates;
     }
 }
 

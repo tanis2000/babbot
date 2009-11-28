@@ -719,11 +719,12 @@ namespace BabBot.Forms
         private void btnInputHandler_Click(object sender, EventArgs e)
         {
             ProcessManager.Injector.Lua_DoStringEx(tbLuaScript.Text);
+            btnGetLuaText_Click(sender, e);
         }
 
         private void btnGetLuaText_Click(object sender, EventArgs e)
         {
-            List<string> s = ProcessManager.Injector.RemoteGetValues();
+            List<string> s = ProcessManager.Injector.Lua_GetValues();
             tbLuaResult.Clear();
 
             if (s.Count > 0)
@@ -995,6 +996,41 @@ namespace BabBot.Forms
             form.TopMost = this.TopMost;
             form.ShowDialog();
             form = null;
+        }
+
+        private void cbTalentTemplates_DropDown(object sender, EventArgs e)
+        {
+            // Remember last selection
+            string saved = cbTalentTemplates.Text;
+
+            cbTalentTemplates.DataSource = null;
+
+            cbTalentTemplates.DataSource = ProcessManager.TalentTemplateList;
+            cbTalentTemplates.SelectedIndex = -1;
+
+
+            // Restore back edited template
+            cbTalentTemplates.Text = saved;
+        }
+
+        private void btnLEarnTemplates_Click(object sender, EventArgs e)
+        {
+            if (cbTalentTemplates.SelectedItem == null)
+            {
+                MessageBox.Show("Select talent tempalte from the list");
+                return;
+            }
+
+            // Check if InGame
+            if (!ProcessManager.InGame)
+            {
+                MessageBox.Show("Character not in game");
+                return;
+            }
+
+            Talents t = (Talents)cbTalentTemplates.SelectedItem;
+
+
         }
     }
 }

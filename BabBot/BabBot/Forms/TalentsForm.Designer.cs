@@ -59,6 +59,7 @@
             this.tbLearningOrder = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnViewURL = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.numTalent)).BeginInit();
@@ -224,9 +225,9 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Enabled = false;
-            this.btnImport.Location = new System.Drawing.Point(203, 45);
+            this.btnImport.Location = new System.Drawing.Point(220, 45);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(63, 23);
+            this.btnImport.Size = new System.Drawing.Size(46, 23);
             this.btnImport.TabIndex = 14;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
@@ -240,8 +241,6 @@
             this.tbTalentURL.Name = "tbTalentURL";
             this.tbTalentURL.Size = new System.Drawing.Size(260, 20);
             this.tbTalentURL.TabIndex = 16;
-            this.tbTalentURL.Text = "http://www.wowarmory.com/talent-calc.xml?cid=3&tal=052030015252102501305013412050" +
-                "352000000000000000000000300000000000000000000000000";
             this.tbTalentURL.TextChanged += new System.EventHandler(this.tbTalentURL_TextChanged);
             // 
             // btnRemove
@@ -331,7 +330,7 @@
             // labelLevelNum
             // 
             this.labelLevelNum.AutoSize = true;
-            this.labelLevelNum.Location = new System.Drawing.Point(234, 230);
+            this.labelLevelNum.Location = new System.Drawing.Point(219, 24);
             this.labelLevelNum.Name = "labelLevelNum";
             this.labelLevelNum.Size = new System.Drawing.Size(0, 13);
             this.labelLevelNum.TabIndex = 24;
@@ -403,9 +402,9 @@
             // 
             this.tbLearningOrder.Location = new System.Drawing.Point(92, 45);
             this.tbLearningOrder.Name = "tbLearningOrder";
-            this.tbLearningOrder.Size = new System.Drawing.Size(100, 20);
+            this.tbLearningOrder.Size = new System.Drawing.Size(70, 20);
             this.tbLearningOrder.TabIndex = 31;
-            this.tbLearningOrder.Text = "1,2,3";
+            this.tbLearningOrder.TextChanged += new System.EventHandler(this.tbLearningOrder_TextChanged);
             // 
             // label3
             // 
@@ -420,6 +419,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.btnViewURL);
             this.groupBox1.Controls.Add(this.tbTalentURL);
             this.groupBox1.Controls.Add(this.tbLearningOrder);
             this.groupBox1.Controls.Add(this.label3);
@@ -430,6 +430,17 @@
             this.groupBox1.TabIndex = 33;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Import From WoW Armory URL";
+            // 
+            // btnViewURL
+            // 
+            this.btnViewURL.Enabled = false;
+            this.btnViewURL.Location = new System.Drawing.Point(170, 45);
+            this.btnViewURL.Name = "btnViewURL";
+            this.btnViewURL.Size = new System.Drawing.Size(44, 23);
+            this.btnViewURL.TabIndex = 31;
+            this.btnViewURL.Text = "View";
+            this.btnViewURL.UseVisualStyleBackColor = true;
+            this.btnViewURL.Click += new System.EventHandler(this.btnViewURL_Click);
             // 
             // groupBox2
             // 
@@ -453,6 +464,7 @@
             this.groupBox3.Controls.Add(this.labelLevel);
             this.groupBox3.Controls.Add(this.labelTab);
             this.groupBox3.Controls.Add(this.labelTalent);
+            this.groupBox3.Controls.Add(this.labelLevelNum);
             this.groupBox3.Controls.Add(this.numTalent);
             this.groupBox3.Controls.Add(this.btnReset);
             this.groupBox3.Controls.Add(this.btnAdd);
@@ -480,7 +492,6 @@
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.labelLevelNum);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.label1);
@@ -491,13 +502,11 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Talents";
             this.Load += new System.EventHandler(this.TalentsForm_Load);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TalentsForm_FormClosing);
             this.Controls.SetChildIndex(this.btnHelp, 0);
             this.Controls.SetChildIndex(this.cbTalentTemplates, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
-            this.Controls.SetChildIndex(this.labelLevelNum, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.groupBox2, 0);
             this.Controls.SetChildIndex(this.groupBox3, 0);
@@ -549,5 +558,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button btnViewURL;
     }
 }

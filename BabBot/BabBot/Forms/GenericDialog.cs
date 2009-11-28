@@ -16,17 +16,58 @@ namespace BabBot.Forms
     {
         // Internal name
         private string _name;
-        
+        // Change tracking
+        private bool _changed = false;
+
+        protected bool IsChanged
+        {
+            get { return _changed; }
+            set { _changed = value; }
+        }
+
         GenericDialog()
         {
             InitializeComponent();
         }
 
-        public GenericDialog(string name) : this()
+        #region Public Methods
+
+        public GenericDialog(string name)
+            : this()
         {
             _name = name;
-            
+
         }
+
+        #endregion
+
+        #region Protected Methods
+
+        protected void ShowErrorMessage(string err)
+        {
+            MessageBox.Show(this, err, "ERROR",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        protected void ShowInfoMessage(string info)
+        {
+            MessageBox.Show(this, info, "INFO",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        protected virtual void GenericDialog_Load(object sender, EventArgs e)
+        {
+            _changed = false;
+        }
+
+        protected void OpenURL(string url)
+        {
+            Process.Start(GetDefaultBrowserPath(), url);
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private static string GetDefaultBrowserPath()
         {
@@ -43,18 +84,18 @@ namespace BabBot.Forms
             string url = "file:///" + Environment.CurrentDirectory.Replace("\\", "/") +
                 "/Doc/index.html" + "#" + _name;
 
-            Process.Start(GetDefaultBrowserPath(), url);
+            OpenURL(url);
         }
 
-        protected void ShowErrorMessage(string err) {
-            MessageBox.Show(this, err, "ERROR",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);   
-        }
-
-        protected void ShowInfoMessage(string info)
+        private void GenericDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
-            MessageBox.Show(this, info, "INFO",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            e.Cancel = (IsChanged &&
+                (MessageBox.Show(this, "Are you sure you want close and cancel changes ?",
+                    "Confirmation", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2) != DialogResult.Yes));
         }
+
+        #endregion
     }
 }

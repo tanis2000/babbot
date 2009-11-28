@@ -44,20 +44,25 @@ namespace BabBot.Forms
 
         private void cbAutoLogin_CheckedChanged(object sender, EventArgs e)
         {
-            tbRealmLocation.Enabled = cbAutoLogin.Checked;
-            cbxGameType.Enabled = cbAutoLogin.Checked;
-            tbRealm.Enabled = cbAutoLogin.Checked;
-            tbLoginUsername.Enabled = cbAutoLogin.Checked;
-            tbLoginPassword.Enabled = cbAutoLogin.Checked;
-			tbCharacter.Enabled = cbAutoLogin.Checked;
+            bool is_checked = cbAutoLogin.Checked;
 
-            labelRealmLocation.Enabled = cbAutoLogin.Checked;
-            labelGameType.Enabled = cbAutoLogin.Checked;
-            labelRealm.Enabled = cbAutoLogin.Checked;
-            labelUser.Enabled = cbAutoLogin.Checked;
-            labelPwd.Enabled = cbAutoLogin.Checked;
-			labelCharacter.Enabled = cbAutoLogin.Checked;
-			labelComment.Enabled = cbAutoLogin.Checked;
+            tbRealmLocation.Enabled = is_checked;
+            cbxGameType.Enabled = is_checked;
+            tbRealm.Enabled = is_checked;
+            tbLoginUsername.Enabled = is_checked;
+            tbLoginPassword.Enabled = is_checked;
+			tbCharacter.Enabled = is_checked;
+
+            labelRealmLocation.Enabled = is_checked;
+            labelGameType.Enabled = is_checked;
+            labelRealm.Enabled = is_checked;
+            labelUser.Enabled = is_checked;
+            labelPwd.Enabled = is_checked;
+			labelCharacter.Enabled = is_checked;
+			labelComment.Enabled = is_checked;
+
+            if (is_checked)
+                tbRealmLocation.Focus();
         }
     }
 }
