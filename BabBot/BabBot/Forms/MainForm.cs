@@ -1043,6 +1043,8 @@ namespace BabBot.Forms
             LearnAllTalents(t);
         }
 
+        #region Talents
+
         internal void LearnAllTalents(Talents t)
         {
             bool all_learned = false;
@@ -1124,6 +1126,9 @@ namespace BabBot.Forms
                     LearnTalent(l, tname, trank, delay);
             else { 
                 //TODO Check previous talent
+                // for now stop
+                throw new TalentLearnException("Talent already learned. Talent merge not implemented yet. " +
+                    " Talent template mis-configured or outdated", tname, l.TalentId, l.Rank);
             }
 
             return (points - 1);
@@ -1216,6 +1221,8 @@ namespace BabBot.Forms
 
             return res;
         }
+
+        #endregion
     }
 
     public class TalentLearnException : Exception
@@ -1226,4 +1233,6 @@ namespace BabBot.Forms
             base(string.Format("Failed learn talent '{0}; id: {1}; rank {2}. {3}",
                 talent, id, rank, err)) { }
     }
+
+        
 }
