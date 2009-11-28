@@ -160,7 +160,7 @@ namespace BabBot.Manager
         // Last version of used config file
         private static int ConfigVersion = 2;
 
-        public static WoWVersion CurVersion
+        public static WoWVersion CurWoWVersion
         {
             get { return wversion; }
         }
@@ -268,6 +268,11 @@ namespace BabBot.Manager
 
                 return res;
             }
+        }
+
+        public static bool InGame
+        {
+            get { return (_gstatus == GameStatuses.IN_WORLD); }
         }
 
         #endregion
@@ -388,14 +393,6 @@ namespace BabBot.Manager
             Output.Instance.Debug(facility, msg);
         }
 
-        private static bool ShowError(string err)
-        {
-            bool res = (ShowErrorMessage != null);
-            if (res)
-                ShowErrorMessage(err);
-            return res;
-        }
-
         /// <summary>
         /// Read URL and return result. Saved for future use
         /// </summary>
@@ -428,6 +425,19 @@ namespace BabBot.Manager
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Redirect error message to ShowErrorMessage handler
+        /// </summary>
+        /// <param name="err"></param>
+        /// <returns></returns>
+        public static bool ShowError(string err)
+        {
+            bool res = (ShowErrorMessage != null);
+            if (res)
+                ShowErrorMessage(err);
+            return res;
+        }
 
         /// <summary>
         /// Load content of WoWData.xml
@@ -500,8 +510,6 @@ namespace BabBot.Manager
                     } else
                         Log("char", "Continuing with WoW.exe version '" + version + "'");
                         
-                    Injector.InitLuaCalls(wversion);
-
                     Log("char", "Starting WoW ...");
 
                     // Guest account might not be enabled
@@ -636,10 +644,12 @@ namespace BabBot.Manager
             }
             catch(Exception ex)
             {
-                Debug("char", "CheckInGame() - caugth exception: " + ex.Message);
-
                 if (_gstatus == GameStatuses.IN_WORLD)
+                {
+                    Debug("char", "CheckInGame() - caugth exception: " + ex.Message);
+
                     _gstatus = GameStatuses.DISCONNECTED;
+                }
                 else
                     _gstatus = GameStatuses.INIT;
                 

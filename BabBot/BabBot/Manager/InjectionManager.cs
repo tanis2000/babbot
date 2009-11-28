@@ -28,6 +28,7 @@ using BabBot.Wow;
 using Dante;
 using EasyHook;
 using Magic;
+using System.Collections;
 
 namespace BabBot.Manager
 {
@@ -57,11 +58,6 @@ namespace BabBot.Manager
 
         [DllImport("kernel32", CharSet = CharSet.Ansi)]
         private static extern IntPtr GetProcAddress(IntPtr hLibModule, string procName);
-
-        private static string fSetGlueState;
-        private static string fSendLogin;
-        private static string fSelectCharacter;
-        private static string fGetCurrentMapContinentId;
 
         #endregion
 
@@ -731,7 +727,7 @@ end)()",
         public string Lua_GetLocalizedText(int position)
         {
             if (values == null)
-                RemoteGetValues();
+                Lua_GetValues();
 
             if (values != null)
             {
@@ -746,7 +742,7 @@ end)()",
             return "";
         }
 
-        public List<string> RemoteGetValues()
+        public List<string> Lua_GetValues()
         {
             values = RemoteObject.GetValues();
 
@@ -758,41 +754,142 @@ end)()",
             return values;
         }
 
+        /// <summary>
+        /// Execute lua function by name that doesn't require returning parameters
+        /// </summary>
+        /// <param name="fname">Function name as defined in WoWData.xml</param>
+        /// <param name="param_list">List of parameters</param>
+        public void Lua_Exec(string fname, object[] param_list)
+        {
+            Lua_ExecByName(fname, param_list, null);
+        }
+
+        /// <summary>
+        /// Execute lua function by name without input parameters
+        /// </summary>
+        /// <param name="fname">Function name as defined in WoWData.xml</param>
+        /// <returns>
+        ///     Array with first ret_size returning values from lua execution. 
+        ///     Final array enumerated from 0 to (ret_size - 1).
+        /// </returns>
+        public string[] Lua_ExecByName(string fname)
+        {
+            return Lua_ExecByName(fname, null);
+        }
+
+        /// <summary>
+        /// Execute lua function by name. 
+        /// Number of returning parameters automatically extracted from function definition
+        /// </summary>
+        /// <param name="fname">Function name as defined in WoWData.xml</param>
+        /// <param name="param_list">List of parameters</param>
+        /// <returns>
+        ///     Array with first ret_size returning values from lua execution. 
+        ///     Final array enumerated from 0 to (ret_size - 1).
+        /// </returns>
+        public string[] Lua_ExecByName(string fname, object[] param_list)
+        {
+            // Find Function
+            LuaFunction lf = FindLuaFunction(fname);
+            int ret_size = lf.RetSize;
+
+            int[] ret_list = null;
+            if (ret_size > 0)
+            {
+                // Initialize returning list
+                ret_list = new int[ret_size];
+                for (int i = 0; i < ret_size; i++)
+                    ret_list[i] = i;
+            }
+
+            return ExecLua(lf, param_list, ret_list);
+        }
+
+        /// <summary>
+        /// Execute lua function by name
+        /// </summary>
+        /// <param name="fname">Function name as defined in WoWData.xml</param>
+        /// <param name="param_list">List of parameters</param>
+        /// <param name="res_list">List of parameters needs to be returned</param>
+        /// <returns>
+        ///     Array with result. Final array enumerated from 0 to (size of returning list - 1).
+        ///     For ex if you need parameters 2 and 5 (total 2) to be returned from lua calls than
+        ///     in returning array the parameter 2 can be found by index 0 and parameter 5 by index 1
+        /// </returns>
+        public string[] Lua_ExecByName(string fname, object[] param_list, int[] res_list)
+        {
+            return ExecLua(FindLuaFunction(fname), param_list, res_list);
+        }
+
+        /// <summary>
+        /// Execute lua function by name
+        /// </summary>
+        /// <param name="fname">Function name as defined in WoWData.xml</param>
+        /// <param name="param_list">List of parameters</param>
+        /// <param name="res_list">List of parameters needs to be returned</param>
+        /// <returns>
+        ///     Array with result. Final array enumerated from 0 to (size of returning list - 1).
+        ///     For ex if you need parameters 2 and 5 (total 2) to be returned from lua calls than
+        ///     in returning array the parameter 2 can be found by index 0 and parameter 5 by index 1
+        /// </returns>
+        private string[] ExecLua(LuaFunction lf, object[] param_list, int[] res_list)
+        {
+            string[] res = null;
+            
+            // format lua code with parameter list
+            string code = lf.Code;
+            if (param_list != null)
+            {
+                try
+                {
+                    code = string.Format(code, param_list);
+                }
+                catch
+                {
+                    ShowError("Internal bug. Unable format parameters '" +
+                        param_list.ToString() + "' with lua function '" + lf.Name + "'");
+                    Environment.Exit(6);
+                }
+            }
+
+            // Check if result expected
+            if (res_list == null)
+                Lua_DoString(code);
+            else
+            {
+                Lua_DoStringEx(code);
+                values = RemoteObject.GetValues();
+                res = new string[res_list.Length];
+
+                // Initialize returning result
+                int i = 0;
+                foreach (int id in res_list)
+                {
+                    if ((values != null) && (id < values.Count) && (values[id] != null))
+                        res[i] = values[id];
+                    i++;
+                }
+            }
+
+            return res;
+        }
+
+        private LuaFunction FindLuaFunction(string fname)
+        {
+            LuaFunction res = ProcessManager.CurWoWVersion.FindLuaFunction(fname);
+
+            if (res == null)
+            {
+                ShowError("Internal bug. Definition for lua function '" +
+                    fname + "' not found in WoWData.xml");
+                Environment.Exit(5);
+            }
+
+            return res;
+        }
+
         #endregion
 
-        #region Lua Calls
-
-        public void InitLuaCalls(WoWVersion wversion)
-        {
-            // Get lua functions
-            fSetGlueState = wversion.FindLuaFunction("SetGlueState");
-            fSelectCharacter = wversion.FindLuaFunction("SelectCharacter");
-            fSendLogin = wversion.FindLuaFunction("SendLogin");
-            fGetCurrentMapContinentId = wversion.FindLuaFunction("GetCurrentMapContinentId");
-        }
-
-        public void SetGlueState(string realm, string location, string type, int sleep)
-        {
-            Lua_DoStringEx(string.Format(fSetGlueState,
-                                realm, location, type, sleep));
-        }
-
-        public void SelectCharacter(string name)
-        {
-            Lua_DoStringEx(string.Format(fSelectCharacter, name));
-        }
-
-        public void SendLogin(string realm, string user, string pwd)
-        {
-            Lua_DoStringEx(string.Format(fSendLogin, realm, user, pwd));
-        }
-
-        public void GetCurrentMapContinentId()
-        {
-            Lua_DoStringEx(fGetCurrentMapContinentId);
-        }
-
-        #endregion
         #region FindPattern
 
         /// <summary>
@@ -833,6 +930,11 @@ end)()",
         private BlackMagic wow
         {
             get { return ProcessManager.WowProcess; }
+        }
+
+        private void ShowError(string err)
+        {
+            ProcessManager.ShowError(err);
         }
     }
 }

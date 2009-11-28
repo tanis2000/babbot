@@ -32,10 +32,11 @@ namespace BabBot
         [XmlAttribute("debug")]
         public bool DebugMode = false;
 
-        // This parameter is hidden
+#if DEBUG
+        // This parameter is for developers internal use
         [XmlAttribute("test")]
         public int Test = 0;
-
+#endif
         // Not used
         // public string InteractKey = "{SHIFTD}ì{SHIFTU}";
 

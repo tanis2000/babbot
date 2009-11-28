@@ -285,7 +285,8 @@ namespace BabBot.Wow
         /// <param name="pwd">Password</param>
         static void SendLogin(string realm, string user, string pwd)
 		{
-			ProcessManager.Injector.SendLogin(realm, user, pwd);
+			ProcessManager.Injector.Lua_ExecByName("SendLogin", 
+                new object[] {realm, user, pwd});
 
             // Unregister our hook right away before wow tries to login
             ProcessManager.Injector.Lua_UnRegisterInputHandler();
@@ -304,9 +305,10 @@ namespace BabBot.Wow
 		/// <returns>Character index or -1 if character not found on realm</returns>
 		static int SelectCharacter(string name)
 		{
-			ProcessManager.Injector.SelectCharacter(name);
+			string[] lret = ProcessManager.Injector.
+                Lua_ExecByName("SelectCharacter", new object[] { name });
 
-            string idx = ProcessManager.Injector.Lua_GetLocalizedText(0);
+            string idx = lret[0];
 
             if ((idx == null) || idx.Equals(""))
             {
@@ -335,15 +337,16 @@ namespace BabBot.Wow
 		static int SetGlueState(string location, string type, string realm)
 		{
             // We need returning values
-            ProcessManager.Injector.SetGlueState(realm, 
-                        location, type, (int)((psleepTime/1000) * 2));
+            string[] flist = ProcessManager.Injector.Lua_ExecByName(
+                "SetGlueState", new object[] {realm, 
+                location, type, (int)((psleepTime/1000) * 2)});
 
-            CurrentGlueScreen = ProcessManager.Injector.Lua_GetLocalizedText(0);
-            string PendingScreen = ProcessManager.Injector.Lua_GetLocalizedText(1);
-            CurrentGlueDialog = ProcessManager.Injector.Lua_GetLocalizedText(2);
-            string DialogText = ProcessManager.Injector.Lua_GetLocalizedText(3);
-            DInfo = ProcessManager.Injector.Lua_GetLocalizedText(4);
-            string Connected = ProcessManager.Injector.Lua_GetLocalizedText(5);
+            CurrentGlueScreen = flist[0];
+            string PendingScreen = flist[1];
+            CurrentGlueDialog = flist[2];
+            string DialogText = flist[3];
+            DInfo = flist[4];
+            string Connected = flist[5];
 
             bool IsDialogText = (!((DialogText == null) || DialogText.Equals("")) && (DialogText.Equals("html")));
             bool IsHtml = ((DInfo != null) && !DInfo.Equals(""));

@@ -1403,11 +1403,12 @@ end)()");
         {
             try
             {
-                ProcessManager.Injector.GetCurrentMapContinentId();
-                string sId = ProcessManager.Injector.Lua_GetLocalizedText(0);
+                string [] lret = ProcessManager.
+                    Injector.Lua_ExecByName("GetCurrentMapContinentId");
+                string sId = lret[0];
                 return Convert.ToInt32(sId);
             }
-            catch (Exception e)
+            catch
             {
                 return 0;
             }

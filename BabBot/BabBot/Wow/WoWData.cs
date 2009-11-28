@@ -82,7 +82,7 @@ namespace BabBot.Wow
             _tlist = new ArrayList();
         }
 
-        public string FindLuaFunction(string name)
+        public LuaFunction FindLuaFunction(string name)
         {
             return LuaList.FindLuaFunction(name);
         }
@@ -126,10 +126,10 @@ namespace BabBot.Wow
             }
         }
 
-        public string FindLuaFunction(string name)
+        public LuaFunction FindLuaFunction(string name)
         {
             LuaFunction res = (LuaFunction)_flist[name];
-            return (res != null) ? res.Code : null;
+            return res;
         }
     }
 
@@ -137,11 +137,18 @@ namespace BabBot.Wow
     {
         [XmlAttribute("name")] 
         public string Name;
-        
+
         [XmlElement("text", typeof(XmlCDataSection))]
         public XmlCDataSection Text;
 
-        // [XmlElement("text")] public string Text;
+        [XmlElement("return")]
+        public LuaResult FRet;
+
+        [XmlIgnore]
+        public int RetSize
+        {
+            get { return (FRet == null) ? 0 : FRet.Size; }
+        }
 
         public LuaFunction() {}
 
@@ -158,6 +165,18 @@ namespace BabBot.Wow
             get { return ((Text != null) ? Text.InnerText : null); }
         }
 
+        public override string ToString()
+        {
+            return Code;
+        }
+    }
+
+    public class LuaResult
+    {
+        [XmlAttribute("size")]
+        public int Size;
+
+        public LuaResult() { }
     }
 
     public class CharClasses

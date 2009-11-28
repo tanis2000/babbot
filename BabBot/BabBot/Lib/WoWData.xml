@@ -20,13 +20,13 @@
           3 - realm type (NORMAL_PVE or others
           3 - Sleeping time if some process pending
         </parameters>
-        <return>
-          1 - Current Glue Screen
-          2 - Pending Glue Screen
-          3 - Current Glue Dialog
-          4 - Text for Glue Dialog (if any)
-          5 - Glue Dialog Parameters (depends of dialog type)
-          6 - Is Connected to server
+        <return size="6">
+          0 - Current Glue Screen
+          1 - Pending Glue Screen
+          2 - Current Glue Dialog
+          3 - Text for Glue Dialog (if any)
+          4 - Glue Dialog Parameters (depends of dialog type)
+          5 - Is Connected to server
         </return>
         <text>
           <![CDATA[(function()
@@ -141,8 +141,8 @@ end)()]]>
         <parameters>
           1 - Character Name
         </parameters>
-        <return>
-          1 - Character ID in list or null if not found
+        <return size="1">
+          0 - Character ID in list or null if not found
         </return>
         <text>
           <![CDATA[(function()
@@ -169,7 +169,6 @@ end)()]]>
           2 - user
           3 - password
         </parameters>
-        <return />
         <text>
           <![CDATA[(function()
   local realm = AccountLoginRealmName:GetText(serverName);
@@ -184,8 +183,8 @@ end)()]]></text>
       </function>
       <function name="GetCurrentMapContinentId">
         <parameters />
-        <return>
-          1 - Continent ID
+        <return size="1">
+          0 - Continent ID
         </return>
         <text>
           <![CDATA[(function()
@@ -196,9 +195,9 @@ end)()]]></text>
       </function>
       <function name="GetAvailTalentPoints">
         <parameters />
-        <return>
-        1 - Number of available talent points
-        2 - Number of proffessions slot available
+        <return size="2">
+        0 - Number of available talent points
+        1 - Number of proffessions slot available
         </return>
         <text><![CDATA[(function()
   return UnitCharacterPoints("player")
@@ -219,8 +218,8 @@ end)()]]></text>
         1 - Tab ID
         2 - Talent ID
         </parameters>
-        <return>
-        1 -  
+        <return size="1">
+        0 -  
         </return>
         <text><![CDATA[(function()
     return GetTalentInfo({0}, {1}, false, false)
@@ -231,7 +230,7 @@ end)()]]></text>
       <function name="">
         <parameters>
         </parameters>
-        <return>
+        <return size="">
         </return>
         <text><![CDATA[(function()
   
