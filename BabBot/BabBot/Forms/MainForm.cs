@@ -1013,7 +1013,7 @@ namespace BabBot.Forms
             cbTalentTemplates.Text = saved;
         }
 
-        private void btnLEarnTemplates_Click(object sender, EventArgs e)
+        private void btnLearnTalents_Click(object sender, EventArgs e)
         {
             if (cbTalentTemplates.SelectedItem == null)
             {
@@ -1030,7 +1030,200 @@ namespace BabBot.Forms
 
             Talents t = (Talents)cbTalentTemplates.SelectedItem;
 
+            if (t == null)
+            {
+                MessageBox.Show("Talents list is empty");
+                return;
+            }
 
+            // Switch to main tabl
+            tabControlMain.SelectedIndex = 0;
+
+            // Start learning
+            LearnAllTalents(t);
         }
+
+        internal void LearnAllTalents(Talents t)
+        {
+            bool all_learned = false;
+            while (!all_learned)
+                try
+                {
+                    all_learned = (LearnTalents(t) == 0);
+                }
+                catch (TalentLearnException te)
+                {
+                    // Register error but still can continue
+                    Output.Instance.LogError("char", te.Message);
+                }
+                catch (Exception ex)
+                {
+                    // Fatal error
+                    Output.Instance.LogError("char", ex);
+                }
+        }
+
+        internal int LearnTalents(Talents t)
+        {
+            // Check how many talent point available
+            Output.Instance.Log("char", "Checking for the number of talent points available ...");
+            string[] lret = ProcessManager.Injector.Lua_ExecByName("GetAvailTalentPoints");
+            
+            int points = 0;
+            int delay = ProcessManager.CurWoWVersion.TalentConfig.Delay;
+
+            try
+            {
+                points = Convert.ToInt32(lret[0]);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable retrieve number of talent points.", ex);
+            }
+
+            Output.Instance.Log("char", points + " talent points currently available");
+            if (points == 0)
+                return 0;
+
+            int lvl = ProcessManager.Player.Level;
+
+            int cur_lvl = lvl - points + 1;
+            Output.Instance.Log("char", "Looking up talent " + " for lvl " + cur_lvl);
+
+            Level l = t.GetLevel(cur_lvl - ProcessManager.CurWoWVersion.TalentConfig.StartLevel);
+            Output.Instance.Debug("char", "Checking talent " + l.TalentToString());
+
+            lret = ProcessManager.Injector.Lua_ExecByName("GetTalentInfo",
+                    new object[] { l.TabId, l.TalentId, l.Rank });
+
+            // Converting result
+            int trank = 0;
+            string tname = null;
+            bool meets = false;
+            try
+            {
+                tname = lret[0];
+                trank = Convert.ToInt32(lret[4]);
+                meets = lret[7] != null && lret[7].Equals("1");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable retrieve result of 'GetTalentInfo' function.", ex);
+            }
+
+            Output.Instance.Debug(string.Format("Located talent: '{0}' rank: {1}; meets: {2}",
+                    tname, trank, meets));
+
+            if (!meets) 
+                // Something wrong with template
+                throw new TalentLearnException("Talent prerequisites aren't met." + 
+                    " Talent template mis-configured or outdated", tname, l.TalentId, l.Rank);
+
+            // Check if any talents already learned in a past
+            if (trank == (l.Rank - 1))
+                    LearnTalent(l, tname, trank, delay);
+            else { 
+                //TODO Check previous talent
+            }
+
+            return (points - 1);
+        }
+
+        internal void LearnTalent(Level l, string tname, int rank, int delay)
+        {
+            int rank1 = rank + 1;
+
+            int retry = 0;
+            int max_retry = ProcessManager.CurWoWVersion.TalentConfig.Retry;
+
+            bool learned = false;
+
+            do
+            {
+                int rank2 = 0;
+
+                if (retry > 0)
+                {
+                    Output.Instance.Log("char",
+                        "Retrying " + retry + " of " + max_retry);
+
+                    Thread.Sleep(delay);
+
+                    // Check if talent already learned
+                    rank2 = GetTalentRank(l.TabId, l.TalentId);
+
+                    Output.Instance.Debug("Learning result for talent: '" +
+                                tname + "' is rank: " + rank2);
+
+                    if (rank2 == rank1)
+                    {
+                        learned = true;
+                        Output.Instance.Log("char",
+                            "Successfully learned '" + tname + "' rank " + rank1);
+                        break;
+                    }
+                }
+
+                Output.Instance.Log("char",
+                    "Learning '" + tname + "' rank " + rank1 + " ...");
+                ProcessManager.Injector.Lua_ExecByName("LearnTalent",
+                                new object[] { l.TabId, l.TalentId });
+
+                // WoW prevent learning talents fast
+                Thread.Sleep(delay);
+
+                rank2 = GetTalentRank(l.TabId, l.TalentId);
+
+                Output.Instance.Debug("Learning result for talent: '" +
+                                tname + "' is rank: " + rank2);
+
+                // Converting result
+                if (rank2 == rank1)
+                    {
+                        learned = true;
+                        Output.Instance.Log("char",
+                            "Successfully learned '" + tname + "' rank " + rank1);
+                    }
+                    else
+                        retry++;
+
+            } while (!learned && (retry <= max_retry));
+
+            if (!learned)
+                // Something wrong with template
+                throw new TalentLearnException ("Failed learned after " + 
+                    (retry + 1) + " retries with " + delay + 
+                    " msec delay between each retry", tname, l.TalentId, l.Rank);
+        }
+
+        internal int GetTalentRank(int tab, int id)
+        {
+            int res;
+
+            // Checking rank increased
+            string[] lret = ProcessManager.Injector.Lua_ExecByName("GetTalentInfo",
+                        new object[] { tab, id });
+
+            // Converting result
+            try
+            {
+                res = Convert.ToInt32(lret[4]);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable retrieve result of 'GetTalentInfo' function.", ex);
+            }
+
+            return res;
+        }
+    }
+
+    public class TalentLearnException : Exception
+    {
+        public TalentLearnException(string err) : base(err) { }
+
+        public TalentLearnException(string err, string talent, int id, int rank) :
+            base(string.Format("Failed learn talent '{0}; id: {1}; rank {2}. {3}",
+                talent, id, rank, err)) { }
     }
 }

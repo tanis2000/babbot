@@ -171,6 +171,11 @@ namespace BabBot.Wow
         {
             return this.MemberwiseClone();
         }
+
+        public string TalentToString()
+        {
+            return string.Format("{0}/{1}/{2}", TabId, TalentId, Rank);
+        }
     }
 /*
 Talents tlist = new Talents();

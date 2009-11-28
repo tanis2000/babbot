@@ -113,6 +113,30 @@ namespace BabBot.Common
         }
 
         /// <summary>
+        /// A simple logging method. Will output to ErrorLog.txt.
+        /// </summary>
+        /// <param name="facility">Name of logging facility</param>
+        /// <param name="err">Error string</param>
+        /// <param name="exception">The exception to be logged</param>
+        /// <returns>Nothing.</returns>
+        internal void LogError(string facility, string err, Exception exception)
+        {
+            Log(facility, err, Color.Red);
+            Log(facility, Format("{0}{1}{2}{1}{3}", exception.InnerException,
+                            Environment.NewLine, exception.Message, exception.StackTrace), Color.Red);
+        }
+
+        /// <summary>
+        /// A simple logging method. Will output to ErrorLog.txt.
+        /// </summary>
+        /// <param name="facility">Name of logging facility</param>
+        /// <param name="err">Error string</param>
+        internal void LogError(string facility, string err)
+        {
+            Log(facility, err, Color.Red);
+        }
+
+        /// <summary>
         /// A simple logging method. Will output to ChatLog.txt.
         /// </summary>
         /// <param name="message">The message to be logged.</param>

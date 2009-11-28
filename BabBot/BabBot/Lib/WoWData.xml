@@ -218,8 +218,26 @@ end)()]]></text>
         1 - Tab ID
         2 - Talent ID
         </parameters>
-        <return size="1">
-        0 -  
+        <return size="10">
+          0 - name String - The name of the talent in that tab, 
+              or nil if there is no talent with this tab/index combination.
+          1 - iconPath String - The path to the icon of the talent, 
+            or nil if there is no talent with this tab/index combination.
+          2 - tier Integer - The vertical grid position of the talent icon 
+              in its talent pane tab, or 1 if there is no talent with this tab/index combination.
+          3 - column Integer - The horizontal grid position of the talent 
+            icon in its talent pane tab, or 1 if there is no talent with this tab/index combination.
+          4 - currentRank Integer - The current rank (currently assigned talent points) 
+            of the talent, or 0 (zero) if there is no talent with this tab/index combination.
+          5 - maxRank - Integer - The maximum rank (maximum number of talent points) 
+            of the talent, or 0 (zero) if there is no talent with this tab/index combination.
+          6 - isExceptional 
+          7 - meetsPrereq
+            Whether the talent's prerequisites are met.
+          8 - previewRank
+            The rank of this talent in preview mode. If it is not previewed, previewRank == currentRank.
+          9 - meetsPreviewPrereq
+            Whether the talent's prerequisites in preview mode are met.
         </return>
         <text><![CDATA[(function()
     return GetTalentInfo({0}, {1}, false, false)
@@ -239,7 +257,11 @@ end)()]]></text>
       -->
     </lua>
     
-    <talents lvl_start="10" 
+    <!-- 
+      "delay" parameter define delay between learning each talent from list
+       "retry" parameters control how many retries need if learning too fast
+    -->
+    <talents lvl_start="10" delay="1000" retry="5"
       armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
   </version>
 </wow_data>

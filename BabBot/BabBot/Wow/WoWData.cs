@@ -292,6 +292,12 @@ namespace BabBot.Wow
         [XmlAttribute("armory_pattern")]
         public string ArmoryPattern;
 
+        [XmlAttribute("delay")]
+        public int Delay;
+
+        [XmlAttribute("retry")]
+        public int Retry;
+
         public TalentConfig() { }
     }
 }

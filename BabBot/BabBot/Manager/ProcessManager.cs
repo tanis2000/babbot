@@ -272,7 +272,7 @@ namespace BabBot.Manager
 
         public static bool InGame
         {
-            get { return (_gstatus == GameStatuses.IN_WORLD); }
+            get { return (_gstatus == GameStatuses.INITIALIZED); }
         }
 
         #endregion

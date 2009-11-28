@@ -87,7 +87,7 @@
             this.tbCountNormal = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPagePlayer = new System.Windows.Forms.TabPage();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControlPlayer = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -129,7 +129,7 @@
             this.tbPlayerTarget = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.tabPageDebug = new System.Windows.Forms.TabPage();
-            this.btnLEarnTemplates = new System.Windows.Forms.Button();
+            this.btnLearnTalents = new System.Windows.Forms.Button();
             this.cbTalentTemplates = new System.Windows.Forms.ComboBox();
             this.lblTalentTemplates = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
@@ -203,7 +203,7 @@
             this.groupBox2.SuspendLayout();
             this.gbNormalWaypoints.SuspendLayout();
             this.tabPagePlayer.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.tabControlPlayer.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).BeginInit();
@@ -798,7 +798,7 @@
             // 
             // tabPagePlayer
             // 
-            this.tabPagePlayer.Controls.Add(this.tabControl1);
+            this.tabPagePlayer.Controls.Add(this.tabControlPlayer);
             this.tabPagePlayer.Controls.Add(this.label33);
             this.tabPagePlayer.Controls.Add(this.label30);
             this.tabPagePlayer.Controls.Add(this.tbCorpseZ);
@@ -826,17 +826,17 @@
             this.tabPagePlayer.Text = "Player";
             this.tabPagePlayer.UseVisualStyleBackColor = true;
             // 
-            // tabControl1
+            // tabControlPlayer
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.tabControlPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(-4, 81);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(572, 293);
-            this.tabControl1.TabIndex = 46;
+            this.tabControlPlayer.Controls.Add(this.tabPage1);
+            this.tabControlPlayer.Controls.Add(this.tabPage2);
+            this.tabControlPlayer.Location = new System.Drawing.Point(-4, 81);
+            this.tabControlPlayer.Name = "tabControlPlayer";
+            this.tabControlPlayer.SelectedIndex = 0;
+            this.tabControlPlayer.Size = new System.Drawing.Size(572, 293);
+            this.tabControlPlayer.TabIndex = 46;
             // 
             // tabPage1
             // 
@@ -1224,7 +1224,7 @@
             // 
             // tabPageDebug
             // 
-            this.tabPageDebug.Controls.Add(this.btnLEarnTemplates);
+            this.tabPageDebug.Controls.Add(this.btnLearnTalents);
             this.tabPageDebug.Controls.Add(this.cbTalentTemplates);
             this.tabPageDebug.Controls.Add(this.lblTalentTemplates);
             this.tabPageDebug.Controls.Add(this.label29);
@@ -1273,14 +1273,15 @@
             this.tabPageDebug.Text = "Debug";
             this.tabPageDebug.UseVisualStyleBackColor = true;
             // 
-            // btnLEarnTemplates
+            // btnLearnTalents
             // 
-            this.btnLEarnTemplates.Location = new System.Drawing.Point(465, 35);
-            this.btnLEarnTemplates.Name = "btnLEarnTemplates";
-            this.btnLEarnTemplates.Size = new System.Drawing.Size(75, 23);
-            this.btnLEarnTemplates.TabIndex = 59;
-            this.btnLEarnTemplates.Text = "Learn Now";
-            this.btnLEarnTemplates.UseVisualStyleBackColor = true;
+            this.btnLearnTalents.Location = new System.Drawing.Point(465, 35);
+            this.btnLearnTalents.Name = "btnLearnTalents";
+            this.btnLearnTalents.Size = new System.Drawing.Size(75, 23);
+            this.btnLearnTalents.TabIndex = 59;
+            this.btnLearnTalents.Text = "Learn Now";
+            this.btnLearnTalents.UseVisualStyleBackColor = true;
+            this.btnLearnTalents.Click += new System.EventHandler(this.btnLearnTalents_Click);
             // 
             // cbTalentTemplates
             // 
@@ -1843,7 +1844,7 @@
             this.gbNormalWaypoints.PerformLayout();
             this.tabPagePlayer.ResumeLayout(false);
             this.tabPagePlayer.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
+            this.tabControlPlayer.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
@@ -2007,7 +2008,7 @@
         private System.Windows.Forms.Button btnRegisterInputHandler;
         private System.Windows.Forms.Button btnUnregisterInputHandler;
         private System.Windows.Forms.Button btnLogin;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabControlPlayer;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.PictureBox imgRadar;
@@ -2024,7 +2025,7 @@
         private System.Windows.Forms.ToolStripMenuItem talentTemplatesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem realmListToolStripMenuItem;
         private System.Windows.Forms.Label lblTalentTemplates;
-        private System.Windows.Forms.Button btnLEarnTemplates;
+        private System.Windows.Forms.Button btnLearnTalents;
         private System.Windows.Forms.ComboBox cbTalentTemplates;
     }
 }
