@@ -194,25 +194,48 @@ end)()]]></text>
 	return continent
 end)()]]></text>
       </function>
-      <function name="LearnTalent">
-        <parameters>
-          1 - TabId
-          2 - TalentId
-        </parameters>
+      <function name="GetAvailTalentPoints">
+        <parameters />
         <return>
+        1 - Number of available talent points
+        2 - Number of proffessions slot available
         </return>
-        <text>
-          <![CDATA[(function()
-  LearnTalent( {0}, {1} );
+        <text><![CDATA[(function()
+  return UnitCharacterPoints("player")
 end)()]]></text>
       </function>
+      <function name="LearnTalent">
+        <parameters>
+        1 - Tab ID
+        2 - Talent ID
+        </parameters>
+        <return />
+        <text><![CDATA[(function()
+    LearnTalent({0}, {1}, false)
+end)()]]></text>
+      </function>
+      <function name="GetTalentInfo">
+        <parameters>
+        1 - Tab ID
+        2 - Talent ID
+        </parameters>
+        <return>
+        1 -  
+        </return>
+        <text><![CDATA[(function()
+    return GetTalentInfo({0}, {1}, false, false)
+end)()]]></text>
+      </function>
+
       <!-- Template for new function 
       <function name="">
         <parameters>
         </parameters>
         <return>
         </return>
-        <text><![CDATA[...]]></text>
+        <text><![CDATA[(function()
+  
+end)()]]></text>
       </function>
       -->
     </lua>

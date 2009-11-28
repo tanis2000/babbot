@@ -35,6 +35,8 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.botOptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.talentTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.realmListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControlMain = new System.Windows.Forms.TabControl();
@@ -184,8 +186,9 @@
             this.txtScript = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.talentTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.realmListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblTalentTemplates = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.btnLEarnTemplates = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -264,6 +267,19 @@
             this.botOptionsToolStripMenuItem.Text = "&Bot Options";
             this.botOptionsToolStripMenuItem.Click += new System.EventHandler(this.botOptionsToolStripMenuItem_Click);
             // 
+            // talentTemplatesToolStripMenuItem
+            // 
+            this.talentTemplatesToolStripMenuItem.Name = "talentTemplatesToolStripMenuItem";
+            this.talentTemplatesToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.talentTemplatesToolStripMenuItem.Text = "Talent Templates";
+            this.talentTemplatesToolStripMenuItem.Click += new System.EventHandler(this.talentTemplatesToolStripMenuItem_Click);
+            // 
+            // realmListToolStripMenuItem
+            // 
+            this.realmListToolStripMenuItem.Name = "realmListToolStripMenuItem";
+            this.realmListToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.realmListToolStripMenuItem.Text = "Realm List";
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -275,7 +291,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.aboutToolStripMenuItem.Text = "&About..";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -1208,6 +1224,9 @@
             // 
             // tabPageDebug
             // 
+            this.tabPageDebug.Controls.Add(this.btnLEarnTemplates);
+            this.tabPageDebug.Controls.Add(this.comboBox1);
+            this.tabPageDebug.Controls.Add(this.lblTalentTemplates);
             this.tabPageDebug.Controls.Add(this.label29);
             this.tabPageDebug.Controls.Add(this.txtTravelTime);
             this.tabPageDebug.Controls.Add(this.cbWPRecord);
@@ -1446,7 +1465,7 @@
             // 
             // tbWndHandle
             // 
-            this.tbWndHandle.Location = new System.Drawing.Point(401, 32);
+            this.tbWndHandle.Location = new System.Drawing.Point(398, 77);
             this.tbWndHandle.Name = "tbWndHandle";
             this.tbWndHandle.Size = new System.Drawing.Size(89, 20);
             this.tbWndHandle.TabIndex = 31;
@@ -1454,7 +1473,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(295, 35);
+            this.label19.Location = new System.Drawing.Point(305, 80);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(87, 13);
             this.label19.TabIndex = 30;
@@ -1757,18 +1776,31 @@
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(0, 17);
             // 
-            // talentTemplatesToolStripMenuItem
+            // lblTalentTemplates
             // 
-            this.talentTemplatesToolStripMenuItem.Name = "talentTemplatesToolStripMenuItem";
-            this.talentTemplatesToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.talentTemplatesToolStripMenuItem.Text = "Talent Templates";
-            this.talentTemplatesToolStripMenuItem.Click += new System.EventHandler(this.talentTemplatesToolStripMenuItem_Click);
+            this.lblTalentTemplates.AutoSize = true;
+            this.lblTalentTemplates.Location = new System.Drawing.Point(324, 9);
+            this.lblTalentTemplates.Name = "lblTalentTemplates";
+            this.lblTalentTemplates.Size = new System.Drawing.Size(89, 13);
+            this.lblTalentTemplates.TabIndex = 57;
+            this.lblTalentTemplates.Text = "Talent Templates";
             // 
-            // realmListToolStripMenuItem
+            // comboBox1
             // 
-            this.realmListToolStripMenuItem.Name = "realmListToolStripMenuItem";
-            this.realmListToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.realmListToolStripMenuItem.Text = "Realm List";
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(419, 6);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 58;
+            // 
+            // btnLEarnTemplates
+            // 
+            this.btnLEarnTemplates.Location = new System.Drawing.Point(465, 35);
+            this.btnLEarnTemplates.Name = "btnLEarnTemplates";
+            this.btnLEarnTemplates.Size = new System.Drawing.Size(75, 23);
+            this.btnLEarnTemplates.TabIndex = 59;
+            this.btnLEarnTemplates.Text = "Learn Now";
+            this.btnLEarnTemplates.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -1990,6 +2022,9 @@
         private System.Windows.Forms.ToolStripMenuItem botOptionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem talentTemplatesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem realmListToolStripMenuItem;
+        private System.Windows.Forms.Label lblTalentTemplates;
+        private System.Windows.Forms.Button btnLEarnTemplates;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

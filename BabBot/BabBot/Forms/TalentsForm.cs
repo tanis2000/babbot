@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Net;
 using System.IO;
 using BabBot.Wow;
 using BabBot.Manager;
@@ -44,30 +43,6 @@ namespace BabBot.Forms
                 return (labelLevelNum.Text.Equals("")) ? 0 : 
                             Convert.ToInt32(labelLevelNum.Text);
             }
-        }
-
-        private string ReadURL(string url)
-        {
-            // Create a request for the URL.         
-            WebRequest request = WebRequest.Create(url);
-            // If required by the server, set the credentials.
-            request.Credentials = CredentialCache.DefaultCredentials;
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Display the status.
-            // response.StatusDescription;
-            // Get the stream containing content returned by the server.
-            Stream stream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(stream);
-            // Read the content.
-            string res = reader.ReadToEnd();
-            // Cleanup the streams and the response.
-            reader.Close();
-            stream.Close();
-            response.Close();
-
-            return res;
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -179,7 +154,7 @@ namespace BabBot.Forms
                             // Added current talent with all ranks
                             for (int k = 1; k <= ct; k++)
                             {
-                                CurTalents.AddLevel(new Level(num, cur_tab_id, j, k));
+                                CurTalents.AddLevel(new Level(num, cur_tab_id, j + 1, k));
                                 num++;
                                 RefreshLevelList();
                             }
@@ -228,32 +203,25 @@ namespace BabBot.Forms
 
         private void cbTalentTemplates_DropDown(object sender, EventArgs e)
         {
-            cbTalentTemplates.Items.Clear();
-            string[] dir;
+            // Remember last selection
+            string saved = cbTalentTemplates.Text;
 
-            // Scan Profiles/Talents for list
-            try
-            {
-                dir = Directory.GetFiles(wdir, "*.xml");
-            }
-            catch (System.IO.DirectoryNotFoundException)
-            {
-                MessageBox.Show("Directory '" + wdir + "' not found");
-                return;
-            }
-            
-            // Check each file
-            foreach (string fname in dir)
-            {
-                try
-                {
-                    Talents tlist = ProcessManager.ReadTalents(fname);
-                    if ((tlist != null) && (tlist.Description != null))
-                        cbTalentTemplates.Items.Add(tlist);
-                } catch { 
-                    // Continue 
-                }
-            }
+            cbTalentTemplates.DataSource = null;
+
+            // Disable event handler b4 assign datasource
+            // EventHandler h = cbTalentTemplates.DropDown;
+            cbTalentTemplates.SelectedIndexChanged -= 
+                    cbTalentTemplates_SelectedIndexChanged;
+
+            cbTalentTemplates.DataSource = ProcessManager.TalentTemplateList;
+            cbTalentTemplates.SelectedIndex = -1;
+
+            // Restore event handler back
+            cbTalentTemplates.SelectedIndexChanged += 
+                    cbTalentTemplates_SelectedIndexChanged;
+
+            // Restore back edited template
+            cbTalentTemplates.Text = saved;
         }
 
         private void SelectClass()
@@ -274,6 +242,9 @@ namespace BabBot.Forms
         private void cbTalentTemplates_SelectedIndexChanged(object sender, EventArgs e)
         {
             CurTalents = (Talents)cbTalentTemplates.SelectedItem;
+            // Doesn't make sence process if tallent not selected
+            if (CurTalents == null)
+                return;
 
             if (CurTalents.WoWVersion != null)
                 cbWoWVersion.SelectedItem =

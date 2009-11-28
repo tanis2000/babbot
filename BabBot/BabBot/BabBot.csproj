@@ -17,6 +17,7 @@
     <AssemblyOriginatorKeyFile>BabBot.snk</AssemblyOriginatorKeyFile>
     <StartupObject>
     </StartupObject>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +30,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -312,11 +312,21 @@
     <Content Include="Doc\COPYING.TXT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Doc\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Doc\README.TXT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Lib\Profiles\Talents\hunter-bm.xml" />
-    <Content Include="Lib\WoWData.xml" />
+    <Content Include="Profiles\Talents\hunter-bm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Profiles\Talents\pally_full_retro.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\WoWData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Lib\BlackMagic.dll" />
     <None Include="Lib\BlackMagic.XML" />
     <None Include="Lib\CSScriptLibrary.dll" />
@@ -361,6 +371,8 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -371,10 +383,8 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>copy "$(ProjectDir)Lib\*" "$(TargetDir)"
-mkdir "$(TargetDir)\Profiles\Accounts"
-mkdir "$(TargetDir)\Profiles\Characters"
-mkdir "$(TargetDir)\Profiles\Talents"
-copy "$(ProjectDir)Lib\Profiles\Talents\*" "$(TargetDir)\Profiles\Talents"
+
+
 </PreBuildEvent>
     <PostBuildEvent>
     </PostBuildEvent>

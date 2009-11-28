@@ -28,36 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode81 = new System.Windows.Forms.TreeNode("Wave");
-            System.Windows.Forms.TreeNode treeNode82 = new System.Windows.Forms.TreeNode("Smile");
-            System.Windows.Forms.TreeNode treeNode83 = new System.Windows.Forms.TreeNode("Cry");
-            System.Windows.Forms.TreeNode treeNode84 = new System.Windows.Forms.TreeNode("Fart");
-            System.Windows.Forms.TreeNode treeNode85 = new System.Windows.Forms.TreeNode("Pat");
-            System.Windows.Forms.TreeNode treeNode86 = new System.Windows.Forms.TreeNode("Friend", new System.Windows.Forms.TreeNode[] {
-            treeNode81,
-            treeNode82,
-            treeNode83,
-            treeNode84,
-            treeNode85});
-            System.Windows.Forms.TreeNode treeNode87 = new System.Windows.Forms.TreeNode("Wave");
-            System.Windows.Forms.TreeNode treeNode88 = new System.Windows.Forms.TreeNode("Smile");
-            System.Windows.Forms.TreeNode treeNode89 = new System.Windows.Forms.TreeNode("Cry");
-            System.Windows.Forms.TreeNode treeNode90 = new System.Windows.Forms.TreeNode("Fart");
-            System.Windows.Forms.TreeNode treeNode91 = new System.Windows.Forms.TreeNode("Pat");
-            System.Windows.Forms.TreeNode treeNode92 = new System.Windows.Forms.TreeNode("Foe", new System.Windows.Forms.TreeNode[] {
-            treeNode87,
-            treeNode88,
-            treeNode89,
-            treeNode90,
-            treeNode91});
-            System.Windows.Forms.TreeNode treeNode93 = new System.Windows.Forms.TreeNode("Follower City Table");
-            System.Windows.Forms.TreeNode treeNode94 = new System.Windows.Forms.TreeNode("Chat City Table");
-            System.Windows.Forms.TreeNode treeNode95 = new System.Windows.Forms.TreeNode("PVP City Ignore Table");
-            System.Windows.Forms.TreeNode treeNode96 = new System.Windows.Forms.TreeNode("Invite Group Table");
-            System.Windows.Forms.TreeNode treeNode97 = new System.Windows.Forms.TreeNode("Invite Guild Table");
-            System.Windows.Forms.TreeNode treeNode98 = new System.Windows.Forms.TreeNode("Invite Trade Table");
-            System.Windows.Forms.TreeNode treeNode99 = new System.Windows.Forms.TreeNode("Invite Duel Table");
-            System.Windows.Forms.TreeNode treeNode100 = new System.Windows.Forms.TreeNode("Scripts");
+            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Wave");
+            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Smile");
+            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Cry");
+            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Fart");
+            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Pat");
+            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Friend", new System.Windows.Forms.TreeNode[] {
+            treeNode21,
+            treeNode22,
+            treeNode23,
+            treeNode24,
+            treeNode25});
+            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Wave");
+            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Smile");
+            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Cry");
+            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Fart");
+            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Pat");
+            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Foe", new System.Windows.Forms.TreeNode[] {
+            treeNode27,
+            treeNode28,
+            treeNode29,
+            treeNode30,
+            treeNode31});
+            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Follower City Table");
+            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Chat City Table");
+            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("PVP City Ignore Table");
+            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Invite Group Table");
+            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Invite Guild Table");
+            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Invite Trade Table");
+            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Invite Duel Table");
+            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Scripts");
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -491,6 +491,9 @@
             this.CobBoxEOTSGuardSpot = new System.Windows.Forms.ComboBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.button9 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -606,6 +609,9 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label1);
+            this.tabPage1.Controls.Add(this.button9);
+            this.tabPage1.Controls.Add(this.comboBox1);
             this.tabPage1.Controls.Add(this.ChkBoxUseMount);
             this.tabPage1.Controls.Add(this.ChkBoxPullElites);
             this.tabPage1.Controls.Add(this.ChkBoxIgnoreMaxLevel);
@@ -2643,34 +2649,34 @@
             this.TreeEmote.HotTracking = true;
             this.TreeEmote.Location = new System.Drawing.Point(3, 16);
             this.TreeEmote.Name = "TreeEmote";
-            treeNode81.Name = "Node1";
-            treeNode81.Text = "Wave";
-            treeNode82.Name = "Node2";
-            treeNode82.Text = "Smile";
-            treeNode83.Name = "Node3";
-            treeNode83.Text = "Cry";
-            treeNode84.Name = "Node4";
-            treeNode84.Text = "Fart";
-            treeNode85.Name = "Node5";
-            treeNode85.Text = "Pat";
-            treeNode86.Checked = true;
-            treeNode86.Name = "";
-            treeNode86.Text = "Friend";
-            treeNode87.Name = "Node9";
-            treeNode87.Text = "Wave";
-            treeNode88.Name = "Node10";
-            treeNode88.Text = "Smile";
-            treeNode89.Name = "Node11";
-            treeNode89.Text = "Cry";
-            treeNode90.Name = "Node12";
-            treeNode90.Text = "Fart";
-            treeNode91.Name = "Node13";
-            treeNode91.Text = "Pat";
-            treeNode92.Name = "Node0";
-            treeNode92.Text = "Foe";
+            treeNode21.Name = "Node1";
+            treeNode21.Text = "Wave";
+            treeNode22.Name = "Node2";
+            treeNode22.Text = "Smile";
+            treeNode23.Name = "Node3";
+            treeNode23.Text = "Cry";
+            treeNode24.Name = "Node4";
+            treeNode24.Text = "Fart";
+            treeNode25.Name = "Node5";
+            treeNode25.Text = "Pat";
+            treeNode26.Checked = true;
+            treeNode26.Name = "";
+            treeNode26.Text = "Friend";
+            treeNode27.Name = "Node9";
+            treeNode27.Text = "Wave";
+            treeNode28.Name = "Node10";
+            treeNode28.Text = "Smile";
+            treeNode29.Name = "Node11";
+            treeNode29.Text = "Cry";
+            treeNode30.Name = "Node12";
+            treeNode30.Text = "Fart";
+            treeNode31.Name = "Node13";
+            treeNode31.Text = "Pat";
+            treeNode32.Name = "Node0";
+            treeNode32.Text = "Foe";
             this.TreeEmote.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode86,
-            treeNode92});
+            treeNode26,
+            treeNode32});
             this.TreeEmote.Size = new System.Drawing.Size(142, 274);
             this.TreeEmote.TabIndex = 4;
             // 
@@ -3165,31 +3171,31 @@
             this.TreeTables.HotTracking = true;
             this.TreeTables.Location = new System.Drawing.Point(3, 16);
             this.TreeTables.Name = "TreeTables";
-            treeNode93.Name = "Node0";
-            treeNode93.Text = "Follower City Table";
-            treeNode94.Name = "Node1";
-            treeNode94.Text = "Chat City Table";
-            treeNode95.Name = "Node6";
-            treeNode95.Text = "PVP City Ignore Table";
-            treeNode96.Name = "Node2";
-            treeNode96.Text = "Invite Group Table";
-            treeNode97.Name = "Node3";
-            treeNode97.Text = "Invite Guild Table";
-            treeNode98.Name = "Node4";
-            treeNode98.Text = "Invite Trade Table";
-            treeNode99.Name = "Node5";
-            treeNode99.Text = "Invite Duel Table";
-            treeNode100.Name = "Node7";
-            treeNode100.Text = "Scripts";
+            treeNode33.Name = "Node0";
+            treeNode33.Text = "Follower City Table";
+            treeNode34.Name = "Node1";
+            treeNode34.Text = "Chat City Table";
+            treeNode35.Name = "Node6";
+            treeNode35.Text = "PVP City Ignore Table";
+            treeNode36.Name = "Node2";
+            treeNode36.Text = "Invite Group Table";
+            treeNode37.Name = "Node3";
+            treeNode37.Text = "Invite Guild Table";
+            treeNode38.Name = "Node4";
+            treeNode38.Text = "Invite Trade Table";
+            treeNode39.Name = "Node5";
+            treeNode39.Text = "Invite Duel Table";
+            treeNode40.Name = "Node7";
+            treeNode40.Text = "Scripts";
             this.TreeTables.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode93,
-            treeNode94,
-            treeNode95,
-            treeNode96,
-            treeNode97,
-            treeNode98,
-            treeNode99,
-            treeNode100});
+            treeNode33,
+            treeNode34,
+            treeNode35,
+            treeNode36,
+            treeNode37,
+            treeNode38,
+            treeNode39,
+            treeNode40});
             this.TreeTables.Size = new System.Drawing.Size(156, 344);
             this.TreeTables.TabIndex = 4;
             // 
@@ -5251,7 +5257,9 @@
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            // 
             // btnOk
+            // 
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOk.Location = new System.Drawing.Point(362, 6);
             this.btnOk.Name = "btnOk";
@@ -5260,6 +5268,32 @@
             this.btnOk.Text = "OK";
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(98, 32);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 254;
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(225, 30);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(75, 23);
+            this.button9.TabIndex = 255;
+            this.button9.Text = "button9";
+            this.button9.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(84, 13);
+            this.label1.TabIndex = 256;
+            this.label1.Text = "Talent Template";
             // 
             // OptionsForm
             // 
@@ -5812,5 +5846,8 @@
         private System.Windows.Forms.TextBox tbRealmLocation;
         private System.Windows.Forms.Label labelGameType;
         private System.Windows.Forms.Label labelComment;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

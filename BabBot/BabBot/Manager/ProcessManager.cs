@@ -24,12 +24,14 @@ using BabBot.Common;
 using BabBot.Scripting;
 using BabBot.Wow;
 using Magic;
+using System.Collections;
 using System.Collections.Generic;
 using Pather.Graph;
 using System.Linq;
 using System.Threading;
 using System.IO;
 using System.Xml.Serialization;
+using System.Net;
 
 namespace BabBot.Manager
 {
@@ -83,6 +85,12 @@ namespace BabBot.Manager
         /// </summary>
         public delegate void ConfigFileChangedHandler();
 
+        /// <summary>
+        /// Show Error Message
+        /// </summary>
+        /// <param name="err"></param>
+        public delegate void ShowErrorMessageHandler(string err);
+
         #endregion
 
         #region WOWApplication Events
@@ -121,6 +129,7 @@ namespace BabBot.Manager
 
         public static event FirstTimeRunHandler FirstTimeRun;
         public static event ConfigFileChangedHandler ConfigFileChanged;
+        public static event ShowErrorMessageHandler ShowErrorMessage;
 
         #endregion
 
@@ -218,7 +227,47 @@ namespace BabBot.Manager
 
         public static WoWVersion[] WoWVersions
         {
-            get { return wdata.Versions; }
+            get { return (wdata != null) ? wdata.Versions : null; }
+        }
+
+        public static ArrayList TalentTemplateList
+        {
+            get
+            {
+                string[] dir;
+                ArrayList res = new ArrayList(); ;
+
+                // Scan Profiles/Talents for list
+                string wdir = config.ProfilesDir +
+                        System.IO.Path.DirectorySeparatorChar + "Talents";
+                try
+                {
+                    dir = Directory.GetFiles(wdir, "*.xml");
+                }
+                catch (System.IO.DirectoryNotFoundException)
+                {
+                    if (WoWProcessFailed != null)
+                    ShowErrorMessage("Directory '" + wdir + "' not found");
+                    return res;
+                }
+
+                // Check each file
+                foreach (string fname in dir)
+                {
+                    try
+                    {
+                        Talents tlist = ProcessManager.ReadTalents(fname);
+                        if ((tlist != null) && (tlist.Description != null))
+                            res.Add(tlist);
+                    }
+                    catch
+                    {
+                        // Continue 
+                    }
+                }
+
+                return res;
+            }
         }
 
         #endregion
@@ -230,9 +279,8 @@ namespace BabBot.Manager
             Debug("char", "Executing AfterStart ...");
 
             if (WoWProcessStarted != null)
-            {
                 WoWProcessStarted(process.Id);
-            }
+
             try
             {
                 _pstatus = ProcessStatuses.STARTING;
@@ -287,8 +335,7 @@ namespace BabBot.Manager
                     {
                         // Login exception means new patch
                         // Exit bot
-                        if (WoWProcessFailed != null)
-                            WoWProcessFailed(e.Message);
+                        ShowError(e.Message);
                         Environment.Exit(5);
                     }
                     Injector.Lua_UnRegisterInputHandler();
@@ -341,6 +388,43 @@ namespace BabBot.Manager
             Output.Instance.Debug(facility, msg);
         }
 
+        private static bool ShowError(string err)
+        {
+            bool res = (ShowErrorMessage != null);
+            if (res)
+                ShowErrorMessage(err);
+            return res;
+        }
+
+        /// <summary>
+        /// Read URL and return result. Saved for future use
+        /// </summary>
+        /// <param name="url">URL to retrieve data from</param>
+        /// <returns>HTTP response</returns>
+        private string ReadURL(string url)
+        {
+            // Create a request for the URL.         
+            WebRequest request = WebRequest.Create(url);
+            // If required by the server, set the credentials.
+            request.Credentials = CredentialCache.DefaultCredentials;
+            // Get the response.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            // Display the status.
+            // response.StatusDescription;
+            // Get the stream containing content returned by the server.
+            Stream stream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(stream);
+            // Read the content.
+            string res = reader.ReadToEnd();
+            // Cleanup the streams and the response.
+            reader.Close();
+            stream.Close();
+            response.Close();
+
+            return res;
+        }
+
         #endregion
 
         #region Public Methods
@@ -352,8 +436,20 @@ namespace BabBot.Manager
         {
             XmlSerializer s = new XmlSerializer(typeof(WoWData));
             TextReader r = new StreamReader("WoWData.xml");
-            wdata = (WoWData)s.Deserialize(r);
-            r.Close();
+
+            try
+            {
+                wdata = (WoWData)s.Deserialize(r);
+            }
+            catch (Exception e)
+            {
+                ShowError("Unable load WoWData.xml : " + e.Message);
+                Environment.Exit(1);
+            }
+            finally
+            {
+                r.Close();
+            }
         }
 
         /// <summary>
@@ -396,10 +492,8 @@ namespace BabBot.Manager
 
                     if (!wversion.ToString().Equals(version))
                     {
-                        if (WoWProcessFailed != null)
-                            WoWProcessFailed(@"Version of WoW.exe '" + version + 
-                                "' not equal version from config.xml '" + wversion + "'");
-                        else
+                        if (!ShowError("Version of WoW.exe '" + version + 
+                                "' is not equal version from config.xml '" + wversion + "'"))
                             Environment.Exit(4);
 
                         return;
@@ -754,7 +848,7 @@ namespace BabBot.Manager
         public static void LoadConfig()
         {
             var serializer = new Serializer<Config>();
-
+            
             try
             {
                 config = serializer.Load(ConfigFileName);
@@ -799,7 +893,7 @@ namespace BabBot.Manager
                     ConfigFileChanged();
                 else
                 {
-                    Console.WriteLine("Config file config.xml has version " +
+                    ShowError("Config file config.xml has version " +
                         config.Version + " that different from application version " +
                         ProcessManager.ConfigVersion);
                     Environment.Exit(2);
@@ -807,12 +901,13 @@ namespace BabBot.Manager
             }
             catch (WoWDataNotFoundException ex)
             {
-                if (WoWProcessFailed != null)
-                    WoWProcessFailed(ex.Message);
-                else
-                    Console.WriteLine(ex.Message);
-
+                ShowError(ex.Message);
                 Environment.Exit(3);
+            }
+            catch (Exception e)
+            {
+                ShowError("Unable load config.xml : " + e.Message);
+                Environment.Exit(4);
             }
         }
 
@@ -832,9 +927,14 @@ namespace BabBot.Manager
 
         private static void OnConfigurationChanged()
         {
-            // Create log directory if doesn't existst
-            if (!Directory.Exists(config.LogParams.Dir))
-                Directory.CreateDirectory(config.LogParams.Dir);
+            // Check  mandatory directories
+            string[] dirs = {config.LogParams.Dir,
+                config.ProfilesDir + System.IO.Path.DirectorySeparatorChar + "Accounts",
+                config.ProfilesDir + System.IO.Path.DirectorySeparatorChar + "Characters" };
+
+            foreach (string dir in dirs)
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
 
             wversion = FindWoWVersionByName(config.WoWInfo.Version);
             if (wversion == null)

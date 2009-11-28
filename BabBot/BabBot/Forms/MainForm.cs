@@ -51,8 +51,12 @@ namespace BabBot.Forms
             // Configuration must be loaded first of all. 
             ProcessManager.FirstTimeRun += OnFirstTimeRun;
             ProcessManager.ConfigFileChanged += OnConfigFileChanged;
-            ProcessManager.WoWProcessFailed += wow_ProcessFailed;
+            ProcessManager.ShowErrorMessage += ShowErrorMessage;
 
+            // data first
+            ProcessManager.LoadWowData();
+
+            // Everything else after
             ProcessManager.LoadConfig();
 
             // Log Output controlled by Config.LogOutput parameter
@@ -67,6 +71,7 @@ namespace BabBot.Forms
             // ProcessManager events binding
             ProcessManager.WoWProcessStarted += wow_ProcessStarted;
             ProcessManager.WoWProcessEnded += wow_ProcessEnded;
+            ProcessManager.WoWProcessFailed += wow_ProcessFailed;
             ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
             ProcessManager.WoWInGame += wow_InGame;
             
@@ -326,6 +331,11 @@ namespace BabBot.Forms
         }
 
         private static void wow_ProcessFailed(string error)
+        {
+            ShowErrorMessage(error);
+        }
+
+        private static void ShowErrorMessage(string error)
         {
             MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }

@@ -71,9 +71,6 @@ namespace BabBot
                 }
             }
 
-            // Load WoWData.xml
-            ProcessManager.LoadWowData();
-
             var mainForm = new MainForm();
             Application.ThreadException += mainForm.UnhandledThreadExceptionHandler;
             try

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,6 +7,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace BabBot.Forms
 {
@@ -25,11 +28,22 @@ namespace BabBot.Forms
             
         }
 
+        private static string GetDefaultBrowserPath()
+        {
+            // Registry info for default browser
+            string key = @"http\shell\open\command";
+            RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey(key, false);
+            // get default browser path
+            return ((string)registryKey.GetValue(null, null)).Split('"')[1];
+        }
+
         private void btnHelp_Click(object sender, EventArgs e)
         {
-            // TODO Open Default Browswer
-            ShowInfoMessage("Test message. Help for '" + 
-                                        _name + "' coming soon");
+            // Open local URL in default browswer
+            string url = "file:///" + Environment.CurrentDirectory.Replace("\\", "/") +
+                "/Doc/index.html" + "#" + _name;
+
+            Process.Start(GetDefaultBrowserPath(), url);
         }
 
         protected void ShowErrorMessage(string err) {
