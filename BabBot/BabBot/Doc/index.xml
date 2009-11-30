@@ -1,91 +1,99 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
-"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This document was created with Syntext Serna Free. -->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
 <book>
   <bookinfo>
-    <title>BabBot super bot</title>
-
+    <title>BabBot WoW Automa</title>
     <author>
       <firstname>ivp4</firstname>
-
-      <surname></surname>
-
+      <surname/>
       <affiliation>
-        <orgname></orgname>
+        <orgname/>
       </affiliation>
     </author>
-
     <author>
       <surname>tanis</surname>
     </author>
-
     <pubdate>November 29, 2009</pubdate>
   </bookinfo>
-
   <chapter>
     <title>Configure &amp; Run bot</title>
-
     <section>
-      <title>Configuration</title>
-
+      <title>System Requirements</title>
       <para>Some parameters are still hardcoded and will be editable during a
-      later release. Right now you're required to run on a 32bit OS (XP or
+      later release. Right now you&apos;re required to run on a 32bit OS (XP or
       Vista). Development releases for x64 processors are under testing. You
       can still compile it in 64bit mode from the sources though. </para>
-
       <para>In order to run, BabBot requires to be run from a user with
       administrator privileges so that it can run the WoW client as a guest
-      user (currently the username is "guest" and it's got to be enabled in
+      user (currently the username is &quot;guest&quot; and it&apos;s got to be enabled in
       your OS). </para>
-    </section>
+      <section>
+        <title>OS</title>
+        <para>BabBot has been tested on the following platforms:
 
+    </para>
+        <para>* Windows XP 32-bit
+    </para>
+        <para>* Windows Vista 32-bit
+    </para>
+        <para>* Windows XP 64-bit
+    </para>
+        <para>* Windows Vista 64-bit 
+
+</para>
+        <para>The current development version is under testing for:
+
+    </para>
+        <para>* Windows 7 32-bit
+    </para>
+        <para>* Windows 7 64-bit </para>
+      </section>
+      <section>
+        <title>Privileges</title>
+        <para>In order to run BabBot it&apos;s necessary to have administrator privileges for the account running BabBot itself. This is because the bot will instantiate WoW&apos;s client as the guest user.
+
+</para>
+        <para><emphasis role="italic">Guest user has to be enabled in your OS. </emphasis></para>
+      </section>
+    </section>
     <section>
       <title>Basic usage </title>
+      <para>Run BabBot and launch WoW through the &quot;Run WoW&quot; button. If your copy of WoW has been installed properly, BabBot will detect its path and use it. Otherwise you&apos;ll have to set it in the Options menu.</para>
+      <para>If you&apos;ve enabled autologin in the Options, BabBot will use your credentials to log into the game directly, otherwise you will have to log in by hand.
 
-      <para>Run BabBot and either launch WoW through the "Run WoW" button or
-      attach to an already running client instance (but beware that attaching
-      to a running instance might make you vulnerable to Warden and get you
-      banned as your client might be running as a privileged user and you
-      don't want this to happen!) </para>
+</para>
+      <para><emphasis role="italic">Make sure that you have enabled &quot;Click to move&quot; and &quot;Auto-loot&quot; in WoW or some features might not work as expected. </emphasis></para>
+      <para>If it&apos;s the first time you&apos;re running BabBot, you will want to make a new profile to start with. Enter a name and a description in the fields you see on the Main tab and then select the WayPoints? tab. Make sure that &quot;Normal&quot; is selected in the dropdown list and check &quot;Auto add waypoints&quot;. Now start moving to record the path your bot will walk through during its farming cycle. When you are done, uncheck &quot;Auto add waypoints&quot;.
 
-      <para>Enter your username and password in WoW, log into the game with
-      your favorite toon and let's start rocking. </para>
+</para>
+      <para>Now it&apos;s time to choose which mobs we will attack. So select the &quot;Enemies&quot; tab. Run around the path you made before and target the mobs you want to kill by selecting them and clicking on the &quot;Add to list&quot; button. You don&apos;t need to add each mob as BabBot will attack any mob that has the same name as those you have put into the list.
 
-      <para>If it's the first time you're running BabBot, you will want to
-      make a new profile to work from. Enter a name and a description in the
-      fields you see on the Main tab and then select the WayPoints tab. Make
-      sure that "Normal" is selected in the dropdown list and check "Auto add
-      waypoints". Now start moving to record the path your bot will walk
-      through during its farming cycle. When you are done, uncheck "Auto add
-      waypoints". </para>
+</para>
+      <para>Once you are done, it&apos;s time to save your work so that you don&apos;t have to do it again when you shutdown the bot. Just click on the &quot;Main&quot; tab and click &quot;Save&quot; and choose a filename for your profile. When you run the bot again you will be able to load your profile with the &quot;Load&quot; button.
 
-      <para>Now it's time to choose which mobs we will attack. So select the
-      "Enemies" tab. Run around the path you made before and target the mobs
-      you want to kill by selecting them and clicking on the "Add to list"
-      button. You don't need to add each mob as BabBot will attack any mob
-      that has the same name as those you have put into the list. </para>
+</para>
+      <para>The next step is to load a script. A script is a collection of commands that your bot will execute in order to perform things like farming, grinding, walking around, sell stuff, repairs, etc..
 
-      <para>Once you are done, it's time to save your work so that you don't
-      have to do it again when you shutdown the bot. Just click on the "Main"
-      tab and click "Save" and choose a filename for your profile. When you
-      run the bot again you will be able to load your profilo with the "Load"
-      button. </para>
+</para>
+      <para>BabBot comes with a sample script that has been written based on the Paladin class. Anyone can take that script and modify it and customize it for any other class.
+
+</para>
+      <para>So, for the time being, just load the example script by clicking on &quot;Load&quot; on the Main tab under the &quot;Script&quot; group, browse to the scripts folder, enter the Paladin folder and select Core.cs
+
+</para>
+      <para>BabBot will load the script and be ready to start. It&apos;s time to click on the &quot;Start&quot; button and enjoy watching your bot doing its duties. </para>
     </section>
   </chapter>
-
   <chapter>
     <title>Configure Talent Template</title>
-
     <section>
       <title>Import from WoW Armory site</title>
-
-      <para></para>
+      <para/>
     </section>
-
     <section>
       <title>Manual adjustment</title>
-
-      <para></para>
+      <para/>
     </section>
   </chapter>
 </book>
