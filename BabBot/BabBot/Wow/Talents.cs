@@ -8,6 +8,29 @@ using BabBot.Manager;
 
 namespace BabBot.Wow
 {
+    public class TalentLearnException : Exception
+    {
+        public TalentLearnException(string err) : base(err) { }
+
+        public TalentLearnException(string err, string talent, int id, int rank) :
+            base(string.Format("Failed learn talent '{0}; id: {1}; rank {2}. {3}",
+                talent, id, rank, err)) { }
+    }
+
+    public struct TalentInfo
+    {
+        public string Name;
+        public int Rank;
+        public bool Meets;
+
+        public TalentInfo(string name, int rank, bool meets)
+        {
+            Name = name;
+            Rank = rank;
+            Meets = meets;
+        }
+    }
+
     // Talents list which will be serialized
     [XmlRoot("talents")]
     public class Talents

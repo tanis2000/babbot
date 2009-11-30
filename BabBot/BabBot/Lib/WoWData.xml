@@ -213,6 +213,7 @@ end)()]]></text>
     LearnTalent({0}, {1}, false)
 end)()]]></text>
       </function>
+	  
       <function name="GetTalentInfo">
         <parameters>
         1 - Tab ID
@@ -244,6 +245,82 @@ end)()]]></text>
 end)()]]></text>
       </function>
 
+      <function name="SetTrainerAvailableFilter">
+        <text><![CDATA[(function()
+  SetTrainerServiceTypeFilter("available " , 1, 1)
+end)()]]></text>
+      </function>
+
+	  <function name="GetNumTrainerServices">
+        <return size="1">
+		0 - the number of entries in the trainer service listing. 
+			Entries include both group headers and individual trainer services 
+			(i.e spells or recipes to be purchased). Reflects the list as it should 
+			currently be displayed, not necessarily the complete list -- if headers 
+			are collapsed or a filter is enabled, a smaller number will be returned
+        </return>
+        <text><![CDATA[(function()
+  return GetNumTrainerServices()
+end)()]]></text>
+      </function>
+	  
+	  <function name="BuyTrainerService">
+        <parameters>
+		0 - Index of the trainer service
+        </parameters>
+        <text><![CDATA[(function()
+  BuyTrainerService({0})
+end)()]]></text>
+      </function>
+	  
+	  <function name="">
+        <parameters>
+		0 - "Train Me" index
+        </parameters>
+        <text><![CDATA[(function()
+  SelectGossipOption({0})
+end)()]]></text>
+      </function>
+	  
+      <function name="FindGossipIndex">
+        <parameters>
+		0 - gossipType - Non-localized string indicating the type of gossip option (string)
+    * banker - Begin a Bank interaction
+    * battleMaster - Queue for a battleground instance
+    * binder - Set the player's Hearthstone location
+    * gossip - Talk to the NPC
+    * tabard - Begin a Tabard design interaction
+    * taxi - Begin a Taxi (flight master) interaction
+    * trainer - Begin a Trainer interaction
+    * vendor - Begin a Merchant interaction
+	* gossip
+		- Custom gossip types
+        </parameters>
+        <return size="1">
+		0 - index if gossip type found in NPC gossip dialog or null if not found
+        </return>
+        <text><![CDATA[(function()
+	local idx, txt
+    local arg = GetGossipOptions()
+	for i = 1, table.getn(arg), 2 do
+		local title, type = arg[i], arg[i+1]
+		if (type == "{0}) then
+			idx = i
+			txt = title
+			
+			break
+		end
+	end
+	return null, null
+end)()]]></text>
+      </function>
+
+      <function name="InteractUnit">
+        <text>
+          <![CDATA[InteractUnit("target")]]>
+        </text>
+      </function>
+      
       <!-- Template for new function 
       <function name="">
         <parameters>
@@ -255,6 +332,13 @@ end)()]]></text>
 end)()]]></text>
       </function>
       -->
+	  
+	  <!-- 
+	  // TO TRY
+	   (function()
+		return GetGossipOptions()
+		end)()
+	  -->
     </lua>
     
     <!-- 

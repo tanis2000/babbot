@@ -1095,48 +1095,46 @@ namespace BabBot.Forms
             Level l = t.GetLevel(cur_lvl - ProcessManager.CurWoWVersion.TalentConfig.StartLevel);
             Output.Instance.Debug("char", "Checking talent " + l.TalentToString());
 
-            lret = ProcessManager.Injector.Lua_ExecByName("GetTalentInfo",
-                    new object[] { l.TabId, l.TalentId, l.Rank });
-
-            // Converting result
-            int trank = 0;
-            string tname = null;
-            bool meets = false;
-            try
-            {
-                tname = lret[0];
-                trank = Convert.ToInt32(lret[4]);
-                meets = lret[7] != null && lret[7].Equals("1");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Unable retrieve result of 'GetTalentInfo' function.", ex);
-            }
+            TalentInfo t1 = GetTalentInfo(l.TabId, l.TalentId);
 
             Output.Instance.Debug(string.Format("Located talent: '{0}' rank: {1}; meets: {2}",
-                    tname, trank, meets));
-
-            if (!meets) 
-                // Something wrong with template
-                throw new TalentLearnException("Talent prerequisites aren't met." + 
-                    " Talent template mis-configured or outdated", tname, l.TalentId, l.Rank);
+                    t1.Name, t1.Rank, t1.Meets));
 
             // Check if any talents already learned in a past
-            if (trank == (l.Rank - 1))
-                    LearnTalent(l, tname, trank, delay);
-            else { 
+            if (t1.Meets && (t1.Rank == (l.Rank - 1)))
+                    LearnTalent(l, t1, delay);
+            else {
+                // Go backwards
+                bool f = false;
+                for (int i = cur_lvl - ProcessManager.CurWoWVersion.TalentConfig.StartLevel - 1;
+                    i >= ProcessManager.CurWoWVersion.TalentConfig.StartLevel; i--)
+                {
+                    Level l1 = t.GetLevel(i);
+                    TalentInfo t2 = GetTalentInfo(l.TabId, l.TalentId);
+                    if (t2.Meets && (t2.Rank == l.Rank - 1))
+                    {
+                        Output.Instance.Log("Found talent " +
+                            " that wasn't learned for level " + l.Num);
+                        LearnTalent(l, t2, delay);
+                        f = true;
+                    }
+                }
+
                 //TODO Check previous talent
                 // for now stop
-                throw new TalentLearnException("Talent already learned. Talent merge not implemented yet. " +
-                    " Talent template mis-configured or outdated", tname, l.TalentId, l.Rank);
+                if (!f)
+                    // Profile un-synchronized with talents
+                    throw new TalentLearnException("Some talents already learned " + 
+                        "that not configured in template. Talent template might be mis-configured " + 
+                        "or outdated", t1.Name,l.TalentId, l.Rank);
             }
 
             return (points - 1);
         }
 
-        internal void LearnTalent(Level l, string tname, int rank, int delay)
+        internal void LearnTalent(Level l, TalentInfo t, int delay)
         {
-            int rank1 = rank + 1;
+            int rank1 = t.Rank + 1;
 
             int retry = 0;
             int max_retry = ProcessManager.CurWoWVersion.TalentConfig.Retry;
@@ -1145,7 +1143,7 @@ namespace BabBot.Forms
 
             do
             {
-                int rank2 = 0;
+                TalentInfo t2;
 
                 if (retry > 0)
                 {
@@ -1155,39 +1153,39 @@ namespace BabBot.Forms
                     Thread.Sleep(delay);
 
                     // Check if talent already learned
-                    rank2 = GetTalentRank(l.TabId, l.TalentId);
+                    t2 = GetTalentInfo(l.TabId, l.TalentId);
 
                     Output.Instance.Debug("Learning result for talent: '" +
-                                tname + "' is rank: " + rank2);
+                                t.Name + "' is rank: " + t2.Rank);
 
-                    if (rank2 == rank1)
+                    if (t2.Rank == rank1)
                     {
                         learned = true;
                         Output.Instance.Log("char",
-                            "Successfully learned '" + tname + "' rank " + rank1);
+                            "Successfully learned '" + t.Name + "' rank " + rank1);
                         break;
                     }
                 }
 
                 Output.Instance.Log("char",
-                    "Learning '" + tname + "' rank " + rank1 + " ...");
+                    "Learning '" + t.Name + "' rank " + rank1 + " ...");
                 ProcessManager.Injector.Lua_ExecByName("LearnTalent",
                                 new object[] { l.TabId, l.TalentId });
 
                 // WoW prevent learning talents fast
                 Thread.Sleep(delay);
 
-                rank2 = GetTalentRank(l.TabId, l.TalentId);
+                t2 = GetTalentInfo(l.TabId, l.TalentId);
 
                 Output.Instance.Debug("Learning result for talent: '" +
-                                tname + "' is rank: " + rank2);
+                                t.Name + "' is rank: " + t2.Rank);
 
                 // Converting result
-                if (rank2 == rank1)
+                if (t2.Rank == rank1)
                     {
                         learned = true;
                         Output.Instance.Log("char",
-                            "Successfully learned '" + tname + "' rank " + rank1);
+                            "Successfully learned '" + t.Name + "' rank " + rank1);
                     }
                     else
                         retry++;
@@ -1197,42 +1195,36 @@ namespace BabBot.Forms
             if (!learned)
                 // Something wrong with template
                 throw new TalentLearnException ("Failed learned after " + 
-                    (retry + 1) + " retries with " + delay + 
-                    " msec delay between each retry", tname, l.TalentId, l.Rank);
+                    (retry + 1) + " retries with " + delay +
+                    " msec delay between each retry", t.Name, l.TalentId, l.Rank);
         }
 
-        internal int GetTalentRank(int tab, int id)
+        internal TalentInfo GetTalentInfo(int tab, int id)
         {
-            int res;
-
             // Checking rank increased
             string[] lret = ProcessManager.Injector.Lua_ExecByName("GetTalentInfo",
                         new object[] { tab, id });
 
             // Converting result
+            int rank;
+
             try
             {
-                res = Convert.ToInt32(lret[4]);
+                rank = Convert.ToInt32(lret[4]);
             }
             catch (Exception ex)
             {
                 throw new Exception("Unable retrieve result of 'GetTalentInfo' function.", ex);
             }
 
-            return res;
+            return new TalentInfo(lret[0], rank, lret[7] != null && lret[7].Equals("1"));
         }
 
         #endregion
+
+        private void contentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Help.ShowHelp(this, "doc/index.html");
+        }
     }
-
-    public class TalentLearnException : Exception
-    {
-        public TalentLearnException(string err) : base(err) { }
-
-        public TalentLearnException(string err, string talent, int id, int rank) :
-            base(string.Format("Failed learn talent '{0}; id: {1}; rank {2}. {3}",
-                talent, id, rank, err)) { }
-    }
-
-        
 }
