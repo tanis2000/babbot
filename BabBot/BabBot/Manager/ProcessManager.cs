@@ -453,7 +453,8 @@ namespace BabBot.Manager
             }
             catch (Exception e)
             {
-                ShowError("Unable load WoWData.xml : " + e.Message);
+                ShowError("Unable load WoWData.xml : " + 
+                            e.Message + Environment.NewLine + e.InnerException);
                 Environment.Exit(1);
             }
             finally
@@ -729,6 +730,7 @@ namespace BabBot.Manager
         {
             ObjectManager = new ObjectManager();
             Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
+            Player.SetCurrentMapContinentId();
             if (WoWInGame != null)
                 WoWInGame();
         }
@@ -753,10 +755,11 @@ namespace BabBot.Manager
                     }
                     Thread.Sleep(250);
                 } 
-                InitializePlayer();
                 // This might have already been done, but since we could have autologin disabled
                 // we do this again (there are no issues if you call this more than once anyway)
                 Injector.Lua_RegisterInputHandler();
+
+                InitializePlayer();
                 InitializeCaronte();
                 //ScriptHost.Start();
                 //StateManager.Instance.Stop();
@@ -772,8 +775,16 @@ namespace BabBot.Manager
         public static void InitializeCaronte()
         {
             //string continent = "Azeroth";  // temporary fix to get things running while debugging LUA
-            string continent = Player.GetCurrentMapContinent();
             
+            string continent = ProcessManager.CurWoWVersion.Continents.
+                                            FindContinentNameById(Player.ContinentID);
+            if (continent == null)
+            {
+                // Stopping the bot
+                BotManager.Stop();
+                throw new Exception("Continent not found for id: " + Player.ContinentID);
+            }
+
             Caronte.Init(continent);
             Log("char", string.Format(
                 "Caronte initialized with continent '{0}'", continent));
@@ -926,6 +937,14 @@ namespace BabBot.Manager
         /// </summary>
         public static void SaveConfig()
         {
+            /*
+             XmlWriterSettings settings = new XmlWriterSettings();
+            settings.OmitXmlDeclaration = true; // Remove the <?xml version="1.0" encoding="utf-8"?>
+            
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", ""); // Remove  xmlns: parameters
+             
+             */
             var serializer = new Serializer<Config>();
 
             // Remember current config version

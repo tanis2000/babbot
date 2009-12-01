@@ -43,6 +43,9 @@ namespace BabBot.Wow
         private bool StopMovement;
         public int TravelTime;
         public readonly List<WowUnit> MobBlackList;
+        // The continent id currently player in
+        private int continent = -1;
+
 
         /// <summary>
         /// Constructor
@@ -87,6 +90,11 @@ namespace BabBot.Wow
             {
                 return ReadDescriptor<int>(Descriptor.ePlayerFields.PLAYER_NEXT_LEVEL_XP);
             }
+        }
+
+        public int ContinentID
+        {
+            get { return continent; }
         }
 
         #region Target stats
@@ -1396,52 +1404,20 @@ end)()");
         }
 
         /// <summary>
-        /// Gets the id of the continent we're in
+        /// Sets the id of the continent we're in
         /// </summary>
-        /// <returns>id of the continent</returns>
-        public int GetCurrentMapContinentId()
+        public void SetCurrentMapContinentId()
         {
             try
             {
                 string [] lret = ProcessManager.
                     Injector.Lua_ExecByName("GetCurrentMapContinentId");
                 string sId = lret[0];
-                return Convert.ToInt32(sId);
+                continent = Convert.ToInt32(sId);
             }
             catch
             {
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// Gets the name of the continent we're in (used by PPather)
-        /// </summary>
-        /// <returns>short name of the continent</returns>
-        public string GetCurrentMapContinent()
-        {
-            int id = GetCurrentMapContinentId();
-            switch (id)
-            {
-                default:
-                case -1:
-                    return "Unknown"; //if showing the cosmic map or a Battleground map. Also when showing The Scarlet Enclave, the Death Knights' starting area. 
-                    
-                case 0:
-                    return "All"; // if showing the entire world (both continents) 
-                    
-                case 1:
-                    return "Kalimdor"; //if showing the first continent (currently Kalimdor), or a zone map within it. 
-                    
-                case 2:
-                    return "Azeroth"; //if showing the second continent (currently Eastern Kingdoms), or a zone map within it. 
-                    
-                case 3:
-                    return "Expansion01"; //if showing the Outland, or a zone map within it. 
-                    
-                case 4:
-                    return "Northrend"; //if showing Northrend, or a zone map within it.                    
-
+                continent = -1;
             }
         }
 

@@ -11,7 +11,14 @@
         <class armory_id="8" long_name="Mage" short_name="mage" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
         <class armory_id="9" long_name="Warlock" short_name="lock" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
         <class armory_id="11" long_name="Druid" short_name="druid" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-      </classes>
+    </classes>
+    <continents>
+      <continent id="0" name="All" />
+      <continent id="1" name="Kalimdor" />
+      <continent id="2" name="Azeroth" />
+      <continent id="3" name="Expansion01" />
+      <continent id="4" name="Northrend" />
+    </continents>      
     <lua>
       <function name="SetGlueState">
         <parameters>
@@ -271,11 +278,34 @@ end)()]]></text>
         <text><![CDATA[(function()
   BuyTrainerService({0})
 end)()]]></text>
-      </function>
-	  
-	  <function name="">
+    </function>
+
+    <function name="GetGossipOptions">
+        <return size="-1">
+          * text - Text to be displayed for the gossip option (string)
+          * gossipType - Non-localized string indicating the type of gossip option (string)
+            o Banker - Begin a Bank interaction
+            o BattleMaster - Queue for a battleground instance
+            o Binder - Set the player's Hearthstone location
+            o Gossip - Talk to the NPC
+            o Tabard - Begin a Tabard design interaction
+            o Taxi - Begin a Taxi (flight master) interaction
+            o Trainer - Begin a Trainer interaction
+            o Vendor - Begin a Merchant interaction
+          *
+          ... - Additional text, gossipType values for each gossip option available (list)
+
+        </return>
+        <text>
+          <![CDATA[(function()
+  return GetGossipOptions()
+end)()]]>
+        </text>
+    </function>
+      
+    <function name="ChooseGossipOption">
         <parameters>
-		0 - "Train Me" index
+          0 - "gossip" index (see FindGossipIndex)
         </parameters>
         <text><![CDATA[(function()
   SelectGossipOption({0})
@@ -311,14 +341,31 @@ end)()]]></text>
 			break
 		end
 	end
-	return null, null
+	return idx, txt
 end)()]]></text>
       </function>
 
       <function name="InteractUnit">
         <text>
+          <!-- Unit should be targeted before call this function -->
           <![CDATA[InteractUnit("target")]]>
         </text>
+      </function>
+      
+      <function name="GetVendorInfo">
+      <!-- Player should be interacting with vendor before call this function -->
+        <return size="3">
+        0 - Is Vendor can repear
+        1 - Does Vendor has water
+        2 - Does Vendor has food
+        </return>
+        <text><![CDATA[(function()
+  local hasWater, hasFood
+  local canRepair = CanMerchantRepair()
+  
+  ; TODO Check for water & food
+  return canRepair, hasWater, hasFood
+end)()]]></text>
       </function>
       
       <!-- Template for new function 
@@ -333,12 +380,6 @@ end)()]]></text>
       </function>
       -->
 	  
-	  <!-- 
-	  // TO TRY
-	   (function()
-		return GetGossipOptions()
-		end)()
-	  -->
     </lua>
     
     <!-- 

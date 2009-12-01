@@ -71,13 +71,11 @@ namespace BabBot.Wow
 
         [XmlElement("classes")]
         public CharClasses Classes;
-        
-        public WoWVersion()
-        {
-            Init();
-        }
 
-        private void Init()
+        [XmlElement("continents")]
+        public ContinentList Continents;
+
+        public WoWVersion()
         {
             _tlist = new ArrayList();
         }
@@ -299,5 +297,60 @@ namespace BabBot.Wow
         public int Retry;
 
         public TalentConfig() { }
+    }
+
+    public class ContinentList
+    {
+        private Hashtable _list;
+
+        [XmlElement("continent")]
+        public Continent[] Continents
+        {
+            get
+            {
+                Continent[] res = new Continent[_list.Count];
+                _list.Values.CopyTo(res, 0);
+                return res;
+            }
+
+            set
+            {
+                if (value == null) return;
+                Continent[] items = (Continent[])value;
+                _list.Clear();
+
+                foreach (Continent item in items)
+                {
+                    _list.Add(item.ID, item);
+                }
+            }
+        }
+
+        public ContinentList()
+        {
+            _list = new Hashtable();
+        }
+
+        public Continent FindContinentById(int id)
+        {
+            return (Continent)_list[id];
+        }
+
+        public string FindContinentNameById(int id)
+        {
+            Continent c = FindContinentById(id);
+            return (c != null) ? c.Name : null;
+        }
+    }
+
+    public class Continent
+    {
+        [XmlAttribute("id")]
+        public int ID;
+
+        [XmlAttribute("name")]
+        public string Name;
+
+        public Continent() { }
     }
 }
