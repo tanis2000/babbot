@@ -1057,11 +1057,13 @@ namespace BabBot.Forms
                 {
                     // Register error but still can continue
                     Output.Instance.LogError("char", te.Message);
+                    break;
                 }
                 catch (Exception ex)
                 {
                     // Fatal error
                     Output.Instance.LogError("char", ex);
+                    break;
                 }
         }
 
@@ -1107,15 +1109,15 @@ namespace BabBot.Forms
                 // Go backwards
                 bool f = false;
                 for (int i = cur_lvl - ProcessManager.CurWoWVersion.TalentConfig.StartLevel - 1;
-                    i >= ProcessManager.CurWoWVersion.TalentConfig.StartLevel; i--)
+                    i >= 0 ; i--)
                 {
                     Level l1 = t.GetLevel(i);
-                    TalentInfo t2 = GetTalentInfo(l.TabId, l.TalentId);
-                    if (t2.Meets && (t2.Rank == l.Rank - 1))
+                    TalentInfo t2 = GetTalentInfo(l1.TabId, l1.TalentId);
+                    if (t2.Meets && (t2.Rank == l1.Rank - 1))
                     {
-                        Output.Instance.Log("Found talent " +
-                            " that wasn't learned for level " + l.Num);
-                        LearnTalent(l, t2, delay);
+                        Output.Instance.Log("Found talent '" + t2.Name + "' Rank: " + t2.Rank +
+                            " that wasn't learned for level " + l1.Num);
+                        LearnTalent(l1, t2, delay);
                         f = true;
                     }
                 }
@@ -1195,8 +1197,8 @@ namespace BabBot.Forms
             if (!learned)
                 // Something wrong with template
                 throw new TalentLearnException ("Failed learned after " + 
-                    (retry + 1) + " retries with " + delay +
-                    " msec delay between each retry", t.Name, l.TalentId, l.Rank);
+                    retry + " tries with " + delay +
+                    " msec delay between each try", t.Name, l.TalentId, l.Rank);
         }
 
         internal TalentInfo GetTalentInfo(int tab, int id)
