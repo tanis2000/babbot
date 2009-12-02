@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<talents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" url="http://www.wowarmory.com/talent-calc.xml?cid=2&amp;tal=050000000000000000000000000500000000000000000000000050232251223331322133231331" learn_order="3,2,1" description="Full Retro Spec. SoC adjusted to lvl 20, Repentance to lvl 40, CC to 50 and DS at 60" class="PALLADIN" wow_version="3.2.2.10505">
+<talents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" url="http://www.wowarmory.com/talent-calc.xml?cid=2&amp;tal=050000000000000000000000000500000000000000000000000050232251223331322133231331" learn_order="3,2,1" description="Full Retro Spec. SoC adjusted to lvl 20, Repentance to lvl 40, CC to 50 and DS at 60" class="PALADIN" wow_version="3.2.2.10505">
   <level num="10" tab_id="3" talent_id="1" rank="1" />
   <level num="11" tab_id="3" talent_id="1" rank="2" />
   <level num="12" tab_id="3" talent_id="1" rank="3" />
