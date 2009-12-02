@@ -1230,6 +1230,49 @@ namespace BabBot.Forms
 
         #endregion
 
+        #region NPC
+
+        private void AddNPC()
+        {
+            ProcessManager.Injector.Lua_ExecByName("InteractUnit");
+
+            string[] opts = ProcessManager.
+                Injector.Lua_ExecByName("GetGossipOptions");
+
+            if (opts == null)
+            {
+                ShowErrorMessage("NPC is useless. No service detected.");
+                return;
+            }
+
+            NPC npc = new NPC(ProcessManager.Player.CurTarget.Name);
+
+            // Parse list of services
+            for (int i = 0; i < (int) (opts.Length/2); i++)
+            {
+                string gossip = opts[i * 2];
+                string service = opts[i * 2 + 1];
+
+                switch (service)
+                {
+                    case "trainer" :
+                        // Get additional information
+                        npc.AddService(new TrainingService(ProcessManager.Player.CharClass));
+                        ProcessManager.CurWoWVersion.NPCData.AddNPC(npc);
+                        break;
+
+                    default :
+                        Output.Instance.Log("Unknown npc service type '" + 
+                            service + "' with gossip info '" + gossip + "'");
+                        break;
+                }
+            }
+
+            if (npc.ServiceCount > 0)
+                ProcessManager.SaveNpcData();
+        }
+        #endregion
+
         private void contentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Help.ShowHelp(this, "doc/index.html");
@@ -1240,7 +1283,15 @@ namespace BabBot.Forms
             if (!CheckInGame())
                 return;
 
+            // Check if npc selected
+            if (!ProcessManager.Player.HasTarget)
+            {
+                ShowErrorMessage("NPC is not selected");
+                return;
+            }
+
             // TODO Add npc
+            AddNPC();
 
             // Open NPC List for configuration
             npcListToolStripMenuItem_Click(sender, e);
@@ -1264,6 +1315,16 @@ namespace BabBot.Forms
                 NPCListForm = new NPCListForm();
             NPCListForm.TopMost = this.TopMost;
             NPCListForm.ShowDialog();
+        }
+
+        private void addCurrentTargetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnAddNPC_Click(sender, e);
+        }
+
+        private void startWoWToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnRun_Click(sender, e);
         }
     }
 }

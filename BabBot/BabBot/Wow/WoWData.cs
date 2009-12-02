@@ -75,6 +75,9 @@ namespace BabBot.Wow
         [XmlElement("continents")]
         public ContinentList Continents;
 
+        [XmlIgnore]
+        public NPCVersion NPCData;
+
         public WoWVersion()
         {
             _tlist = new ArrayList();
@@ -183,7 +186,7 @@ namespace BabBot.Wow
         private Hashtable _clist;
         // Sorted by Long Name
         private SortedList _clist1;
-        // Sorted by Short Name
+        // Sorted by Sys Name
         private SortedList _clist2;
 
         [XmlElement("class")]
@@ -208,7 +211,7 @@ namespace BabBot.Wow
                 {
                     _clist.Add(item.ArmoryId, item);
                     _clist1.Add(item.LongName, item);
-                    _clist2.Add(item.ShortName, item);
+                    _clist2.Add(item.SysName, item);
                 }
             }
         }
@@ -231,7 +234,7 @@ namespace BabBot.Wow
             _clist2 = new SortedList();
         }
 
-        public int FindClassByShortName(string name)
+        public int FindClassBySysName(string name)
         {
             return _clist2.IndexOfKey(name);
         }
@@ -250,8 +253,8 @@ namespace BabBot.Wow
         [XmlAttribute("long_name")]
         public string LongName;
 
-        [XmlAttribute("short_name")]
-        public string ShortName;
+        [XmlAttribute("sys_name")]
+        public string SysName;
 
         [XmlAttribute("tab_1_max")]
         public byte TabMax1;

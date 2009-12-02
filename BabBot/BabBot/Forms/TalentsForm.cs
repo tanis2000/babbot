@@ -234,7 +234,7 @@ namespace BabBot.Forms
                 (CurTalents.Class != null))
             {
                 cbClass.SelectedIndex = ((WoWVersion)cbWoWVersion.SelectedItem).
-                    Classes.FindClassByShortName(CurTalents.Class);
+                    Classes.FindClassBySysName(CurTalents.Class);
                 cbClass.Enabled = false;
 
             }
@@ -383,6 +383,9 @@ namespace BabBot.Forms
         {
             try
             {
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                ns.Add("", ""); // Remove  xmlns: parameters
+
                 XmlSerializer s = new XmlSerializer(typeof(Talents));
                 TextWriter w = new StreamWriter(CurTalents.FullPath);
 
@@ -390,10 +393,10 @@ namespace BabBot.Forms
                 CurTalents.URL = tbTalentURL.Text;
                 CurTalents.LearningOrder = tbLearningOrder.Text;
                 CurTalents.Description = tbDescription.Text;
-                CurTalents.Class = ((CharClass) cbClass.SelectedItem).ShortName;
+                CurTalents.Class = ((CharClass) cbClass.SelectedItem).SysName;
                 CurTalents.WoWVersion = cbWoWVersion.Text;
 
-                s.Serialize(w, CurTalents);
+                s.Serialize(w, CurTalents, ns);
                 w.Close();
 
                 IsChanged = false;

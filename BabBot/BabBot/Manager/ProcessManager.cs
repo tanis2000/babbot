@@ -455,6 +455,9 @@ namespace BabBot.Manager
 
             // Everything else after
             LoadConfig();
+
+            // Attach NPC data to selected WoW version
+            wversion.NPCData = ndata.FindVersion(wversion.Number);
         }
     
         /// <summary>
@@ -763,6 +766,9 @@ namespace BabBot.Manager
             ObjectManager = new ObjectManager();
             Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
             Player.SetCurrentMapContinentId();
+            Player.SetCharClass();
+            // TODO
+            // Player.SetCharRace();
             if (WoWInGame != null)
                 WoWInGame();
         }
@@ -984,6 +990,31 @@ namespace BabBot.Manager
             serializer.Save(ConfigFileName, config);
 
             OnConfigurationChanged();
+        }
+
+        public static void SaveNpcData()
+        {
+            TextWriter w = null;
+            try
+            {
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                ns.Add("", ""); // Remove  xmlns: parameters
+
+                XmlSerializer s = new XmlSerializer(typeof(NPCData));
+                w = new StreamWriter("NPCData.xml");
+
+                s.Serialize(w, wversion.NPCData, ns);
+                w.Close();
+            }
+            catch (Exception e)
+            {
+                ShowErrorMessage("Failed save NPCData.xml. " + e.Message);
+            }
+            finally
+            {
+                if (w != null)
+                    w.Close();
+            }
         }
 
         private static void OnConfigurationChanged()

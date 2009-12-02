@@ -85,6 +85,11 @@ namespace BabBot.Wow
         {
             return Number;
         }
+
+        public void AddNPC(NPC npc)
+        {
+            _npc_list.Add(npc.Name, npc);
+        }
     }
 
 /*
@@ -146,15 +151,86 @@ namespace BabBot.Wow
         public string Class;
 
         [XmlElement("services")]
-        public NPCService[] ServiceList;
+        public NPCServices Services;
+
+        [XmlIgnore]
+        public int ServiceCount
+        {
+            get { return Services._services.Count; }
+        }
 
         public NPC() {}
 
-        // [XmlIgnore]
+        public NPC(string name)
+        {
+            Name = name;
+            Services = new NPCServices();
+        }
+
+        public void AddService(NPCService service)
+        {
+            Services._services.Add(service.SType, service);
+        }
     }
 
+    public class NPCServices
+    {
+        internal Hashtable _services;
+
+        [XmlElement("service")]
+        public NPCService[] ServiceList
+        {
+            get
+            {
+                NPCService[] res = new NPCService[_services.Count];
+                _services.Values.CopyTo(res, 0);
+                return res;
+            }
+
+            set
+            {
+                if (value == null) return;
+                NPCService[] items = (NPCService[])value;
+                _services.Clear();
+                foreach (NPCService item in items)
+                    _services.Add(item.SType, item);
+            }
+        }
+
+        public NPCServices()
+        {
+            _services = new Hashtable();
+        }
+    }
+
+    
     public class NPCService
     {
+        [XmlAttribute("type")]
+        public string SType;
+
+        [XmlAttribute("class")]
+        public string CharClass;
+
         NPCService() { }
+
+        public NPCService(string stype)
+        {
+            SType = stype;
+        }
     }
+
+    #region NPC Services
+
+    public class TrainingService : NPCService
+    {
+        private string _class;
+
+        public TrainingService(string class_name) : base("trainer")
+        {
+            _class = class_name;
+        }
+    }
+
+    #endregion
 }

@@ -1,16 +1,16 @@
 <wow_data>
   <version num="3.2.2.10505" max_lvl="80">
     <classes>
-        <class armory_id="1" long_name="Warrior" short_name="war" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="2" long_name="Palladin" short_name="pally" tab_1_max="26" tab_2_max="26" tab_3_max="26" />
-        <class armory_id="3" long_name="Hunter" short_name="hunter" tab_1_max="26" tab_2_max="27" tab_3_max="28" />
-        <class armory_id="4" long_name="Rogue" short_name="rogue" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="5" long_name="Priest" short_name="priest" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="6" long_name="Death Knight" short_name="dk" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="7" long_name="Shaman" short_name="sham" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="8" long_name="Mage" short_name="mage" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="9" long_name="Warlock" short_name="lock" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="11" long_name="Druid" short_name="druid" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="1" long_name="Warrior" sys_name="WARRIOR" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="2" long_name="Paladin" sys_name="PALADIN" tab_1_max="26" tab_2_max="26" tab_3_max="26" />
+        <class armory_id="3" long_name="Hunter" sys_name="HUNTER" tab_1_max="26" tab_2_max="27" tab_3_max="28" />
+        <class armory_id="4" long_name="Rogue" sys_name="ROGUE" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="5" long_name="Priest" sys_name="PRIEST" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="6" long_name="Death Knight" sys_name="DEATHKNIGHT" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="7" long_name="Shaman" sys_name="SHAMAN" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="8" long_name="Mage" sys_name="MAGE" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="9" long_name="Warlock" sys_name="WARLOCK" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="11" long_name="Druid" sys_name="DRUID" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
     </classes>
     <continents>
       <continent id="0" name="All" />
@@ -20,6 +20,7 @@
       <continent id="4" name="Northrend" />
     </continents>      
     <lua>
+      <!-- SetGlueState -->
       <function name="SetGlueState">
         <parameters>
           1 - realm
@@ -144,6 +145,8 @@
 end)()]]>
         </text>
       </function>
+
+      <!-- SelectCharacter -->
       <function name="SelectCharacter">
         <parameters>
           1 - Character Name
@@ -170,6 +173,8 @@ end)()]]>
 end)()]]>
         </text>
       </function>
+      
+      <!-- SendLogin -->
       <function name="SendLogin">
         <parameters>
           1 - realm
@@ -188,6 +193,8 @@ end)()]]>
   DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText())
 end)()]]></text>
       </function>
+
+      <!-- GetCurrentMapContinentId -->
       <function name="GetCurrentMapContinentId">
         <parameters />
         <return size="1">
@@ -200,6 +207,8 @@ end)()]]></text>
 	return continent
 end)()]]></text>
       </function>
+      
+      <!-- GetAvailTalentPoints -->
       <function name="GetAvailTalentPoints">
         <parameters />
         <return size="2">
@@ -210,6 +219,8 @@ end)()]]></text>
   return UnitCharacterPoints("player")
 end)()]]></text>
       </function>
+      
+      <!-- LearnTalent -->
       <function name="LearnTalent">
         <parameters>
         1 - Tab ID
@@ -220,7 +231,8 @@ end)()]]></text>
     LearnTalent({0}, {1}, false)
 end)()]]></text>
       </function>
-	  
+
+      <!-- GetTalentInfo -->
       <function name="GetTalentInfo">
         <parameters>
         1 - Tab ID
@@ -252,15 +264,17 @@ end)()]]></text>
 end)()]]></text>
       </function>
 
+      <!-- SetTrainerAvailableFilter -->
       <function name="SetTrainerAvailableFilter">
         <text><![CDATA[(function()
-  SetTrainerServiceTypeFilter("available " , 1, 1)
+  SetTrainerServiceTypeFilter("available" , 1, 1)
 end)()]]></text>
       </function>
 
-	  <function name="GetNumTrainerServices">
+      <!-- GetNumTrainerServices -->
+	    <function name="GetNumTrainerServices">
         <return size="1">
-		0 - the number of entries in the trainer service listing. 
+		  0 - the number of entries in the trainer service listing. 
 			Entries include both group headers and individual trainer services 
 			(i.e spells or recipes to be purchased). Reflects the list as it should 
 			currently be displayed, not necessarily the complete list -- if headers 
@@ -270,17 +284,19 @@ end)()]]></text>
   return GetNumTrainerServices()
 end)()]]></text>
       </function>
-	  
-	  <function name="BuyTrainerService">
+
+      <!-- BuyTrainerService -->
+	    <function name="BuyTrainerService">
         <parameters>
-		0 - Index of the trainer service
+		  0 - Index of the trainer service
         </parameters>
         <text><![CDATA[(function()
   BuyTrainerService({0})
 end)()]]></text>
-    </function>
+      </function>
 
-    <function name="GetGossipOptions">
+      <!-- GetGossipOptions -->
+      <function name="GetGossipOptions">
         <return size="-1">
           * text - Text to be displayed for the gossip option (string)
           * gossipType - Non-localized string indicating the type of gossip option (string)
@@ -302,7 +318,8 @@ end)()]]></text>
 end)()]]>
         </text>
     </function>
-      
+
+    <!-- ChooseGossipOption -->
     <function name="ChooseGossipOption">
         <parameters>
           0 - "gossip" index (see FindGossipIndex)
@@ -312,6 +329,7 @@ end)()]]>
 end)()]]></text>
       </function>
 	  
+      <!-- FindGossipIndex -->
       <function name="FindGossipIndex">
         <parameters>
 		0 - gossipType - Non-localized string indicating the type of gossip option (string)
@@ -344,7 +362,8 @@ end)()]]></text>
 	return idx, txt
 end)()]]></text>
       </function>
-
+      
+      <!-- InteractUnit-->
       <function name="InteractUnit">
         <text>
           <!-- Unit should be targeted before call this function -->
@@ -352,6 +371,7 @@ end)()]]></text>
         </text>
       </function>
       
+      <!-- GetVendorInfo -->
       <function name="GetVendorInfo">
       <!-- Player should be interacting with vendor before call this function -->
         <return size="3">
@@ -367,8 +387,28 @@ end)()]]></text>
   return canRepair, hasWater, hasFood
 end)()]]></text>
       </function>
-      
-      <!-- Template for new function 
+
+      <!-- UnitClass -->
+      <function name="GetUnitClass">
+        <parameters>
+          0 - unit String - the unitId to query, e.g. "player"
+        </parameters>
+        <return size="2">
+        </return>
+        0 - localizedclass
+        The localized class of the specified unit as a string. e.g. "Mage", "Warrior", "Guerrier", etc.
+
+        1 - englishclass
+        The fully capitalized english class name with no spaces, e.g. "MAGE", "WARRIOR", "DEATHKNIGHT", etc.
+        <text>
+          <![CDATA[(function()
+  return UnitClass("{0}")  
+end)()]]>
+        </text>
+      </function>
+
+      <!-- Template for new function
+      <!- - name - ->
       <function name="">
         <parameters>
         </parameters>

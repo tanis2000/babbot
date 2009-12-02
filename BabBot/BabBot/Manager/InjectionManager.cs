@@ -761,7 +761,7 @@ end)()",
         /// <param name="param_list">List of parameters</param>
         public void Lua_Exec(string fname, object[] param_list)
         {
-            Lua_ExecByName(fname, param_list, null);
+            Lua_ExecByName(fname, param_list, null, false);
         }
 
         /// <summary>
@@ -794,7 +794,8 @@ end)()",
             int ret_size = lf.RetSize;
 
             int[] ret_list = null;
-            if (ret_size > 0)
+            bool get_all = ret_size < 0;
+            if (!get_all && (ret_size > 0))
             {
                 // Initialize returning list
                 ret_list = new int[ret_size];
@@ -802,7 +803,7 @@ end)()",
                     ret_list[i] = i;
             }
 
-            return ExecLua(lf, param_list, ret_list);
+            return ExecLua(lf, param_list, ret_list, get_all);
         }
 
         /// <summary>
@@ -816,9 +817,10 @@ end)()",
         ///     For ex if you need parameters 2 and 5 (total 2) to be returned from lua calls than
         ///     in returning array the parameter 2 can be found by index 0 and parameter 5 by index 1
         /// </returns>
-        public string[] Lua_ExecByName(string fname, object[] param_list, int[] res_list)
+        public string[] Lua_ExecByName(string fname, object[] param_list, 
+                                                int[] res_list, bool get_all)
         {
-            return ExecLua(FindLuaFunction(fname), param_list, res_list);
+            return ExecLua(FindLuaFunction(fname), param_list, res_list, get_all);
         }
 
         /// <summary>
@@ -832,7 +834,8 @@ end)()",
         ///     For ex if you need parameters 2 and 5 (total 2) to be returned from lua calls than
         ///     in returning array the parameter 2 can be found by index 0 and parameter 5 by index 1
         /// </returns>
-        private string[] ExecLua(LuaFunction lf, object[] param_list, int[] res_list)
+        private string[] ExecLua(LuaFunction lf, object[] param_list, 
+                                            int[] res_list, bool get_all)
         {
             string[] res = null;
             
@@ -853,21 +856,30 @@ end)()",
             }
 
             // Check if result expected
-            if (res_list == null)
+            if (!get_all && (res_list == null))
                 Lua_DoString(code);
             else
             {
                 Lua_DoStringEx(code);
                 values = RemoteObject.GetValues();
-                res = new string[res_list.Length];
 
-                // Initialize returning result
-                int i = 0;
-                foreach (int id in res_list)
+                if (get_all)
                 {
-                    if ((values != null) && (id < values.Count) && (values[id] != null))
-                        res[i] = values[id];
-                    i++;
+                    res = new string[values.Count];
+                    values.CopyTo(res);
+                }
+                else
+                {
+                    res = new string[res_list.Length];
+
+                    // Initialize returning result
+                    int i = 0;
+                    foreach (int id in res_list)
+                    {
+                        if ((values != null) && (id < values.Count) && (values[id] != null))
+                            res[i] = values[id];
+                        i++;
+                    }
                 }
             }
 
@@ -880,7 +892,7 @@ end)()",
 
             if (res == null)
             {
-                ShowError("Internal bug. Definition for lua function '" +
+                ShowError("Internal bug. The definition of the lua function '" +
                     fname + "' not found in WoWData.xml");
                 Environment.Exit(5);
             }

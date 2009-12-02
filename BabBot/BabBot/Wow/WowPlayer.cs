@@ -45,6 +45,8 @@ namespace BabBot.Wow
         public readonly List<WowUnit> MobBlackList;
         // The continent id currently player in
         private int continent = -1;
+        // Player class
+        string _class;
 
 
         /// <summary>
@@ -95,6 +97,11 @@ namespace BabBot.Wow
         public int ContinentID
         {
             get { return continent; }
+        }
+
+        public string CharClass
+        {
+            get { return _class; }
         }
 
         #region Target stats
@@ -1419,6 +1426,17 @@ end)()");
             {
                 continent = -1;
             }
+        }
+
+        public void SetCharClass()
+        {
+            string[] s = ProcessManager.Injector.Lua_ExecByName("GetUnitClass",
+                new object[] {"player"});
+
+            if (s == null || (s.Length < 2) || (s[1] == null))
+                throw new Exception("Unable retrieve character's class");
+
+            _class = s[1];
         }
 
         public void AttackTarget()

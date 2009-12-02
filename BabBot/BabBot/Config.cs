@@ -34,8 +34,9 @@ namespace BabBot
 
 #if DEBUG
         // This parameter is for developers internal use
+        // 0-7 range reserved for ivp4
         [XmlAttribute("test")]
-        public int Test = 0;
+        public int Test = -1;
 #endif
         // Not used
         // public string InteractKey = "{SHIFTD}ì{SHIFTU}";

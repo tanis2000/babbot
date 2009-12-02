@@ -31,13 +31,16 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.msMain = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startWoWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.botOptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.npcListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addCurrentTargetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.talentTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.realmListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.npcListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -232,15 +235,30 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startWoWToolStripMenuItem,
+            this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "&File";
             // 
+            // startWoWToolStripMenuItem
+            // 
+            this.startWoWToolStripMenuItem.Name = "startWoWToolStripMenuItem";
+            this.startWoWToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.startWoWToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.startWoWToolStripMenuItem.Text = "Start WoW";
+            this.startWoWToolStripMenuItem.Click += new System.EventHandler(this.startWoWToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(154, 6);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -270,6 +288,24 @@
             this.botOptionsToolStripMenuItem.Text = "&Bot Options";
             this.botOptionsToolStripMenuItem.Click += new System.EventHandler(this.botOptionsToolStripMenuItem_Click);
             // 
+            // npcListToolStripMenuItem
+            // 
+            this.npcListToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addCurrentTargetToolStripMenuItem});
+            this.npcListToolStripMenuItem.Name = "npcListToolStripMenuItem";
+            this.npcListToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.npcListToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.npcListToolStripMenuItem.Text = "NPC List";
+            this.npcListToolStripMenuItem.Click += new System.EventHandler(this.npcListToolStripMenuItem_Click);
+            // 
+            // addCurrentTargetToolStripMenuItem
+            // 
+            this.addCurrentTargetToolStripMenuItem.Name = "addCurrentTargetToolStripMenuItem";
+            this.addCurrentTargetToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
+            this.addCurrentTargetToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.addCurrentTargetToolStripMenuItem.Text = "Add Current Target";
+            this.addCurrentTargetToolStripMenuItem.Click += new System.EventHandler(this.addCurrentTargetToolStripMenuItem_Click);
+            // 
             // talentTemplatesToolStripMenuItem
             // 
             this.talentTemplatesToolStripMenuItem.Name = "talentTemplatesToolStripMenuItem";
@@ -281,16 +317,9 @@
             // realmListToolStripMenuItem
             // 
             this.realmListToolStripMenuItem.Name = "realmListToolStripMenuItem";
+            this.realmListToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
             this.realmListToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.realmListToolStripMenuItem.Text = "Realm List";
-            // 
-            // npcListToolStripMenuItem
-            // 
-            this.npcListToolStripMenuItem.Name = "npcListToolStripMenuItem";
-            this.npcListToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.npcListToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.npcListToolStripMenuItem.Text = "NPC List";
-            this.npcListToolStripMenuItem.Click += new System.EventHandler(this.npcListToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -2054,6 +2083,9 @@
         private System.Windows.Forms.Label lblTalentTemplates;
         private System.Windows.Forms.Button btnAddNPC;
         private System.Windows.Forms.ToolStripMenuItem npcListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addCurrentTargetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem startWoWToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
 
