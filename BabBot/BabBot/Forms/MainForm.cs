@@ -41,21 +41,23 @@ namespace BabBot.Forms
         private AppOptionsForm AppOptionsForm;
         private OptionsForm BotOptionsForm;
         private NPCListForm NPCListForm;
+        // number of lines in logging window
+        private int _log_len = 500;
 
         public MainForm()
         {
             InitializeComponent();
 
-            ProcessManager.Initialize(
-                OnFirstTimeRun, OnConfigFileChanged, ShowErrorMessage);
-
             // Log Output controlled by Config.LogOutput parameter
             Output.OutputEvent += LogOutput;
             Output.Instance.Log("char", "Initializing..");
 
+            // Process manager first
+            ProcessManager.Initialize(
+                OnFirstTimeRun, OnConfigFileChanged, ShowErrorMessage);
+
             // Custom initialization of some components
             Initialize();
-
             Output.Instance.Log("char", "Initialization done.");
 
             // ProcessManager events binding
@@ -773,37 +775,56 @@ namespace BabBot.Forms
                         rt.BackColor = txtConsole.BackColor;
 
                         tab.Controls.Add(rt);
+
                         LogFS.Add(facility, rt);
-                        tabLogs.Controls.Add(tab);
+                        // Insert "char" tab first
+                        // some bug in implementation
+                        if (tabLogs.TabPages.Count == 1)
+                        {
+                            TabPage cur = tabAll;
+                            tabLogs.TabPages.Remove(tabAll);
+                            tabLogs.TabPages.Add(tab);
+                            tabLogs.TabPages.Add(tabAll);
+                        }
+                        else
+                            tabLogs.TabPages.Insert(1, tab);
                     }
 
                     string text = String.Format(CultureInfo.CurrentCulture, "[{0}] {1}{2}",
                                                 time, message, Environment.NewLine);
-                    rt.SelectionColor = color;
-                    rt.AppendText(text);
+                    
+                    // Append to facility log
+                    AppendText(rt, text, color);
 
-                    // Append to All logs
-                    // Need to change color b4 each output or it remember last selection
-                    txtConsole.SelectionColor = color;
-                    txtConsole.AppendText(text);
-                    txtConsole.ScrollToCaret();
-
-                    // Check if limit exceed
-                    if (txtConsole.Lines.Length > 500)
-                    {
-                        // TODO Remove extra lines
-                        int count = txtConsole.Lines.Length - 500;
-                        for (int i = 0; i < count; i++ )
-                        {
-                            txtConsole.SelectionStart = 0;
-                            txtConsole.SelectionLength = txtConsole.Rtf.IndexOf(Environment.NewLine, 0);
-                            txtConsole.SelectedText = "";
-                        }
-                    }
+                    // Append to All logs as well
+                    AppendText(txtConsole, text, color);
                 } 
                 catch(Exception)
                 {
                     
+                }
+            }
+        }
+
+        private void AppendText(RichTextBox rtb, string text, Color color)
+        {
+            rtb.SelectionColor = color;
+            rtb.AppendText(text);
+            rtb.ScrollToCaret();
+
+            // Check if limit exceed
+            if (rtb.Lines.Length > _log_len)
+            {
+
+                int count = rtb.Lines.Length - _log_len;
+                for (int i = 0; i < count; i++)
+                {
+                    rtb.SelectionStart = 0;
+                    rtb.SelectionLength = rtb.Lines[0].Length + 1;
+                    rtb.ReadOnly = false;
+                    rtb.SelectedText = "";
+                    rtb.ReadOnly = true;
+                    rtb.SelectionStart = rtb.Text.Length;
                 }
             }
         }
