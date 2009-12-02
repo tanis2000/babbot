@@ -32,8 +32,6 @@
             this.cbTalentTemplates = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lbLevelList = new System.Windows.Forms.ListBox();
-            this.btnClose = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
             this.labelLevel = new System.Windows.Forms.Label();
             this.labelTab = new System.Windows.Forms.Label();
             this.labelTalent = new System.Windows.Forms.Label();
@@ -72,7 +70,16 @@
             // 
             // btnHelp
             // 
-            this.btnHelp.Location = new System.Drawing.Point(15, 543);
+            this.btnHelp.Location = new System.Drawing.Point(15, 554);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(537, 554);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(456, 554);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // cbTalentTemplates
             // 
@@ -101,40 +108,18 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.lbLevelList.FormattingEnabled = true;
             this.lbLevelList.Location = new System.Drawing.Point(9, 24);
+            this.lbLevelList.MultiColumn = true;
             this.lbLevelList.Name = "lbLevelList";
             this.lbLevelList.ScrollAlwaysVisible = true;
-            this.lbLevelList.Size = new System.Drawing.Size(153, 277);
+            this.lbLevelList.Size = new System.Drawing.Size(481, 277);
             this.lbLevelList.TabIndex = 3;
             this.lbLevelList.SelectedIndexChanged += new System.EventHandler(this.lbLevelList_SelectedIndexChanged);
-            // 
-            // btnClose
-            // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(204, 543);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(75, 23);
-            this.btnClose.TabIndex = 5;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = true;
-            // 
-            // btnSave
-            // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Enabled = false;
-            this.btnSave.Location = new System.Drawing.Point(119, 543);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 6;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // labelLevel
             // 
             this.labelLevel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelLevel.AutoSize = true;
-            this.labelLevel.Location = new System.Drawing.Point(175, 24);
+            this.labelLevel.Location = new System.Drawing.Point(503, 25);
             this.labelLevel.Name = "labelLevel";
             this.labelLevel.Size = new System.Drawing.Size(36, 13);
             this.labelLevel.TabIndex = 7;
@@ -144,7 +129,7 @@
             // 
             this.labelTab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTab.AutoSize = true;
-            this.labelTab.Location = new System.Drawing.Point(175, 47);
+            this.labelTab.Location = new System.Drawing.Point(503, 47);
             this.labelTab.Name = "labelTab";
             this.labelTab.Size = new System.Drawing.Size(29, 13);
             this.labelTab.TabIndex = 9;
@@ -154,7 +139,7 @@
             // 
             this.labelTalent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTalent.AutoSize = true;
-            this.labelTalent.Location = new System.Drawing.Point(175, 73);
+            this.labelTalent.Location = new System.Drawing.Point(503, 73);
             this.labelTalent.Name = "labelTalent";
             this.labelTalent.Size = new System.Drawing.Size(40, 13);
             this.labelTalent.TabIndex = 10;
@@ -163,7 +148,7 @@
             // numTalent
             // 
             this.numTalent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numTalent.Location = new System.Drawing.Point(222, 71);
+            this.numTalent.Location = new System.Drawing.Point(550, 71);
             this.numTalent.Maximum = new decimal(new int[] {
             200,
             0,
@@ -187,7 +172,7 @@
             // numTab
             // 
             this.numTab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numTab.Location = new System.Drawing.Point(222, 45);
+            this.numTab.Location = new System.Drawing.Point(550, 45);
             this.numTab.Maximum = new decimal(new int[] {
             3,
             0,
@@ -212,7 +197,7 @@
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdate.Enabled = false;
-            this.btnUpdate.Location = new System.Drawing.Point(181, 132);
+            this.btnUpdate.Location = new System.Drawing.Point(509, 132);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(85, 23);
             this.btnUpdate.TabIndex = 13;
@@ -225,7 +210,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Enabled = false;
-            this.btnImport.Location = new System.Drawing.Point(220, 45);
+            this.btnImport.Location = new System.Drawing.Point(548, 45);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(46, 23);
             this.btnImport.TabIndex = 14;
@@ -239,15 +224,15 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbTalentURL.Location = new System.Drawing.Point(6, 19);
             this.tbTalentURL.Name = "tbTalentURL";
-            this.tbTalentURL.Size = new System.Drawing.Size(260, 20);
+            this.tbTalentURL.Size = new System.Drawing.Size(588, 20);
             this.tbTalentURL.TabIndex = 16;
             this.tbTalentURL.TextChanged += new System.EventHandler(this.tbTalentURL_TextChanged);
             // 
             // btnRemove
             // 
-            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRemove.Enabled = false;
-            this.btnRemove.Location = new System.Drawing.Point(184, 244);
+            this.btnRemove.Location = new System.Drawing.Point(512, 254);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(82, 23);
             this.btnRemove.TabIndex = 17;
@@ -280,7 +265,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbDescription.Location = new System.Drawing.Point(55, 74);
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(212, 20);
+            this.tbDescription.Size = new System.Drawing.Size(540, 20);
             this.tbDescription.TabIndex = 20;
             this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
@@ -296,7 +281,7 @@
             // numRank
             // 
             this.numRank.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numRank.Location = new System.Drawing.Point(222, 97);
+            this.numRank.Location = new System.Drawing.Point(550, 97);
             this.numRank.Maximum = new decimal(new int[] {
             5,
             0,
@@ -321,7 +306,7 @@
             // 
             this.labelRank.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelRank.AutoSize = true;
-            this.labelRank.Location = new System.Drawing.Point(175, 99);
+            this.labelRank.Location = new System.Drawing.Point(503, 99);
             this.labelRank.Name = "labelRank";
             this.labelRank.Size = new System.Drawing.Size(36, 13);
             this.labelRank.TabIndex = 22;
@@ -329,8 +314,9 @@
             // 
             // labelLevelNum
             // 
+            this.labelLevelNum.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelLevelNum.AutoSize = true;
-            this.labelLevelNum.Location = new System.Drawing.Point(219, 24);
+            this.labelLevelNum.Location = new System.Drawing.Point(547, 25);
             this.labelLevelNum.Name = "labelLevelNum";
             this.labelLevelNum.Size = new System.Drawing.Size(0, 13);
             this.labelLevelNum.TabIndex = 24;
@@ -338,8 +324,9 @@
             // 
             // btnUp
             // 
+            this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUp.Enabled = false;
-            this.btnUp.Location = new System.Drawing.Point(184, 186);
+            this.btnUp.Location = new System.Drawing.Point(512, 196);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(30, 23);
             this.btnUp.TabIndex = 25;
@@ -349,8 +336,9 @@
             // 
             // btnDown
             // 
+            this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDown.Enabled = false;
-            this.btnDown.Location = new System.Drawing.Point(220, 186);
+            this.btnDown.Location = new System.Drawing.Point(548, 196);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(47, 23);
             this.btnDown.TabIndex = 26;
@@ -360,8 +348,9 @@
             // 
             // btnAdd
             // 
+            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAdd.Enabled = false;
-            this.btnAdd.Location = new System.Drawing.Point(183, 215);
+            this.btnAdd.Location = new System.Drawing.Point(511, 225);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(84, 23);
             this.btnAdd.TabIndex = 27;
@@ -371,8 +360,8 @@
             // 
             // btnReset
             // 
-            this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnReset.Location = new System.Drawing.Point(184, 273);
+            this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReset.Location = new System.Drawing.Point(512, 283);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(82, 23);
             this.btnReset.TabIndex = 28;
@@ -426,15 +415,16 @@
             this.groupBox1.Controls.Add(this.btnImport);
             this.groupBox1.Location = new System.Drawing.Point(12, 33);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(272, 76);
+            this.groupBox1.Size = new System.Drawing.Size(600, 76);
             this.groupBox1.TabIndex = 33;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Import From WoW Armory URL";
             // 
             // btnViewURL
             // 
+            this.btnViewURL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnViewURL.Enabled = false;
-            this.btnViewURL.Location = new System.Drawing.Point(170, 45);
+            this.btnViewURL.Location = new System.Drawing.Point(498, 45);
             this.btnViewURL.Name = "btnViewURL";
             this.btnViewURL.Size = new System.Drawing.Size(44, 23);
             this.btnViewURL.TabIndex = 31;
@@ -454,13 +444,16 @@
             this.groupBox2.Controls.Add(this.labelDescr);
             this.groupBox2.Location = new System.Drawing.Point(12, 115);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(272, 100);
+            this.groupBox2.Size = new System.Drawing.Size(600, 100);
             this.groupBox2.TabIndex = 34;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Profile Header";
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.labelLevel);
             this.groupBox3.Controls.Add(this.labelTab);
             this.groupBox3.Controls.Add(this.labelTalent);
@@ -478,7 +471,7 @@
             this.groupBox3.Controls.Add(this.btnUpdate);
             this.groupBox3.Location = new System.Drawing.Point(12, 226);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(272, 311);
+            this.groupBox3.Size = new System.Drawing.Size(600, 316);
             this.groupBox3.TabIndex = 35;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Talents Assignment per Level";
@@ -487,13 +480,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(292, 578);
+            this.ClientSize = new System.Drawing.Size(620, 589);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbTalentTemplates);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -502,11 +492,11 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Talents";
             this.Load += new System.EventHandler(this.TalentsForm_Load);
+            this.Controls.SetChildIndex(this.btnClose, 0);
+            this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnHelp, 0);
             this.Controls.SetChildIndex(this.cbTalentTemplates, 0);
             this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.btnClose, 0);
-            this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.groupBox2, 0);
             this.Controls.SetChildIndex(this.groupBox3, 0);
@@ -529,8 +519,6 @@
         private System.Windows.Forms.ComboBox cbTalentTemplates;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox lbLevelList;
-        private System.Windows.Forms.Button btnClose;
-        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Label labelLevel;
         private System.Windows.Forms.Label labelTab;
         private System.Windows.Forms.Label labelTalent;

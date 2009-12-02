@@ -146,6 +146,7 @@ namespace BabBot.Manager
         public static InjectionManager Injector;
         private static Config config;
         private static WoWData wdata;
+        private static NPCData ndata;
         private static WoWVersion wversion;
         public static ObjectManager ObjectManager;
         public static WowPlayer Player;
@@ -158,7 +159,7 @@ namespace BabBot.Manager
         // Config file name
         private static string ConfigFileName = "config.xml";
         // Last version of used config file
-        private static int ConfigVersion = 2;
+        private static readonly int ConfigVersion = 2;
 
         public static WoWVersion CurWoWVersion
         {
@@ -427,6 +428,36 @@ namespace BabBot.Manager
         #region Public Methods
 
         /// <summary>
+        /// Initialize configuration parameters. 
+        /// This method must be first called on application start
+        /// For GUI mode from Main Form constructor
+        /// For CMD mode from main thread
+        /// The rest of events can be bind later but those 3 are mandatory
+        /// </summary>
+        /// <param name="OnFirstTimeRun">OnFirstTimeRun event handler</param>
+        /// <param name="OnConfigFileChanged">OnConfigFileChanged event handler</param>
+        /// <param name="OnShowErrorMessage">OnShowErrorMessage event handler</param>
+        public static void Initialize(FirstTimeRunHandler OnFirstTimeRun,
+            ConfigFileChangedHandler OnConfigFileChanged,
+            ShowErrorMessageHandler OnShowErrorMessage)
+        {
+            Process.EnterDebugMode();
+
+            // Load the configuration file
+            // Configuration must be loaded first of all. 
+            FirstTimeRun += OnFirstTimeRun;
+            ConfigFileChanged += OnConfigFileChanged;
+            ShowErrorMessage += OnShowErrorMessage;
+
+            // data first
+            wdata = (WoWData)LoadXmlData("WoWData.xml", typeof(WoWData));
+            ndata = (NPCData)LoadXmlData("NPCData.xml", typeof(NPCData));
+
+            // Everything else after
+            LoadConfig();
+        }
+    
+        /// <summary>
         /// Redirect error message to ShowErrorMessage handler
         /// </summary>
         /// <param name="err"></param>
@@ -439,21 +470,20 @@ namespace BabBot.Manager
             return res;
         }
 
-        /// <summary>
-        /// Load content of WoWData.xml
-        /// </summary>
-        public static void LoadWowData()
+        private static object LoadXmlData(string fname, Type t)
         {
-            XmlSerializer s = new XmlSerializer(typeof(WoWData));
-            TextReader r = new StreamReader("WoWData.xml");
+            object res = null;
+
+            XmlSerializer s = new XmlSerializer(t);
+            TextReader r = new StreamReader(fname);
 
             try
             {
-                wdata = (WoWData)s.Deserialize(r);
+                res = s.Deserialize(r);
             }
             catch (Exception e)
             {
-                ShowError("Unable load WoWData.xml : " + 
+                ShowError("Unable load " + fname + " : " +
                             e.Message + Environment.NewLine + e.InnerException);
                 Environment.Exit(1);
             }
@@ -461,6 +491,8 @@ namespace BabBot.Manager
             {
                 r.Close();
             }
+
+            return res;
         }
 
         /// <summary>
@@ -640,7 +672,7 @@ namespace BabBot.Manager
                 if (_gstatus != GameStatuses.INITIALIZED)
                 {
                     _gstatus = GameStatuses.IN_WORLD;
-                    Initialize();
+                    InitializeBot();
                 }
             }
             catch(Exception ex)
@@ -738,7 +770,7 @@ namespace BabBot.Manager
         /// <summary>
         /// Search for the TLS and Initialize the bot once the user is logged in
         /// </summary>
-        public static void Initialize()
+        public static void InitializeBot()
         {
             try
             {

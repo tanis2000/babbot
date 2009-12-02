@@ -153,6 +153,12 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\NPCListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NPCListForm.Designer.cs">
+      <DependentUpon>NPCListForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -195,6 +201,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NPCListForm.resx">
+      <DependentUpon>NPCListForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\OptionsForm.resx">
@@ -280,6 +290,7 @@
     <Compile Include="States\StateMachine.cs" />
     <Compile Include="States\State.cs" />
     <Compile Include="Wow\Login.cs" />
+    <Compile Include="Wow\NPCData.cs" />
     <Compile Include="Wow\PlayerState.cs" />
     <Compile Include="Wow\Descriptor.cs" />
     <Compile Include="Wow\Globals.cs" />
@@ -318,6 +329,7 @@
     <Content Include="Doc\README.TXT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Lib\NPCData.xml" />
     <Content Include="Profiles\Talents\hunter-bm.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

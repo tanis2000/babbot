@@ -40,24 +40,14 @@ namespace BabBot.Forms
         private Radar.Radar Radar;
         private AppOptionsForm AppOptionsForm;
         private OptionsForm BotOptionsForm;
+        private NPCListForm NPCListForm;
 
         public MainForm()
         {
             InitializeComponent();
 
-            Process.EnterDebugMode();
-
-            // Load the configuration file
-            // Configuration must be loaded first of all. 
-            ProcessManager.FirstTimeRun += OnFirstTimeRun;
-            ProcessManager.ConfigFileChanged += OnConfigFileChanged;
-            ProcessManager.ShowErrorMessage += ShowErrorMessage;
-
-            // data first
-            ProcessManager.LoadWowData();
-
-            // Everything else after
-            ProcessManager.LoadConfig();
+            ProcessManager.Initialize(
+                OnFirstTimeRun, OnConfigFileChanged, ShowErrorMessage);
 
             // Log Output controlled by Config.LogOutput parameter
             Output.OutputEvent += LogOutput;
@@ -74,7 +64,6 @@ namespace BabBot.Forms
             ProcessManager.WoWProcessFailed += wow_ProcessFailed;
             ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
             ProcessManager.WoWInGame += wow_InGame;
-            
 
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
@@ -938,7 +927,7 @@ namespace BabBot.Forms
             Opacity = x;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnRegisterInputHandler_Click(object sender, EventArgs e)
         {
             ProcessManager.Injector.Lua_RegisterInputHandler();
             SetDebugBtns();
@@ -1021,12 +1010,8 @@ namespace BabBot.Forms
                 return;
             }
 
-            // Check if InGame
-            if (!ProcessManager.InGame)
-            {
-                MessageBox.Show("Character not in game");
+            if (!CheckInGame())
                 return;
-            }
 
             Talents t = (Talents)cbTalentTemplates.SelectedItem;
 
@@ -1227,6 +1212,37 @@ namespace BabBot.Forms
         private void contentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Help.ShowHelp(this, "doc/index.html");
+        }
+
+        private void btnAddNPC_Click(object sender, EventArgs e)
+        {
+            if (!CheckInGame())
+                return;
+
+            // TODO Add npc
+
+            // Open NPC List for configuration
+            npcListToolStripMenuItem_Click(sender, e);
+        }
+
+        private bool CheckInGame()
+        {
+            // Check if InGame
+            if (!ProcessManager.InGame)
+            {
+                MessageBox.Show("Not in game");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void npcListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (NPCListForm == null)
+                NPCListForm = new NPCListForm();
+            NPCListForm.TopMost = this.TopMost;
+            NPCListForm.ShowDialog();
         }
     }
 }

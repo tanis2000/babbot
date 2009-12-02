@@ -14,7 +14,8 @@ using System.Xml.Serialization;
 
 // TODO 
 // 1 - Add Ctrl-S to save talent
-// 2 - Extract Talent Name from URL and use it instead of Talent ID
+// 2 - Extract Talent Name from armory URL and use it instead of Talent ID
+// 3 - Add Ctrl-Up/Ctrl-Down to move talents
 
 namespace BabBot.Forms
 {
