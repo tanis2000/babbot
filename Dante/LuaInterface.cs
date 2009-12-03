@@ -55,6 +55,8 @@ namespace Dante
 
         private static uint state = 0;
 
+        private static bool LogLuaCalls = true;
+
         #endregion
 
         #region delegates
@@ -216,16 +218,16 @@ namespace Dante
 
         internal static void Patch()
         {
-            LuaInterface.LoggingInterface.Log(string.Format("Patch() - Patching CommandHandler: {0:X} ...", (uint)LuaInterface.CommandHandlerPtr));
+            Log(string.Format("Patch() - Patching CommandHandler: {0:X} ...", (uint)LuaInterface.CommandHandlerPtr));
             int bw = LuaInterface.SetFunctionPtr(LuaInterface.CommandHandlerPtr);
-            LuaInterface.LoggingInterface.Log(string.Format("Patch() - Patched CommandHandler. Bytes written: {0}", bw));
+            Log(string.Format("Patch() - Patched CommandHandler. Bytes written: {0}", bw));
         }
 
         internal static void RestorePatch()
         {
-            LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Restoring patched CommandHandler ... "));
+            Log(string.Format("RestorePatch() - Restoring patched CommandHandler ... "));
             int bw = LuaInterface.RestoreFunctionPtr();
-            LuaInterface.LoggingInterface.Log(string.Format("RestorePatch() - Restored patched CommandHandler. Bytes written: {0}", bw));
+            Log(string.Format("RestorePatch() - Restored patched CommandHandler. Bytes written: {0}", bw));
         }
 
         // Calls LUA's DoString directly without using our InputHandler
@@ -233,14 +235,14 @@ namespace Dante
         {
             try
             {
-                LoggingInterface.Log("DoString() - Calling ...");
-                LoggingInterface.Log("DoString() - " + command);
+                Log("DoString() - Calling ...");
+                Log("DoString() - " + command);
                 Lua_DoString(command, lua_cmd, 0);
-                LoggingInterface.Log("DoString() - Done");
+                Log("DoString() - Done");
             }
             catch (SEHException e)
             {
-                LoggingInterface.Log("DoString() exception: " + e.ToString());
+                Log("DoString() exception: " + e.ToString());
             }
         }
 
@@ -250,26 +252,26 @@ namespace Dante
             try
             {
                 string cmd = string.Format("InputHandler({0})", command);
-                LoggingInterface.Log("DoStringEx() - Calling ...");
+                Log("DoStringEx() - Calling ...");
                 uint new_state = Lua_GetState();
                 if (new_state != state)
                 {
-                    LoggingInterface.Log(string.Format(
+                    Log(string.Format(
                         "Detected new lua state {0:X} different from old {1:X}", 
                         new_state, state));
                     RegisterLuaInputHandler();
                 }
-                LoggingInterface.Log("DoStringEx() - " + cmd);
+                Log("DoStringEx() - " + cmd);
                 Lua_DoString(cmd, lua_cmd, 0);
-                LoggingInterface.Log("DoString() - Done");
+                Log("DoString() - Done");
             }
             catch (SEHException e)
             {
-                LoggingInterface.Log("DoStringEx() exception: " + e.ToString());
+                Log("DoStringEx() exception: " + e.ToString());
             }
             catch (Exception e)
             {
-                LoggingInterface.Log("DoStringEx() exception: " + e.ToString());
+                Log("DoStringEx() exception: " + e.ToString());
             }
         }
 
@@ -279,28 +281,28 @@ namespace Dante
             {
                 try
                 {
-                    //LoggingInterface.Log("InputHandler() - Calling ...");
+                    Log("InputHandler() - Calling ...");
 
                     Values.Clear();
 
                     int n = Lua_GetTop(Lua_GetState());
-                    //LoggingInterface.Log(string.Format("InputHandler() - Passed LUA_State (ignored): {0:X}", luaState));
-                    //LoggingInterface.Log(string.Format("InputHandler() - Our own LUA_State: {0:X}", Lua_GetState()));
-                    //LoggingInterface.Log("InputHandler() - Vars num: " + n);
+                    Log(string.Format("InputHandler() - Passed LUA_State (ignored): {0:X}", luaState));
+                    Log(string.Format("InputHandler() - Our own LUA_State: {0:X}", Lua_GetState()));
+                    Log("InputHandler() - Vars num: " + n);
 
                     for (int i = 1; i <= n; i++)
                     {
                         string res = Lua_ToString(Lua_GetState(), i, 0);
-                        //LoggingInterface.Log(string.Format(
-                        //                         "InputHandler() - Var[{0}] = {1}", i, res));
+                        Log(string.Format(
+                                                "InputHandler() - Var[{0}] = {1}", i, res));
                         Values.Add(res);
                     }
 
-                    //LoggingInterface.Log("InputHandler() - Done");
+                    Log("InputHandler() - Done");
                 }
                 catch (Exception e)
                 {
-                    //LoggingInterface.Log("InputHandler() exception: " + e.ToString());                
+                    Log("InputHandler() exception: " + e.ToString());                
                 }
 
                 ValueReceived = true;
@@ -310,7 +312,7 @@ namespace Dante
 
         public static int SetFunctionPtr(IntPtr pointer)
         {
-            LoggingInterface.Log("SetFunctionPtr() - Starting ...");
+            Log("SetFunctionPtr() - Starting ...");
             bool ReturnVal;
             uint p = (uint)pointer - PatchOffset - 5;
             var buf = new byte[4];
@@ -324,31 +326,31 @@ namespace Dante
             IntPtr hProcess = Kernel32.GetCurrentProcess();
                 // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            LoggingInterface.Log(string.Format("SetFunctionPtr() - hProcess = {0:X}", (uint) hProcess));
+            Log(string.Format("SetFunctionPtr() - hProcess = {0:X}", (uint) hProcess));
 
             ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr)PatchOffset, buf2, 1, out BytesWritten);
             if (!ReturnVal)
             {
-                LoggingInterface.Log(string.Format("SetFunctionPtr() - Error during first WriteProcessMemory"));
+                Log(string.Format("SetFunctionPtr() - Error during first WriteProcessMemory"));
             }
-            LoggingInterface.Log(string.Format("SetFunctionPtr() - Written {0:d} bytes", BytesWritten));
+            Log(string.Format("SetFunctionPtr() - Written {0:d} bytes", BytesWritten));
 
             ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr)(PatchOffset + 1), buf, 4,
                                                     out BytesWritten);
             if (!ReturnVal)
             {
-                LoggingInterface.Log(string.Format("SetFunctionPtr() - Error during second WriteProcessMemory"));
+                Log(string.Format("SetFunctionPtr() - Error during second WriteProcessMemory"));
             }
-            LoggingInterface.Log(string.Format("SetFunctionPtr() - Written {0:d} bytes", BytesWritten));
+            Log(string.Format("SetFunctionPtr() - Written {0:d} bytes", BytesWritten));
 
-            LoggingInterface.Log("SetFunctionPtr() - Done");
+            Log("SetFunctionPtr() - Done");
 
             return BytesWritten;
         }
 
         public static int RestoreFunctionPtr()
         {
-            LoggingInterface.Log("RestoreFunctionPtr() - Starting ...");
+            Log("RestoreFunctionPtr() - Starting ...");
             bool ReturnVal;
             var buf = new byte[5];
             buf[0] = buf[1] = buf[2] = buf[3] = buf[4] = 0xCC;
@@ -356,51 +358,57 @@ namespace Dante
             IntPtr hProcess = Kernel32.GetCurrentProcess();
                 // OpenProcess(ProcessAccessFlags.All, false, (UInt32)proc[0].Id);
 
-            LoggingInterface.Log(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", 
+            Log(string.Format("RestoreFunctionPtr -> hProcess = {0:X}", 
                                                                             (uint) hProcess));
 
             ReturnVal = Kernel32.WriteProcessMemory(hProcess,
                 (IntPtr)PatchOffset, buf, 5, out BytesWritten);
 
-            LoggingInterface.Log("RestoreFunctionPtr() - Done");
+            Log("RestoreFunctionPtr() - Done");
 
             return BytesWritten;
         }
 
         private static void RegisterLUADelegate()
         {
-            LoggingInterface.Log("RegisterLUADelegate:  Lua_Register");
+            Log("RegisterLUADelegate:  Lua_Register");
             Lua_Register = Tools.GetRegisterDelegate<Lua_RegisterDelegate>(Functions.Lua_Register);
 
-            LoggingInterface.Log("RegisterLUADelegate:  Lua_GetTop");
+            Log("RegisterLUADelegate:  Lua_GetTop");
             Lua_GetTop = Tools.GetRegisterDelegate<Lua_GetTopDelegate>(Functions.Lua_GetTop);
 
-            LoggingInterface.Log("RegisterLUADelegate:  Lua_ToString");
+            Log("RegisterLUADelegate:  Lua_ToString");
             Lua_ToString = Tools.GetRegisterDelegate<Lua_ToStringDelegate>(Functions.Lua_ToString);
 
-            LoggingInterface.Log("RegisterLUADelegate:  Lua_GetState");
+            Log("RegisterLUADelegate:  Lua_GetState");
             Lua_GetState = Tools.GetRegisterDelegate<Lua_GetStateDelegate>(Functions.Lua_GetState);
 
-            LoggingInterface.Log("RegisterLUADelegate:  Lua_DoString");
+            Log("RegisterLUADelegate:  Lua_DoString");
             Lua_DoString = Tools.GetRegisterDelegate<Lua_DoStringDelegate>(Functions.Lua_DoString);
         }
 
         private static void InitLUAState()
         {
             state = Lua_GetState();
-            LoggingInterface.Log(string.Format("InitLUAState returned {0:X}", state));
+            Log(string.Format("InitLUAState returned {0:X}", state));
         }
 
 
         public static void RegisterLuaInputHandler()
         {
-            LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - Registering our InputHandler.."));
+            Log(string.Format("RegisterLuaInputHandler() - Registering our InputHandler.."));
             Lua_Register("InputHandler", (IntPtr) PatchOffset); // This is the code hole we want to use
             InitLUAState();
-            LoggingInterface.Log(string.Format("RegisterLuaInputHandler() - InputHandler Registered"));
+            Log(string.Format("RegisterLuaInputHandler() - InputHandler Registered"));
         }
 
         #endregion
+
+        private static void Log(string msg)
+        {
+            if (LogLuaCalls)
+                LoggingInterface.Log(msg);
+        }
 
         public LuaInterface(
             RemoteHooking.IContext InContext,

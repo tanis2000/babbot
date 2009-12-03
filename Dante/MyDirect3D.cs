@@ -170,8 +170,11 @@ namespace Dante
 
                     }
 
-                    LuaInterface.LoggingInterface.Log(string.Format("{0:X} Device", (uint)&Device));
-                    LuaInterface.LoggingInterface.Log(string.Format("{0:X} EndScene()", (uint)OriginalEndScene));
+                    if (EndSceneDebug)
+                    {
+                        LuaInterface.LoggingInterface.Log(string.Format("{0:X} Device", (uint)&Device));
+                        LuaInterface.LoggingInterface.Log(string.Format("{0:X} EndScene()", (uint)OriginalEndScene));
+                    }
 
                 }
                 catch (Exception e)
