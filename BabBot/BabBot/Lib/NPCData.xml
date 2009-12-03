@@ -1,51 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <npc_data>
   <version num="3.2.2.10505">
-    
-    <!-- Template for npc configuration
-        
-    <npc name="" type=""  continent_id="" map_name="" class="">
-      <services>
-        <service type="trainer" class="" max_lvl="${CurWoWVersion.MaxLevel}" />
-        <service type="banker" />
-        <service type="battlemaster" />
-        <service type="binder" />
-        <service type="gossip" />
-        <service type="tabard" />
-        <service type="taxi" />
-        <service type="trainer" />
-        <service type="vendor" can_repear="" has_water="" has_food="" />
-        <service type="quest">
-          <quest name="" min_level="">
-            <wp_list>
-              <waypoint x="" y="" z=""/>
-            </wp_list>
-            <click_list>
-              <click_target name="" />
-            </click_list>
-            <mob_kill_list>
-              <mob faction_id="" name="" />
-            </mob_kill_list>
-            <requirement_list>
-              <loot_items>
-                <loot_item name="" qty=""/>
-              </loot_items>
-              <mobs>
-                <mob name="" qty="" />
-              </mobs>
-            </requirement_list>
-            <rewards>
-              <reward index="" name= "" />
-            </rewards>
-          </quest>
-        </service>
-      </services>
+    <npc name="Keina" continent_id="1" zone_text="Teldrassil">
+      <services />
+      <quests />
       <wp_list>
-        <waypoint x="0" y="1" z="2"/>
+        <waypoint x="10436.7" y="794.837" z="1322.79" />
       </wp_list>
     </npc>
-
-    
-    -->
-    
   </version>
 </npc_data>

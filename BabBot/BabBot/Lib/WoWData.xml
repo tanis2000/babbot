@@ -407,6 +407,34 @@ end)()]]>
         </text>
       </function>
 
+      <function name="GetAvailQuests">
+        <return size="-1">
+          *  name - Name of the quest (string)
+          * level - Suggested character level for attempting the quest (number)
+          * isTrivial - 1 if the quest is considered "trivial" at the player's level (rewards no XP); otherwise nil (1nil)
+          * ... - Additional name, level, isTrivial values if more than one quest is active (list)
+
+        </return>
+        <text>
+          <![CDATA[(function()
+      return GetGossipAvailableQuests()
+      end)()]]>
+        </text>
+      </function>
+
+      <!-- GetZoneText -->
+      <function name="GetZoneText">
+        <return size="1">
+          zoneName
+          String - zone name (localized).
+        </return>
+        <text>
+          <![CDATA[(function()
+  return GetZoneText()
+end)()]]>
+        </text>
+      </function>
+      
       <!-- Template for new function
       <!- - name - ->
       <function name="">

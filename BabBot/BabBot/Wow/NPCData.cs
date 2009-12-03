@@ -141,17 +141,23 @@ namespace BabBot.Wow
         [XmlAttribute("type")] 
         public string Type;
 
-        [XmlAttribute("zone_id")] 
-        public int ZoneId;
+        [XmlAttribute("continent_id")] 
+        public int ContinentId;
 
-        [XmlAttribute("zone_map")] 
-        public string ZoneMap;
+        [XmlAttribute("zone_text")] 
+        public string ZoneText;
 
         [XmlAttribute("class")] 
         public string Class;
 
         [XmlElement("services")]
         public NPCServices Services;
+
+        [XmlElement("quests")]
+        public Quests QuestList;
+
+        [XmlElement("wp_list")]
+        public Waypoints WPList;
 
         [XmlIgnore]
         public int ServiceCount
@@ -161,18 +167,124 @@ namespace BabBot.Wow
 
         public NPC() {}
 
-        public NPC(string name)
+        public NPC(WowPlayer player)
         {
-            Name = name;
+            WowUnit w = player.CurTarget;
+
+            Name = w.Name;
+            ContinentId = player.ContinentID;
+            ZoneText = player.ZoneText;
+
+            WPList = new Waypoints();
             Services = new NPCServices();
+            QuestList = new Quests();
+
+            WPList.Add(w.Location.Clone());
         }
 
         public void AddService(NPCService service)
         {
-            Services._services.Add(service.SType, service);
+            Services.Add(service);
+        }
+
+        public void AddQuest(QuestHeader qh)
+        {
+            QuestList.Add(qh);
         }
     }
 
+    public class Waypoints
+    {
+        internal ArrayList _wplist;
+
+        [XmlElement("waypoint")]
+        public Vector3D[] VectorList
+        {
+            get
+            {
+                Vector3D[] res = new Vector3D[_wplist.Count];
+                _wplist.CopyTo(res, 0);
+                return res;
+            }
+
+            set
+            {
+                if (value == null) return;
+                Vector3D[] items = (Vector3D[])value;
+                _wplist.Clear();
+                foreach (Vector3D item in items)
+                    _wplist.Add(item);
+            }
+        }
+
+        public Waypoints() {
+            _wplist = new ArrayList();
+        }
+
+        public void Add(object wp)
+        {
+            _wplist.Add(wp);
+        }
+    }
+
+
+    #region Quests
+
+    public class Quests
+    {
+        internal Hashtable _quests;
+
+        [XmlElement("quest")]
+        public QuestHeader[] QuestList
+        {
+            get
+            {
+                QuestHeader[] res = new QuestHeader[_quests.Count];
+                _quests.Values.CopyTo(res, 0);
+                return res;
+            }
+
+            set
+            {
+                if (value == null) return;
+                QuestHeader[] items = (QuestHeader[])value;
+                _quests.Clear();
+                foreach (QuestHeader item in items)
+                    Add(item);
+            }
+        }
+
+        public Quests() {
+            _quests = new Hashtable();
+        }
+
+        internal void Add(QuestHeader qh)
+        {
+            _quests.Add(qh.Name, qh);
+        }
+    }
+
+    public class QuestHeader
+    {
+        [XmlAttribute("name")]
+        public string Name;
+
+        [XmlAttribute("level")]
+        public int Level;
+
+        public QuestHeader() {}
+
+        public QuestHeader(string name, int level) {
+            Name = name;
+            Level = level;
+        }
+    }
+
+    #endregion
+
+    #region NPC Services
+
+    // Service container
     public class NPCServices
     {
         internal Hashtable _services;
@@ -201,9 +313,14 @@ namespace BabBot.Wow
         {
             _services = new Hashtable();
         }
+
+        internal void Add(NPCService service)
+        {
+            _services.Add(service.SType, service);
+        }
     }
 
-    
+    // Base class
     public class NPCService
     {
         [XmlAttribute("type")]
@@ -220,15 +337,25 @@ namespace BabBot.Wow
         }
     }
 
-    #region NPC Services
-
-    public class TrainingService : NPCService
+    public class ClassTrainingService : NPCService
     {
         private string _class;
 
-        public TrainingService(string class_name) : base("trainer")
+        public ClassTrainingService(string class_name)
+            : base("trainer")
         {
             _class = class_name;
+        }
+    }
+
+    public class ProfTrainingService : NPCService
+    {
+        private string _prof;
+
+        public ProfTrainingService(string prof_name)
+            : base("trainer")
+        {
+            _prof = prof_name;
         }
     }
 

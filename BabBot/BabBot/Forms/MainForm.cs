@@ -1236,16 +1236,45 @@ namespace BabBot.Forms
         {
             ProcessManager.Injector.Lua_ExecByName("InteractUnit");
 
+            bool add = false;
+            string npc_name = ProcessManager.Player.CurTarget.Name;
+            ProcessManager.Player.setCurrentZoneText();
+
+            Output.Instance.Log("char", "Processing NPC '" + npc_name + "' ...");
+
+            Output.Instance.Debug("char", "Checking available services ...");
+            // Get list of services
             string[] opts = ProcessManager.
                 Injector.Lua_ExecByName("GetGossipOptions");
-
-            if (opts == null)
+            if (opts == null || (opts.Length == 0))
+                Output.Instance.Debug("No service detected.");
+            else
             {
-                ShowErrorMessage("NPC is useless. No service detected.");
+                Output.Instance.Debug((int)(opts.Length / 2) + " service(s) detected.");
+                add = true;
+            }
+
+            Output.Instance.Debug("char", "Checking available quests ...");
+            // Get list of quests
+            string[] quests = ProcessManager.
+                Injector.Lua_ExecByName("GetAvailQuests");
+            if (quests == null || (quests.Length == 0))
+                Output.Instance.Debug("No quests detected.");
+            else
+            {
+                Output.Instance.Debug((int)(quests.Length / 3) + " quests(s) detected.");
+                add = true;
+            }
+
+            if (!add)
+            {
+                ShowErrorMessage("NPC is useless. No services or quests detected");
                 return;
             }
 
-            NPC npc = new NPC(ProcessManager.Player.CurTarget.Name);
+
+            Output.Instance.Debug("Adding NPC ...");
+            NPC npc = new NPC(ProcessManager.Player);
 
             // Parse list of services
             for (int i = 0; i < (int) (opts.Length/2); i++)
@@ -1257,20 +1286,54 @@ namespace BabBot.Forms
                 {
                     case "trainer" :
                         // Get additional information
-                        npc.AddService(new TrainingService(ProcessManager.Player.CharClass));
+                        Output.Instance.Log("char", "Detected training service");
+                        npc.AddService(new ClassTrainingService(
+                                            ProcessManager.Player.CharClass));
                         ProcessManager.CurWoWVersion.NPCData.AddNPC(npc);
                         break;
 
                     default :
-                        Output.Instance.Log("Unknown npc service type '" + 
-                            service + "' with gossip info '" + gossip + "'");
+                        if (gossip != null)
+                            Output.Instance.Log("char", "Service type '" +
+                              service + "' with gossip info '" + gossip + 
+                              "' not implemented yet");
+                        /* Replace after all types implemented
+                        Output.Instance.Log("char", "Unknown npc service type '" + 
+                            service + "' with gossip info '" + gossip + "'"); */
                         break;
                 }
             }
 
-            if (npc.ServiceCount > 0)
-                ProcessManager.SaveNpcData();
+            // Parse list of quests
+            for (int i = 0; i < (int)(quests.Length / 3); i++)
+            {
+                string sqlevel = quests[i * 3 + 1];
+
+                try
+                {
+                    string qname = quests[i * 3];
+                    int qlevel = Convert.ToInt32(sqlevel);
+                    // Last parameter we not interested in
+                    Output.Instance.Debug("Adding quest '" + 
+                                    qname + "'; Level: " + qlevel);
+                    npc.AddQuest(new QuestHeader(qname, qlevel));
+                }
+                catch (Exception ex)
+                {
+                    Output.Instance.LogError("char", "Failed convert quests level '" +
+                                                          sqlevel + "' to integer");
+                    return;
+                }
+
+            }
+
+            ProcessManager.CurWoWVersion.NPCData.AddNPC(npc);
+
+            ProcessManager.SaveNpcData();
+            Output.Instance.Log("char", "NPC '" + npc_name + 
+                        "' successfully added to NPCData.xml");
         }
+
         #endregion
 
         private void contentToolStripMenuItem_Click(object sender, EventArgs e)

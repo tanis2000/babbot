@@ -47,7 +47,8 @@ namespace BabBot.Wow
         private int continent = -1;
         // Player class
         string _class;
-
+        // Zone text where currently player in
+        string _zone;
 
         /// <summary>
         /// Constructor
@@ -103,6 +104,12 @@ namespace BabBot.Wow
         {
             get { return _class; }
         }
+
+        public string ZoneText
+        {
+            get { return _zone; }
+        }
+
 
         #region Target stats
         public uint TargetHp
@@ -1426,6 +1433,13 @@ end)()");
             {
                 continent = -1;
             }
+        }
+
+        public void setCurrentZoneText()
+        {
+            string[] lret = ProcessManager.
+                Injector.Lua_ExecByName("GetZoneText");
+            _zone = lret[0];
         }
 
         public void SetCharClass()

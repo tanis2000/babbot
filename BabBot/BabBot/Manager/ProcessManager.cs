@@ -158,6 +158,13 @@ namespace BabBot.Manager
         private static bool arun = false;
         // Config file name
         private static string ConfigFileName = "config.xml";
+        // NPCData file name
+        private static string NPCDataFileName = 
+#if DEBUG
+            "..\\..\\Lib\\" + 
+#endif
+            "NPCData.xml";
+
         // Last version of used config file
         private static readonly int ConfigVersion = 2;
 
@@ -451,13 +458,24 @@ namespace BabBot.Manager
 
             // data first
             wdata = (WoWData)LoadXmlData("WoWData.xml", typeof(WoWData));
-            ndata = (NPCData)LoadXmlData("NPCData.xml", typeof(NPCData));
+            ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
 
             // Everything else after
             LoadConfig();
 
             // Attach NPC data to selected WoW version
             wversion.NPCData = ndata.FindVersion(wversion.Number);
+
+            // Test
+            /*
+            NPC npc = new NPC();
+
+            npc.Name = "Test XXX";
+            npc.WPList.Add(new Vector3D(1, 2, 3));
+            npc.AddService(new ClassTrainingService("HUNTER"));
+            npc.AddQuest(new QuestHeader("Catch if u can", 1));
+
+            SaveNpcData(); */
         }
     
         /// <summary>
@@ -992,7 +1010,21 @@ namespace BabBot.Manager
             OnConfigurationChanged();
         }
 
+        /// <summary>
+        /// Save NPC data in xml format
+        /// </summary>
         public static void SaveNpcData()
+        {
+            SaveXmlData(NPCDataFileName, typeof(NPCData), ndata);
+        }
+
+        /// <summary>
+        /// Serialize object in xml format
+        /// </summary>
+        /// <param name="fname">Output File Name</param>
+        /// <param name="t">Type of object</param>
+        /// <param name="obj">Object itself</param>
+        public static void SaveXmlData(string fname, Type t, object obj)
         {
             TextWriter w = null;
             try
@@ -1000,15 +1032,16 @@ namespace BabBot.Manager
                 XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                 ns.Add("", ""); // Remove  xmlns: parameters
 
-                XmlSerializer s = new XmlSerializer(typeof(NPCData));
-                w = new StreamWriter("NPCData.xml");
+                XmlSerializer s = new XmlSerializer(t);
+                w = new StreamWriter(fname);
 
-                s.Serialize(w, wversion.NPCData, ns);
+                s.Serialize(w, obj, ns);
                 w.Close();
             }
             catch (Exception e)
             {
-                ShowErrorMessage("Failed save NPCData.xml. " + e.Message);
+                ShowErrorMessage("Failed save " +  fname + ". " + 
+                            e.Message + ". " + e.InnerException);
             }
             finally
             {

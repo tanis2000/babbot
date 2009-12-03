@@ -330,7 +330,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Lib\NPCData.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Profiles\Talents\hunter-bm.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -339,7 +338,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Lib\WoWData.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Lib\BlackMagic.dll" />
     <None Include="Lib\BlackMagic.XML" />
