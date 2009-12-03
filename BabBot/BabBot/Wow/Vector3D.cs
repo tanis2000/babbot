@@ -17,13 +17,19 @@
     Copyright 2009 BabBot Team
 */
 using System;
+using System.Xml.Serialization;
 
 namespace BabBot.Wow
 {
-    public class Vector3D
+    public class Vector3D : ICloneable
     {
+        [XmlAttribute("x")]
         public float X;
+
+        [XmlAttribute("y")]
         public float Y;
+
+        [XmlAttribute("z")]
         public float Z;
 
         public Vector3D(float x, float y, float z)
@@ -153,6 +159,11 @@ namespace BabBot.Wow
             float dy = Y - l.Y;
             float dz = Z - l.Z;
             return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }
