@@ -255,10 +255,15 @@ namespace BabBot.Wow
                     
                     case 101: // Retry
                         RetryCount++;
-                        Thread.Sleep(10000);
 
-                        Log("Retrying " + RetryCount + " of " + retry);
-                        StateChangeTime = DateTime.Now;
+                        if (RetryCount <= retry)
+                        {
+                            Log("Continuing in 10 sec ...");
+                            Thread.Sleep(10000);
+
+                            Log("Retrying " + RetryCount + " of " + retry);
+                            StateChangeTime = DateTime.Now;
+                        }
                         break;
 
                     default:
@@ -272,7 +277,7 @@ namespace BabBot.Wow
                     Thread.Sleep(1000);
 
                 
-            } while (!((State == 999) || (RetryCount > retry)));
+            } while ((State != 999) && (RetryCount <= retry));
 
             return true;
         }
@@ -422,7 +427,7 @@ namespace BabBot.Wow
             if (IsHtml) {
                 if (CurrentGlueDialog.Equals("CONNECTION_HELP_HTML") && IsHtml)
                 {
-                    Log("Networking problem. Retrying in 10 sec");
+                    Log("Networking problem.");
                     // Connection problem
                     ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
                     return SetState(101);
