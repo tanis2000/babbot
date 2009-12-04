@@ -1247,7 +1247,9 @@ namespace BabBot.Forms
 
                 case "vendor":
                     npc_service = new VendorService(
-                            ((opts[1] != null) && opts[1].Equals("1")), false, false);
+                            ((opts[1] != null) && opts[1].Equals("1")),
+                            ((opts[2] != null) && opts[2].Equals("1")),
+                            ((opts[3] != null) && opts[3].Equals("1")));
                     break;
 
                 case "wep_skill_trainer":

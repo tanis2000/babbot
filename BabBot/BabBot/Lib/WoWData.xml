@@ -463,11 +463,13 @@ end)()]]>
                 1 - can vendor repair
                 2 - Is vendor has water
                 3 - Is vendor has food
+                
+                At the moment it doesn't distinguish food and drink since it's the same subcategory
               
         </return>
         <text>
               <![CDATA[(function()
-  local service, p1, p2, p3
+  local service, d1, d2, d3
   if (GossipFrame:IsShown()) then
     service = "gossip"
   else 
@@ -483,6 +485,12 @@ end)()]]>
         for i = 1, max_num do
           name, link, quality, iLevel, reqLevel, class, subclass, 
             maxStack, equipSlot, texture, vendorPrice = GetItemInfo(GetMerchantItemLink(i));
+          if (subclass == "Food & Drink") then
+            d2 = 1
+            d3 = 1
+            
+            break
+          end
         end
       else 
         if (BankFrame:IsShown()) then
