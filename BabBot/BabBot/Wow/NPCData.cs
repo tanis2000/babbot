@@ -171,15 +171,21 @@ namespace BabBot.Wow
         {
             WowUnit w = player.CurTarget;
 
-            Name = w.Name;
-            ContinentId = player.ContinentID;
-            ZoneText = player.ZoneText;
+            Init(w.Name, player.ContinentID, player.ZoneText, w.Location.Clone());
+        }
+
+        public void Init(string name, int continent_id, 
+                                    string zone_text, object waypoint)
+        {
+            Name = name;
+            ContinentId = continent_id;
+            ZoneText = zone_text;
 
             WPList = new Waypoints();
             Services = new NPCServices();
             QuestList = new Quests();
 
-            WPList.Add(w.Location.Clone());
+            WPList.Add(waypoint);
         }
 
         public void AddService(NPCService service)
@@ -321,15 +327,16 @@ namespace BabBot.Wow
     }
 
     // Base class
+    [XmlInclude(typeof(ClassTrainingService))]
+    [XmlInclude(typeof(TradeSkillTrainingService))]
+    [XmlInclude(typeof(TradeSkillTrainingService))]
+    [XmlInclude(typeof(VendorService))]
     public class NPCService
     {
         [XmlAttribute("type")]
         public string SType;
 
-        [XmlAttribute("class")]
-        public string CharClass;
-
-        NPCService() { }
+        public NPCService() { }
 
         public NPCService(string stype)
         {
@@ -339,23 +346,51 @@ namespace BabBot.Wow
 
     public class ClassTrainingService : NPCService
     {
-        private string _class;
+        [XmlAttribute("class")]
+        public string CharClass;
+
+        ClassTrainingService() { }
 
         public ClassTrainingService(string class_name)
-            : base("trainer")
+            : base("class_trainer")
         {
-            _class = class_name;
+            CharClass = class_name;
         }
     }
 
-    public class ProfTrainingService : NPCService
+    public class TradeSkillTrainingService : NPCService
     {
-        private string _prof;
+        [XmlAttribute("trade_skill")]
+        public string TradeSkill;
 
-        public ProfTrainingService(string prof_name)
-            : base("trainer")
+        TradeSkillTrainingService() { }
+
+        public TradeSkillTrainingService(string trade_skill)
+            : base("trade_skill_trainer")
         {
-            _prof = prof_name;
+            TradeSkill = trade_skill;
+        }
+    }
+
+    public class VendorService : NPCService
+    {
+        [XmlAttribute("can_repair")]
+        public bool CanRepair;
+
+        [XmlAttribute("has_water")]
+        public bool HasWater;
+
+        [XmlAttribute("has_food")]
+        public bool HasFood;
+
+        VendorService() { }
+
+        public VendorService(bool can_repair, bool has_water, bool has_food)
+            : base("vendor")
+        {
+            CanRepair = can_repair;
+            HasWater = has_water;
+            HasFood = has_food;
         }
     }
 

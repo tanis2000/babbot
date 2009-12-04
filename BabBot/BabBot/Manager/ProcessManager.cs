@@ -1050,6 +1050,31 @@ namespace BabBot.Manager
             }
         }
 
+        private void SaveXMLData(string fname, Type t, object o)
+        {
+            TextWriter w = null;
+            try
+            {
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                ns.Add("", ""); // Remove  xmlns: parameters
+
+                XmlSerializer s = new XmlSerializer(t);
+                w = new StreamWriter(fname);
+
+                s.Serialize(w, o, ns);
+                w.Close();
+            }
+            catch (Exception e)
+            {
+                ShowErrorMessage("Failed save " + fname + ". " + e.Message);
+            }
+            finally
+            {
+                if (w != null)
+                    w.Close();
+            }
+        }
+        
         private static void OnConfigurationChanged()
         {
             // Check  mandatory directories
