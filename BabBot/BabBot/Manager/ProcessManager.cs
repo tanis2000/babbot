@@ -317,10 +317,7 @@ namespace BabBot.Manager
 
                 while (!FindTLS())
                 {
-                   if (UpdateStatus != null)
-                   {
-                       UpdateStatus("Looking for the TLS ...");
-                   }
+                   OnUpdateAppStatus("Looking for the TLS ...");
                    Thread.Sleep(250);
                 }
 
@@ -729,11 +726,8 @@ namespace BabBot.Manager
                     return false;
                 }
 
-                if (UpdateStatus != null)
-                {
-                    UpdateStatus("TLS found");
-                    Debug("char", "TLS found");
-                }
+                OnUpdateAppStatus("TLS found");
+                Debug("char", "TLS found");
 
                 return true;
 
@@ -798,17 +792,11 @@ namespace BabBot.Manager
         {
             try
             {
-                if (UpdateStatus != null)
-                {
-                    UpdateStatus("Initializing..");
-                }
+                OnUpdateAppStatus("Initializing..");
 
                 while (!InitializeConnectionManager())
                 {
-                    if (UpdateStatus != null)
-                    {
-                        UpdateStatus("Looking for the ConnectionManager..");
-                    }
+                    OnUpdateAppStatus("Looking for the ConnectionManager..");
                     Thread.Sleep(250);
                 } 
                 // This might have already been done, but since we could have autologin disabled
@@ -820,6 +808,7 @@ namespace BabBot.Manager
                 //ScriptHost.Start();
                 //StateManager.Instance.Stop();
 
+                OnUpdateAppStatus("Game started");
                 _gstatus = GameStatuses.INITIALIZED;
             }
             catch (Exception ex)
@@ -907,6 +896,8 @@ namespace BabBot.Manager
         {
             _gstatus = GameStatuses.INIT;
         }
+
+        #region XML
 
         public static Talents ReadTalents(string fname)
         {
@@ -1074,7 +1065,9 @@ namespace BabBot.Manager
                     w.Close();
             }
         }
-        
+
+        #endregion
+
         private static void OnConfigurationChanged()
         {
             // Check  mandatory directories
@@ -1097,6 +1090,11 @@ namespace BabBot.Manager
         }
 
         #endregion
+
+        private static void OnUpdateAppStatus(string status)
+        {
+            OnUpdateAppStatus(status);
+        }
     }
 
     public class ConfigFileChangedException : Exception

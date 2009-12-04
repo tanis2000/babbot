@@ -475,6 +475,7 @@ end)()]]>
   else 
     if (TaxiFrame:IsShown()) then
       service = "taxi"
+      CloseTaxiMap();
     else 
       if (MerchantFrame:IsShown()) then
         service = "vendor"
@@ -492,21 +493,27 @@ end)()]]>
             break
           end
         end
+        -- done with merchant
+        CloseMerchant();
       else 
         if (BankFrame:IsShown()) then
           service = "banker"
+          CloseBankFrame()
         else
           if (SkillFrame:IsShown()) then
             service = "wep_skill_trainer"
           else
             if (ClassTrainerFrame:IsShown()) then
               service = "class_trainer"
+              CloseTrainer()
             else
               if (TradeSkillFrame:IsShown()) then
                 service = "trade_skill_trainer"
+                CloseTradeSkill()
               else
                 if (BattlefieldFrame:IsShown()) then
                   service = "battlemaster"
+                  CloseBattlefield()
                 end
               end
             end
