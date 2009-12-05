@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<npc_data>
-  <version num="3.2.2.10505">
+<npc_data version="0">
+  <wow_version name="3.2.2.10505">
     <npc name="Dellylah" continent_id="1" zone_text="Teldrassil">
       <services>
         <service d5p1:type="VendorService" type="vendor" can_repair="false" has_water="true" has_food="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
@@ -19,5 +19,5 @@
         <waypoint x="10436.7" y="794.837" z="1322.79" />
       </wp_list>
     </npc>
-  </version>
+  </wow_version>
 </npc_data>

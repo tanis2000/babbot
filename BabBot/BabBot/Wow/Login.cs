@@ -239,7 +239,7 @@ namespace BabBot.Wow
                         break;
 
                     case 100: // Pending
-                        if (DateTime.Now.Millisecond - StateChangeTime.Millisecond > MaxScreenWaitTime) {
+                        if (DateTime.Now.Subtract(StateChangeTime).Milliseconds > MaxScreenWaitTime) {
                             // Cancel current process and retry
                             RetryCount++;
                             Log("Session stack. Canceling ...");
@@ -328,10 +328,15 @@ namespace BabBot.Wow
         /// </summary>
         /// <param name="state">State ID</param>
         /// <returns>State ID</returns>
-        private static int SetState(int state)
+        private static int SetState(int new_state)
         {
-            State = state;
-            StateChangeTime = DateTime.Now;
+            // Regiser time only if state change
+            if (State != new_state)
+            {
+                StateChangeTime = DateTime.Now;
+                State = new_state;
+            }
+
             return State;
         }
 
@@ -353,7 +358,8 @@ namespace BabBot.Wow
             DInfo = flist[4];
             string Connected = flist[5];
 
-            bool IsDialogText = (!((DialogText == null) || DialogText.Equals("")) && (DialogText.Equals("html")));
+            bool IsDialogText = (!((DialogText == null) || 
+                        DialogText.Equals("") || (DialogText.Equals("html"))));
             bool IsHtml = ((DInfo != null) && !DInfo.Equals(""));
 
             Debug(string.Format("Screen: {0}; Pending: {1};" +
@@ -380,13 +386,13 @@ namespace BabBot.Wow
                 return -1;
             }
 
-            SetState(idx);
+            // SetState(idx);
 
             // Check for dialog
             if ((CurrentGlueDialog == null) || CurrentGlueDialog.Equals(""))
             {
                 // we done
-                return State;
+                return SetState(idx);
             }
 
             // Analyze dialogs
@@ -403,12 +409,25 @@ namespace BabBot.Wow
                 // Current state in progress
                 string s = "Current state in progress";
                 if (IsDialogText) 
-                    s += " '" + DialogText + "'";
+                    s += ": '" + DialogText + "'";
                  s += " ...";
                  Log(s);
                  return SetState(100);
              }
-             
+
+             // Check for progress dialog
+             if (CurrentGlueDialog.Equals("OKAY"))
+             {
+                 // Current state in progress
+                 string s = "Received server message";
+                 if (IsDialogText)
+                     s += ": '" + DialogText + "'";
+                 Log(s);
+                 Log("Accepting 'OK' choice");
+                 ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
+                 return SetState(101);
+             }
+
             // Check for realm suggest
             if (CurrentGlueDialog.Equals("SUGGEST_REALM"))
             {
@@ -439,9 +458,12 @@ namespace BabBot.Wow
 
             if (IsDialogText)
             {
-                Log("Received" + DialogText);
+                Log("Received Dialog Text: '" + DialogText + "'");
                 return SetState(100);
             }
+
+            // Return whatever we at Glue screen
+            SetState(idx);
 
             // If we still here than something wrong
             Log(string.Format(@"Unknow state detected for GlueScreen: {0}; 

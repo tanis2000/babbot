@@ -165,8 +165,11 @@ namespace BabBot.Manager
 #endif
             "NPCData.xml";
 
-        // Last version of used config file
+        // Current version of config file
         private static readonly int ConfigVersion = 2;
+
+        // Current version of NPCData
+        private static readonly int NPCDataVersion = 0;
 
         public static WoWVersion CurWoWVersion
         {
@@ -457,13 +460,16 @@ namespace BabBot.Manager
             wdata = (WoWData)LoadXmlData("WoWData.xml", typeof(WoWData));
             ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
 
+            //\\ TEST
+            //SaveXmlData(NPCDataFileName, typeof(NPCData), ndata);
+
             // Everything else after
             LoadConfig();
 
             // Attach NPC data to selected WoW version
             wversion.NPCData = ndata.FindVersion(wversion.Number);
 
-            // Test
+            //\\ Test
             /*
             NPC npc = new NPC();
 
@@ -1093,7 +1099,8 @@ namespace BabBot.Manager
 
         private static void OnUpdateAppStatus(string status)
         {
-            OnUpdateAppStatus(status);
+            if (UpdateStatus != null)
+                UpdateStatus(status);
         }
     }
 

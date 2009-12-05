@@ -1389,7 +1389,7 @@ namespace BabBot.Forms
 
             }
 */
-            ProcessManager.CurWoWVersion.NPCData.AddNPC(npc);
+            ProcessManager.CurWoWVersion.NPCData.Add(npc);
 
             ProcessManager.SaveNpcData();
             Output.Instance.Log("npc", "NPC '" + npc_name + 

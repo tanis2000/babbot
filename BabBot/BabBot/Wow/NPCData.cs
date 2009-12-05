@@ -25,137 +25,236 @@ using System.Xml.Serialization;
 
 namespace BabBot.Wow
 {
-    [XmlRoot("npc_data")]
-    public class NPCData
+    #region Common
+
+    /// <summary>
+    /// Common class for collection item that has a unique name 
+    /// </summary>
+    public abstract class CommonItem : IComparable
     {
-        private Hashtable _versions;
+        [XmlAttribute("name")]
+        public string Name;
 
-        public NPCData() 
+        public CommonItem() { }
+
+        public int CompareTo(object obj)
         {
-            _versions = new Hashtable();
-        }
-
-        [XmlElement("version")]
-        public NPCVersion[] Versions
-        {
-            get
-            {
-                NPCVersion[] res = new NPCVersion[_versions.Count];
-                _versions.Values.CopyTo(res, 0);
-                return res;
-            }
-            set
-            {
-                if (value == null) return;
-                NPCVersion[] items = (NPCVersion[])value;
-                _versions.Clear();
-                foreach (NPCVersion item in items)
-                    _versions.Add(item.Number, item);
-            }
-        }
-
-        public NPCVersion FindVersion(string version)
-        {
-            return (NPCVersion)_versions[version];
-        }
-    }
-    
-    [Serializable]
-    public class NPCVersion
-    {
-        private Hashtable _npc_list;
-
-        [XmlAttribute("num")]
-        public string Number;
-
-        [XmlElement("npc")]
-        public NPC[] NPCList
-        {
-            get
-            {
-                NPC[] res = new NPC[_npc_list.Count];
-                _npc_list.Values.CopyTo(res, 0);
-                return res;
-            }
-
-            set
-            {
-                if (value == null) return;
-                NPC[] items = (NPC[])value;
-                _npc_list.Clear();
-                foreach (NPC item in items)
-                    _npc_list.Add(item.Name, item);
-            }
-        }
-
-        public NPCVersion()
-        {
-            _npc_list = new Hashtable();
-        }
-
-        public NPC FindNPCByName(string name)
-        {
-            // TODO
-            return null; // NPCList.FindLuaFunction(name);
+            return ToString().CompareTo(((CommonItem)obj).ToString());
         }
 
         public override string ToString()
         {
-            return Number;
-        }
-
-        public void AddNPC(NPC npc)
-        {
-            _npc_list.Add(npc.Name, npc);
+            return Name;
         }
     }
 
-/*
-    public class LuaProc
+    /// <summary>
+    /// Class with internal hashtable that needs to be serialized
+    /// </summary>
+    /// <typeparam name="T">Type of elements in the table</typeparam>
+    public class CommonTable<T>
     {
-        private Hashtable _flist;
-
-        public LuaProc() { 
-            _flist = new Hashtable(); 
-        }
-
-        public LuaProc(LuaFunction[] flist)
-        {
-            FList = flist;
-        }
-
-        [XmlElement("function")]
-        public LuaFunction[] FList
+        internal readonly Hashtable _htable;
+        
+        [XmlIgnore]
+        internal T[] Items
         {
             get
             {
-                LuaFunction[] res = new LuaFunction[_flist.Count];
-                _flist.Values.CopyTo(res, 0);
+                T[] res = new T[_htable.Count];
+                _htable.Values.CopyTo(res, 0);
                 return res;
             }
-
             set
             {
                 if (value == null) return;
-                LuaFunction[] items = (LuaFunction[])value;
-                _flist.Clear();
-                foreach (LuaFunction item in items)
-                    _flist.Add(item.Name, item);
+                T[] items = (T[])value;
+                _htable.Clear();
+                foreach (T item in items)
+                    _htable.Add(item.ToString(), item);
             }
         }
 
-        public LuaFunction FindLuaFunction(string name)
+        public CommonTable()
         {
-            LuaFunction res = (LuaFunction)_flist[name];
-            return res;
+            _htable = new Hashtable();
+        }
+        
+        [XmlIgnore]
+        public Hashtable Table
+        {
+            get { return _htable; }
+        }
+        
+        public override bool Equals(object obj)
+        {
+            CommonTable<T> t = (CommonTable<T>)obj;
+            
+            // Check size first
+            if (_htable.Count != t.Table.Count)
+                return false;
+                
+            // Check values
+            foreach (DictionaryEntry item1 in _htable)
+            {
+                T item2 = (T) t.Table[item1.Key];
+                if ((item2 == null) || !item1.Value.Equals(item2))
+                    return false;
+            }
+            
+            // No differences found
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public T FindItemByName(string name)
+        {
+            return (T) _htable[name];
+        }
+
+        public void Add(T item)
+        {
+            _htable.Add(item.ToString(), item);
+        }
+
+        public int ItemCount()
+        {
+            return _htable.Count;
         }
     }
-*/
-    public class NPC
+
+    /// <summary>
+    /// Class with internal hashtable that needs to be serialized and have a unique name
+    /// </summary>
+    /// <typeparam name="T">Type of elements in the table</typeparam>
+    public class CommonNameTable<T> : CommonTable<T>
     {
-        [XmlAttribute("name")] 
+        [XmlAttribute("name")]
         public string Name;
 
+    }
+
+    /// <summary>
+    /// Class with internal list that needs to be serialized
+    /// </summary>
+    /// <typeparam name="T">Type of elements in the list</typeparam>
+    public abstract class CommonList<T>
+    {
+        internal readonly ArrayList _list;
+
+        public CommonList()
+        {
+            _list = new ArrayList();
+        }
+
+        [XmlIgnore]
+        internal T[] Items
+        {
+            get
+            {
+                T[] res = new T[_list.Count];
+                _list.CopyTo(res, 0);
+                return res;
+            }
+            set
+            {
+                if (value == null) return;
+                T[] items = (T[])value;
+                _list.Clear();
+                foreach (T item in items)
+                    _list.Add(item);
+            }
+        }
+
+        [XmlIgnore]
+        public ArrayList List
+        {
+            get { return _list; }
+        }
+        
+        public override bool Equals(object obj)
+        {
+            CommonList<T> l = (CommonList<T>)obj;
+            
+            // Check size first
+            if (_list.Count != l.List.Count)
+                return false;
+                
+            // Check values
+            for (int i = 0; i < _list.Count; i++)
+            {
+                T item1 = (T) _list[i];
+                T item2 = (T) l.List[i];
+
+                if ((item2 == null) || !item1.Equals(item2))
+                    return false;
+            }
+            
+            // No differences found
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+        public void Add(T item)
+        {
+            _list.Add(item);
+        }
+
+    }
+
+    /// <summary>
+    /// Class with internal list that needs to be serialized and have a unique name
+    /// </summary>
+    /// <typeparam name="T">Type of elements in the list</typeparam>
+    public abstract class CommonNameList<T> : CommonList<T>
+    {
+        [XmlAttribute("name")]
+        public string Name;
+    }
+
+    #endregion
+
+    #region NPC
+    
+    [XmlRoot("npc_data")]
+    public class NPCData : CommonTable<NPCVersion>
+    {
+        [XmlAttribute("version")]
+        public int Version;
+
+        [XmlElement("wow_version")]
+        public NPCVersion[] Versions
+        {
+            get { return (NPCVersion[])Items; }
+            set { Items = value; }
+        }
+
+        public NPCVersion FindVersion(string version)
+        {
+            return (NPCVersion)_htable[version];
+        }
+    }
+    
+    [Serializable]
+    public class NPCVersion : CommonNameTable<NPC>
+    {
+        [XmlElement("npc")]
+        public NPC[] NPCList
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+    }
+
+    public class NPC : CommonItem
+    {
         [XmlAttribute("type")] 
         public string Type;
 
@@ -177,32 +276,26 @@ namespace BabBot.Wow
         [XmlElement("wp_list")]
         public Waypoints WPList;
 
-        [XmlIgnore]
-        public int ServiceCount
-        {
-            get { return Services._services.Count; }
+        public NPC() {
+            WPList = new Waypoints();
+            Services = new NPCServices();
+            QuestList = new Quests();
         }
-
-        public NPC() {}
 
         public NPC(WowPlayer player)
         {
             WowUnit w = player.CurTarget;
 
-            Init(w.Name, player.ContinentID, player.ZoneText, w.Location.Clone());
+            Init(w.Name, player.ContinentID, 
+                player.ZoneText, (Vector3D) w.Location.Clone());
         }
 
         public void Init(string name, int continent_id, 
-                                    string zone_text, object waypoint)
+                                    string zone_text, Vector3D waypoint)
         {
             Name = name;
             ContinentId = continent_id;
             ZoneText = zone_text;
-
-            WPList = new Waypoints();
-            Services = new NPCServices();
-            QuestList = new Quests();
-
             WPList.Add(waypoint);
         }
 
@@ -211,94 +304,68 @@ namespace BabBot.Wow
             Services.Add(service);
         }
 
-        public void AddQuest(QuestHeader qh)
+        public void AddQuest(Quest qh)
         {
             QuestList.Add(qh);
         }
+        
+        public override bool Equals(object obj)
+        {
+            NPC npc = (NPC)obj;
+
+            return (!(
+                // Check name
+                Name.Equals(npc.Name) && 
+                // Continent ID
+                (ContinentId == npc.ContinentId) &&
+                // Zone Text
+                (ZoneText.Equals(npc.ZoneText)) &&
+                // Service list
+                Services.Equals(npc.Services) &&
+                // Waypoints
+                WPList.Equals(npc.WPList) &&
+                // Quest List
+                QuestList.Equals(npc.QuestList)));
+        }
     }
 
-    public class Waypoints
+    #endregion
+    
+    #region Waypoints
+    
+    public class Waypoints : CommonList<Vector3D>
     {
-        internal ArrayList _wplist;
-
         [XmlElement("waypoint")]
         public Vector3D[] VectorList
         {
-            get
-            {
-                Vector3D[] res = new Vector3D[_wplist.Count];
-                _wplist.CopyTo(res, 0);
-                return res;
-            }
-
-            set
-            {
-                if (value == null) return;
-                Vector3D[] items = (Vector3D[])value;
-                _wplist.Clear();
-                foreach (Vector3D item in items)
-                    _wplist.Add(item);
-            }
-        }
-
-        public Waypoints() {
-            _wplist = new ArrayList();
-        }
-
-        public void Add(object wp)
-        {
-            _wplist.Add(wp);
+            get { return Items; }
+            set { Items = value; }
         }
     }
 
-
+    #endregion
+    
     #region Quests
 
-    public class Quests
+    public class Quests : CommonTable<Quest>
     {
-        internal Hashtable _quests;
-
         [XmlElement("quest")]
-        public QuestHeader[] QuestList
+        public Quest[] QuestList
         {
-            get
-            {
-                QuestHeader[] res = new QuestHeader[_quests.Count];
-                _quests.Values.CopyTo(res, 0);
-                return res;
-            }
-
-            set
-            {
-                if (value == null) return;
-                QuestHeader[] items = (QuestHeader[])value;
-                _quests.Clear();
-                foreach (QuestHeader item in items)
-                    Add(item);
-            }
-        }
-
-        public Quests() {
-            _quests = new Hashtable();
-        }
-
-        internal void Add(QuestHeader qh)
-        {
-            _quests.Add(qh.Name, qh);
+            get { return Items; }
+            set { Items = value; }
         }
     }
 
-    public class QuestHeader
+    public class Quest : CommonItem
     {
-        [XmlAttribute("name")]
-        public string Name;
-
         [XmlAttribute("level")]
         public int Level;
 
-        public QuestHeader() {}
+        public Quest() {}
 
-        public QuestHeader(string name, int level) {
+        public Quest(string name, int level)
+        {
             Name = name;
             Level = level;
         }
@@ -309,38 +376,13 @@ namespace BabBot.Wow
     #region NPC Services
 
     // Service container
-    public class NPCServices
+    public class NPCServices : CommonTable<NPCService>
     {
-        internal Hashtable _services;
-
         [XmlElement("service")]
         public NPCService[] ServiceList
         {
-            get
-            {
-                NPCService[] res = new NPCService[_services.Count];
-                _services.Values.CopyTo(res, 0);
-                return res;
-            }
-
-            set
-            {
-                if (value == null) return;
-                NPCService[] items = (NPCService[])value;
-                _services.Clear();
-                foreach (NPCService item in items)
-                    _services.Add(item.SType, item);
-            }
-        }
-
-        public NPCServices()
-        {
-            _services = new Hashtable();
-        }
-
-        internal void Add(NPCService service)
-        {
-            _services.Add(service.SType, service);
+            get { return Items; }
+            set { Items = value; }
         }
     }
 
@@ -359,6 +401,11 @@ namespace BabBot.Wow
         public NPCService(string stype)
         {
             SType = stype;
+        }
+
+        public override string ToString()
+        {
+            return SType;
         }
     }
 
