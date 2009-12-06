@@ -993,18 +993,23 @@ namespace BabBot.Manager
             /*
              XmlWriterSettings settings = new XmlWriterSettings();
             settings.OmitXmlDeclaration = true; // Remove the <?xml version="1.0" encoding="utf-8"?>
-            
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            ns.Add("", ""); // Remove  xmlns: parameters
-             
              */
+
             var serializer = new Serializer<Config>();
 
-            // Remember current config version
-            config.Version = ConfigVersion;
-            serializer.Save(ConfigFileName, config);
+            try
+            {
+                // Remember current config version
+                config.Version = ConfigVersion;
+                serializer.Save(ConfigFileName, config);
+                OnConfigurationChanged();
 
-            OnConfigurationChanged();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("Failed save configuration file. " + 
+                    ex.Message + ". " + ex.InnerException);
+            }
         }
 
         /// <summary>
@@ -1039,31 +1044,6 @@ namespace BabBot.Manager
             {
                 ShowErrorMessage("Failed save " +  fname + ". " + 
                             e.Message + ". " + e.InnerException);
-            }
-            finally
-            {
-                if (w != null)
-                    w.Close();
-            }
-        }
-
-        private void SaveXMLData(string fname, Type t, object o)
-        {
-            TextWriter w = null;
-            try
-            {
-                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-                ns.Add("", ""); // Remove  xmlns: parameters
-
-                XmlSerializer s = new XmlSerializer(t);
-                w = new StreamWriter(fname);
-
-                s.Serialize(w, o, ns);
-                w.Close();
-            }
-            catch (Exception e)
-            {
-                ShowErrorMessage("Failed save " + fname + ". " + e.Message);
             }
             finally
             {

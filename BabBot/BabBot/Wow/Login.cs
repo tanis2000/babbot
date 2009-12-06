@@ -44,6 +44,7 @@ namespace BabBot.Wow
         private static string CurrentGlueDialog;
         private static DateTime StateChangeTime;
         private static string DInfo;
+        private static string SendKey = null;
 
         #region Login States
 
@@ -234,12 +235,14 @@ namespace BabBot.Wow
                             return false;
                         }
                         break;
+
                     case 99: // disconnect
                         ProcessManager.CommandManager.SendKeys(CommandManager.SK_ESC);
                         break;
 
                     case 100: // Pending
-                        if (DateTime.Now.Subtract(StateChangeTime).Milliseconds > MaxScreenWaitTime) {
+                        if (DateTime.Now.Subtract(StateChangeTime).
+                                    TotalMilliseconds > MaxScreenWaitTime) {
                             // Cancel current process and retry
                             RetryCount++;
                             Log("Session stack. Canceling ...");
@@ -258,6 +261,13 @@ namespace BabBot.Wow
 
                         if (RetryCount <= retry)
                         {
+                            if (SendKey != null)
+                            {
+                                Log("Sending " + SendKey + " and retrying");
+                                ProcessManager.CommandManager.SendKeys(SendKey);
+                                SendKey = null;
+                            }
+
                             Log("Continuing in 10 sec ...");
                             Thread.Sleep(10000);
 
@@ -265,7 +275,8 @@ namespace BabBot.Wow
                             StateChangeTime = DateTime.Now;
                         }
                         break;
-
+                    
+                    case 102: // Accept message dialog and retry
                     default:
                         Log("'" + LoginState.GetValue(State) + 
                                                                   "' not implemented yet");
@@ -423,8 +434,8 @@ namespace BabBot.Wow
                  if (IsDialogText)
                      s += ": '" + DialogText + "'";
                  Log(s);
-                 Log("Accepting 'OK' choice");
-                 ProcessManager.CommandManager.SendKeys(CommandManager.SK_ENTER);
+                 // Prepare ENTER to acknowledge dialog
+                 SendKey = CommandManager.SK_ENTER;
                  return SetState(101);
              }
 

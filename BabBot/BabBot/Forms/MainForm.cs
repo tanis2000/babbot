@@ -243,6 +243,12 @@ namespace BabBot.Forms
 
                                     break;
 
+                                case Descriptor.eObjType.OT_ITEM:
+                                    // Add Item
+                                    WowItem item = (WowItem)wobj;
+                                    // item.Name;
+                                    break;
+
                                 // Resources - fish, herb, vein
                                 /* case Descriptor.eObjType.
                                  */
@@ -1289,7 +1295,7 @@ namespace BabBot.Forms
                 Thread.Sleep(100);
                 TimeSpan ts = DateTime.Now.Subtract(dt);
                 while ((cur_service == null) &&  
-                  (DateTime.Now.Subtract(dt).Milliseconds <= 10000))
+                  (DateTime.Now.Subtract(dt).TotalMilliseconds <= 10000))
                 {
                     Thread.Sleep(2000);
                     fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
@@ -1389,6 +1395,16 @@ namespace BabBot.Forms
 
             }
 */
+            // Check if NPC already exists
+            NPC check = ProcessManager.
+                CurWoWVersion.NPCData.FindNpcByName(npc.Name);
+            if ((check != null) && npc.Equals(check))
+            {
+                ShowErrorMessage("NPC '" + npc.Name +
+                    "' already added with identicall parameters");
+                return false;
+            }
+
             ProcessManager.CurWoWVersion.NPCData.Add(npc);
 
             ProcessManager.SaveNpcData();

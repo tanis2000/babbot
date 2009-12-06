@@ -514,6 +514,41 @@ end)()]]>
                 if (BattlefieldFrame:IsShown()) then
                   service = "battlemaster"
                   CloseBattlefield()
+                else
+                  if (QuestFrame:IsShown()) then
+                    service = "quest"
+                    
+                    d1 = "[" + GetTitleText() + "][" + GetQuestText() + "]"
+                    
+                    q = {{"required", "reward", "choice"}, {}}
+                    
+                    -- Get quest details
+                    q[1][1] = GetNumQuestItems()
+                    q[2][1] = GetNumQuestRewards(),
+                    q[3][1] = GetNumQuestChoices()
+                    
+                    d3 = ""
+                    texture, name, isTradeskillSpell, isSpellLearned = GetRewardSpell()
+                    d2 = name + "," + isTradeskillSpell + "," + isSpellLearned
+                    for i = 1, 3 do
+                      d2 += "," + q[i]
+                      if (d3 ~= "")
+                        d3 += ","
+                      d3 += "["
+                      
+                      s = ""
+                      for j = 1, q[i][1] do
+                        if (s ~= "")
+                          s += ","
+                        s += "["
+                        
+                        name, texture, qty = GetQuestItemInfo(q[i][0], j)
+                        d3 += qty + "," + name + "]"
+                      end
+                      
+                      d3 += s + "]"
+                    end
+                  end
                 end
               end
             end

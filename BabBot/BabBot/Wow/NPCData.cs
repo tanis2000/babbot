@@ -22,204 +22,10 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using BabBot.Common;
 
 namespace BabBot.Wow
 {
-    #region Common
-
-    /// <summary>
-    /// Common class for collection item that has a unique name 
-    /// </summary>
-    public abstract class CommonItem : IComparable
-    {
-        [XmlAttribute("name")]
-        public string Name;
-
-        public CommonItem() { }
-
-        public int CompareTo(object obj)
-        {
-            return ToString().CompareTo(((CommonItem)obj).ToString());
-        }
-
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
-    /// <summary>
-    /// Class with internal hashtable that needs to be serialized
-    /// </summary>
-    /// <typeparam name="T">Type of elements in the table</typeparam>
-    public class CommonTable<T>
-    {
-        internal readonly Hashtable _htable;
-        
-        [XmlIgnore]
-        internal T[] Items
-        {
-            get
-            {
-                T[] res = new T[_htable.Count];
-                _htable.Values.CopyTo(res, 0);
-                return res;
-            }
-            set
-            {
-                if (value == null) return;
-                T[] items = (T[])value;
-                _htable.Clear();
-                foreach (T item in items)
-                    _htable.Add(item.ToString(), item);
-            }
-        }
-
-        public CommonTable()
-        {
-            _htable = new Hashtable();
-        }
-        
-        [XmlIgnore]
-        public Hashtable Table
-        {
-            get { return _htable; }
-        }
-        
-        public override bool Equals(object obj)
-        {
-            CommonTable<T> t = (CommonTable<T>)obj;
-            
-            // Check size first
-            if (_htable.Count != t.Table.Count)
-                return false;
-                
-            // Check values
-            foreach (DictionaryEntry item1 in _htable)
-            {
-                T item2 = (T) t.Table[item1.Key];
-                if ((item2 == null) || !item1.Value.Equals(item2))
-                    return false;
-            }
-            
-            // No differences found
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public T FindItemByName(string name)
-        {
-            return (T) _htable[name];
-        }
-
-        public void Add(T item)
-        {
-            _htable.Add(item.ToString(), item);
-        }
-
-        public int ItemCount()
-        {
-            return _htable.Count;
-        }
-    }
-
-    /// <summary>
-    /// Class with internal hashtable that needs to be serialized and have a unique name
-    /// </summary>
-    /// <typeparam name="T">Type of elements in the table</typeparam>
-    public class CommonNameTable<T> : CommonTable<T>
-    {
-        [XmlAttribute("name")]
-        public string Name;
-
-    }
-
-    /// <summary>
-    /// Class with internal list that needs to be serialized
-    /// </summary>
-    /// <typeparam name="T">Type of elements in the list</typeparam>
-    public abstract class CommonList<T>
-    {
-        internal readonly ArrayList _list;
-
-        public CommonList()
-        {
-            _list = new ArrayList();
-        }
-
-        [XmlIgnore]
-        internal T[] Items
-        {
-            get
-            {
-                T[] res = new T[_list.Count];
-                _list.CopyTo(res, 0);
-                return res;
-            }
-            set
-            {
-                if (value == null) return;
-                T[] items = (T[])value;
-                _list.Clear();
-                foreach (T item in items)
-                    _list.Add(item);
-            }
-        }
-
-        [XmlIgnore]
-        public ArrayList List
-        {
-            get { return _list; }
-        }
-        
-        public override bool Equals(object obj)
-        {
-            CommonList<T> l = (CommonList<T>)obj;
-            
-            // Check size first
-            if (_list.Count != l.List.Count)
-                return false;
-                
-            // Check values
-            for (int i = 0; i < _list.Count; i++)
-            {
-                T item1 = (T) _list[i];
-                T item2 = (T) l.List[i];
-
-                if ((item2 == null) || !item1.Equals(item2))
-                    return false;
-            }
-            
-            // No differences found
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-        public void Add(T item)
-        {
-            _list.Add(item);
-        }
-
-    }
-
-    /// <summary>
-    /// Class with internal list that needs to be serialized and have a unique name
-    /// </summary>
-    /// <typeparam name="T">Type of elements in the list</typeparam>
-    public abstract class CommonNameList<T> : CommonList<T>
-    {
-        [XmlAttribute("name")]
-        public string Name;
-    }
-
-    #endregion
 
     #region NPC
     
@@ -250,6 +56,11 @@ namespace BabBot.Wow
         {
             get { return Items; }
             set { Items = value; }
+        }
+
+        public NPC FindNpcByName(string name)
+        {
+            return FindItemByName(name);
         }
     }
 
