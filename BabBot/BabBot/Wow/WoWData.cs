@@ -23,6 +23,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using BabBot.Common;
+using System.Text.RegularExpressions;
 
 namespace BabBot.Wow
 {
@@ -42,7 +43,6 @@ namespace BabBot.Wow
         }
     }
     
-    [Serializable]
     public class WoWVersion : CommonItem
     {
         [XmlAttribute("max_lvl")]
@@ -53,6 +53,9 @@ namespace BabBot.Wow
 
         [XmlElement("talents")]
         public TalentConfig TalentConfig;
+
+        [XmlElement("quests")]
+        public QuestConfig QuestConfig;
 
         [XmlElement("classes")]
         public CharClasses Classes;
@@ -89,15 +92,10 @@ namespace BabBot.Wow
         }
     }
 
-    public class LuaFunction : CommonItem
+    public class LuaFunction : CommonText
     {
-        [XmlElement("text", typeof(XmlCDataSection))]
-        public XmlCDataSection Text;
-
         [XmlElement("return")]
         public LuaResult FRet;
-
-        public LuaFunction() { }
 
         [XmlIgnore]
         public int RetSize
@@ -105,18 +103,13 @@ namespace BabBot.Wow
             get { return (FRet == null) ? 0 : FRet.Size; }
         }
 
-        public LuaFunction(string name, string text) :
-            base(name)
-        {
-            XmlDocument doc = new XmlDocument();
-            Text = doc.CreateCDataSection(text);
-        }
-
         [XmlIgnore]
         public string Code
         {
-            get { return ((Text != null) ? Text.InnerText : null); }
+            get { return TextData; }
         }
+
+        // public LuaFunction() { }
     }
 
     public class LuaResult
@@ -218,6 +211,9 @@ namespace BabBot.Wow
     }
 
     #endregion
+
+    #region Configurations
+
     public class TalentConfig
     {
         [XmlAttribute("lvl_start")]
@@ -234,6 +230,47 @@ namespace BabBot.Wow
 
         public TalentConfig() { }
     }
+
+    public class QuestConfig
+    {
+        [XmlIgnore]
+        public Regex HeaderRx;
+
+        [XmlIgnore]
+        public Regex InfoRx;
+
+        [XmlIgnore]
+        public Regex DetailRx;
+
+        [XmlIgnore]
+        public Regex[] Patterns {
+            get { return new Regex[3] { HeaderRx, InfoRx, DetailRx }; }
+        }
+
+        [XmlAttribute("header_pattern")]
+        public string HeaderPattern {
+            get { return HeaderRx.ToString(); }
+            set { HeaderRx = new Regex(value); }
+        }
+
+        [XmlAttribute("info_pattern")]
+        public string InfoPattern
+        {
+            get { return InfoRx.ToString(); }
+            set { InfoRx = new Regex(value); }
+        }
+
+        [XmlAttribute("detail_pattern")]
+        public string DetailPattern
+        {
+            get { return DetailRx.ToString(); }
+            set { DetailRx = new Regex(value); }
+        }
+
+        public QuestConfig() { }
+    }
+
+    #endregion
 
     #region Continets
 

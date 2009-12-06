@@ -182,17 +182,36 @@ namespace BabBot.Wow
         }
     }
 
-    public class Quest : CommonItem
+    public class Quest : CommonText
     {
         [XmlAttribute("level")]
         public int Level;
 
+        [XmlAttribute("bonus_spell")]
+        public string BonusSpell;
+
+        [XmlElement("required")]
+        CommonQty[] ReqItems { get; set; }
+
+        [XmlElement("reward")]
+        CommonQty[] RewardItems { get; set; }
+        
+        [XmlElement("choice")]
+        CommonQty[] ChoiceItems { get; set; }
+
         public Quest() {}
 
-        public Quest(string name, int level)
+        public Quest(string title, string text, int level, 
+                int req_qty, int reward_qty, int choice_qty, string bonus_spell) :
+            base(title, text)
         {
-            Name = name;
             Level = level;
+
+            ReqItems = new CommonQty[req_qty];
+            RewardItems = new CommonQty[reward_qty];
+            ChoiceItems = new CommonQty[choice_qty];
+
+            BonusSpell = bonus_spell;
         }
     }
 

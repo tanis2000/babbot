@@ -1275,7 +1275,6 @@ namespace BabBot.Forms
                             ((opts[2] != null) && opts[2].Equals("1")),
                             ((opts[3] != null) && opts[3].Equals("1")));
                     break;
-
                 case "wep_skill_trainer":
                 case "taxi":
                 case "banker":
@@ -1293,6 +1292,61 @@ namespace BabBot.Forms
                 npc.AddService(npc_service);
         }
 
+        private void AddNpcQuest(NPC npc, string[] opts)
+        {
+            Quest q = null;
+
+            // Checking parameters first
+            if (opts.Length < 3)
+            {
+                Output.Instance.LogError("npc", "Not enough " + 
+                        opts.Length + " parameters to add quest");
+                return;
+            }
+
+            // Check parsing result
+            for (int i = 0; i < 3; i++)
+            {
+                if (string.IsNullOrEmpty(opts[i]))
+                {
+                    Output.Instance.LogError("npc", i + 
+                        " parameter from quest info result is empty");
+                    return;
+                }
+
+                // Check each value against pattern
+                if (!ProcessManager.CurWoWVersion.QuestConfig.Patterns[i].IsMatch(opts[i]))
+                {
+                    Output.Instance.LogError("npc", i +
+                        " parameter from quest info doesn't match template");
+                    return;
+                }
+            }
+
+            // Read header
+            char[] split1 = new char[2] { ':', ':' };
+            char[] split2 = new char[2] { '|', '|' };
+
+            string[] headers = opts[0].Split(split1);
+            string[] info = opts[1].Split(split1);
+            string[] details = opts[2].Split(split2);
+
+            try
+            {
+                q = new Quest(headers[1], headers[2],
+                    Convert.ToInt32(headers[0]), Convert.ToInt32(info[3]),
+                    Convert.ToInt32(info[4]), Convert.ToInt32(info[5]), info[0]);
+            }
+            catch
+            {
+                Output.Instance.LogError("npc", "Error creating quest with parameters " +
+                    "Header: " + headers[1] + "; Text: " + headers[2] + "; Level: " + headers[3]);
+                return;
+            }
+
+            if (q != null)
+                npc.AddQuest(q);
+        }
         private bool AddNpc()
         {
             string npc_name = ProcessManager.Player.CurTarget.Name;
@@ -1370,13 +1424,13 @@ namespace BabBot.Forms
                 else
                     Output.Instance.Debug((int)(opts.Length / 2) + " service(s) detected.");
 
-                                /*
-                // Parse list of services
-                for (int i = 0; i < (int)(opts.Length / 2); i++)
-                {
-                    string gossip = opts[i * 2];
-                    string service = opts[i * 2 + 1];
-                */
+                /*
+// Parse list of services
+for (int i = 0; i < (int)(opts.Length / 2); i++)
+{
+    string gossip = opts[i * 2];
+    string service = opts[i * 2 + 1];
+*/
 
                 Output.Instance.Debug("npc", "Checking available quests ...");
 
@@ -1387,7 +1441,9 @@ namespace BabBot.Forms
                     Output.Instance.Debug("No quests detected.");
                 else
                     Output.Instance.Debug((int)(quests.Length / 3) + " quests(s) detected.");
-            } 
+            }
+            else if (cur_service.Equals("quest"))
+                AddNpcQuest(npc, fparams);
             else
                 AddNpcService(npc, cur_service, fparams);
 /*

@@ -472,31 +472,34 @@ end)()]]>
       <function name="IsNpcFrameOpen">
         <return size="4">
           0 - type of chosen gossip service as:
-          * "wep_skill_trainer" - SkillFrame (weapon skills)
-          * "class_trainer" - ClassTrainerFrame
-          * "trade_skill_trainer" - TradeSkillFrame
-          * "taxi" - TaxiFrame
-          * "vendor" - MerchantFrame
-          * "banker" - BankFrame
-          * "battlemaster" - BattlefieldFrame ??
+            * "wep_skill_trainer" - SkillFrame (weapon skills)
+            * "class_trainer" - ClassTrainerFrame
+            * "trade_skill_trainer" - TradeSkillFrame
+            * "taxi" - TaxiFrame
+            * "vendor" - MerchantFrame
+            * "banker" - BankFrame
+            * "battlemaster" - BattlefieldFrame ??
 
           or null if it not shown (yet)
           1..3 - Optional service information:
-          * vendor -
-            1 - can vendor repair
-            2 - Is vendor has water
-            3 - Is vendor has food
+            * vendor -
+              1 - can vendor repair
+              2 - Is vendor has water
+              3 - Is vendor has food
 
-          At the moment it doesn't distinguish food and drink since it's the same subcategory
-          * quest -
-            1 - quest header in format:
-              [quest link][quest title][quest text]
-            2 - general quest info in format:
-              Learned Spell,isTradeskillSpell,isSpellLearned,
-              NumQuestItems, NumQuestRewards, NumQuestChoices
-            3 - details about each quest type ("required", "reward", "choice") in format:
-              [[qty, name],[qty, name]][[..],[..]][]
-            
+              At the moment it doesn't distinguish food and drink 
+              since it's the same subcategory
+              
+            * quest -
+              1 - quest header in format according "quests.header_pattern" below:
+                quest level::quest title::quest text
+              2 - general quest info in format according "quests.info_pattern" below:
+                Learned Spell::isTradeskillSpell::isSpellLearned::
+                  NumQuestItems::NumQuestRewards::NumQuestChoices
+              3 - details about each quest type ("required", "reward", "choice")
+                in format according "quests.details_pattern" below:
+              qty::name::qty::name||..||..
+
         </return>
         <text>
               <![CDATA[(function()
@@ -549,7 +552,9 @@ end)()]]>
                   if (QuestFrame:IsShown()) then
                     service = "quest"
                     
-                    d1 = "[" + GetTitleText() + "][" + GetQuestText() + "]"
+                    -- Returning quest level as char level
+                    d1 = UnitLevel("player") + "::" + 
+                      GetTitleText() + "::" + GetQuestText()
                     
                     q = {{"required", "reward", "choice"}, {}}
                     
@@ -560,21 +565,20 @@ end)()]]>
                     
                     d3 = ""
                     texture, name, isTradeskillSpell, isSpellLearned = GetRewardSpell()
-                    d2 = name + "," + isTradeskillSpell + "," + isSpellLearned
+                    d2 = name + "::" + isTradeskillSpell + "::" + isSpellLearned
                     for i = 1, 3 do
-                      d2 += "," + q[i]
+                      d2 += "::" + q[i]
                       if (d3 ~= "")
                         d3 += ","
-                      d3 += "["
                       
                       s = ""
                       for j = 1, q[i][1] do
                         if (s ~= "")
-                          s += ","
+                          s += "::"
                         s += "["
                         
                         name, texture, qty = GetQuestItemInfo(q[i][0], j)
-                        d3 += qty + "," + name + "]"
+                        d3 += qty + "::" + name
                       end
                       
                       d3 += s + "]"
@@ -628,5 +632,10 @@ end)()]]></text>
     -->
     <talents lvl_start="10" delay="1000" retry="5"
       armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
+    <quests header_pattern="^\d+::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
+            detail_pattern="^\.*||.*||.*$" />
+    3 - details about each quest type ("required", "reward", "choice")
+    in format according "quests.details_pattern" below:
+    [[qty, name],[qty, name]][[..],[..]][]
   </version>
 </wow_data>

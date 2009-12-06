@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
 using System.Collections;
+using System.Xml;
 
 namespace BabBot.Common
 {
@@ -92,6 +93,47 @@ namespace BabBot.Common
         public override string ToString()
         {
             return Name;
+        }
+    }
+
+    /// <summary>
+    /// Common class for collection item that has a unique name and CDATA text
+    /// </summary>
+    public abstract class CommonText : CommonItem
+    {
+        [XmlElement("text", typeof(XmlCDataSection))]
+        public XmlCDataSection Text { get; set; }
+
+        [XmlIgnore]
+        public string TextData
+        {
+            get { return ((Text != null) ? Text.InnerText : null); }
+        }
+
+        public CommonText() { }
+
+        public CommonText(string name, string text) :
+            base(name)
+        {
+            XmlDocument doc = new XmlDocument();
+            Text = doc.CreateCDataSection(text);
+        }
+    }
+
+    /// <summary>
+    /// Common class for collection item that has a unique name and qty
+    /// </summary>
+    public abstract class CommonQty : CommonItem
+    {
+        [XmlElement("qty")]
+        public int Qty { get; set; }
+
+        public CommonQty() { }
+
+        public CommonQty(string name, int qty) :
+            base(name)
+        {
+            Qty = qty;
         }
     }
 
