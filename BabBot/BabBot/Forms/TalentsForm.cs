@@ -204,8 +204,14 @@ namespace BabBot.Forms
         private void BindClasses()
         {
             if (cbWoWVersion.SelectedItem != null)
+            {
                 cbClass.DataSource = ((WoWVersion)cbWoWVersion.
-                            SelectedItem).Classes.ClassListByName;
+                            SelectedItem).Classes.Items;
+
+                cbClass.DisplayMember = "LongName";
+                cbClass.ValueMember = "Name";
+                // cbClass.ValueMember = "LongName";
+            }
             cbClass.SelectedItem = null;
         }
 
@@ -251,8 +257,8 @@ namespace BabBot.Forms
                 (CurTalents != null) &&
                 (CurTalents.Class != null))
             {
-                cbClass.SelectedIndex = ((WoWVersion)cbWoWVersion.SelectedItem).
-                    Classes.FindClassBySysName(CurTalents.Class);
+                cbClass.SelectedItem = ((WoWVersion)cbWoWVersion.SelectedItem).
+                    Classes.FindClassByName(CurTalents.Class);
                 cbClass.Enabled = false;
 
             }
@@ -411,7 +417,7 @@ namespace BabBot.Forms
                 CurTalents.URL = tbTalentURL.Text;
                 CurTalents.LearningOrder = tbLearningOrder.Text;
                 CurTalents.Description = tbDescription.Text;
-                CurTalents.Class = ((CharClass) cbClass.SelectedItem).SysName;
+                CurTalents.Class = ((CharClass) cbClass.SelectedItem).Name;
                 CurTalents.WoWVersion = cbWoWVersion.Text;
 
                 s.Serialize(w, CurTalents, ns);

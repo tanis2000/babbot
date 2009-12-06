@@ -44,7 +44,7 @@ namespace BabBot.Wow
 
         public NPCVersion FindVersion(string version)
         {
-            return (NPCVersion)_htable[version];
+            return FindItemByName(version);
         }
     }
     
@@ -137,6 +137,11 @@ namespace BabBot.Wow
                 WPList.Equals(npc.WPList) &&
                 // Quest List
                 QuestList.Equals(npc.QuestList)));
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 

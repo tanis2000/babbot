@@ -22,64 +22,31 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using BabBot.Common;
 
 namespace BabBot.Wow
 {
     [XmlRoot("wow_data")]
-    public class WoWData
+    public class WoWData : CommonTable<WoWVersion>
     {
-        private Hashtable _versions;
-
-        public WoWData() 
-        {
-            Init();
-        }
-
-        public WoWData(WoWVersion[] versions)
-        {
-            Init();
-            Versions = versions;
-        }
-
-        private void Init()
-        {
-            _versions = new Hashtable();
-        }
-
         [XmlElement("version")]
         public WoWVersion[] Versions
         {
-            get {
-                WoWVersion[] res = new WoWVersion[_versions.Count];
-                _versions.Values.CopyTo(res,0);
-                return res;
-            }
-            set
-            {
-                if (value == null) return;
-                WoWVersion[] items = (WoWVersion[])value;
-                _versions.Clear();
-                foreach (WoWVersion item in items)
-                    _versions.Add(item.Number, item);
-            }
+            get { return Items; }
+            set { Items = value; }
         }
 
         public WoWVersion FindVersion(string version)
         {
-            return (WoWVersion) _versions[version];
+            return (WoWVersion) FindItemByName(version);
         }
     }
     
     [Serializable]
-    public class WoWVersion
+    public class WoWVersion : CommonItem
     {
-        private ArrayList _tlist;
-
         [XmlAttribute("max_lvl")]
         public int MaxLvl;
-
-        [XmlAttribute("num")]
-        public string Number;
 
         [XmlElement("lua")]
         public LuaProc LuaList;
@@ -96,72 +63,38 @@ namespace BabBot.Wow
         [XmlIgnore]
         public NPCVersion NPCData;
 
-        public WoWVersion()
-        {
-            _tlist = new ArrayList();
-        }
-
         public LuaFunction FindLuaFunction(string name)
         {
             return LuaList.FindLuaFunction(name);
         }
-
-        public override string ToString()
-        {
-            return Number;
-        }
     }
 
-    public class LuaProc
+    #region Lua Function
+
+    public class LuaProc : CommonTable<LuaFunction>
     {
-        private Hashtable _flist;
-
-        public LuaProc() { 
-            _flist = new Hashtable(); 
-        }
-
-        public LuaProc(LuaFunction[] flist)
-        {
-            FList = flist;
-        }
-
         [XmlElement("function")]
         public LuaFunction[] FList
         {
-            get
-            {
-                LuaFunction[] res = new LuaFunction[_flist.Count];
-                _flist.Values.CopyTo(res, 0);
-                return res;
-            }
-
-            set
-            {
-                if (value == null) return;
-                LuaFunction[] items = (LuaFunction[])value;
-                _flist.Clear();
-                foreach (LuaFunction item in items)
-                    _flist.Add(item.Name, item);
-            }
+            get { return Items; }
+            set { Items = value; }
         }
 
         public LuaFunction FindLuaFunction(string name)
         {
-            LuaFunction res = (LuaFunction)_flist[name];
-            return res;
+            return (LuaFunction)FindItemByName(name);
         }
     }
 
-    public class LuaFunction
+    public class LuaFunction : CommonItem
     {
-        [XmlAttribute("name")] 
-        public string Name;
-
         [XmlElement("text", typeof(XmlCDataSection))]
         public XmlCDataSection Text;
 
         [XmlElement("return")]
         public LuaResult FRet;
+
+        public LuaFunction() { }
 
         [XmlIgnore]
         public int RetSize
@@ -169,11 +102,9 @@ namespace BabBot.Wow
             get { return (FRet == null) ? 0 : FRet.Size; }
         }
 
-        public LuaFunction() {}
-
-        public LuaFunction(string name, string text)
+        public LuaFunction(string name, string text) :
+            base(name)
         {
-            Name = name;
             XmlDocument doc = new XmlDocument();
             Text = doc.CreateCDataSection(text);
         }
@@ -182,11 +113,6 @@ namespace BabBot.Wow
         public string Code
         {
             get { return ((Text != null) ? Text.InnerText : null); }
-        }
-
-        public override string ToString()
-        {
-            return Code;
         }
     }
 
@@ -198,90 +124,53 @@ namespace BabBot.Wow
         public LuaResult() { }
     }
 
-    public class CharClasses
-    {
-        // Sorted by Armory ID
-        private Hashtable _clist;
-        // Sorted by Long Name
-        private SortedList _clist1;
-        // Sorted by Sys Name
-        private SortedList _clist2;
+    #endregion
 
+    #region Char Class
+
+    public class CharClasses : CommonTable<CharClass>
+    {
         [XmlElement("class")]
         public CharClass[] ClassList
         {
-            get
-            {
-                CharClass[] res = new CharClass[_clist.Count];
-                _clist.Values.CopyTo(res, 0);
-                return res;
-            }
-
-            set
-            {
-                if (value == null) return;
-                CharClass[] items = (CharClass[])value;
-                _clist.Clear();
-                _clist1.Clear();
-                _clist2.Clear();
-
-                foreach (CharClass item in items)
-                {
-                    _clist.Add(item.ArmoryId, item);
-                    _clist1.Add(item.LongName, item);
-                    _clist2.Add(item.SysName, item);
-                }
-            }
+            get { return Items; }
+            set { Items = value; }
         }
 
-        [XmlIgnore]
-        public CharClass[] ClassListByName
+        public CharClass FindClassByName(string name)
         {
-            get
-            {
-                CharClass[] res = new CharClass[_clist1.Count];
-                _clist1.Values.CopyTo(res, 0);
-                return res;
-            }
-        }
-
-        public CharClasses () 
-        {
-            _clist = new Hashtable();
-            _clist1 = new SortedList();
-            _clist2 = new SortedList();
-        }
-
-        public int FindClassBySysName(string name)
-        {
-            return _clist2.IndexOfKey(name);
+            return FindItemByName(name);
         }
 
         public CharClass FindClassByArmoryId(byte id)
         {
-            return (CharClass) _clist[id];
+            CharClass res = null;
+            foreach (CharClass c in Table.Values)
+                if (c.ArmoryId == id)
+                {
+                    res = c;
+                    break;
+                }
+            return res;
         }
     }
     
-    public class CharClass
+    public class CharClass : CommonItem
     {
         [XmlAttribute("armory_id")]
-        public byte ArmoryId;
+        public byte ArmoryId { get; set; }
 
         [XmlAttribute("long_name")]
-        public string LongName;
-
-        [XmlAttribute("sys_name")]
-        public string SysName;
+        public string LongName { get; set; }
 
         [XmlAttribute("tab_1_max")]
-        public byte TabMax1;
+        public byte TabMax1 { get; set; }
 
         [XmlAttribute("tab_2_max")]
-        public byte TabMax2;
+        public byte TabMax2 { get; set; }
 
         [XmlAttribute("tab_3_max")]
-        public byte TabMax3;
+        public byte TabMax3 { get; set; }
 
         [XmlIgnore]
         public byte[] Tabs
@@ -296,13 +185,10 @@ namespace BabBot.Wow
         }
 
         public CharClass () {}
-
-        public override string ToString()
-        {
-            return LongName;
-        }
     }
-    
+
+    #endregion
+
     public class TalentConfig
     {
         [XmlAttribute("lvl_start")]
@@ -320,41 +206,20 @@ namespace BabBot.Wow
         public TalentConfig() { }
     }
 
-    public class ContinentList
-    {
-        private Hashtable _list;
+    #region Continets
 
+    public class ContinentList : CommonTable<Continent>
+    {
         [XmlElement("continent")]
         public Continent[] Continents
         {
-            get
-            {
-                Continent[] res = new Continent[_list.Count];
-                _list.Values.CopyTo(res, 0);
-                return res;
-            }
-
-            set
-            {
-                if (value == null) return;
-                Continent[] items = (Continent[])value;
-                _list.Clear();
-
-                foreach (Continent item in items)
-                {
-                    _list.Add(item.ID, item);
-                }
-            }
-        }
-
-        public ContinentList()
-        {
-            _list = new Hashtable();
+            get { return Items; }
+            set { Items = value; }
         }
 
         public Continent FindContinentById(int id)
         {
-            return (Continent)_list[id];
+            return FindItemByName(Convert.ToString(id));
         }
 
         public string FindContinentNameById(int id)
@@ -364,14 +229,10 @@ namespace BabBot.Wow
         }
     }
 
-    public class Continent
+    public class Continent : CommonItemEx
     {
-        [XmlAttribute("id")]
-        public int ID;
-
-        [XmlAttribute("name")]
-        public string Name;
-
         public Continent() { }
     }
+
+    #endregion
 }

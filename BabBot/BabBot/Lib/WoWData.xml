@@ -1,16 +1,16 @@
 <wow_data>
-  <version num="3.2.2.10505" max_lvl="80">
+  <version name="3.2.2.10505" max_lvl="80">
     <classes>
-        <class armory_id="1" long_name="Warrior" sys_name="WARRIOR" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="2" long_name="Paladin" sys_name="PALADIN" tab_1_max="26" tab_2_max="26" tab_3_max="26" />
-        <class armory_id="3" long_name="Hunter" sys_name="HUNTER" tab_1_max="26" tab_2_max="27" tab_3_max="28" />
-        <class armory_id="4" long_name="Rogue" sys_name="ROGUE" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="5" long_name="Priest" sys_name="PRIEST" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="6" long_name="Death Knight" sys_name="DEATHKNIGHT" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="7" long_name="Shaman" sys_name="SHAMAN" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="8" long_name="Mage" sys_name="MAGE" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="9" long_name="Warlock" sys_name="WARLOCK" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="11" long_name="Druid" sys_name="DRUID" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="1" long_name="Warrior" name="WARRIOR" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="2" long_name="Paladin" name="PALADIN" tab_1_max="26" tab_2_max="26" tab_3_max="26" />
+        <class armory_id="3" long_name="Hunter" name="HUNTER" tab_1_max="26" tab_2_max="27" tab_3_max="28" />
+        <class armory_id="4" long_name="Rogue" name="ROGUE" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="5" long_name="Priest" name="PRIEST" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="6" long_name="Death Knight" name="DEATHKNIGHT" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="7" long_name="Shaman" name="SHAMAN" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="8" long_name="Mage" name="MAGE" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="9" long_name="Warlock" name="WARLOCK" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="11" long_name="Druid" name="DRUID" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
     </classes>
     <continents>
       <continent id="0" name="All" />
@@ -448,24 +448,32 @@ end)()]]>
       <!-- IsGossipFrameOpen -->
       <function name="IsNpcFrameOpen">
         <return size="4">
-            0 - type of chosen gossip service as:
-             * "wep_skill_trainer" - SkillFrame (weapon skills)
-             * "class_trainer" - ClassTrainerFrame
-             * "trade_skill_trainer" - TradeSkillFrame
-             * "taxi" - TaxiFrame
-             * "vendor" - MerchantFrame
-             * "banker" - BankFrame
-             * "battlemaster" - BattlefieldFrame ??
+          0 - type of chosen gossip service as:
+          * "wep_skill_trainer" - SkillFrame (weapon skills)
+          * "class_trainer" - ClassTrainerFrame
+          * "trade_skill_trainer" - TradeSkillFrame
+          * "taxi" - TaxiFrame
+          * "vendor" - MerchantFrame
+          * "banker" - BankFrame
+          * "battlemaster" - BattlefieldFrame ??
 
-            or null if it not shown (yet)
-            1..3 - Optional service information:
-              * "vendor" - 
-                1 - can vendor repair
-                2 - Is vendor has water
-                3 - Is vendor has food
-                
-                At the moment it doesn't distinguish food and drink since it's the same subcategory
-              
+          or null if it not shown (yet)
+          1..3 - Optional service information:
+          * vendor -
+            1 - can vendor repair
+            2 - Is vendor has water
+            3 - Is vendor has food
+
+          At the moment it doesn't distinguish food and drink since it's the same subcategory
+          * quest -
+            1 - quest header in format:
+              [quest link][quest title][quest text]
+            2 - general quest info in format:
+              Learned Spell,isTradeskillSpell,isSpellLearned,
+              NumQuestItems, NumQuestRewards, NumQuestChoices
+            3 - details about each quest type ("required", "reward", "choice") in format:
+              [[qty, name],[qty, name]][[..],[..]][]
+            
         </return>
         <text>
               <![CDATA[(function()

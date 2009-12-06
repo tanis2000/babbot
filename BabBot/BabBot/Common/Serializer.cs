@@ -75,11 +75,16 @@ namespace BabBot.Common
     public abstract class CommonItem : IComparable
     {
         [XmlAttribute("name")]
-        public string Name;
+        public string Name { get; set; }
 
         public CommonItem() { }
 
-        public int CompareTo(object obj)
+        public CommonItem(string name)
+        {
+            Name = name;
+        }
+
+        public virtual int CompareTo(object obj)
         {
             return ToString().CompareTo(((CommonItem)obj).ToString());
         }
@@ -91,12 +96,40 @@ namespace BabBot.Common
     }
 
     /// <summary>
+    /// Common class for collection items with id -> name parameters
+    /// </summary>
+    public abstract class CommonItemEx : CommonItem
+    {
+        [XmlAttribute("id")]
+        public int Id;
+
+        public CommonItemEx() { }
+
+        public CommonItemEx(int id, string name) : 
+            base(name)
+        {
+            Id = id;
+        }
+
+        public override int CompareTo(object obj)
+        {
+            CommonItemEx c = (CommonItemEx) obj;
+            return ((Id > c.Id) ? 1 : ((Id < c.Id) ? -1 : 1));
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(Id);
+        }
+    }
+
+    /// <summary>
     /// Class with internal hashtable that needs to be serialized
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public class CommonTable<T>
+    public abstract class CommonTable<T>
     {
-        internal readonly Hashtable _htable;
+        private readonly Hashtable _htable;
 
         [XmlIgnore]
         internal T[] Items
@@ -173,11 +206,10 @@ namespace BabBot.Common
     /// Class with internal hashtable that needs to be serialized and have a unique name
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public class CommonNameTable<T> : CommonTable<T>
+    public abstract class CommonNameTable<T> : CommonTable<T>
     {
         [XmlAttribute("name")]
         public string Name;
-
     }
 
     /// <summary>

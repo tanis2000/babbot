@@ -467,7 +467,7 @@ namespace BabBot.Manager
             LoadConfig();
 
             // Attach NPC data to selected WoW version
-            wversion.NPCData = ndata.FindVersion(wversion.Number);
+            wversion.NPCData = ndata.FindVersion(wversion.Name);
 
             //\\ Test
             /*
