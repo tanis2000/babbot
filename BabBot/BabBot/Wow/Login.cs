@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using BabBot.Manager;
 using BabBot.Common;
 using System.Threading;
@@ -45,6 +46,8 @@ namespace BabBot.Wow
         private static DateTime StateChangeTime;
         private static string DInfo;
         private static string SendKey = null;
+        // Pattern when realm is full
+        private static Regex RealmFull = new Regex("Position in queue: \\d*");
 
         #region Login States
 
@@ -276,10 +279,15 @@ namespace BabBot.Wow
                         }
                         break;
                     
-                    case 102: // Accept message dialog and retry
+                    case 103:
+                        // Realm is full. Just wait
+                        Log("Realm is full. Just waiting");
+                        Thread.Sleep(psleepTime);
+                        break;
+
                     default:
                         Log("'" + LoginState.GetValue(State) + 
-                                                                  "' not implemented yet");
+                                        "' not implemented yet");
                         return false;
                 }
 
@@ -419,11 +427,28 @@ namespace BabBot.Wow
              if (CurrentGlueDialog.Equals("CANCEL")) {
                 // Current state in progress
                 string s = "Current state in progress";
-                if (IsDialogText) 
+
+                 // detect when realm full
+                 // <Realm> is Full
+                 // Position in queue: 6
+                // Estimated time: Calculating...
+
+                 // or
+
+                 // <Realm> is Full
+                // Position in queue: 4
+                // Estimated time: < 1 minute' ...
+
+                bool is_full = false;
+                if (IsDialogText)
+                {
                     s += ": '" + DialogText + "'";
-                 s += " ...";
-                 Log(s);
-                 return SetState(100);
+                    is_full = RealmFull.IsMatch(DialogText);
+                }
+                
+                s += " ...";
+                Log(s);
+                return (is_full) ? SetState(103) : SetState(100);
              }
 
              // Check for progress dialog

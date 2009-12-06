@@ -1411,7 +1411,7 @@ namespace BabBot.Forms
                     catch (Exception e)
                     {
                         ShowErrorMessage("Unable convert " + i + " parameter '" +
-                            opts[i] + "' from  'GetNpcGossipInfo' result to integer");
+                            opts[i] + "' from  'GetNpcGossipInfo' result to integer. " + e);
                         return false;
                     }
                 }

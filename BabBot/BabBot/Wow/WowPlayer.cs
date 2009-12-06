@@ -47,6 +47,10 @@ namespace BabBot.Wow
         private int continent = -1;
         // Player class
         string _class;
+        // Player race
+        string _race;
+        // Player sex
+        int _sex;
         // Zone text where currently player in
         string _zone;
 
@@ -1442,15 +1446,17 @@ end)()");
             _zone = lret[0];
         }
 
-        public void SetCharClass()
+        public void SetCharInfo()
         {
-            string[] s = ProcessManager.Injector.Lua_ExecByName("GetUnitClass",
+            string[] s = ProcessManager.Injector.Lua_ExecByName("GetUnitInfo",
                 new object[] {"player"});
 
-            if (s == null || (s.Length < 2) || (s[1] == null))
+            if (false)//  (s == null || (s.Length < 5) || (s[1] == null) || (s[3] == null))
                 throw new Exception("Unable retrieve character's class");
 
             _class = s[1];
+            _race = s[3];
+            _sex = Convert.ToInt32(s[4]);
         }
 
         public void AttackTarget()

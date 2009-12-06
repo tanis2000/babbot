@@ -784,7 +784,7 @@ namespace BabBot.Manager
             ObjectManager = new ObjectManager();
             Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
             Player.SetCurrentMapContinentId();
-            Player.SetCharClass();
+            Player.SetCharInfo();
             // TODO
             // Player.SetCharRace();
             if (WoWInGame != null)

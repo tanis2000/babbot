@@ -847,10 +847,11 @@ end)()",
                 {
                     code = string.Format(code, param_list);
                 }
-                catch
+                catch (Exception e)
                 {
                     ShowError("Internal bug. Unable format parameters '" +
-                        param_list.ToString() + "' with lua function '" + lf.Name + "'");
+                        param_list.ToString() + "' with lua function '" + 
+                        lf.Name + "'. " + e.Message);
                     Environment.Exit(6);
                 }
             }
