@@ -317,6 +317,13 @@
     <None Include="Lib\EasyHook64.lib" />
     <None Include="Lib\EasyHook64Drv.sys" />
     <None Include="Lib\EasyHookTestCert.cer" />
+    <Content Include="Data\NPCData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\WoWData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Forms\WoWData.xml" />
     <Content Include="Doc\ChangeLog.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

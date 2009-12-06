@@ -161,7 +161,7 @@ namespace BabBot.Manager
         // NPCData file name
         private static string NPCDataFileName = 
 #if DEBUG
-            "..\\..\\Lib\\" + 
+            "..\\..\\Data\\" + 
 #endif
             "NPCData.xml";
 
@@ -457,7 +457,7 @@ namespace BabBot.Manager
             ShowErrorMessage += OnShowErrorMessage;
 
             // data first
-            wdata = (WoWData)LoadXmlData("WoWData.xml", typeof(WoWData));
+            wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
             ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
 
             //\\ TEST
