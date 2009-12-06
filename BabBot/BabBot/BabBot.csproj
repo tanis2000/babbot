@@ -320,7 +320,9 @@
     <Content Include="Data\NPCData.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\WoWData.xml" />
+    <Content Include="Data\WoWData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Forms\WoWData.xml" />
     <Content Include="Doc\ChangeLog.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
