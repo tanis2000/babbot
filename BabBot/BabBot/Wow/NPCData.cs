@@ -69,6 +69,12 @@ namespace BabBot.Wow
         [XmlAttribute("type")] 
         public string Type;
 
+        [XmlAttribute("race")]
+        public string Race;
+
+        [XmlAttribute("sex")]
+        public string Sex;
+
         [XmlAttribute("continent_id")] 
         public int ContinentId;
 
@@ -93,18 +99,21 @@ namespace BabBot.Wow
             QuestList = new Quests();
         }
 
-        public NPC(WowPlayer player)
+        public NPC(WowPlayer player, string race, string sex)
         {
             WowUnit w = player.CurTarget;
 
-            Init(w.Name, player.ContinentID, 
+            Init(w.Name, race, sex, player.ContinentID, 
                 player.ZoneText, (Vector3D) w.Location.Clone());
         }
 
-        public void Init(string name, int continent_id, 
-                                    string zone_text, Vector3D waypoint)
+        public void Init(string name, string race, string sex, 
+                int continent_id, string zone_text, Vector3D waypoint)
         {
             Name = name;
+            Race = race;
+            Sex = sex;
+
             ContinentId = continent_id;
             ZoneText = zone_text;
             WPList.Add(waypoint);

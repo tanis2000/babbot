@@ -892,8 +892,26 @@ namespace BabBot.Forms
             }
 
             /// Test
-            if (ProcessManager.Config.Test == 1)
-                talentTemplatesToolStripMenuItem_Click(sender, e);
+#if DEBUG
+            if (ProcessManager.Config.IsTest)
+            {
+                switch (ProcessManager.Config.Test)
+                {
+                    case 0:
+                        talentTemplatesToolStripMenuItem_Click(sender, e);
+                        break;
+
+                    case 1:
+                        npcListToolStripMenuItem_Click(sender, e);
+                        break;
+                }
+            }
+#endif
+        }
+
+        private void swtich(int p)
+        {
+            throw new NotImplementedException();
         }
 
         private void SetDebugBtns()
@@ -1280,6 +1298,7 @@ namespace BabBot.Forms
             string npc_name = ProcessManager.Player.CurTarget.Name;
             ProcessManager.Player.setCurrentZoneText();
 
+            string[] npc_info = ProcessManager.Injector.Lua_ExecByName("GetUnitInfo");
             string[] fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
             string cur_service = fparams[0];
 
@@ -1316,7 +1335,7 @@ namespace BabBot.Forms
             }
 
             Output.Instance.Debug("Adding NPC ...");
-            NPC npc = new NPC(ProcessManager.Player);
+            NPC npc = new NPC(ProcessManager.Player, npc_info[3], npc_info[4]);
 
             if (cur_service.Equals("gossip"))
             {

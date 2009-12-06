@@ -23,6 +23,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using BabBot.Manager;
 
 namespace BabBot.Forms
 {
@@ -31,6 +32,14 @@ namespace BabBot.Forms
         public NPCListForm() : base ("npc_list")
         {
             InitializeComponent();
+        }
+
+        private void NPCListForm_Load(object sender, EventArgs e)
+        {
+            cbWoWVersion.DataSource = ProcessManager.WoWVersions;
+            cbWoWVersion.SelectedItem = ProcessManager.CurWoWVersion;
+
+            IsChanged = false;
         }
     }
 }

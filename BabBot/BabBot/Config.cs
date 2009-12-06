@@ -37,6 +37,12 @@ namespace BabBot
         // 0-7 range reserved for ivp4
         [XmlAttribute("test")]
         public int Test = -1;
+
+        [XmlIgnore]
+        public bool IsTest
+        {
+            get { return (Test >= 0); }
+        }
 #endif
         // Not used
         // public string InteractKey = "{SHIFTD}ì{SHIFTU}";

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <npc_data version="0">
   <wow_version name="3.2.2.10505">
-    <npc name="Dellylah" continent_id="1" zone_text="Teldrassil">
+    <npc name="Dellylah" race="NIGHTELF" sex="2" continent_id="1" zone_text="Teldrassil">
       <services>
         <service d5p1:type="VendorService" type="vendor" can_repair="false" has_water="true" has_food="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
       </services>
@@ -10,7 +10,7 @@
         <waypoint x="10450.2" y="779.858" z="1322.75" />
       </wp_list>
     </npc>
-    <npc name="Keina" continent_id="1" zone_text="Teldrassil">
+    <npc name="Keina" race="NIGHTELF" sex="2" continent_id="1" zone_text="Teldrassil">
       <services>
         <service d5p1:type="VendorService" type="vendor" can_repair="true" has_water="false" has_food="false" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
       </services>

@@ -57,6 +57,9 @@ namespace BabBot.Wow
         [XmlElement("classes")]
         public CharClasses Classes;
 
+        [XmlElement("races")]
+        public Races Races;
+
         [XmlElement("continents")]
         public ContinentList Continents;
 
@@ -189,6 +192,32 @@ namespace BabBot.Wow
 
     #endregion
 
+    #region Races
+
+    public class Races : CommonTable<Race> {
+        [XmlElement("race")]
+        public Race[] RaceList
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+
+        public Race FindRaceByName(string name)
+        {
+            return FindItemByName(name);
+        } 
+    }
+
+    public class Race : CommonItem
+    {
+        [XmlAttribute("long_name")]
+        public string LongName;
+
+        [XmlAttribute("id")]
+        public int Id;
+    }
+
+    #endregion
     public class TalentConfig
     {
         [XmlAttribute("lvl_start")]
