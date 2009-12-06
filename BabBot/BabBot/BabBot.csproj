@@ -320,9 +320,7 @@
     <Content Include="Data\NPCData.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\WoWData.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Data\WoWData.xml" />
     <Content Include="Forms\WoWData.xml" />
     <Content Include="Doc\ChangeLog.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -336,15 +334,11 @@
     <Content Include="Doc\README.TXT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Lib\NPCData.xml">
-    </Content>
     <Content Include="Profiles\Talents\hunter-bm.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Profiles\Talents\pally_full_retro.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Lib\WoWData.xml">
     </Content>
     <None Include="Lib\BlackMagic.dll" />
     <None Include="Lib\BlackMagic.XML" />
