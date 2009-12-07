@@ -310,6 +310,8 @@ namespace BabBot.Forms
         private void SetCtrlBtns(bool Enabled)
         {
             btnRun.Enabled = Enabled;
+            startWoWToolStripMenuItem.Enabled = Enabled;
+
             btnLogin.Enabled = !Enabled;
         }
 
@@ -1312,7 +1314,7 @@ namespace BabBot.Forms
             Quest q = null;
 
             // Checking parameters first
-            if (opts.Length < 3)
+            if (opts.Length < 4)
             {
                 Output.Instance.LogError("npc", "Not enough " + 
                         opts.Length + " parameters to add quest");
@@ -1426,7 +1428,7 @@ namespace BabBot.Forms
             return true;
         }
 
-        public string InteractNpc(string npc_name)
+        public string[] InteractNpc(string npc_name)
         {
             Output.Instance.Log("npc", "Interacting with NPC '" + npc_name + "' ...");
             ProcessManager.Injector.Lua_ExecByName("InteractWithTarget");
@@ -1438,12 +1440,13 @@ namespace BabBot.Forms
             Thread.Sleep(100);
             TimeSpan ts = DateTime.Now.Subtract(dt);
 
+            string[] fparams = null;
             string cur_service = null;
             while ((cur_service == null) &&
               (DateTime.Now.Subtract(dt).TotalMilliseconds <= 10000))
             {
                 Thread.Sleep(2000);
-                string[] fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
+                fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
                 cur_service = fparams[0];
             }
 
@@ -1453,7 +1456,7 @@ namespace BabBot.Forms
                 return null;
             }
 
-            return cur_service;
+            return fparams;
         }
 
         private bool FindAvailGossips(NPC npc)
@@ -1489,7 +1492,9 @@ namespace BabBot.Forms
 
             if (cur_service == null)
             {
-                cur_service = InteractNpc(npc.Name);
+                fparams = InteractNpc(npc.Name);
+                cur_service = fparams[0];
+
                 if (cur_service == null)
                     return false;
             }
@@ -1717,7 +1722,8 @@ namespace BabBot.Forms
 
         private void startWoWToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            btnRun_Click(sender, e);
+            if (btnRun.Enabled)
+                btnRun_Click(sender, e);
         }
     }
 }
