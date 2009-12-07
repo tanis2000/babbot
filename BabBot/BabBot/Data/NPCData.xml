@@ -19,6 +19,26 @@
         <waypoint x="10436.7" y="794.837" z="1322.79" />
       </wp_list>
     </npc>
+    <npc name="Conservator Ilthalaine" sex="2" continent_id="1" zone_text="Teldrassil">
+      <services />
+      <quests>
+        <quest name="The Balance of Nature" level="2" bonus_spell="">
+          <text><![CDATA[Greetings, Flinar.  I am Conservator Ilthalaine.  My purpose in Shadowglen is to ensure that the balance of nature is maintained.
+
+The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
+
+Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young hunter, and thin the boar and saber populations so that nature's harmony will be preserved.]]></text>
+          <choice_items>
+            <item name="Stemleaf Bracers" qty="1" />
+            <item name="Archery Training Gloves" qty="1" />
+          </choice_items>
+          <objectives><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives>
+        </quest>
+      </quests>
+      <wp_list>
+        <waypoint x="10328.9" y="826.052" z="1326.38" />
+      </wp_list>
+    </npc>
     <npc name="Melithar Staghelm" sex="2" continent_id="1" zone_text="Teldrassil">
       <services />
       <quests>

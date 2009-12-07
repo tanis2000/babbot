@@ -204,14 +204,30 @@ namespace BabBot.Wow
         [XmlAttribute("bonus_spell")]
         public string BonusSpell;
 
-        [XmlElement("required")]
-        CommonQty[] ReqItems { get; set; }
+        [XmlIgnore]
+        internal QuestItem[] QuestItems = new QuestItem[3];
 
-        [XmlElement("reward")]
-        CommonQty[] RewardItems { get; set; }
+        [XmlElement("req_items")]
+        public QuestItem ReqItems
+        {
+            get { return QuestItems[0]; }
+            set { QuestItems[0] = value; }
+        }
+
+
+        [XmlElement("reward_items")]
+        public QuestItem RewardItems
+        {
+            get { return QuestItems[1]; }
+            set { QuestItems[1] = value; }
+        }
         
-        [XmlElement("choice")]
-        CommonQty[] ChoiceItems { get; set; }
+        [XmlElement("choice_items")]
+        public QuestItem ChoiceItems
+        {
+            get { return QuestItems[2]; }
+            set { QuestItems[2] = value; }
+        }
 
         [XmlElement("objectives", typeof(XmlCDataSection))]
         public XmlCDataSection Objectives { get; set; }
@@ -225,16 +241,10 @@ namespace BabBot.Wow
             get { return ((Objectives != null) ? Objectives.InnerText : null); }
         }
 
-        [XmlIgnore]
-        public CommonQty[][] ReqList
-        {
-            get { return new CommonQty[][] { ReqItems, RewardItems, ChoiceItems }; }
-        }
-
         public Quest() {}
 
         public Quest(string title, string text, string objectives, int level, 
-                int req_qty, int reward_qty, int choice_qty, string bonus_spell) :
+                int[] iqty, string[] det_list, string bonus_spell) :
             base(title, text)
         {
             Level = level;
@@ -242,10 +252,20 @@ namespace BabBot.Wow
             XmlDocument doc = new XmlDocument();
             Objectives = doc.CreateCDataSection(objectives);
 
-            ReqItems = new CommonQty[req_qty];
-            RewardItems = new CommonQty[reward_qty];
-            ChoiceItems = new CommonQty[choice_qty];
-
+            for (int i = 0; i < iqty.Length; i++)
+                if (iqty[i] > 0)
+                {
+                    QuestItem qi = new QuestItem();
+                    QuestItems[i] = qi;
+                    string[] det_item = det_list[i].Split(new string[] { "::" }, 
+                                                    StringSplitOptions.None);
+                    for (int j = 0; j < iqty[i]; j++)
+                    {
+                        string[] d = det_item[j].Split(',');
+                        qi.Add(new CommonQty(d[1], Convert.ToInt32(d[0])));
+                    }
+                }
+                    
             BonusSpell = bonus_spell;
         }
 
@@ -269,39 +289,55 @@ namespace BabBot.Wow
                 return false;
 
             // Check Req List
-            CommonQty[][] rl = ReqList;
+            QuestItem[] rl = QuestItems;
 
-            for (int i = 0; i < rl.Length; i++)
+            if ((rl != null) && (q.QuestItems != null))
             {
-                CommonQty[] ra1 = rl[i];
-                CommonQty[] ra2 = q.ReqList[i];
+                for (int i = 0; i < rl.Length; i++)
+                {
+                    QuestItem ra1 = rl[i];
+                    QuestItem ra2 = q.QuestItems[i];
 
-                if (((ra2 == null) && ((ra1 == null) || (ra1.Length == 0))))
-                    continue;
-
-                if (!((ra2 != null) && ra1.Length == ra2.Length))
-                    return false;
-
-                // Check item by item
-                if (ra1 != null)
-                    for (int j = 0; j < ra1.Length; j++)
-                        if (!ra1[j].Equals(ra2[j]))
+                    if (ra1 == null)
+                    {
+                        if (ra2 != null)
                             return false;
+                    }
+                    else
+                    {
+                        if (ra2 == null)
+                            return false;
+                        else
+                            // Check item by item
+                            if (! ra1.Equals(ra2))
+                                return false;
+                    }
+                }
             }
+            else
+            {
+                if (((rl == null) && (q.QuestItems != null)) ||
+                    ((rl != null) && (q.QuestItems == null)))
+                    return false;
+            }
+
 
             return true;
         }
 
-        public bool CompareQtyArray(CommonQty[] q1, CommonQty[] q2)
+        public override int GetHashCode()
         {
-            if (q1.Length != q2.Length)
-                return false;
+            return base.GetHashCode();
+        }
+    }
 
-            for (int i = 0; i < q1.Length; i++)
-                if (!q1[i].Equals(q2[i]))
-                    return false;
-
-            return true;
+    public class QuestItem : CommonTable<CommonQty>
+    {
+        [XmlElement("item")]
+        public CommonQty[] ItemList
+        {
+            get { return Items; }
+            set { Items = value; }
         }
     }
 

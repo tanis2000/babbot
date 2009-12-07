@@ -97,6 +97,8 @@ namespace BabBot.Common
 
         public override bool Equals(object obj)
         {
+            if (obj == null) 
+                return false;
             return ToString().Equals(obj.ToString());
         }
 
@@ -133,9 +135,9 @@ namespace BabBot.Common
     /// <summary>
     /// Common class for collection item that has a unique name and qty
     /// </summary>
-    public abstract class CommonQty : CommonItem
+    public class CommonQty : CommonItem
     {
-        [XmlElement("qty")]
+        [XmlAttribute("qty")]
         public int Qty { get; set; }
 
         public CommonQty() { }
@@ -149,6 +151,11 @@ namespace BabBot.Common
         public override bool Equals(object obj)
         {
             return base.Equals(obj) && (((CommonQty) obj).Qty == Qty);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 

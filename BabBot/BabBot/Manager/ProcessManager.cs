@@ -1024,9 +1024,39 @@ namespace BabBot.Manager
         /// <summary>
         /// Save NPC data in xml format
         /// </summary>
-        public static void SaveNpcData()
+        public static bool SaveNpcData()
         {
-            SaveXmlData(NPCDataFileName, typeof(NPCData), ndata);
+            // Backup old NPC data before save
+            string bf = System.IO.Path.GetDirectoryName(NPCDataFileName) + 
+                System.IO.Path.DirectorySeparatorChar + 
+                System.IO.Path.GetFileNameWithoutExtension(NPCDataFileName) + ".bak";
+            Output.Instance.Log("npc", "Saving " + NPCDataFileName + 
+                " before serializing to " + bf);
+
+            try
+            {
+                File.Copy(NPCDataFileName, bf, true);
+            }
+            catch (Exception e)
+            {
+                ShowError("Failed update NPC Data. Unable copy file " + NPCDataFileName + 
+                            "  to " + bf + ". " + e.Message);
+
+                return false;
+            }
+
+            if (!SaveXmlData(NPCDataFileName, typeof(NPCData), ndata))
+            {
+                Output.Instance.Log("npc", "Recovering " + NPCDataFileName +
+                    " after error from " + bf);
+                File.Copy(bf, NPCDataFileName);
+                return false;
+            }
+            else
+                Output.Instance.Log("npc", "File " + NPCDataFileName + 
+                                                            " successfully saved.");
+
+            return true;
         }
 
         /// <summary>
@@ -1035,8 +1065,9 @@ namespace BabBot.Manager
         /// <param name="fname">Output File Name</param>
         /// <param name="t">Type of object</param>
         /// <param name="obj">Object itself</param>
-        public static void SaveXmlData(string fname, Type t, object obj)
+        public static bool SaveXmlData(string fname, Type t, object obj)
         {
+            bool res = false;
             TextWriter w = null;
             try
             {
@@ -1047,7 +1078,7 @@ namespace BabBot.Manager
                 w = new StreamWriter(fname);
 
                 s.Serialize(w, obj, ns);
-                w.Close();
+                res = true;
             }
             catch (Exception e)
             {
@@ -1059,6 +1090,8 @@ namespace BabBot.Manager
                 if (w != null)
                     w.Close();
             }
+
+            return res;
         }
 
         #endregion

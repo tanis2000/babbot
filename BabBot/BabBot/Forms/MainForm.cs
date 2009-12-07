@@ -1255,8 +1255,22 @@ namespace BabBot.Forms
 
         #endregion
 
-        #region NPC
-        
+        #region Nested type: NPC
+
+        private class QuestHeader
+        {
+            internal string Name;
+            internal int Level;
+
+            public QuestHeader(string name, int level)
+            {
+                Name = name;
+                Level = level;
+            }
+        }
+
+        private QuestHeader qh;
+
         private void AddNpcService(NPC npc, string cur_service, string[] opts) {
             NPCService npc_service = null;
 
@@ -1335,9 +1349,13 @@ namespace BabBot.Forms
 
             try
             {
-                q = new Quest(headers[1], headers[2], headers[3],
-                    Convert.ToInt32(headers[0]), Convert.ToInt32(info[3]),
-                    Convert.ToInt32(info[4]), Convert.ToInt32(info[5]), info[0]);
+                int qlevel = Convert.ToInt32(headers[0]);
+                if (qh != null)
+                    qlevel = qh.Level;
+
+                q = new Quest(headers[1], headers[2], headers[3], qlevel, 
+                    new int[] { Convert.ToInt32(info[3]), Convert.ToInt32(info[4]), 
+                        Convert.ToInt32(info[5]) }, details, info[0]);
             }
             catch
             {
@@ -1387,12 +1405,11 @@ namespace BabBot.Forms
 
                     try
                     {
-                        string qname = quests[i * 3];
-                        int qlevel = Convert.ToInt32(sqlevel);
+                        qh = new QuestHeader(quests[i * 3], Convert.ToInt32(sqlevel));
 
                         // Last parameter we not interested in
                         Output.Instance.Debug("npc", "Adding quest '" +
-                                                    qname + "'; Level: " + qlevel);
+                                                    qh.Name + "'; Level: " + qh.Level);
 
                         SelectNpcOption(npc, "SelectAvailableQuest", i + 1, max_num);
                     }
@@ -1532,6 +1549,8 @@ namespace BabBot.Forms
 
         private bool AddNpc()
         {
+            qh = null;
+
             string npc_name = ProcessManager.Player.CurTarget.Name;
             ProcessManager.Player.setCurrentZoneText();
 
@@ -1563,8 +1582,8 @@ namespace BabBot.Forms
             } else
                 ProcessManager.CurWoWVersion.NPCData.Add(npc);
 
-            ProcessManager.SaveNpcData();
-            Output.Instance.Log("npc", "NPC '" + npc_name + 
+            if (ProcessManager.SaveNpcData())
+                Output.Instance.Log("npc", "NPC '" + npc_name + 
                         "' successfully added to NPCData.xml");
             return true;
         }
@@ -1602,7 +1621,7 @@ namespace BabBot.Forms
                     string name = "Conservator Ilthalaine";
                     ProcessManager.Injector.Lua_ExecByName("TargetUnit",
                         new string[] { name });
-                    Thread.Sleep(250);
+                    Thread.Sleep(500);
                 }
 #endif
 
