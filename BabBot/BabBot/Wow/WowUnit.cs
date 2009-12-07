@@ -67,14 +67,7 @@ namespace BabBot.Wow
 
         public bool HasTarget
         {
-            get
-            {
-                if (CurTargetGuid != 0)
-                {
-                    return true;
-                }
-                return false;
-            }
+            get { return (CurTargetGuid != 0); }
         }
 
         public bool IsAggro

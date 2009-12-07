@@ -423,7 +423,17 @@ end)()");
             return false;
         }
 
+        public bool SelectNpc(WowUnit u)
+        {
+            return SelectUnit(u, CommandManager.SK_CTRL_TAB);
+        }
+
         public bool SelectMob(WowUnit u)
+        {
+            return SelectUnit(u, CommandManager.SK_TAB);
+        }
+
+        public bool SelectUnit(WowUnit u, string key)
         {
             // We face the target otherwise the tabbing won't work as it might be out of our scope
             // NOTE: we are using the timed one, but it's a bit shaky
@@ -431,14 +441,14 @@ end)()");
             Face(u.Location);
 
             // We tab till we have found our target or till we come back to the first GUID we met
-            return FindMob(u);
+            return FindUnit(u, key);
         }
 
-        public bool FindMob(WowUnit u)
+        public bool FindUnit(WowUnit u, string key)
         {
             DateTime start = DateTime.Now;
             TimeSpan tsTimeSpent;
-            PlayerCM.SendKeys(CommandManager.SK_TAB);
+            PlayerCM.SendKeys(key);
             Thread.Sleep(250);
             ulong firstGuid = CurTargetGuid;
 
@@ -1451,7 +1461,7 @@ end)()");
             string[] s = ProcessManager.Injector.Lua_ExecByName("GetUnitInfo",
                 new object[] {"player"});
 
-            if (false)//  (s == null || (s.Length < 5) || (s[1] == null) || (s[3] == null))
+            if ((s == null) || (s.Length < 5) || (s[1] == null) || (s[3] == null))
                 throw new Exception("Unable retrieve character's class");
 
             _class = s[1];
@@ -1563,8 +1573,9 @@ end)()", iName));
                     return true;
                 }
             }
-            */
+             
             return false;
+            */
         }
 
         public void UseItem(Item item)

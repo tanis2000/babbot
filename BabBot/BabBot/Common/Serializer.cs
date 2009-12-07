@@ -242,6 +242,21 @@ namespace BabBot.Common
         {
             return _htable.Count;
         }
+
+        public void Merge(CommonTable<T> t)
+        {
+            if (t == null)
+                return;
+
+            // Check values
+            foreach (DictionaryEntry item in t.Table)
+            {
+                if (!_htable.ContainsKey(item.Key))
+                    _htable.Add(item.Key, item.Value);
+                else if (!item.Value.Equals(_htable[item.Key]))
+                    _htable[item.Key] = item.Value;
+            }
+        }
     }
 
     /// <summary>
@@ -252,6 +267,11 @@ namespace BabBot.Common
     {
         [XmlAttribute("name")]
         public string Name;
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     /// <summary>
@@ -261,11 +281,6 @@ namespace BabBot.Common
     public abstract class CommonList<T>
     {
         internal readonly ArrayList _list;
-
-        public CommonList()
-        {
-            _list = new ArrayList();
-        }
 
         [XmlIgnore]
         internal T[] Items
@@ -290,6 +305,11 @@ namespace BabBot.Common
         public ArrayList List
         {
             get { return _list; }
+        }
+
+        public CommonList()
+        {
+            _list = new ArrayList();
         }
 
         public override bool Equals(object obj)
@@ -318,11 +338,24 @@ namespace BabBot.Common
         {
             return base.GetHashCode();
         }
+
         public void Add(T item)
         {
             _list.Add(item);
         }
 
+        public void Merge(CommonList<T> l)
+        {
+            foreach (T item1 in l.List)
+            {
+                foreach (T item2 in _list)
+                    if (!item1.Equals(item2))
+                    {
+                        _list.Add(item1);
+                        break;
+                    }
+            }
+        }
     }
 
     /// <summary>

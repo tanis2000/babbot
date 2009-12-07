@@ -115,7 +115,7 @@ namespace BabBot.Manager
                         CurrentVendorWayPointIndex = 0;
                     }
                     return VendorPath[CurrentVendorWayPointIndex];
-                    break;
+
                 case WayPointType.Repair:
                     if (RepairNodeCount == 0)
                     {
@@ -127,7 +127,7 @@ namespace BabBot.Manager
                         CurrentRepairWayPointIndex = 0;
                     }
                     return RepairPath[CurrentRepairWayPointIndex];
-                    break;
+
                 case WayPointType.Normal:
                     if (NormalNodeCount == 0)
                     {
@@ -139,7 +139,7 @@ namespace BabBot.Manager
                         CurrentNormalWayPointIndex = 0;
                     }
                     return NormalPath[CurrentNormalWayPointIndex];
-                    break;
+
                 case WayPointType.Ghost:
                     if (GhostNodeCount == 0)
                     {
@@ -151,7 +151,7 @@ namespace BabBot.Manager
                         CurrentGhostWayPointIndex = 0;
                     }
                     return GhostPath[CurrentGhostWayPointIndex];
-                    break;
+
                 default:
                     return null;
             }

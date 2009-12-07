@@ -45,7 +45,6 @@ namespace BabBot.Manager
         private readonly IDictionary<string, uint> SpellIdCache = new Dictionary<string, uint>();
 
         private bool registered;
-        private uint state;
         List<string> values;
 
         #region External function calls

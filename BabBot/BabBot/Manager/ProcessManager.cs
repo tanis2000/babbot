@@ -460,6 +460,15 @@ namespace BabBot.Manager
             wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
             ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
 
+            // Check if NPC data version the same
+            if (ndata.Version != NPCDataVersion)
+            {
+                // TODO Migrate data from old format to new and save
+                // Show message for now
+                ShowErrorMessage("NPCData.xml is in old format. It has version " + 
+                    ndata.Version + " that different from supported " + NPCDataVersion);
+            }
+
             //\\ TEST
             //SaveXmlData(NPCDataFileName, typeof(NPCData), ndata);
 

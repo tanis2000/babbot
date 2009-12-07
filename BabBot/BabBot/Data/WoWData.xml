@@ -428,7 +428,11 @@ end)()]]></text>
   class1, class2 = UnitClass("{0}")
   race1, race2 = UnitRace("{0}")
   
-  return class1, class2, race1, string.upper(race2),  UnitSex("{0}")
+  if (race2) then
+    race2 = string.upper(race2)
+  end
+  
+  return class1, class2, race1, race2,  UnitSex("{0}")
 end)()]]>
         </text>
       </function>
@@ -495,10 +499,10 @@ end)()]]>
               
             * quest -
               1 - quest header in format according "quests.header_pattern" below:
-                quest level::quest title::quest text
+                quest level::quest title::quest text::quest objectives
               2 - general quest info in format according "quests.info_pattern" below:
-                Learned Spell::isTradeskillSpell::isSpellLearned::
-                  NumQuestItems::NumQuestRewards::NumQuestChoices
+                Learned Spell,isTradeskillSpell,isSpellLearned,
+                  NumQuestItems,NumQuestRewards,NumQuestChoices
               3 - details about each quest type ("required", "reward", "choice")
                 in format according "quests.details_pattern" below:
               qty::name::qty::name||..||..
@@ -510,95 +514,100 @@ end)()]]>
   if (GossipFrame:IsShown()) then
     service = "gossip"
   else 
-    if (TaxiFrame:IsShown()) then
-      service = "taxi"
-      CloseTaxiMap();
-    else 
-      if (MerchantFrame:IsShown()) then
-        service = "vendor"
-        -- check for repair
-        d1 = CanMerchantRepair()
-        -- check for water/food
-        max_num = GetMerchantNumItems()
-        for i = 1, max_num do
-          name, link, quality, iLevel, reqLevel, class, subclass, 
-            maxStack, equipSlot, texture, vendorPrice = GetItemInfo(GetMerchantItemLink(i));
-          if (subclass == "Food & Drink") then
-            d2 = 1
-            d3 = 1
+    if (MerchantFrame:IsShown()) then
+      service = "vendor"
+      -- check for repair
+      d1 = CanMerchantRepair()
+      -- check for water/food
+      max_num = GetMerchantNumItems()
+      for i = 1, max_num do
+        name, link, quality, iLevel, reqLevel, class, subclass, 
+          maxStack, equipSlot, texture, vendorPrice = GetItemInfo(GetMerchantItemLink(i));
+        if (subclass == "Food & Drink") then
+          d2 = 1
+          d3 = 1
             
-            break
-          end
+          break
         end
-        -- done with merchant
-        CloseMerchant();
-      else 
-        if (BankFrame:IsShown()) then
-          service = "banker"
-          CloseBankFrame()
-        else
-          if (SkillFrame:IsShown()) then
-            service = "wep_skill_trainer"
-          else
-            if (ClassTrainerFrame:IsShown()) then
-              service = "class_trainer"
-              CloseTrainer()
-            else
-              if (TradeSkillFrame:IsShown()) then
-                service = "trade_skill_trainer"
-                CloseTradeSkill()
-              else
-                if (BattlefieldFrame:IsShown()) then
-                  service = "battlemaster"
-                  CloseBattlefield()
-                else
-                  if (QuestFrame:IsShown()) then
-                    service = "quest"
+      end
+	  
+      -- done with merchant
+      CloseMerchant()
+      
+    else 
+      if (QuestFrame:IsShown()) then
+		    service = "quest"
+        
+		    -- Returning quest level as char level
+        d1 = UnitLevel("player") .. "::" .. GetTitleText() .. 
+               "::" .. GetQuestText() .. "::" .. GetObjectiveText()
                     
-                    -- Returning quest level as char level
-                    d1 = UnitLevel("player") .. "::" .. GetTitleText() .. 
-                      "::" .. GetQuestText() .. "::" .. GetObjectiveText()
+        q = {"required", "reward", "choice"}
                     
-                    q = {"required", "reward", "choice"}
+        -- Get quest details
+        qr = {}
+        qr[1] = GetNumQuestItems()
+        qr[2] = GetNumQuestRewards()
+        qr[3] = GetNumQuestChoices()
                     
-                    -- Get quest details
-                    qr = {}
-                    qr[1] = GetNumQuestItems()
-                    qr[2] = GetNumQuestRewards()
-                    qr[3] = GetNumQuestChoices()
+        texture, name, isTradeskillSpell, isSpellLearned = GetRewardSpell()
+        if (name) then
+          d2 = name .. "," .. isTradeskillSpell .. "," .. isSpellLearned
+		    else
+          d2 = ",,";
+        end
                     
-                    texture, name, isTradeskillSpell, isSpellLearned = GetRewardSpell()
-                    if (name) then
-                      d2 = name .. "::" .. isTradeskillSpell .. "::" .. isSpellLearned
-                    else
-                      d2 = "::::";
-                    end
+        d3 = ""
+        for i = 1, 3 do
+          d2 = d2 .. "," .. qr[i]
+          if (i > 1) then
+            d3 = d3 .. "||"
+          end
                     
-                    d3 = ""
-                    for i = 1, 3 do
-                      d2 = d2 .. "::" .. qr[i]
-                      if (i > 1) then
-                        d3 = d3 .. "||"
-                      end
-                      
-                      s = ""
-                      for j = 1, qr[i] do
-                        if (s ~= "") then
-                          s = s.."::"
-                        end
-                        
-                        name, texture, qty = GetQuestItemInfo(q[i], j)
-                        s = s .. qty .. "," .. name
-                      end
-                      
-                      d3 = d3 .. s
-                    end
-                  end
-                end
-              end
+          s = ""
+          for j = 1, qr[i] do
+            if (s ~= "") then
+              s = s.."::"
             end
+                      
+            name, texture, qty = GetQuestItemInfo(q[i], j)
+            s = s .. qty .. "," .. name
           end
+                    
+          d3 = d3 .. s
         end
+        
+        -- Done with quest
+        CloseQuest()
+      else
+        if (BankFrame:IsShown()) then
+			    service = "banker"
+			    CloseBankFrame()
+			  else
+				  if (SkillFrame:IsShown()) then
+				    service = "wep_skill_trainer"
+				  else
+					  if (ClassTrainerFrame:IsShown()) then
+					    service = "class_trainer"
+					    CloseTrainer()
+					  else
+						  if (TradeSkillFrame:IsShown()) then
+						    service = "trade_skill_trainer"
+						    CloseTradeSkill()
+						  else
+							  if (BattlefieldFrame:IsShown()) then
+							    service = "battlemaster"
+							    CloseBattlefield()
+							  else
+								  if (TaxiFrame:IsShown()) then
+								    service = "taxi"
+								    CloseTaxiMap();
+								  end
+							  end
+						  end
+					  end
+				  end
+			  end
       end
     end
   end
@@ -621,6 +630,18 @@ end)()]]></text>
 end)()]]></text>
       </function>
 
+      <!-- name -->
+      <function name="TargetUnit">
+        <parameters>
+          0 - Exact Unit Name
+        </parameters>
+        <text>
+          <![CDATA[(function()
+  TargetUnit("{0}" , true)   
+end)()]]>
+        </text>
+      </function>
+        
       <!-- Template for new function
       <!- - name - ->
       <function name="">
@@ -642,8 +663,8 @@ end)()]]></text>
     -->
     <talents lvl_start="10" delay="1000" retry="5"
       armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
-    <quests header_pattern="^\d+::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
-            detail_pattern="^\.*||.*||.*$" />
+    <quests header_pattern="^\d+::.*::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
+            detail_pattern="^.*||.*||.*$" />
     3 - details about each quest type ("required", "reward", "choice")
     in format according "quests.details_pattern" below:
     [[qty, name],[qty, name]][[..],[..]][]

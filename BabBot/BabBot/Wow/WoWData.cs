@@ -250,7 +250,7 @@ namespace BabBot.Wow
         [XmlAttribute("header_pattern")]
         public string HeaderPattern {
             get { return HeaderRx.ToString(); }
-            set { HeaderRx = new Regex(value); }
+            set { HeaderRx = new Regex(value, RegexOptions.Singleline); }
         }
 
         [XmlAttribute("info_pattern")]

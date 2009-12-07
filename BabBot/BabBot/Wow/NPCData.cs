@@ -26,7 +26,8 @@ using BabBot.Common;
 
 namespace BabBot.Wow
 {
-
+    // TODO organize NPC continent ID into list 
+    // with table of zones NPC was found. Keep waypoints assigned per zone
     #region NPC
     
     [XmlRoot("npc_data")]
@@ -99,7 +100,7 @@ namespace BabBot.Wow
             QuestList = new Quests();
         }
 
-        public NPC(WowPlayer player, string race, string sex)
+        public NPC(WowPlayer player, string race, string sex) : this()
         {
             WowUnit w = player.CurTarget;
 
@@ -116,6 +117,7 @@ namespace BabBot.Wow
 
             ContinentId = continent_id;
             ZoneText = zone_text;
+
             WPList.Add(waypoint);
         }
 
@@ -133,7 +135,7 @@ namespace BabBot.Wow
         {
             NPC npc = (NPC)obj;
 
-            return (!(
+            return (
                 // Check name
                 Name.Equals(npc.Name) && 
                 // Continent ID
@@ -145,12 +147,24 @@ namespace BabBot.Wow
                 // Waypoints
                 WPList.Equals(npc.WPList) &&
                 // Quest List
-                QuestList.Equals(npc.QuestList)));
+                QuestList.Equals(npc.QuestList));
         }
 
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public void Merge(NPC npc)
+        {
+            // Merge services
+            Services.Merge(npc.Services);
+
+            // Merge Waypoints
+            WPList.Merge(npc.WPList);
+            
+            // Merge Quest List
+            QuestList.Merge(npc.QuestList);
         }
     }
 
@@ -199,19 +213,51 @@ namespace BabBot.Wow
         [XmlElement("choice")]
         CommonQty[] ChoiceItems { get; set; }
 
+        [XmlElement("objectives", typeof(XmlCDataSection))]
+        public XmlCDataSection Objectives { get; set; }
+
+        [XmlIgnore]
+        public string TextObjectives
+        {
+            get { return ((Objectives != null) ? Objectives.InnerText : null); }
+        }
+
         public Quest() {}
 
-        public Quest(string title, string text, int level, 
+        public Quest(string title, string text, string objectives, int level, 
                 int req_qty, int reward_qty, int choice_qty, string bonus_spell) :
             base(title, text)
         {
             Level = level;
+
+            XmlDocument doc = new XmlDocument();
+            Objectives = doc.CreateCDataSection(objectives);
 
             ReqItems = new CommonQty[req_qty];
             RewardItems = new CommonQty[reward_qty];
             ChoiceItems = new CommonQty[choice_qty];
 
             BonusSpell = bonus_spell;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            return Equals((Quest)obj);
+        }
+
+        public bool Equals(Quest q)
+        {
+            return q.Name.Equals(Name) &&
+                q.TextData.Equals(TextData) &&
+                (q.Level == Level) &&
+                q.TextObjectives.Equals(TextObjectives) &&
+                q.BonusSpell.Equals(BonusSpell) &&
+                q.ReqItems.Equals(ReqItems) &&
+                q.RewardItems.Equals(RewardItems) &&
+                q.ChoiceItems.Equals(ChoiceItems);
         }
     }
 

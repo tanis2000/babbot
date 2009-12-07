@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BabBot.Forms.Radar;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace BabBot.Forms
 {
@@ -1305,8 +1306,10 @@ namespace BabBot.Forms
             }
 
             // Check parsing result
-            for (int i = 0; i < 3; i++)
+            for (int i = 1; i < 4; i++)
             {
+                string s = opts[i];
+
                 if (string.IsNullOrEmpty(opts[i]))
                 {
                     Output.Instance.LogError("npc", i + 
@@ -1315,25 +1318,24 @@ namespace BabBot.Forms
                 }
 
                 // Check each value against pattern
-                if (!ProcessManager.CurWoWVersion.QuestConfig.Patterns[i].IsMatch(opts[i]))
+                Regex rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[i - 1];
+                if (!rx.IsMatch(s))
                 {
                     Output.Instance.LogError("npc", i +
-                        " parameter from quest info doesn't match template");
+                        " parameter '" + s + "' from quest scan" + 
+                        " doesn't match template '" + rx.ToString() + "'");
                     return;
                 }
             }
 
             // Read header
-            char[] split1 = new char[2] { ':', ':' };
-            char[] split2 = new char[2] { '|', '|' };
-
-            string[] headers = opts[0].Split(split1);
-            string[] info = opts[1].Split(split1);
-            string[] details = opts[2].Split(split2);
+            string[] headers = opts[1].Split(new string[] {"::"}, StringSplitOptions.None);
+            string[] info = opts[2].Split(',');
+            string[] details = opts[3].Split(new string[] {"||"}, StringSplitOptions.None);
 
             try
             {
-                q = new Quest(headers[1], headers[2],
+                q = new Quest(headers[1], headers[2], headers[3],
                     Convert.ToInt32(headers[0]), Convert.ToInt32(info[3]),
                     Convert.ToInt32(info[4]), Convert.ToInt32(info[5]), info[0]);
             }
@@ -1352,7 +1354,8 @@ namespace BabBot.Forms
             string npc_name = ProcessManager.Player.CurTarget.Name;
             ProcessManager.Player.setCurrentZoneText();
 
-            string[] npc_info = ProcessManager.Injector.Lua_ExecByName("GetUnitInfo");
+            string[] npc_info = ProcessManager.Injector.
+                Lua_ExecByName("GetUnitInfo", new object[] {"target"});
             string[] fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
             string cur_service = fparams[0];
 
@@ -1473,14 +1476,21 @@ for (int i = 0; i < (int)(opts.Length / 2); i++)
             // Check if NPC already exists
             NPC check = ProcessManager.
                 CurWoWVersion.NPCData.FindNpcByName(npc.Name);
-            if ((check != null) && npc.Equals(check))
+            if ((check != null))
             {
-                ShowErrorMessage("NPC '" + npc.Name +
-                    "' already added with identicall parameters");
-                return false;
-            }
-
-            ProcessManager.CurWoWVersion.NPCData.Add(npc);
+                if (npc.Equals(check))
+                {
+                    ShowErrorMessage("NPC '" + npc.Name +
+                        "' already added with identicall parameters");
+                    return false;
+                }
+                else
+                {
+                    // NPC in database but with different parameters
+                    check.Merge(npc);
+                }
+            } else
+                ProcessManager.CurWoWVersion.NPCData.Add(npc);
 
             ProcessManager.SaveNpcData();
             Output.Instance.Log("npc", "NPC '" + npc_name + 
@@ -1510,6 +1520,18 @@ for (int i = 0; i < (int)(opts.Length / 2); i++)
             if (!CheckInGame())
                 return;
 
+#if DEBUG
+            //\\ TEST
+            if (ProcessManager.Config.IsTest)
+                if (ProcessManager.Config.Test == 1)
+                {
+                    // Target NPC
+                    string name = "Melithar Staghelm";
+                    ProcessManager.Injector.Lua_ExecByName("TargetUnit",
+                        new string[] { name });
+                }
+#endif
+
             // Check if npc selected
             if (!ProcessManager.Player.HasTarget)
             {
@@ -1517,7 +1539,11 @@ for (int i = 0; i < (int)(opts.Length / 2); i++)
                 return;
             }
 
-            // TODO Add npc
+            // Switch to npc output tab
+            Output.Instance.Log("npc", 
+                "Checking NPC '" + ProcessManager.Player.CurTarget.Name + "'");
+            tabLogs.SelectedIndex = tabLogs.TabPages.IndexOfKey("Npc");
+
             if (AddNpc())
                 // Open NPC List for configuration
                 npcListToolStripMenuItem_Click(sender, e);
@@ -1545,6 +1571,53 @@ for (int i = 0; i < (int)(opts.Length / 2); i++)
 
         private void addCurrentTargetToolStripMenuItem_Click(object sender, EventArgs e)
         {
+#if DEBUG
+            //\\ TEST
+            if (ProcessManager.Config.IsTest)
+                if (ProcessManager.Config.Test == 1)
+                {
+                    // Check each value against pattern
+                    Regex rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[0];
+                    string s1 = "1::dfdf::dfdd::dd";
+                    string s2 = @"1::The Woodland Protector::
+                Thank goodness you are here, 
+                hunter. Strange news has traveled to me through the 
+                whisperings of the forest spirits.\n\nThe mysterious woodland 
+                protector, Tarindrella, has returned to Shadowglen. The dryad's presence 
+                has not been felt in the forests of Kalimdor in years. 
+                Something is surely amiss if she has journeyed back to this land.\n\nSeek 
+                out Tarindrella and see what business she tends to in our grove. 
+                One of the Sentinels reported seeing her to the southwest of Aldrassil.::
+                Seek out the dryad known as Tarindrella.";
+
+                    
+                    if (!(rx.IsMatch(s1) && rx.IsMatch(s2)))
+                    {
+                        ShowErrorMessage("Pattern 1 doesn't work");
+                        return;
+                    }
+
+                    rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[1];
+                    s1 = "alsd dsf,1,1,1,2,3";
+                    s2 = ",,,0,0,0";
+
+                    if (!(rx.IsMatch(s1) && rx.IsMatch(s2)))
+                    {
+                        ShowErrorMessage("Pattern 2 doesn't work");
+                        return;
+                    }
+
+                    s1 = "1,aa::2,bb||1,aa::2,bb||1,aa::2,bb";
+                    s2 = "||||";
+                    rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[2];
+                    if (!(rx.IsMatch(s1) && rx.IsMatch(s2)))
+                        if (!(rx.IsMatch(s2) && rx.IsMatch(s2)))
+                    {
+                        ShowErrorMessage("Pattern 3 doesn't work");
+                        return;
+                    }
+                }
+#endif
             btnAddNPC_Click(sender, e);
         }
 
