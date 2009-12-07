@@ -1349,50 +1349,139 @@ namespace BabBot.Forms
             if (q != null)
                 npc.AddQuest(q);
         }
-        private bool AddNpc()
-        {
-            string npc_name = ProcessManager.Player.CurTarget.Name;
-            ProcessManager.Player.setCurrentZoneText();
 
-            string[] npc_info = ProcessManager.Injector.
-                Lua_ExecByName("GetUnitInfo", new object[] {"target"});
+        public bool SelectNpcOption(NPC npc, string lua_fname, int idx, int max)
+        {
+            // Choose gossip option and check npc again
+            ProcessManager.Injector.Lua_ExecByName(
+                lua_fname, new string[] { Convert.ToString(idx) });
+            if (!AddNpcInfo(npc))
+                return false;
+
+            // After gossip option processed interact with npc again
+            if (idx < max)
+                if (InteractNpc(npc.Name) == null)
+                    return false;
+
+            return true;
+        }
+
+        private bool FindAvailQuests(NPC npc)
+        {
+            Output.Instance.Debug("npc", "Checking available quests ...");
+
+            // Get list of quests
+            string[] quests = ProcessManager.
+                Injector.Lua_ExecByName("GetAvailQuests");
+            if (quests == null || (quests.Length == 0))
+                Output.Instance.Debug("npc", "No quests detected.");
+            else
+            {
+                Output.Instance.Debug("npc", (int)(quests.Length / 3) + " quests(s) detected.");
+
+                // Parse list of quests
+                int max_num = (int)(quests.Length / 3);
+                for (int i = 0; i < max_num; i++)
+                {
+                    string sqlevel = quests[i * 3 + 1];
+
+                    try
+                    {
+                        string qname = quests[i * 3];
+                        int qlevel = Convert.ToInt32(sqlevel);
+
+                        // Last parameter we not interested in
+                        Output.Instance.Debug("npc", "Adding quest '" +
+                                                    qname + "'; Level: " + qlevel);
+
+                        SelectNpcOption(npc, "SelectAvailableQuest", i + 1, max_num);
+                    }
+                    catch (Exception e)
+                    {
+                        Output.Instance.LogError("npc", "Failed convert quests level '" +
+                        sqlevel + "' to integer. " + e.Message);
+                        return false;
+                    }
+
+                }
+            }
+
+            return true;
+        }
+
+        public string InteractNpc(string npc_name)
+        {
+            Output.Instance.Log("npc", "Interacting with NPC '" + npc_name + "' ...");
+            ProcessManager.Injector.Lua_ExecByName("InteractWithTarget");
+
+            // IF NPC doesn't have any quests and just on gossip option the WoW
+            // use it option by default
+
+            DateTime dt = DateTime.Now;
+            Thread.Sleep(100);
+            TimeSpan ts = DateTime.Now.Subtract(dt);
+
+            string cur_service = null;
+            while ((cur_service == null) &&
+              (DateTime.Now.Subtract(dt).TotalMilliseconds <= 10000))
+            {
+                Thread.Sleep(2000);
+                string[] fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
+                cur_service = fparams[0];
+            }
+
+            if (cur_service == null)
+            {
+                ShowErrorMessage("NPC doesn't interact after 10 sec of waiting or it's service unknown");
+                return null;
+            }
+
+            return cur_service;
+        }
+
+        private bool FindAvailGossips(NPC npc)
+        {
+            // Get list of options
+            string [] opts = ProcessManager.
+                Injector.Lua_ExecByName("GetGossipOptions");
+            if (opts == null || (opts.Length == 0))
+                Output.Instance.Debug("No service detected.");
+            else
+            {
+                Output.Instance.Debug((int)(opts.Length / 2) + " service(s) detected.");
+
+                // Parse list of services
+                int max_opts = (int)(opts.Length / 2);
+                for (int i = 0; i < max_opts; i++)
+                {
+                    string gossip = opts[i * 2];
+                    string service = opts[i * 2 + 1];
+
+                    SelectNpcOption(npc, "SelectGossipOption", i + 1, max_opts); 
+                }
+            }
+
+            return true;
+        }
+
+        // This method is recursive
+        private bool AddNpcInfo(NPC npc)
+        {
             string[] fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
             string cur_service = fparams[0];
 
             if (cur_service == null)
             {
-                Output.Instance.Log("npc", "Interacting with NPC '" + npc_name + "' ...");
-                ProcessManager.Injector.Lua_ExecByName("InteractWithTarget");
-                
-                // IF NPC doesn't have any quests and just on gossip option the WoW
-                // use it option by default
-
-                DateTime dt = DateTime.Now;
-                Thread.Sleep(100);
-                TimeSpan ts = DateTime.Now.Subtract(dt);
-                while ((cur_service == null) &&  
-                  (DateTime.Now.Subtract(dt).TotalMilliseconds <= 10000))
-                {
-                    Thread.Sleep(2000);
-                    fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
-                    cur_service = fparams[0];
-                }
-
+                cur_service = InteractNpc(npc.Name);
                 if (cur_service == null)
-                {
-                    ShowErrorMessage("NPC doesn't interact after 10 sec of waiting or it's service unknown");
                     return false;
-                }
             }
 
             if (cur_service == null)
             {
-                ShowErrorMessage("NPC is useless. No services or quests are detected");
-                return false;
+                Output.Instance.Log("NPC is useless. No services or quests are detected");
+                return true ;
             }
-
-            Output.Instance.Debug("Adding NPC ...");
-            NPC npc = new NPC(ProcessManager.Player, npc_info[3], npc_info[4]);
 
             if (cur_service.Equals("gossip"))
             {
@@ -1419,60 +1508,42 @@ namespace BabBot.Forms
                     }
                 }
 
-                // Get list of options
-                opts = ProcessManager.
-                    Injector.Lua_ExecByName("GetGossipOptions");
-                if (opts == null || (opts.Length == 0))
-                    Output.Instance.Debug("No service detected.");
-                else
-                    Output.Instance.Debug((int)(opts.Length / 2) + " service(s) detected.");
+                if (opti[0] > 0)
+                    if (!FindAvailQuests(npc))
+                        return false;
 
-                /*
-// Parse list of services
-for (int i = 0; i < (int)(opts.Length / 2); i++)
-{
-    string gossip = opts[i * 2];
-    string service = opts[i * 2 + 1];
-*/
+                // TODO CheckActiveQuests
+                // if (opti[1] > 0)
+                //      if (!FindActiveQuests(npc))
+                //            return false;
 
-                Output.Instance.Debug("npc", "Checking available quests ...");
-
-                // Get list of quests
-                string[] quests = ProcessManager.
-                    Injector.Lua_ExecByName("GetAvailQuests");
-                if (quests == null || (quests.Length == 0))
-                    Output.Instance.Debug("No quests detected.");
-                else
-                    Output.Instance.Debug((int)(quests.Length / 3) + " quests(s) detected.");
+                if (opti[2] > 0)
+                    if (!FindAvailGossips(npc))
+                        return false;
+            
             }
             else if (cur_service.Equals("quest"))
                 AddNpcQuest(npc, fparams);
             else
                 AddNpcService(npc, cur_service, fparams);
-/*
-            // Parse list of quests
-            for (int i = 0; i < (int)(quests.Length / 3); i++)
-            {
-                string sqlevel = quests[i * 3 + 1];
 
-                try
-                {
-                    string qname = quests[i * 3];
-                    int qlevel = Convert.ToInt32(sqlevel);
-                    // Last parameter we not interested in
-                    Output.Instance.Debug("Adding quest '" + 
-                                    qname + "'; Level: " + qlevel);
-                    npc.AddQuest(new QuestHeader(qname, qlevel));
-                }
-                catch (Exception ex)
-                {
-                    Output.Instance.LogError("npc", "Failed convert quests level '" +
-                                                          sqlevel + "' to integer");
-                    return false;
-                }
+            return true;
+        }
 
-            }
-*/
+        private bool AddNpc()
+        {
+            string npc_name = ProcessManager.Player.CurTarget.Name;
+            ProcessManager.Player.setCurrentZoneText();
+
+            string[] npc_info = ProcessManager.Injector.
+                Lua_ExecByName("GetUnitInfo", new object[] {"target"});
+
+            Output.Instance.Debug("Checking NPC Info ...");
+            NPC npc = new NPC(ProcessManager.Player, npc_info[3], npc_info[4]);
+
+            if (!AddNpcInfo(npc))
+                return false;
+
             // Check if NPC already exists
             NPC check = ProcessManager.
                 CurWoWVersion.NPCData.FindNpcByName(npc.Name);
@@ -1523,12 +1594,15 @@ for (int i = 0; i < (int)(opts.Length / 2); i++)
 #if DEBUG
             //\\ TEST
             if (ProcessManager.Config.IsTest)
-                if (ProcessManager.Config.Test == 1)
+                if ((ProcessManager.Config.Test == 1) && 
+                    !ProcessManager.Player.HasTarget)
                 {
                     // Target NPC
-                    string name = "Melithar Staghelm";
+                    // string name = "Melithar Staghelm";
+                    string name = "Conservator Ilthalaine";
                     ProcessManager.Injector.Lua_ExecByName("TargetUnit",
                         new string[] { name });
+                    Thread.Sleep(250);
                 }
 #endif
 

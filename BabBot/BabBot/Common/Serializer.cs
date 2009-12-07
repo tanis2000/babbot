@@ -87,12 +87,22 @@ namespace BabBot.Common
 
         public virtual int CompareTo(object obj)
         {
-            return ToString().CompareTo(((CommonItem)obj).ToString());
+            return ToString().CompareTo(obj.ToString());
         }
 
         public override string ToString()
         {
             return Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return ToString().Equals(obj.ToString());
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 
@@ -134,6 +144,11 @@ namespace BabBot.Common
             base(name)
         {
             Qty = qty;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj) && (((CommonQty) obj).Qty == Qty);
         }
     }
 

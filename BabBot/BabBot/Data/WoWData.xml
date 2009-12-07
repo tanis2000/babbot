@@ -1,3 +1,23 @@
+<!--
+This file is part of BabBot.
+
+BabBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+BabBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
+
+Copyright 2009 BabBot Team
+
+Lots of credits to http://wowprogramming.com/
+-->
 <wow_data>
   <version name="3.2.2.10505" max_lvl="80">
     <classes>
@@ -333,7 +353,7 @@ end)()]]>
     </function>
 
     <!-- ChooseGossipOption -->
-    <function name="ChooseGossipOption">
+    <function name="SelectGossipOption">
         <parameters>
           0 - "gossip" index (see FindGossipIndex)
         </parameters>
@@ -365,7 +385,7 @@ end)()]]></text>
     local arg = GetGossipOptions()
 	for i = 1, table.getn(arg), 2 do
 		local title, type = arg[i], arg[i+1]
-		if (type == "{0}) then
+		if (type == "{0}") then
 			idx = i
 			txt = title
 			
@@ -638,6 +658,20 @@ end)()]]></text>
         <text>
           <![CDATA[(function()
   TargetUnit("{0}" , true)   
+end)()]]>
+        </text>
+      </function>
+
+      <!-- name -->
+      <function name="SelectAvailableQuest">
+        <parameters>
+          0 - index 
+            Index of a quest available from the current 
+            Gossip NPC (between 1 and GetNumGossipAvailableQuests()) (number)
+        </parameters>
+        <text>
+          <![CDATA[(function()
+  SelectGossipAvailableQuest({0})
 end)()]]>
         </text>
       </function>

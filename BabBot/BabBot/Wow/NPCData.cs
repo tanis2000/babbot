@@ -216,10 +216,19 @@ namespace BabBot.Wow
         [XmlElement("objectives", typeof(XmlCDataSection))]
         public XmlCDataSection Objectives { get; set; }
 
+        [XmlElement("dest_npc")]
+        public string DestNpc = null;
+
         [XmlIgnore]
         public string TextObjectives
         {
             get { return ((Objectives != null) ? Objectives.InnerText : null); }
+        }
+
+        [XmlIgnore]
+        public CommonQty[][] ReqList
+        {
+            get { return new CommonQty[][] { ReqItems, RewardItems, ChoiceItems }; }
         }
 
         public Quest() {}
@@ -250,14 +259,49 @@ namespace BabBot.Wow
 
         public bool Equals(Quest q)
         {
-            return q.Name.Equals(Name) &&
+            bool f = q.Name.Equals(Name) &&
                 q.TextData.Equals(TextData) &&
                 (q.Level == Level) &&
                 q.TextObjectives.Equals(TextObjectives) &&
-                q.BonusSpell.Equals(BonusSpell) &&
-                q.ReqItems.Equals(ReqItems) &&
-                q.RewardItems.Equals(RewardItems) &&
-                q.ChoiceItems.Equals(ChoiceItems);
+                q.BonusSpell.Equals(BonusSpell);
+
+            if (!f)
+                return false;
+
+            // Check Req List
+            CommonQty[][] rl = ReqList;
+
+            for (int i = 0; i < rl.Length; i++)
+            {
+                CommonQty[] ra1 = rl[i];
+                CommonQty[] ra2 = q.ReqList[i];
+
+                if (((ra2 == null) && ((ra1 == null) || (ra1.Length == 0))))
+                    continue;
+
+                if (!((ra2 != null) && ra1.Length == ra2.Length))
+                    return false;
+
+                // Check item by item
+                if (ra1 != null)
+                    for (int j = 0; j < ra1.Length; j++)
+                        if (!ra1[j].Equals(ra2[j]))
+                            return false;
+            }
+
+            return true;
+        }
+
+        public bool CompareQtyArray(CommonQty[] q1, CommonQty[] q2)
+        {
+            if (q1.Length != q2.Length)
+                return false;
+
+            for (int i = 0; i < q1.Length; i++)
+                if (!q1[i].Equals(q2[i]))
+                    return false;
+
+            return true;
         }
     }
 
