@@ -1255,7 +1255,7 @@ namespace BabBot.Forms
 
         #endregion
 
-        #region Nested type: NPC
+        #region NPC
 
         private class QuestHeader
         {
@@ -1618,7 +1618,8 @@ namespace BabBot.Forms
                 {
                     // Target NPC
                     // string name = "Melithar Staghelm";
-                    string name = "Conservator Ilthalaine";
+                    // string name = "Conservator Ilthalaine";
+                    string name = "Tarindrella";
                     ProcessManager.Injector.Lua_ExecByName("TargetUnit",
                         new string[] { name });
                     Thread.Sleep(500);
