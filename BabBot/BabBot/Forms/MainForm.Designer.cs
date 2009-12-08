@@ -173,11 +173,20 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.btnAddNPC = new System.Windows.Forms.Button();
+            this.btnLogin = new System.Windows.Forms.Button();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.btnLearnTalents = new System.Windows.Forms.Button();
             this.cbTalentTemplates = new System.Windows.Forms.ComboBox();
             this.lblTalentTemplates = new System.Windows.Forms.Label();
-            this.btnLogin = new System.Windows.Forms.Button();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.btnReturnQuest = new System.Windows.Forms.Button();
+            this.label39 = new System.Windows.Forms.Label();
+            this.label40 = new System.Windows.Forms.Label();
+            this.cbQuestList = new System.Windows.Forms.ComboBox();
+            this.btnGetQuest = new System.Windows.Forms.Button();
+            this.cbQuestChoiceReward = new System.Windows.Forms.ComboBox();
             this.btnInteract = new System.Windows.Forms.Button();
             this.btnDumpBagsToConsole = new System.Windows.Forms.Button();
             this.lblOrientation = new System.Windows.Forms.Label();
@@ -185,13 +194,19 @@
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.tabPageScript = new System.Windows.Forms.TabPage();
+            this.btnDeleteCurrent = new System.Windows.Forms.Button();
+            this.btnDeleteAll = new System.Windows.Forms.Button();
+            this.btnCopyToClipboard = new System.Windows.Forms.Button();
+            this.btnNewLua = new System.Windows.Forms.Button();
+            this.tabLua = new System.Windows.Forms.TabControl();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tbLuaScript = new System.Windows.Forms.TextBox();
             this.btnUnregisterInputHandler = new System.Windows.Forms.Button();
             this.btnRegisterInputHandler = new System.Windows.Forms.Button();
             this.btnInputHandler = new System.Windows.Forms.Button();
             this.btnGetLuaText = new System.Windows.Forms.Button();
             this.tbLuaResult = new System.Windows.Forms.TextBox();
             this.btnDoString = new System.Windows.Forms.Button();
-            this.tbLuaScript = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.msMain.SuspendLayout();
@@ -216,7 +231,12 @@
             this.tabPageEnemies.SuspendLayout();
             this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
+            this.groupBox9.SuspendLayout();
+            this.groupBox8.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.tabPageScript.SuspendLayout();
+            this.tabLua.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -1635,11 +1655,9 @@
             // 
             // tabPageDebug2
             // 
-            this.tabPageDebug2.Controls.Add(this.btnAddNPC);
-            this.tabPageDebug2.Controls.Add(this.btnLearnTalents);
-            this.tabPageDebug2.Controls.Add(this.cbTalentTemplates);
-            this.tabPageDebug2.Controls.Add(this.lblTalentTemplates);
-            this.tabPageDebug2.Controls.Add(this.btnLogin);
+            this.tabPageDebug2.Controls.Add(this.groupBox9);
+            this.tabPageDebug2.Controls.Add(this.groupBox8);
+            this.tabPageDebug2.Controls.Add(this.groupBox7);
             this.tabPageDebug2.Controls.Add(this.btnInteract);
             this.tabPageDebug2.Controls.Add(this.btnDumpBagsToConsole);
             this.tabPageDebug2.Controls.Add(this.lblOrientation);
@@ -1654,9 +1672,20 @@
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
             // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.btnAddNPC);
+            this.groupBox9.Controls.Add(this.btnLogin);
+            this.groupBox9.Location = new System.Drawing.Point(350, 61);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(206, 52);
+            this.groupBox9.TabIndex = 72;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Test Buttons";
+            // 
             // btnAddNPC
             // 
-            this.btnAddNPC.Location = new System.Drawing.Point(238, 31);
+            this.btnAddNPC.Location = new System.Drawing.Point(20, 19);
             this.btnAddNPC.Name = "btnAddNPC";
             this.btnAddNPC.Size = new System.Drawing.Size(75, 23);
             this.btnAddNPC.TabIndex = 63;
@@ -1664,44 +1693,130 @@
             this.btnAddNPC.UseVisualStyleBackColor = true;
             this.btnAddNPC.Click += new System.EventHandler(this.btnAddNPC_Click);
             // 
-            // btnLearnTalents
-            // 
-            this.btnLearnTalents.Location = new System.Drawing.Point(237, 69);
-            this.btnLearnTalents.Name = "btnLearnTalents";
-            this.btnLearnTalents.Size = new System.Drawing.Size(75, 23);
-            this.btnLearnTalents.TabIndex = 62;
-            this.btnLearnTalents.Text = "Learn Now";
-            this.btnLearnTalents.UseVisualStyleBackColor = true;
-            this.btnLearnTalents.Click += new System.EventHandler(this.btnLearnTalents_Click);
-            // 
-            // cbTalentTemplates
-            // 
-            this.cbTalentTemplates.FormattingEnabled = true;
-            this.cbTalentTemplates.Location = new System.Drawing.Point(110, 71);
-            this.cbTalentTemplates.Name = "cbTalentTemplates";
-            this.cbTalentTemplates.Size = new System.Drawing.Size(121, 21);
-            this.cbTalentTemplates.TabIndex = 61;
-            this.cbTalentTemplates.DropDown += new System.EventHandler(this.cbTalentTemplates_DropDown);
-            // 
-            // lblTalentTemplates
-            // 
-            this.lblTalentTemplates.AutoSize = true;
-            this.lblTalentTemplates.Location = new System.Drawing.Point(15, 74);
-            this.lblTalentTemplates.Name = "lblTalentTemplates";
-            this.lblTalentTemplates.Size = new System.Drawing.Size(89, 13);
-            this.lblTalentTemplates.TabIndex = 60;
-            this.lblTalentTemplates.Text = "Talent Templates";
-            // 
             // btnLogin
             // 
             this.btnLogin.Enabled = false;
-            this.btnLogin.Location = new System.Drawing.Point(428, 31);
+            this.btnLogin.Location = new System.Drawing.Point(115, 19);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 59;
             this.btnLogin.Text = "Login";
             this.btnLogin.UseVisualStyleBackColor = true;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.btnLearnTalents);
+            this.groupBox8.Controls.Add(this.cbTalentTemplates);
+            this.groupBox8.Controls.Add(this.lblTalentTemplates);
+            this.groupBox8.Location = new System.Drawing.Point(18, 61);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(312, 52);
+            this.groupBox8.TabIndex = 71;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Talent Test";
+            // 
+            // btnLearnTalents
+            // 
+            this.btnLearnTalents.Location = new System.Drawing.Point(228, 15);
+            this.btnLearnTalents.Name = "btnLearnTalents";
+            this.btnLearnTalents.Size = new System.Drawing.Size(75, 23);
+            this.btnLearnTalents.TabIndex = 65;
+            this.btnLearnTalents.Text = "Learn Now";
+            this.btnLearnTalents.UseVisualStyleBackColor = true;
+            // 
+            // cbTalentTemplates
+            // 
+            this.cbTalentTemplates.FormattingEnabled = true;
+            this.cbTalentTemplates.Location = new System.Drawing.Point(101, 17);
+            this.cbTalentTemplates.Name = "cbTalentTemplates";
+            this.cbTalentTemplates.Size = new System.Drawing.Size(121, 21);
+            this.cbTalentTemplates.TabIndex = 64;
+            // 
+            // lblTalentTemplates
+            // 
+            this.lblTalentTemplates.AutoSize = true;
+            this.lblTalentTemplates.Location = new System.Drawing.Point(6, 20);
+            this.lblTalentTemplates.Name = "lblTalentTemplates";
+            this.lblTalentTemplates.Size = new System.Drawing.Size(89, 13);
+            this.lblTalentTemplates.TabIndex = 63;
+            this.lblTalentTemplates.Text = "Talent Templates";
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.btnReturnQuest);
+            this.groupBox7.Controls.Add(this.label39);
+            this.groupBox7.Controls.Add(this.label40);
+            this.groupBox7.Controls.Add(this.cbQuestList);
+            this.groupBox7.Controls.Add(this.btnGetQuest);
+            this.groupBox7.Controls.Add(this.cbQuestChoiceReward);
+            this.groupBox7.Location = new System.Drawing.Point(15, 119);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(541, 77);
+            this.groupBox7.TabIndex = 70;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Quest Test";
+            // 
+            // btnReturnQuest
+            // 
+            this.btnReturnQuest.Enabled = false;
+            this.btnReturnQuest.Location = new System.Drawing.Point(436, 44);
+            this.btnReturnQuest.Name = "btnReturnQuest";
+            this.btnReturnQuest.Size = new System.Drawing.Size(99, 23);
+            this.btnReturnQuest.TabIndex = 69;
+            this.btnReturnQuest.Text = "Move && Turn in";
+            this.btnReturnQuest.UseVisualStyleBackColor = true;
+            this.btnReturnQuest.Click += new System.EventHandler(this.btnReturnQuest_Click);
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(6, 22);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(68, 13);
+            this.label39.TabIndex = 64;
+            this.label39.Text = "Select Quest";
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(6, 49);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(80, 13);
+            this.label40.TabIndex = 68;
+            this.label40.Text = "Choice Reward\r\n";
+            // 
+            // cbQuestList
+            // 
+            this.cbQuestList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbQuestList.FormattingEnabled = true;
+            this.cbQuestList.Location = new System.Drawing.Point(80, 19);
+            this.cbQuestList.Name = "cbQuestList";
+            this.cbQuestList.Size = new System.Drawing.Size(350, 21);
+            this.cbQuestList.TabIndex = 65;
+            this.cbQuestList.SelectedIndexChanged += new System.EventHandler(this.cbQuestList_SelectedIndexChanged);
+            this.cbQuestList.DropDown += new System.EventHandler(this.cbQuestList_DropDown);
+            // 
+            // btnGetQuest
+            // 
+            this.btnGetQuest.Enabled = false;
+            this.btnGetQuest.Location = new System.Drawing.Point(436, 17);
+            this.btnGetQuest.Name = "btnGetQuest";
+            this.btnGetQuest.Size = new System.Drawing.Size(99, 23);
+            this.btnGetQuest.TabIndex = 67;
+            this.btnGetQuest.Text = "Move && Accept";
+            this.btnGetQuest.UseVisualStyleBackColor = true;
+            this.btnGetQuest.Click += new System.EventHandler(this.btnGetQuest_Click);
+            // 
+            // cbQuestChoiceReward
+            // 
+            this.cbQuestChoiceReward.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbQuestChoiceReward.FormattingEnabled = true;
+            this.cbQuestChoiceReward.Location = new System.Drawing.Point(95, 46);
+            this.cbQuestChoiceReward.Name = "cbQuestChoiceReward";
+            this.cbQuestChoiceReward.Size = new System.Drawing.Size(109, 21);
+            this.cbQuestChoiceReward.TabIndex = 66;
+            this.cbQuestChoiceReward.SelectedIndexChanged += new System.EventHandler(this.cbQuestChoiceReward_SelectedIndexChanged);
             // 
             // btnInteract
             // 
@@ -1757,13 +1872,17 @@
             // 
             // tabPageScript
             // 
+            this.tabPageScript.Controls.Add(this.btnDeleteCurrent);
+            this.tabPageScript.Controls.Add(this.btnDeleteAll);
+            this.tabPageScript.Controls.Add(this.btnCopyToClipboard);
+            this.tabPageScript.Controls.Add(this.btnNewLua);
+            this.tabPageScript.Controls.Add(this.tabLua);
             this.tabPageScript.Controls.Add(this.btnUnregisterInputHandler);
             this.tabPageScript.Controls.Add(this.btnRegisterInputHandler);
             this.tabPageScript.Controls.Add(this.btnInputHandler);
             this.tabPageScript.Controls.Add(this.btnGetLuaText);
             this.tabPageScript.Controls.Add(this.tbLuaResult);
             this.tabPageScript.Controls.Add(this.btnDoString);
-            this.tabPageScript.Controls.Add(this.tbLuaScript);
             this.tabPageScript.Location = new System.Drawing.Point(4, 22);
             this.tabPageScript.Name = "tabPageScript";
             this.tabPageScript.Padding = new System.Windows.Forms.Padding(3);
@@ -1772,11 +1891,91 @@
             this.tabPageScript.Text = "Lua";
             this.tabPageScript.UseVisualStyleBackColor = true;
             // 
+            // btnDeleteCurrent
+            // 
+            this.btnDeleteCurrent.Enabled = false;
+            this.btnDeleteCurrent.Location = new System.Drawing.Point(481, 125);
+            this.btnDeleteCurrent.Name = "btnDeleteCurrent";
+            this.btnDeleteCurrent.Size = new System.Drawing.Size(75, 36);
+            this.btnDeleteCurrent.TabIndex = 32;
+            this.btnDeleteCurrent.Text = "Delete Current";
+            this.btnDeleteCurrent.UseVisualStyleBackColor = true;
+            this.btnDeleteCurrent.Click += new System.EventHandler(this.btnDeleteCurrent_Click);
+            // 
+            // btnDeleteAll
+            // 
+            this.btnDeleteAll.Enabled = false;
+            this.btnDeleteAll.Location = new System.Drawing.Point(481, 167);
+            this.btnDeleteAll.Name = "btnDeleteAll";
+            this.btnDeleteAll.Size = new System.Drawing.Size(75, 23);
+            this.btnDeleteAll.TabIndex = 31;
+            this.btnDeleteAll.Text = "Delete All";
+            this.btnDeleteAll.UseVisualStyleBackColor = true;
+            this.btnDeleteAll.Click += new System.EventHandler(this.btnDeleteAll_Click);
+            // 
+            // btnCopyToClipboard
+            // 
+            this.btnCopyToClipboard.Location = new System.Drawing.Point(481, 54);
+            this.btnCopyToClipboard.Name = "btnCopyToClipboard";
+            this.btnCopyToClipboard.Size = new System.Drawing.Size(75, 42);
+            this.btnCopyToClipboard.TabIndex = 30;
+            this.btnCopyToClipboard.Text = "Copy To Clipboard";
+            this.btnCopyToClipboard.UseVisualStyleBackColor = true;
+            this.btnCopyToClipboard.Click += new System.EventHandler(this.btnCopyToClipboard_Click);
+            // 
+            // btnNewLua
+            // 
+            this.btnNewLua.Location = new System.Drawing.Point(481, 25);
+            this.btnNewLua.Name = "btnNewLua";
+            this.btnNewLua.Size = new System.Drawing.Size(75, 23);
+            this.btnNewLua.TabIndex = 29;
+            this.btnNewLua.Text = "New";
+            this.btnNewLua.UseVisualStyleBackColor = true;
+            this.btnNewLua.Click += new System.EventHandler(this.btnNewLua_Click);
+            // 
+            // tabLua
+            // 
+            this.tabLua.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabLua.Controls.Add(this.tabPage3);
+            this.tabLua.Location = new System.Drawing.Point(0, 3);
+            this.tabLua.Name = "tabLua";
+            this.tabLua.SelectedIndex = 0;
+            this.tabLua.Size = new System.Drawing.Size(475, 191);
+            this.tabLua.TabIndex = 28;
+            this.tabLua.SelectedIndexChanged += new System.EventHandler(this.tabLua_SelectedIndexChanged);
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.tbLuaScript);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(467, 165);
+            this.tabPage3.TabIndex = 0;
+            this.tabPage3.Text = "f1";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // tbLuaScript
+            // 
+            this.tbLuaScript.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbLuaScript.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbLuaScript.Location = new System.Drawing.Point(0, 0);
+            this.tbLuaScript.Multiline = true;
+            this.tbLuaScript.Name = "tbLuaScript";
+            this.tbLuaScript.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbLuaScript.Size = new System.Drawing.Size(467, 165);
+            this.tbLuaScript.TabIndex = 21;
+            // 
             // btnUnregisterInputHandler
             // 
-            this.btnUnregisterInputHandler.Location = new System.Drawing.Point(489, 200);
+            this.btnUnregisterInputHandler.Enabled = false;
+            this.btnUnregisterInputHandler.Location = new System.Drawing.Point(401, 200);
             this.btnUnregisterInputHandler.Name = "btnUnregisterInputHandler";
-            this.btnUnregisterInputHandler.Size = new System.Drawing.Size(75, 23);
+            this.btnUnregisterInputHandler.Size = new System.Drawing.Size(70, 23);
             this.btnUnregisterInputHandler.TabIndex = 27;
             this.btnUnregisterInputHandler.Text = "UnRegister";
             this.btnUnregisterInputHandler.UseVisualStyleBackColor = true;
@@ -1784,9 +1983,10 @@
             // 
             // btnRegisterInputHandler
             // 
-            this.btnRegisterInputHandler.Location = new System.Drawing.Point(408, 200);
+            this.btnRegisterInputHandler.Enabled = false;
+            this.btnRegisterInputHandler.Location = new System.Drawing.Point(340, 200);
             this.btnRegisterInputHandler.Name = "btnRegisterInputHandler";
-            this.btnRegisterInputHandler.Size = new System.Drawing.Size(75, 23);
+            this.btnRegisterInputHandler.Size = new System.Drawing.Size(55, 23);
             this.btnRegisterInputHandler.TabIndex = 26;
             this.btnRegisterInputHandler.Text = "Register";
             this.btnRegisterInputHandler.UseVisualStyleBackColor = true;
@@ -1794,9 +1994,10 @@
             // 
             // btnInputHandler
             // 
-            this.btnInputHandler.Location = new System.Drawing.Point(106, 200);
+            this.btnInputHandler.Enabled = false;
+            this.btnInputHandler.Location = new System.Drawing.Point(68, 200);
             this.btnInputHandler.Name = "btnInputHandler";
-            this.btnInputHandler.Size = new System.Drawing.Size(100, 23);
+            this.btnInputHandler.Size = new System.Drawing.Size(77, 23);
             this.btnInputHandler.TabIndex = 25;
             this.btnInputHandler.Text = "InputHandler";
             this.btnInputHandler.UseVisualStyleBackColor = true;
@@ -1804,9 +2005,10 @@
             // 
             // btnGetLuaText
             // 
-            this.btnGetLuaText.Location = new System.Drawing.Point(212, 200);
+            this.btnGetLuaText.Enabled = false;
+            this.btnGetLuaText.Location = new System.Drawing.Point(151, 200);
             this.btnGetLuaText.Name = "btnGetLuaText";
-            this.btnGetLuaText.Size = new System.Drawing.Size(75, 23);
+            this.btnGetLuaText.Size = new System.Drawing.Size(67, 23);
             this.btnGetLuaText.TabIndex = 24;
             this.btnGetLuaText.Text = "Get Result";
             this.btnGetLuaText.UseVisualStyleBackColor = true;
@@ -1824,22 +2026,14 @@
             // 
             // btnDoString
             // 
+            this.btnDoString.Enabled = false;
             this.btnDoString.Location = new System.Drawing.Point(0, 200);
             this.btnDoString.Name = "btnDoString";
-            this.btnDoString.Size = new System.Drawing.Size(100, 23);
+            this.btnDoString.Size = new System.Drawing.Size(62, 23);
             this.btnDoString.TabIndex = 22;
             this.btnDoString.Text = "DoString";
             this.btnDoString.UseVisualStyleBackColor = true;
             this.btnDoString.Click += new System.EventHandler(this.btnDoString_Click);
-            // 
-            // tbLuaScript
-            // 
-            this.tbLuaScript.Location = new System.Drawing.Point(0, 0);
-            this.tbLuaScript.Multiline = true;
-            this.tbLuaScript.Name = "tbLuaScript";
-            this.tbLuaScript.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbLuaScript.Size = new System.Drawing.Size(564, 194);
-            this.tbLuaScript.TabIndex = 21;
             // 
             // statusStrip1
             // 
@@ -1910,8 +2104,16 @@
             this.tabPageDebug.PerformLayout();
             this.tabPageDebug2.ResumeLayout(false);
             this.tabPageDebug2.PerformLayout();
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.tabPageScript.ResumeLayout(false);
             this.tabPageScript.PerformLayout();
+            this.tabLua.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -2078,14 +2280,29 @@
         private System.Windows.Forms.TextBox tbLuaResult;
         private System.Windows.Forms.Button btnDoString;
         private System.Windows.Forms.TextBox tbLuaScript;
-        private System.Windows.Forms.Button btnLearnTalents;
-        private System.Windows.Forms.ComboBox cbTalentTemplates;
-        private System.Windows.Forms.Label lblTalentTemplates;
         private System.Windows.Forms.Button btnAddNPC;
         private System.Windows.Forms.ToolStripMenuItem npcListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addCurrentTargetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startWoWToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.TabControl tabLua;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button btnDeleteAll;
+        private System.Windows.Forms.Button btnCopyToClipboard;
+        private System.Windows.Forms.Button btnNewLua;
+        private System.Windows.Forms.Button btnDeleteCurrent;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.Button btnGetQuest;
+        private System.Windows.Forms.ComboBox cbQuestChoiceReward;
+        private System.Windows.Forms.ComboBox cbQuestList;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.Button btnReturnQuest;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.Button btnLearnTalents;
+        private System.Windows.Forms.ComboBox cbTalentTemplates;
+        private System.Windows.Forms.Label lblTalentTemplates;
+        private System.Windows.Forms.GroupBox groupBox9;
     }
 }
 

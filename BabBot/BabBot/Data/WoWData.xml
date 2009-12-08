@@ -52,7 +52,7 @@ Lots of credits to http://wowprogramming.com/
       <continent id="3" name="Expansion01" />
       <continent id="4" name="Northrend" />
     </continents>      
-    <lua>
+    <lua fnew_pattern="(function()\r\n  \r\nend)()">
       <!-- SetGlueState -->
       <function name="SetGlueState">
         <parameters>
@@ -558,8 +558,29 @@ end)()]]>
       if (QuestFrame:IsShown()) then
 		    service = "quest"
         
+        title = GetTitleText()
+        if (GetQuestText() ~= "") then
+          qt = "_start"
+        else
+          if (GetRewardText() ~= "") then
+            d1 = title
+            qt = "_end"
+          else
+            if (GetProgressText() ~= "") then
+              qt = "_progress"
+            else
+              return null
+            end
+          end
+        end
+        
+        service = service .. qt
+        if (service ~= "quest_start") then
+          return service, d1
+        end
+        
 		    -- Returning quest level as char level
-        d1 = UnitLevel("player") .. "::" .. GetTitleText() .. 
+        d1 = UnitLevel("player") .. "::" .. title .. 
                "::" .. GetQuestText() .. "::" .. GetObjectiveText()
                     
         q = {"required", "reward", "choice"}
@@ -672,6 +693,37 @@ end)()]]>
         <text>
           <![CDATA[(function()
   SelectGossipAvailableQuest({0})
+end)()]]>
+        </text>
+      </function>
+      
+      <!-- AcceptQuest -->
+        <function name="AcceptQuest">
+        <text>
+          <![CDATA[(function()
+  AcceptQuest()
+end)()]]>
+        </text>
+      </function>
+
+      <!-- AcceptQuest -->
+      <function name="CompleteQuest">
+        <text>
+          <![CDATA[(function()
+  CompleteQuest()
+end)()]]>
+        </text>
+      </function>
+     
+
+      <!-- GetQuestReward -->
+        <function name="GetQuestReward">
+        <parameters>
+          0 - Quest choice
+        </parameters>
+        <text>
+          <![CDATA[(function()
+   GetQuestReward({0})
 end)()]]>
         </text>
       </function>

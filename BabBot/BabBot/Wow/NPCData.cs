@@ -23,11 +23,10 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using BabBot.Common;
+using BabBot.Manager;
 
 namespace BabBot.Wow
 {
-    // TODO organize NPC continent ID into list 
-    // with table of zones NPC was found. Keep waypoints assigned per zone
     #region NPC
     
     [XmlRoot("npc_data")]
@@ -59,9 +58,53 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
+        [XmlIgnore]
+        public Quest[] QuestList;
+
         public NPC FindNpcByName(string name)
         {
             return FindItemByName(name);
+        }
+
+        public Quest FindQuestByTitle(string title)
+        {
+            Quest q = null;
+
+            foreach (NPC npc in Items)
+            {
+                q = npc.FindQuestByTitle(title);
+                if (q != null)
+                    break;
+            }
+
+            return q;
+        }
+
+        public void IndexData()
+        {
+            IndexQuestList();
+        }
+
+        /// <summary>
+        /// Extract quests from NPC and index into sorted list
+        /// </summary>
+        private void IndexQuestList()
+        {
+            SortedList l = new SortedList();
+
+            foreach (NPC npc in Table.Values)
+            {
+                Quests ql = npc.QuestList;
+                if (ql != null)
+                    foreach (Quest q in ql.Table.Values)
+                    {
+                        q.SrcNpc = npc;
+                        l.Add(q.Name, q);
+                    }
+            }
+
+            QuestList = new Quest[l.Count];
+            l.Values.CopyTo(QuestList, 0);
         }
     }
 
@@ -76,11 +119,8 @@ namespace BabBot.Wow
         [XmlAttribute("sex")]
         public string Sex;
 
-        [XmlAttribute("continent_id")] 
-        public int ContinentId;
-
-        [XmlAttribute("zone_text")] 
-        public string ZoneText;
+        [XmlElement("wp_list")]
+        public ContinentListId Continents;
 
         [XmlAttribute("class")] 
         public string Class;
@@ -91,11 +131,8 @@ namespace BabBot.Wow
         [XmlElement("quests")]
         public Quests QuestList;
 
-        [XmlElement("wp_list")]
-        public Waypoints WPList;
-
         public NPC() {
-            WPList = new Waypoints();
+            Continents = new ContinentListId();
             Services = new NPCServices();
             QuestList = new Quests();
         }
@@ -115,10 +152,7 @@ namespace BabBot.Wow
             Race = race;
             Sex = sex;
 
-            ContinentId = continent_id;
-            ZoneText = zone_text;
-
-            WPList.Add(waypoint);
+            Continents.Add(new ContinentId(continent_id, new Zone(zone_text, waypoint)));
         }
 
         public void AddService(NPCService service)
@@ -138,14 +172,11 @@ namespace BabBot.Wow
             return (
                 // Check name
                 Name.Equals(npc.Name) && 
-                // Continent ID
-                (ContinentId == npc.ContinentId) &&
-                // Zone Text
-                (ZoneText.Equals(npc.ZoneText)) &&
+                
                 // Service list
                 Services.Equals(npc.Services) &&
                 // Waypoints
-                WPList.Equals(npc.WPList) &&
+                Continents.Equals(npc.Continents) &&
                 // Quest List
                 QuestList.Equals(npc.QuestList));
         }
@@ -161,24 +192,15 @@ namespace BabBot.Wow
             Services.Merge(npc.Services);
 
             // Merge Waypoints
-            WPList.Merge(npc.WPList);
+            Continents.Merge(npc.Continents);
             
             // Merge Quest List
             QuestList.Merge(npc.QuestList);
         }
-    }
 
-    #endregion
-    
-    #region Waypoints
-    
-    public class Waypoints : CommonList<Vector3D>
-    {
-        [XmlElement("waypoint")]
-        public Vector3D[] VectorList
+        public Quest FindQuestByTitle(string title)
         {
-            get { return Items; }
-            set { Items = value; }
+            return QuestList.FindItemByName(title);
         }
     }
 
@@ -204,16 +226,24 @@ namespace BabBot.Wow
         [XmlAttribute("bonus_spell")]
         public string BonusSpell;
 
+        [XmlAttribute("dest_npc")]
+        public string DestNpc = null;
+
+        [XmlAttribute("depends_of")]
+        public string DependsOf = null;
+
         [XmlIgnore]
         internal QuestItem[] QuestItems = new QuestItem[3];
 
+        [XmlIgnore]
+        public NPC SrcNpc = null;
+        
         [XmlElement("req_items")]
         public QuestItem ReqItems
         {
             get { return QuestItems[0]; }
             set { QuestItems[0] = value; }
         }
-
 
         [XmlElement("reward_items")]
         public QuestItem RewardItems
@@ -231,9 +261,6 @@ namespace BabBot.Wow
 
         [XmlElement("objectives", typeof(XmlCDataSection))]
         public XmlCDataSection Objectives { get; set; }
-
-        [XmlElement("dest_npc")]
-        public string DestNpc = null;
 
         [XmlIgnore]
         public string TextObjectives
@@ -271,7 +298,7 @@ namespace BabBot.Wow
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if ((obj == null) || (typeof(object) != typeof(Quest)))
                 return false;
 
             return Equals((Quest)obj);
@@ -331,7 +358,7 @@ namespace BabBot.Wow
         }
     }
 
-    public class QuestItem : CommonTable<CommonQty>
+    public class QuestItem : CommonList<CommonQty>
     {
         [XmlElement("item")]
         public CommonQty[] ItemList
@@ -426,6 +453,63 @@ namespace BabBot.Wow
             CanRepair = can_repair;
             HasWater = has_water;
             HasFood = has_food;
+        }
+    }
+
+    #endregion
+
+    #region Waypoints
+
+    public class ContinentListId : CommonTable<ContinentId>
+    {
+        [XmlElement("continent")]
+        public ContinentId[] Continents
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+
+        public ContinentId FindContinentById(int id)
+        {
+            return FindItemByName(Convert.ToString(id));
+        }
+    }
+
+    public class ContinentId : CommonIdTable<Zone>
+    {
+        [XmlElement("zone")]
+        public Zone[] ZList
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+
+        public ContinentId() { }
+        public ContinentId(int id) : base(id) { }
+        public ContinentId(int id, Zone z) 
+            : this(id) 
+        {
+            Table.Add(z.Name, z);
+        }
+    }
+
+    
+
+    public class Zone : CommonNameList<Vector3D>
+    {
+        [XmlElement("waypoint")]
+        public Vector3D[] VectorList
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+
+        public Zone() { }
+        public Zone(string name) : base(name) { }
+        public Zone(string name, Vector3D v)
+            : this(name)
+        {
+            List.Add(v);
         }
     }
 

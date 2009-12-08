@@ -121,6 +121,7 @@ namespace BabBot.Manager
         /// Fired when player Entered to WoW world
         /// </summary>
         public static event PlayerUpdateEventHandler WoWInGame;
+        public static event PlayerUpdateEventHandler WoWGameLoaded;
 
         public static event PlayerUpdateEventHandler PlayerUpdate;
         public static event PlayerWayPointEventHandler PlayerWayPoint;
@@ -290,7 +291,7 @@ namespace BabBot.Manager
 
         #region Private Methods
 
-        private static void afterProcessStart()
+        private static void AfterProcessStart()
         {
             Debug("char", "Executing AfterStart ...");
 
@@ -334,6 +335,9 @@ namespace BabBot.Manager
 
 
                 // At this point it should be safe to do any LUA calls
+                if (WoWGameLoaded != null)
+                    WoWGameLoaded();
+
                 if (config.WoWInfo.AutoLogin)
                 {
                     Injector.Lua_RegisterInputHandler();
@@ -384,9 +388,7 @@ namespace BabBot.Manager
             // TODO Check for crush
 
             if (WoWProcessEnded != null)
-            {
                 WoWProcessEnded(((Process) sender).Id);
-            }
 
             Debug("char", "WoW termination completed");
         }
@@ -470,13 +472,16 @@ namespace BabBot.Manager
             }
 
             //\\ TEST
-            //SaveXmlData(NPCDataFileName, typeof(NPCData), ndata);
+            // SaveNpcData();
 
             // Everything else after
             LoadConfig();
 
             // Attach NPC data to selected WoW version
             wversion.NPCData = ndata.FindVersion(wversion.Name);
+
+            // Index NPC data for future use
+            wversion.NPCData.IndexData();
 
             //\\ Test
             /*
@@ -618,7 +623,7 @@ namespace BabBot.Manager
 
                     if (process != null)
                     {
-                        afterProcessStart();
+                        AfterProcessStart();
                         Log("char", "WoW started.");
                     }
                     else
@@ -1055,6 +1060,9 @@ namespace BabBot.Manager
             else
                 Output.Instance.Log("npc", "File " + NPCDataFileName + 
                                                             " successfully saved.");
+
+            // Index NPC Data
+            wversion.NPCData.IndexData();
 
             return true;
         }

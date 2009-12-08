@@ -97,9 +97,7 @@ namespace BabBot.Common
 
         public override bool Equals(object obj)
         {
-            if (obj == null) 
-                return false;
-            return ToString().Equals(obj.ToString());
+            return (obj != null) && ToString().Equals(obj.ToString());
         }
 
         public override int GetHashCode()
@@ -129,6 +127,11 @@ namespace BabBot.Common
         {
             XmlDocument doc = new XmlDocument();
             Text = doc.CreateCDataSection(text);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj) && (((CommonText) obj).TextData.Equals(TextData));
         }
     }
 
@@ -185,6 +188,37 @@ namespace BabBot.Common
         {
             return Convert.ToString(Id);
         }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj) && (((CommonItemEx) obj).Id == Id);
+        }
+    }
+
+    /// <summary>
+    /// Common class for collection items with id -> name parameters
+    /// </summary>
+    public abstract class CommonItemId 
+    {
+        [XmlAttribute("id")]
+        public int Id;
+
+        public CommonItemId() { }
+
+        public CommonItemId(int id)
+        {
+            Id = id;
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(Id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return (obj != null) && (((CommonItemId) obj).Id == Id);
+        }
     }
 
     /// <summary>
@@ -227,6 +261,9 @@ namespace BabBot.Common
 
         public override bool Equals(object obj)
         {
+            if (obj == null)
+                return false;
+
             CommonTable<T> t = (CommonTable<T>)obj;
 
             // Check size first
@@ -294,6 +331,49 @@ namespace BabBot.Common
         {
             return Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj) && 
+                (((CommonNameTable<T>)obj).Name.Equals(Name));
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+    }
+
+    /// <summary>
+    /// Class with internal hashtable that needs to be serialized and have a unique id
+    /// </summary>
+    /// <typeparam name="T">Type of elements in the table</typeparam>
+    public abstract class CommonIdTable<T> : CommonTable<T>
+    {
+        [XmlAttribute("id")]
+        public int Id;
+
+        public CommonIdTable() { }
+
+        public CommonIdTable(int id) : base()
+        {
+            Id = id;
+        }
+
+        public override string ToString()
+        {
+            return Convert.ToString(Id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj) && (((CommonIdTable<T>)obj).Id == Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     /// <summary>
@@ -336,6 +416,9 @@ namespace BabBot.Common
 
         public override bool Equals(object obj)
         {
+            if (obj == null)
+                return false;
+
             CommonList<T> l = (CommonList<T>)obj;
 
             // Check size first
@@ -388,6 +471,29 @@ namespace BabBot.Common
     {
         [XmlAttribute("name")]
         public string Name;
+
+        public CommonNameList() {}
+
+        public CommonNameList(string name) :
+            base()
+        {
+            Name = name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj) && ((CommonNameList<T>) obj).Name.Equals(Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     #endregion

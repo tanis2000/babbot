@@ -79,6 +79,9 @@ namespace BabBot.Wow
 
     public class LuaProc : CommonTable<LuaFunction>
     {
+        [XmlAttribute("fnew_pattern")]
+        public string FNewPattern;
+
         [XmlElement("function")]
         public LuaFunction[] FList
         {

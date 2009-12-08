@@ -1,25 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <npc_data version="0">
   <wow_version name="3.2.2.10505">
-    <npc name="Dellylah" race="NIGHTELF" sex="2" continent_id="1" zone_text="Teldrassil">
+    <npc name="Dellylah" race="NIGHTELF" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10450.2" y="779.858" z="1322.75" />
+          </zone>
+        </continent>
+      </wp_list>
       <services>
         <service d5p1:type="VendorService" type="vendor" can_repair="false" has_water="true" has_food="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
       </services>
       <quests />
-      <wp_list>
-        <waypoint x="10450.2" y="779.858" z="1322.75" />
-      </wp_list>
     </npc>
-    <npc name="Keina" race="NIGHTELF" sex="2" continent_id="1" zone_text="Teldrassil">
+    <npc name="Keina" race="NIGHTELF" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10436.7" y="794.837" z="1322.79" />
+          </zone>
+        </continent>
+      </wp_list>
       <services>
         <service d5p1:type="VendorService" type="vendor" can_repair="true" has_water="false" has_food="false" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
       </services>
       <quests />
-      <wp_list>
-        <waypoint x="10436.7" y="794.837" z="1322.79" />
-      </wp_list>
     </npc>
-    <npc name="Conservator Ilthalaine" sex="2" continent_id="1" zone_text="Teldrassil">
+    <npc name="Conservator Ilthalaine" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10328.9" y="826.052" z="1326.38" />
+          </zone>
+        </continent>
+      </wp_list>
       <services />
       <quests>
         <quest name="The Balance of Nature" level="2" bonus_spell="">
@@ -35,14 +50,29 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
           <objectives><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives>
         </quest>
       </quests>
-      <wp_list>
-        <waypoint x="10328.9" y="826.052" z="1326.38" />
-      </wp_list>
     </npc>
-    <npc name="Melithar Staghelm" sex="2" continent_id="1" zone_text="Teldrassil">
+    <npc name="Tarindrella" sex="1">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10296.9" y="870.227" z="1335.89465" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services />
+      <quests />
+    </npc>
+    <npc name="Melithar Staghelm" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10389.8" y="763.477" z="1320.33" />
+          </zone>
+        </continent>
+      </wp_list>
       <services />
       <quests>
-        <quest name="The Woodland Protector" level="1" bonus_spell="">
+        <quest name="The Woodland Protector" level="1" bonus_spell="" dest_npc="Tarindrella">
           <text><![CDATA[Thank goodness you are here, hunter. Strange news has traveled to me through the whisperings of the forest spirits.
 
 The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
@@ -51,9 +81,6 @@ Seek out Tarindrella and see what business she tends to in our grove. One of the
           <objectives><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives>
         </quest>
       </quests>
-      <wp_list>
-        <waypoint x="10389.8" y="763.477" z="1320.33" />
-      </wp_list>
     </npc>
   </wow_version>
 </npc_data>

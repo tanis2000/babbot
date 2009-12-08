@@ -67,6 +67,7 @@ namespace BabBot.Forms
             ProcessManager.WoWProcessFailed += wow_ProcessFailed;
             ProcessManager.WoWProcessAccessFailed += wow_ProcessAccessFailed;
             ProcessManager.WoWInGame += wow_InGame;
+            ProcessManager.WoWGameLoaded += wo_GameLoaded;
 
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
@@ -327,6 +328,27 @@ namespace BabBot.Forms
             else
             {
                 btnLogin.Enabled = false;
+
+                SetLuaDebugBtns(false);
+            }
+        }
+
+        private void wo_GameLoaded()
+        {
+            // Cross-Thread operation
+            if (InvokeRequired)
+            {
+                // Setup the cross-thread call
+                InGameDelegate del = wo_GameLoaded;
+                Invoke(del);
+            }
+            else
+            {
+                btnDoString.Enabled = true;
+                btnInputHandler.Enabled = true;
+                btnGetLuaText.Enabled = true;
+
+                SetLuaDebugBtns(false);
             }
         }
 
@@ -371,15 +393,19 @@ namespace BabBot.Forms
 
         private void ActivateDebugMode()
         {
-            tabControlMain.TabPages["tabPageDebug"].Enabled = true;
-            tabControlMain.TabPages["tabPageDebug2"].Enabled = true;
+            SetDebugMode(true);
         }
 
 
         private void DeactivateDebugMode()
         {
-            tabControlMain.TabPages["tabPageDebug"].Enabled = false;
-            tabControlMain.TabPages["tabPageDebug2"].Enabled = false;
+            SetDebugMode(false);
+        }
+
+        private void SetDebugMode(bool Enabled)
+        {
+            tabControlMain.TabPages["tabPageDebug"].Visible = Enabled;
+            tabControlMain.TabPages["tabPageDebug2"].Visible = Enabled;
         }
 
         #region UI Event Handlers
@@ -711,31 +737,6 @@ namespace BabBot.Forms
             }
         }
 
-        private void btnDoString_Click(object sender, EventArgs e)
-        {
-            ProcessManager.Injector.Lua_DoString(tbLuaScript.Text);
-        }
-
-        private void btnInputHandler_Click(object sender, EventArgs e)
-        {
-            ProcessManager.Injector.Lua_DoStringEx(tbLuaScript.Text);
-            btnGetLuaText_Click(sender, e);
-        }
-
-        private void btnGetLuaText_Click(object sender, EventArgs e)
-        {
-            List<string> s = ProcessManager.Injector.Lua_GetValues();
-            tbLuaResult.Clear();
-
-            if (s.Count > 0)
-                foreach (string tmp in s)
-                {
-                    tbLuaResult.Text += tmp + Environment.NewLine;
-                }
-            else
-                tbLuaResult.Text = "null";
-        }
-
         #endregion
 
         #region Nested type: PlayerUpdateDelegate
@@ -779,6 +780,8 @@ namespace BabBot.Forms
                     if (rt == null)
                     {
                         TabPage tab = new TabPage(facility);
+                        tab.Name = facility;
+
                         rt = new RichTextBox();
                         rt.Size = txtConsole.Size;
                         rt.BackColor = txtConsole.BackColor;
@@ -880,12 +883,13 @@ namespace BabBot.Forms
             }
 
             Radar = new Radar.Radar(imgRadar);
-            SetDebugBtns();
 
             if (ProcessManager.Config.DebugMode)
                 ActivateDebugMode();
             else
                 DeactivateDebugMode();
+
+            tbLuaScript.Text = GetFNewLuaPattern();
 
             // Always last
             if (ProcessManager.AutoRun)
@@ -893,6 +897,7 @@ namespace BabBot.Forms
                 // Start wow for now
                 btnRun_Click(sender, e);
             }
+
 
             /// Test
 #if DEBUG
@@ -917,11 +922,6 @@ namespace BabBot.Forms
             throw new NotImplementedException();
         }
 
-        private void SetDebugBtns()
-        {
-            btnRegisterInputHandler.Enabled = !ProcessManager.Injector.IsLuaRegistered;
-            btnUnregisterInputHandler.Enabled = !btnRegisterInputHandler.Enabled;
-        }
 
         private void btnResetBot_Click(object sender, EventArgs e)
         {
@@ -973,18 +973,6 @@ namespace BabBot.Forms
         {
             double x = Convert.ToDouble(hsOpacity.Value)/100;
             Opacity = x;
-        }
-
-        private void btnRegisterInputHandler_Click(object sender, EventArgs e)
-        {
-            ProcessManager.Injector.Lua_RegisterInputHandler();
-            SetDebugBtns();
-        }
-
-        private void btnUnregisterInputHandler_Click(object sender, EventArgs e)
-        {
-            ProcessManager.Injector.Lua_UnRegisterInputHandler();
-            SetDebugBtns();
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -1309,7 +1297,31 @@ namespace BabBot.Forms
                 npc.AddService(npc_service);
         }
 
-        private void AddNpcQuest(NPC npc, string[] opts)
+        private void AddNpcQuestEnd(NPC npc, string[] opts)
+        {
+            if ((opts.Length < 2) || (opts[1] == null))
+            {
+                Output.Instance.LogError("npc", "Not enough " +
+                        opts.Length + " parameters to add quest end");
+                return;
+            }
+
+            string qtitle = opts[1];
+
+            // Now find NPC who has an original quest
+
+            Quest q = ProcessManager.CurWoWVersion.NPCData.FindQuestByTitle(qtitle);
+
+            if (q != null)
+            {
+                Output.Instance.Log("Assign current NPC as end for quest '" +
+                                                                qtitle + "'");
+
+                q.DestNpc = npc.Name;
+            }
+        }
+
+        private void AddNpcQuestStart(NPC npc, string[] opts)
         {
             Quest q = null;
 
@@ -1317,7 +1329,7 @@ namespace BabBot.Forms
             if (opts.Length < 4)
             {
                 Output.Instance.LogError("npc", "Not enough " + 
-                        opts.Length + " parameters to add quest");
+                        opts.Length + " parameters to add quest start");
                 return;
             }
 
@@ -1354,6 +1366,9 @@ namespace BabBot.Forms
                 int qlevel = Convert.ToInt32(headers[0]);
                 if (qh != null)
                     qlevel = qh.Level;
+
+                Output.Instance.Log("Assign current NPC as start for quest '" + 
+                                                                        headers[1] + "'");
 
                 q = new Quest(headers[1], headers[2], headers[3], qlevel, 
                     new int[] { Convert.ToInt32(info[3]), Convert.ToInt32(info[4]), 
@@ -1544,8 +1559,13 @@ namespace BabBot.Forms
                         return false;
             
             }
-            else if (cur_service.Equals("quest"))
-                AddNpcQuest(npc, fparams);
+            else if (cur_service.Equals("quest_start"))
+                AddNpcQuestStart(npc, fparams);
+            else if (cur_service.Equals("quest_progress"))
+                Output.Instance.Log("Ignoring quest progress. If you need add initial quest " + 
+                    "than drop it and talk to NPC again");
+            else if (cur_service.Equals("quest_end"))
+                AddNpcQuestEnd(npc, fparams);
             else
                 AddNpcService(npc, cur_service, fparams);
 
@@ -1554,6 +1574,7 @@ namespace BabBot.Forms
 
         private bool AddNpc()
         {
+            // Initialize parameters
             qh = null;
 
             string npc_name = ProcessManager.Player.CurTarget.Name;
@@ -1562,7 +1583,7 @@ namespace BabBot.Forms
             string[] npc_info = ProcessManager.Injector.
                 Lua_ExecByName("GetUnitInfo", new object[] {"target"});
 
-            Output.Instance.Debug("Checking NPC Info ...");
+            Output.Instance.Log("Checking NPC Info ...");
             NPC npc = new NPC(ProcessManager.Player, npc_info[3], npc_info[4]);
 
             if (!AddNpcInfo(npc))
@@ -1641,7 +1662,8 @@ namespace BabBot.Forms
             // Switch to npc output tab
             Output.Instance.Log("npc", 
                 "Checking NPC '" + ProcessManager.Player.CurTarget.Name + "'");
-            tabLogs.SelectedIndex = tabLogs.TabPages.IndexOfKey("Npc");
+            TabPage npc_tab = tabLogs.TabPages["Npc"];
+            tabLogs.SelectedTab = npc_tab;
 
             if (AddNpc())
                 // Open NPC List for configuration
@@ -1725,5 +1747,174 @@ namespace BabBot.Forms
             if (btnRun.Enabled)
                 btnRun_Click(sender, e);
         }
+
+        #region Lua Debug
+
+        private void btnNewLua_Click(object sender, EventArgs e)
+        {
+            string tname = "f" + Convert.ToString(tabLua.TabCount + 1);
+            TabPage tab = new TabPage(tname);
+            tab.Name = tname;
+
+            TextBox rt = new TextBox();
+            
+            // Add template
+            rt.Text = GetFNewLuaPattern();
+
+            rt.Multiline = true;
+            rt.Size = tbLuaScript.Size;
+            rt.Font = tbLuaScript.Font;
+
+            tab.Controls.Add(rt);
+            tabLua.TabPages.Add(tab);
+            
+            // Select new tab
+            tabLua.SelectedTab = tab;
+
+            checkDeleteBtn();
+        }
+
+        private void btnCopyToClipboard_Click(object sender, EventArgs e)
+        {
+            // Find selected tab
+            Clipboard.SetText(GetActiveLuaScript());
+        }
+
+        private string GetActiveLuaScript()
+        {
+            TextBox rt = (TextBox)tabLua.SelectedTab.Controls[0];
+            return rt.Text;
+        }
+
+        private void btnDeleteCurrent_Click(object sender, EventArgs e)
+        {
+            tabLua.TabPages.Remove(tabLua.SelectedTab);
+            // Select last
+            tabLua.SelectedIndex = tabLua.TabCount - 1;
+
+            checkDeleteBtn();
+        }
+
+        private void btnDeleteAll_Click(object sender, EventArgs e)
+        {
+            int max = tabLua.TabCount;
+            for (int i = 1; i < max; i++)
+                tabLua.TabPages.RemoveAt(1);
+            checkDeleteBtn();
+        }
+
+        private void checkDeleteBtn()
+        {
+            bool enabled = tabLua.TabCount > 1;
+
+            btnDeleteAll.Enabled = enabled;
+            btnDeleteCurrent.Enabled = enabled && (tabLua.SelectedIndex != 0);
+        }
+
+        private void btnDoString_Click(object sender, EventArgs e)
+        {
+            ProcessManager.Injector.Lua_DoString(GetActiveLuaScript());
+        }
+
+        private void btnInputHandler_Click(object sender, EventArgs e)
+        {
+            ProcessManager.Injector.Lua_DoStringEx(GetActiveLuaScript());
+            btnGetLuaText_Click(sender, e);
+        }
+
+        private void btnGetLuaText_Click(object sender, EventArgs e)
+        {
+            List<string> s = ProcessManager.Injector.Lua_GetValues();
+            tbLuaResult.Clear();
+
+            if (s.Count > 0)
+                foreach (string tmp in s)
+                {
+                    tbLuaResult.Text += tmp + Environment.NewLine;
+                }
+            else
+                tbLuaResult.Text = "null";
+        }
+
+        private void btnRegisterInputHandler_Click(object sender, EventArgs e)
+        {
+            ProcessManager.Injector.Lua_RegisterInputHandler();
+            SetLuaDebugBtns(true);
+        }
+
+        private void btnUnregisterInputHandler_Click(object sender, EventArgs e)
+        {
+            ProcessManager.Injector.Lua_UnRegisterInputHandler();
+            SetLuaDebugBtns(false);
+        }
+
+        private void SetLuaDebugBtns(bool registered)
+        {
+            btnRegisterInputHandler.Enabled = !registered;
+            btnUnregisterInputHandler.Enabled = registered;
+        }
+
+        private string GetFNewLuaPattern()
+        {
+            return ProcessManager.CurWoWVersion.LuaList.
+                    FNewPattern.Replace("\\r\\n", "\r\n");
+        }
+
+        private void tabLua_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkDeleteBtn();
+        }
+
+        #endregion
+
+        #region Quest Test
+
+        private void btnGetQuest_Click(object sender, EventArgs e)
+        {
+            if (!CheckInGame())
+                return;
+
+            ShowErrorMessage("Coming soon ...");
+        }
+
+        private void btnReturnQuest_Click(object sender, EventArgs e)
+        {
+            if (!CheckInGame())
+                return;
+
+            ShowErrorMessage("Coming soon ...");
+        }
+
+        private void cbQuestChoiceReward_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnReturnQuest.Enabled = (cbQuestChoiceReward.SelectedIndex >= 0);
+        }
+
+        private void cbQuestList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnGetQuest.Enabled = true;
+            Quest q = (Quest) cbQuestList.SelectedItem;
+            if (q.ChoiceItems != null)
+            {
+                cbQuestChoiceReward.DataSource = q.ChoiceItems.Items;
+                cbQuestChoiceReward.SelectedIndex = -1;
+            }
+            else
+            {
+                cbQuestChoiceReward.DataSource = null;
+                btnReturnQuest.Enabled = true;
+            }
+        }
+
+        private void cbQuestList_DropDown(object sender, EventArgs e)
+        {
+            // Bind quest list
+            if (cbQuestList.DataSource == null)
+                cbQuestList.DataSource = ProcessManager.CurWoWVersion.NPCData.QuestList;
+
+        }
+
+        #endregion
+
     }
 }
