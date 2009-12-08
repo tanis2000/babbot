@@ -37,6 +37,9 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
+        [XmlElement("app_config")]
+        public AppConfig AppConfig;
+
         public WoWVersion FindVersion(string version)
         {
             return (WoWVersion) FindItemByName(version);
@@ -304,4 +307,12 @@ namespace BabBot.Wow
     }
 
     #endregion
+
+    public class AppConfig
+    {
+        [XmlAttribute("min_refresh_time")]
+        public int MinBotRefreshTime;
+
+        AppConfig() { }
+    }
 }

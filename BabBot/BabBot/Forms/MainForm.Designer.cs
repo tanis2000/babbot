@@ -208,7 +208,12 @@
             this.tbLuaResult = new System.Windows.Forms.TextBox();
             this.btnDoString = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.slAppStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.slGameStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -2038,7 +2043,12 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
+            this.toolStripStatusLabel1,
+            this.slAppStatus,
+            this.toolStripStatusLabel2,
+            this.slGameStatus,
+            this.slBotStatus,
+            this.toolStripStatusLabel3});
             this.statusStrip1.Location = new System.Drawing.Point(0, 416);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(572, 22);
@@ -2046,10 +2056,45 @@
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // statusLabel
+            // slAppStatus
             // 
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(0, 17);
+            this.slAppStatus.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.slAppStatus.Name = "slAppStatus";
+            this.slAppStatus.Size = new System.Drawing.Size(29, 17);
+            this.slAppStatus.Text = "IDLE";
+            // 
+            // slGameStatus
+            // 
+            this.slGameStatus.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.slGameStatus.Name = "slGameStatus";
+            this.slGameStatus.Size = new System.Drawing.Size(95, 17);
+            this.slGameStatus.Text = "NOT_CONNECTED";
+            // 
+            // slBotStatus
+            // 
+            this.slBotStatus.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.slBotStatus.Name = "slBotStatus";
+            this.slBotStatus.Size = new System.Drawing.Size(58, 17);
+            this.slBotStatus.Text = "BotStatus:";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(64, 17);
+            this.toolStripStatusLabel1.Text = "AppStatus: ";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(72, 17);
+            this.toolStripStatusLabel2.Text = "GameStatus: ";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(59, 17);
+            this.toolStripStatusLabel3.Text = "UNKNOWN";
             // 
             // MainForm
             // 
@@ -2236,7 +2281,7 @@
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.TextBox tbCorpseX;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel slAppStatus;
         private System.Windows.Forms.RichTextBox txtConsole;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button btnLoadScript;
@@ -2303,6 +2348,11 @@
         private System.Windows.Forms.ComboBox cbTalentTemplates;
         private System.Windows.Forms.Label lblTalentTemplates;
         private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.ToolStripStatusLabel slGameStatus;
+        private System.Windows.Forms.ToolStripStatusLabel slBotStatus;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
     }
 }
 

@@ -755,4 +755,5 @@ end)()]]></text>
     in format according "quests.details_pattern" below:
     [[qty, name],[qty, name]][[..],[..]][]
   </version>
+  <app_config  min_refresh_time="100" />
 </wow_data>

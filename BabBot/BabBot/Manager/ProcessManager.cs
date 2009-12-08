@@ -16,6 +16,9 @@
   
     Copyright 2009 BabBot Team
 */
+
+// TODO Check for crush and implement WOW_CRUSHED status
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -126,7 +129,8 @@ namespace BabBot.Manager
         public static event PlayerUpdateEventHandler PlayerUpdate;
         public static event PlayerWayPointEventHandler PlayerWayPoint;
 
-        public static event UpdateStatusEventHandler UpdateStatus;
+        public static event UpdateStatusEventHandler UpdateGameStatus;
+        public static event UpdateStatusEventHandler UpdateAppStatus;
 
         public static event FirstTimeRunHandler FirstTimeRun;
         public static event ConfigFileChangedHandler ConfigFileChanged;
@@ -167,7 +171,7 @@ namespace BabBot.Manager
             "NPCData.xml";
 
         // Current version of config file
-        private static readonly int ConfigVersion = 2;
+        private static readonly int ConfigVersion = 3;
 
         // Current version of NPCData
         private static readonly int NPCDataVersion = 0;
@@ -177,34 +181,71 @@ namespace BabBot.Manager
             get { return wversion; }
         }
 
+        // Status of application
         public enum ProcessStatuses : byte
         {
             IDLE = 0,
-            STARTING = 1,
-            RUNNING = 2,
-            CLOSED = 3,
-            CRUSHED = 255,
+            WOW_STARTING = 1,
+            WOW_INJECTING = 2,
+            WOW_INITIALIZING = 3,
+            WOW_LOOK_FOR_TLS = 4,
+            WOW_RUNNING = 5,
+            WOW_CRUSHED = 254,
+            WOW_CLOSED = 255
         }
 
+        // In-Game statuses
         public enum GameStatuses : byte
         {
-            INIT = 0,
-            TLS = 1,
-            LOGGING = 2,
+            NOT_STARTED = 0,
+            INIT = 1,
+            IDLE = 2,
             IN_WORLD = 3,
             INITIALIZED = 4,
-            DISCONNECTED = 255,
+            DISCONNECTED = 255
         }
 
-        private static GameStatuses _gstatus;
-        private static ProcessStatuses _pstatus;
+        private static GameStatuses _gstatus = GameStatuses.NOT_STARTED;
+        private static ProcessStatuses _pstatus = ProcessStatuses.IDLE;
+
+        internal static AppConfig AppConfig
+        {
+            get { return (wdata != null) ? wdata.AppConfig : null; }
+        }
+
+        /// <summary>
+        /// Return Process Status
+        /// </summary>
+        public static GameStatuses GameStatus
+        {
+            get { return _gstatus; }
+            private set 
+            {
+                if (_gstatus != value)
+                {
+                    OnUpdateGameStatus(Enum.GetName(typeof(GameStatuses), value));
+                    _gstatus = value;
+                }
+            }
+        }
+
+        public static ProcessStatuses ProcessStatus
+        {
+            get { return _pstatus; }
+            private set
+            {
+                if (_pstatus != value)
+                {
+                    OnUpdateAppStatus(Enum.GetName(typeof(ProcessStatuses), value));
+                    _pstatus = value;
+                }
+            }
+        }
 
         static ProcessManager()
         {
             config = new Config();
             wowProcess = new BlackMagic();
-            _pstatus = ProcessStatuses.IDLE;
-            _gstatus = GameStatuses.INIT;
             CommandManager = new CommandManager();
             Injector = new InjectionManager();
             TLS = 0x0;
@@ -287,6 +328,12 @@ namespace BabBot.Manager
             get { return (_gstatus == GameStatuses.INITIALIZED); }
         }
 
+        public static bool InWorld
+        {
+            get { return ((_gstatus == GameStatuses.INITIALIZED) || 
+                    (_gstatus == GameStatuses.IN_WORLD)); }
+        }
+
         #endregion
 
         #region Private Methods
@@ -300,8 +347,6 @@ namespace BabBot.Manager
 
             try
             {
-                _pstatus = ProcessStatuses.STARTING;
-
                 // Set before using any BlackMagic methods
                 process.EnableRaisingEvents = true;
                 process.Exited += exitProcess;
@@ -310,18 +355,15 @@ namespace BabBot.Manager
                 CommandManager.WowHWND = WowHWND;
 
                 //verify we haven't already opened it, like when we do the injection
-                if ((!wowProcess.IsProcessOpen &&
-                        wowProcess.OpenProcessAndThread(process.Id)))
-                {
-                    // We don't let anyone do anything until wow has finished launching
-                    // We look for the TLS first
-                    _gstatus = GameStatuses.INIT;
-                    _pstatus = ProcessStatuses.RUNNING;
-                }
+                if (!wowProcess.IsProcessOpen)
+                    wowProcess.OpenProcessAndThread(process.Id);
 
+                // We don't let anyone do anything until wow has finished launching
+                // We look for the TLS first
+                ProcessStatus = ProcessStatuses.WOW_LOOK_FOR_TLS;
                 while (!FindTLS())
                 {
-                   OnUpdateAppStatus("Looking for the TLS ...");
+                   Debug("char", "Looking for the TLS ...");
                    Thread.Sleep(250);
                 }
 
@@ -338,25 +380,8 @@ namespace BabBot.Manager
                 if (WoWGameLoaded != null)
                     WoWGameLoaded();
 
-                if (config.WoWInfo.AutoLogin)
-                {
-                    Injector.Lua_RegisterInputHandler();
-                    try
-                    {
-                        Login.AutoLogin(config.Account.RealmLocation, config.Account.GameType,
-                                config.Account.Realm, config.Account.LoginUsername,
-                                    config.Account.getAutoLoginPassword(), config.Character, 5);
-
-                    }
-                    catch (Exception e)
-                    {
-                        // Login exception means new patch
-                        // Exit bot
-                        ShowError(e.Message);
-                        Environment.Exit(5);
-                    }
-                    Injector.Lua_UnRegisterInputHandler();
-                }
+                ProcessStatus = ProcessStatuses.WOW_RUNNING;
+                GameStatus = GameStatuses.INIT;
 
                 Debug("char", "AfterStart completed.");
             }
@@ -372,8 +397,8 @@ namespace BabBot.Manager
         private static void exitProcess(object sender, EventArgs e)
         {
             // Do it first
-            _pstatus = ProcessStatuses.CLOSED;
-            _gstatus = GameStatuses.INIT;
+            ProcessStatus = ProcessStatuses.WOW_CLOSED;
+            GameStatus = GameStatuses.NOT_STARTED;
 
             // Blah blah blah after
             Log("char", "WoW termination detected");
@@ -391,6 +416,16 @@ namespace BabBot.Manager
                 WoWProcessEnded(((Process) sender).Id);
 
             Debug("char", "WoW termination completed");
+
+            // TODO add autorestart. Only can do it if crush implemented
+            if (config.Account.ReStart)
+            {
+                // StartBot();
+                Log("char", "Suppose to restart WoW.exe now now but ... ");
+                Log("char", "Auto Restart not implemented yet");
+            }
+            else
+                ProcessStatus = ProcessStatuses.IDLE;
         }
 
         private static void Log(string facility, string msg)
@@ -401,6 +436,16 @@ namespace BabBot.Manager
         private static void Debug(string facility, string msg)
         {
             Output.Instance.Debug(facility, msg);
+        }
+
+        private static void Error(string facility, string msg)
+        {
+            Output.Instance.LogError(facility, msg);
+        }
+
+        private static void Error(string facility, string msg, Exception e)
+        {
+            Output.Instance.LogError(facility, msg, e);
         }
 
         /// <summary>
@@ -539,7 +584,7 @@ namespace BabBot.Manager
         public static void StartBot()
         {
             // Reset process state so bot will pick it up
-            _pstatus = ProcessStatuses.IDLE;
+            ProcessStatus = ProcessStatuses.WOW_STARTING;
 
             // Start bot thread
             ProcessManager.BotManager.Start();
@@ -550,7 +595,6 @@ namespace BabBot.Manager
         /// </summary>
         public static void StartWow()
         {
-            _pstatus = ProcessStatuses.STARTING;
 
             try
             {
@@ -613,12 +657,14 @@ namespace BabBot.Manager
                     // inject the LUA DLL
 
                     //Inject!!!!
+                    ProcessStatus = ProcessStatuses.WOW_INJECTING;
                     Injector.InjectLua(process.Id);
 
                     // If we're not using autologin we make sure that the LUA hook is off the way until we are logged in
                     // Injector.Lua_RegisterInputHandler();
 
                     // resume
+                    ProcessStatus = ProcessStatuses.WOW_INITIALIZING;
                     ResumeMainWowThread();
 
                     if (process != null)
@@ -672,9 +718,7 @@ namespace BabBot.Manager
         public static void UpdatePlayer()
         {
             if (_gstatus != GameStatuses.INITIALIZED)
-            {
                 return;
-            }
             
             if (PlayerUpdate != null)
             {
@@ -700,29 +744,34 @@ namespace BabBot.Manager
         /// <summary>
         /// Check if you are logged into the WoW game
         /// </summary>
-        public static void CheckInGame()
+        public static bool CheckInGame()
         {
             try
             {
                 WowProcess.ReadUInt(WowProcess.ReadUInt(WowProcess.ReadUInt(Globals.GameOffset) +
                                                         Globals.PlayerBaseOffset1) + Globals.PlayerBaseOffset2);
                 // Read successful. Check if we need initialize
-                if (_gstatus != GameStatuses.INITIALIZED)
+                if ((_gstatus != GameStatuses.INITIALIZED) && 
+                        (_gstatus != GameStatuses.DISCONNECTED))
                 {
-                    _gstatus = GameStatuses.IN_WORLD;
+                    GameStatus = GameStatuses.IN_WORLD;
                     InitializeBot();
                 }
+
+                // Means no exception, we might be actually not in game yet or already initialized
+                return true;
             }
             catch(Exception ex)
             {
-                if (_gstatus == GameStatuses.IN_WORLD)
+                if (InGame)
                 {
-                    Debug("char", "CheckInGame() - caugth exception: " + ex.Message);
+                    Error("char", "CheckInGame() - caugth exception. See error log for details.");
+                    Error("errors", "CheckInGame() - ", ex);
 
-                    _gstatus = GameStatuses.DISCONNECTED;
+                    GameStatus = GameStatuses.DISCONNECTED;
                 }
-                else
-                    _gstatus = GameStatuses.INIT;
+
+                return false;
                 
             }
         }
@@ -746,7 +795,6 @@ namespace BabBot.Manager
                     return false;
                 }
 
-                OnUpdateAppStatus("TLS found");
                 Debug("char", "TLS found");
 
                 return true;
@@ -812,13 +860,17 @@ namespace BabBot.Manager
         {
             try
             {
-                OnUpdateAppStatus("Initializing..");
+                Log("char", "Initializing Character ...");
 
                 while (!InitializeConnectionManager())
                 {
-                    OnUpdateAppStatus("Looking for the ConnectionManager..");
+                    if (!InWorld)
+                        return;
+
+                    Debug("char", "ConnectionManager not found. Keep looking ...");
                     Thread.Sleep(250);
-                } 
+                }
+ 
                 // This might have already been done, but since we could have autologin disabled
                 // we do this again (there are no issues if you call this more than once anyway)
                 Injector.Lua_RegisterInputHandler();
@@ -828,8 +880,8 @@ namespace BabBot.Manager
                 //ScriptHost.Start();
                 //StateManager.Instance.Stop();
 
-                OnUpdateAppStatus("Game started");
-                _gstatus = GameStatuses.INITIALIZED;
+                Log("char", "Character initialized");
+                GameStatus = GameStatuses.INITIALIZED;
             }
             catch (Exception ex)
             {
@@ -893,28 +945,16 @@ namespace BabBot.Manager
         /// </summary>
         public static bool ProcessRunning
         {
-            get { return _pstatus == ProcessStatuses.RUNNING; }
+            get { return _pstatus == ProcessStatuses.WOW_RUNNING; }
         }
         
-        /// <summary>
-        /// Return Process Status
-        /// </summary>
-        public static ProcessStatuses ProcessState
-        {
-            get { return _pstatus; }
-        }
-
-        public static GameStatuses GameStatus
-        {
-            get { return _gstatus; }
-        }
-
+        
         /// <summary>
         /// Reset game status after disconnect or exception
         /// </summary>
         public static void ResetGameStatus()
         {
-            _gstatus = GameStatuses.INIT;
+            GameStatus = GameStatuses.DISCONNECTED;
         }
 
         #region XML
@@ -1125,12 +1165,29 @@ namespace BabBot.Manager
             return wdata.FindVersion(version);
         }
 
+        private static void OnUpdateAppStatus(string new_status)
+        {
+            if (UpdateAppStatus != null)
+                UpdateAppStatus(new_status);
+        }
+
+        private static void OnUpdateGameStatus(string new_status)
+        {
+            if (UpdateGameStatus != null)
+                UpdateGameStatus(new_status);
+        }
+
         #endregion
 
-        private static void OnUpdateAppStatus(string status)
+        public static void AfterLogin()
         {
-            if (UpdateStatus != null)
-                UpdateStatus(status);
+            GameStatus = GameStatuses.IN_WORLD;
+        }
+
+        public static void SetGameIdle(int sleep_time)
+        {
+            GameStatus = GameStatuses.IDLE;
+            Thread.Sleep(sleep_time);
         }
     }
 

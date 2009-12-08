@@ -16,6 +16,7 @@
   
     Copyright 2009 BabBot Team
 */
+// TODO - Need english translation of comments :)
 using System;
 using System.Threading;
 
@@ -36,6 +37,8 @@ namespace BabBot.Common
         public delegate void DlgThreadInitialize();
 
         public delegate void DlgThreadRun();
+
+        public delegate void DlgConigChanged();
 
         #endregion
 
@@ -101,7 +104,8 @@ namespace BabBot.Common
         public event DlgThreadException OnException;
         // Evento che viene generato se avviene un'eccezione durante la vita del thread  
 
-        // Proprietà  
+        // Reinitialize internal parameters 
+        public event DlgConigChanged OnConfigChanged;
 
         public void Start()
         {

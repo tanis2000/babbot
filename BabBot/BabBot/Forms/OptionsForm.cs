@@ -32,14 +32,16 @@ namespace BabBot.Forms
 
         private void OptionsForm_Load(object sender, EventArgs e)
         {
-            
-            cbAutoLogin.Checked = ProcessManager.Config.WoWInfo.AutoLogin;
-			tbCharacter.Text = ProcessManager.Config.Character;
-            tbRealmLocation.Text = ProcessManager.Config.Account.RealmLocation;
-            cbxGameType.Text = ProcessManager.Config.Account.GameType;
-            tbRealm.Text = ProcessManager.Config.Account.Realm;
-            tbLoginUsername.Text = ProcessManager.Config.Account.LoginUsername;
-            tbLoginPassword.Text = ProcessManager.Config.Account.getAutoLoginPassword();
+            Config config = ProcessManager.Config;
+            cbAutoLogin.Checked = config.WoWInfo.AutoLogin;
+            tbCharacter.Text = config.Character;
+            tbRealmLocation.Text = config.Account.RealmLocation;
+            cbxGameType.Text = config.Account.GameType;
+            tbRealm.Text = config.Account.Realm;
+            tbLoginUsername.Text = config.Account.LoginUsername;
+            tbLoginPassword.Text = config.Account.getAutoLoginPassword();
+            cbRestart.Checked = config.Account.ReStart;
+            cbRelogin.Checked = config.Account.ReConnect;
 
             cbAutoLogin_CheckedChanged(sender, e);
         }
@@ -53,6 +55,8 @@ namespace BabBot.Forms
             ProcessManager.Config.Account.Realm = tbRealm.Text;
             ProcessManager.Config.Account.LoginUsername = tbLoginUsername.Text;
             ProcessManager.Config.Account.EncryptPassword(tbLoginPassword.Text);
+            ProcessManager.Config.Account.ReConnect = cbRelogin.Checked;
+            ProcessManager.Config.Account.ReStart = cbRestart.Checked;
         }
 
         private void lstAll_SelectedIndexChanged(object sender, EventArgs e)
@@ -78,6 +82,9 @@ namespace BabBot.Forms
             labelPwd.Enabled = is_checked;
 			labelCharacter.Enabled = is_checked;
 			labelComment.Enabled = is_checked;
+
+            cbRelogin.Enabled = is_checked;
+            cbRelogin.Enabled = is_checked;
 
             if (is_checked)
                 tbRealmLocation.Focus();

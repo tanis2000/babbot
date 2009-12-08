@@ -476,7 +476,7 @@ namespace BabBot.Wow
                 return SetState(3);
             }
                 
-            if (CurrentGlueDialog.Equals("DISCONNECT"))
+            if (CurrentGlueDialog.Equals("DISCONNECTED"))
                 return SetState(99);
 
             if (IsHtml) {

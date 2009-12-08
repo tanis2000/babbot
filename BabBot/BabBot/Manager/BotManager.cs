@@ -28,6 +28,9 @@ namespace BabBot.Manager
     ///</summary>
     public class BotManager
     {
+        private int refresh_time;
+        private int idle_sleep_time;
+
         //private readonly StateManager stateManager;
         private GThread workerThread;
 
@@ -55,6 +58,7 @@ namespace BabBot.Manager
             workerThread.OnBeforeStart += OnBeforeStart;
             workerThread.OnBeforeStop += OnBeforeStop;
             workerThread.OnFinalize += OnFinalize;
+            workerThread.OnConfigChanged += OnConfigChanged;
         }
 
         public void Start()
@@ -93,6 +97,21 @@ namespace BabBot.Manager
         private void OnBeforeStart()
         {
             //Output.Instance.Debug("OnBeforeStart", this);
+            Output.Instance.Debug("char", "Loading bot parameters ...", this);
+            LoadConfig();
+        }
+
+        public void OnConfigChanged()
+        {
+            // Inter-thread call but we safe now
+            Output.Instance.Debug("char", "Re-Loading bot parameters ...", this);
+            LoadConfig();
+        }
+
+        private void LoadConfig()
+        {
+            refresh_time = ProcessManager.Config.WoWInfo.RefreshTime;
+            idle_sleep_time = ProcessManager.Config.WoWInfo.IdleSleepTime;
         }
 
         private void OnInitialize()
@@ -106,55 +125,145 @@ namespace BabBot.Manager
             Console.WriteLine(e.ToString());
         }
 
+        private void Debug(string msg)
+        {
+            Output.Instance.Debug("char", msg);
+        }
+
+        private void Log(string msg)
+        {
+            Output.Instance.Log("char", msg);
+        }
+
         private void OnRun()
         {
-            switch (ProcessManager.ProcessState)
+            switch (ProcessManager.ProcessStatus)
             {
-                case ProcessManager.ProcessStatuses.IDLE:
+                case ProcessManager.ProcessStatuses.WOW_STARTING:
                     // Start Wow
                     ProcessManager.StartWow();
                     break;
 
-                case ProcessManager.ProcessStatuses.RUNNING:
-                    // Analyze game status
-                    ProcessManager.CheckInGame();
+                case ProcessManager.ProcessStatuses.WOW_RUNNING:
 
+                    // Do it on the beginning of each cycle
+                    if (ProcessManager.ProcessRunning)
+                        ProcessManager.CheckInGame();
+
+                    // Analyze game status
                     switch (ProcessManager.GameStatus)
                     {
+                        case ProcessManager.GameStatuses.INIT:
+                            if (ProcessManager.Config.WoWInfo.AutoLogin)
+                                AutoLogin();
+                            else
+                                // Go idle
+                                ProcessManager.SetGameIdle(idle_sleep_time);
+                            break;
+
+                        case ProcessManager.GameStatuses.DISCONNECTED:
+                            // Wait 5 sec it might be a crush
+                            Debug("Entered 'DISCONNECTED' state. Waiting " +
+                                (int)(idle_sleep_time / 1000) + " sec to make sure it's not the crash");
+                            Thread.Sleep(idle_sleep_time);
+                            if (!ProcessManager.ProcessRunning)
+                            {
+                                Debug("Wow.exe not running. It is the crush.");
+
+                                return;
+                            }
+                            // or false alarem
+                            else if (ProcessManager.CheckInGame())
+                            {
+                                Debug("Wow.exe still running. It is not the crush.");
+                                if (ProcessManager.Config.WoWInfo.AutoLogin &&
+                                    ProcessManager.Config.Account.ReConnect)
+                                {
+                                    Log("Disconnected. Reconnecting as configured ...");
+                                    AutoLogin();
+                                }
+                                else
+                                    // Just wait but don't reset status
+                                    Thread.Sleep(idle_sleep_time);
+                            }
+                            else
+                                // go idle
+                                ProcessManager.SetGameIdle(idle_sleep_time);
+                            break;
+
                         case ProcessManager.GameStatuses.INITIALIZED:
                             ProcessManager.UpdatePlayer();
                             ProcessManager.Player.StateMachine.Update();
 
                             break;
+                        
+                        case ProcessManager.GameStatuses.IN_WORLD:
+                        case ProcessManager.GameStatuses.IDLE:
+                            // Just wait
+                            Thread.Sleep(idle_sleep_time);
+                            break;
 
-                        // TODO implement rest of game statuses
-
+                        default:
+                            Debug("Game State '"+ 
+                                Enum.GetName(typeof(ProcessManager.GameStatuses), 
+                                ProcessManager.GameStatus) + "' not implemented yet");
+                            break;
                     }
 
                     break;
 
-                // TODO
-                // CLOSED = 3,
-                // CRUSHED = 255,
+                case ProcessManager.ProcessStatuses.WOW_INJECTING:
+                case ProcessManager.ProcessStatuses.WOW_INITIALIZING:
+                case ProcessManager.ProcessStatuses.WOW_LOOK_FOR_TLS:
+                    // Just wait
+                    Thread.Sleep(idle_sleep_time);
+                    break;
+
+                case ProcessManager.ProcessStatuses.IDLE:
+                case ProcessManager.ProcessStatuses.WOW_CRUSHED:
+                case ProcessManager.ProcessStatuses.WOW_CLOSED:
+                    // Stop on error or when it not suppose running
+                    Stop();
+                    break;
 
                 default:
-                    // For now stop thread
-                    Output.Instance.Log("Status: " + 
-                        ProcessManager.ProcessState + " not implemented yet");
-                    Stop();
-
-                    // After all implemented no surprises
-                    /*
-                    Output.Instance.Log("Internal bug - Unknown bot status: " + 
-                                    ProcessManager.ProcessState + ". Terminate execution");
-                    Environment.Exit(2); */
+                    // Something we forgot ...
+                    ProcessManager.ShowError("Internal bug - Unknown app status: " + 
+                      Enum.GetName(typeof(ProcessManager.ProcessStatuses), 
+                      ProcessManager.ProcessStatus) + ". Terminate execution");
+                    Environment.Exit(2);
 
                     break;
             }
 
-            Thread.Sleep(250);
+            Thread.Sleep(refresh_time);
         }
 
+        /// <summary>
+        /// Auto login in WoW with profile's parameters
+        /// </summary>
+        private void AutoLogin() {
+            ProcessManager.Injector.Lua_RegisterInputHandler();
+            try
+            {
+                Config config = ProcessManager.Config;
+                if (Login.AutoLogin(config.Account.RealmLocation, config.Account.GameType,
+                        config.Account.Realm, config.Account.LoginUsername,
+                            config.Account.getAutoLoginPassword(), config.Character, 5))
+                    ProcessManager.AfterLogin();
+                else
+                    ProcessManager.SetGameIdle(idle_sleep_time);
+
+            }
+            catch (Exception e)
+            {
+                // Login exception means new patch
+                // Exit bot
+                ProcessManager.ShowError(e.Message);
+                Environment.Exit(5);
+            }
+            ProcessManager.Injector.Lua_UnRegisterInputHandler();            
+        }
         #endregion
     }
 }

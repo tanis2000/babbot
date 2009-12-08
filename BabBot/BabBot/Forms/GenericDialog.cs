@@ -83,6 +83,11 @@ namespace BabBot.Forms
             Process.Start(GetDefaultBrowserPath(), url);
         }
 
+        protected virtual void RegisterChange(object sender, EventArgs e)
+        {
+            IsChanged = true;
+        }
+
         #endregion
 
         #region Private Methods

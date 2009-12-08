@@ -72,7 +72,8 @@ namespace BabBot.Forms
             // Starts the bot thread
             ProcessManager.PlayerUpdate += PlayerUpdate;
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
-            ProcessManager.UpdateStatus += UpdateStatus;
+            ProcessManager.UpdateAppStatus += UpdateAppStatus;
+            ProcessManager.UpdateGameStatus += UpdateGameStatus;
         }
 
         #region Exception Handler
@@ -182,111 +183,118 @@ namespace BabBot.Forms
             }
             else
             {
-                if (ProcessManager.ProcessRunning)
+                if (!(ProcessManager.ProcessRunning && ProcessManager.InWorld))
+                    return;
+
+                //Misc info updates for the "Player" tab
+
+                WowPlayer Player = ProcessManager.Player;
+                try
                 {
-                    //Misc info updates for the "Player" tab
-
-                    WowPlayer Player = ProcessManager.Player;
-                    try
-                    {
 #if DEBUG
-                        tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", Player.Location.X,
-                                                Player.Location.Y, Player.Location.Z, Player.CurTargetGuid);
+                    string nl = Environment.NewLine;
+                    string divider = "===========" + nl;
+
+                    tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", 
+                        Player.Location.X,  Player.Location.Y, 
+                        Player.Location.Z, Player.CurTargetGuid);
 
 
-                        tbOrientation.Text = String.Format("Or.: {0}", ProcessManager.Player.Orientation);
-                        tbPlayerHp.Text = Player.Hp.ToString();
-                        tbPlayerMaxHp.Text = ProcessManager.Player.MaxHp.ToString();
-                        tbPlayerMp.Text = ProcessManager.Player.Mp.ToString();
-                        tbPlayerMaxMp.Text = ProcessManager.Player.MaxMp.ToString();
-                        tbPlayerXp.Text = ProcessManager.Player.Xp.ToString();
-                        tbPlayerTarget.Text = string.Format("{0:X}", ProcessManager.Player.CurTargetGuid);
-                        tbPlayerTargetName.Text = ProcessManager.Player.CurTargetName;
-                        tbPlayerNearObjects.Text = "Objects" + Environment.NewLine + "===========" + Environment.NewLine +
-                                                   ProcessManager.Player.NearObjectsAsTextList + Environment.NewLine +
-                                                   "Mobs" +
-                                                   Environment.NewLine +
-                                                   "===========" + Environment.NewLine +
-                                                   ProcessManager.Player.NearMobsAsTextList;
+                    tbOrientation.Text = String.Format("Or.: {0}", Player.Orientation);
+                    tbPlayerHp.Text = Player.Hp.ToString();
+                    tbPlayerMaxHp.Text = ProcessManager.Player.MaxHp.ToString();
+                    tbPlayerMp.Text = ProcessManager.Player.Mp.ToString();
+                    tbPlayerMaxMp.Text = ProcessManager.Player.MaxMp.ToString();
+                    tbPlayerXp.Text = ProcessManager.Player.Xp.ToString();
+                    tbPlayerTarget.Text = string.Format("{0:X}", 
+                                            ProcessManager.Player.CurTargetGuid);
+                    tbPlayerTargetName.Text = ProcessManager.Player.CurTargetName;
+                    tbPlayerNearObjects.Text = "Objects" + nl + 
+                        divider + Player.NearObjectsAsTextList + nl +
+                        "Mobs" + Environment.NewLine +
+                        divider + ProcessManager.Player.NearMobsAsTextList;
 #endif
-                        // Update radar
-                        Radar.AddCenter(Player.Guid, Player.Location, Player.Orientation);
+                    // Update radar
+                    Radar.AddCenter(Player.Guid, Player.Location, Player.Orientation);
 
-                        List<WowObject> AllObj = Player.GetNearObjects();
+                    List<WowObject> AllObj = Player.GetNearObjects();
 
-                        // Add Mobs
-                        foreach (WowObject wobj in AllObj)
+                    // Add Mobs
+                    foreach (WowObject wobj in AllObj)
+                    {
+                        switch (wobj.Type)
                         {
-                            switch (wobj.Type)
-                            {
-                                case Descriptor.eObjType.OT_UNIT:
-                                    // Add mob
-                                    WowUnit unit = (WowUnit)wobj;
-                                    if (unit.IsDead)
-                                        // Draw as a circle
-                                        Radar.AddItem(unit.Guid, unit.Location,
+                            case Descriptor.eObjType.OT_UNIT:
+                                // Add mob
+                                WowUnit unit = (WowUnit)wobj;
+                                if (unit.IsDead)
+                                    // Draw as a circle
+                                    Radar.AddItem(unit.Guid, unit.Location,
                                         ((unit.IsLootable) ? Color.Gray : ((unit.IsSkinnable) ?
                                         Color.LightSteelBlue : Color.Silver)));
-                                    else
-                                        // Draw as triangle with orientation
-                                        Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
-                                            ((unit.IsAggro) ? Color.Red : ((unit.IsNpc) ?
-                                            Color.Yellow : Color.Blue)));
-                                    break;
+                                else
+                                    // Draw as triangle with orientation
+                                    Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
+                                        ((unit.IsAggro) ? Color.Red : ((unit.IsNpc) ?
+                                        Color.Yellow : Color.Blue)));
+                                break;
 
-                                case Descriptor.eObjType.OT_PLAYER:
-                                    // Add Player
-                                    unit = (WowUnit)wobj;
-                                    if (unit.Guid != Player.Guid)
-                                        Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
-                                            ((unit.IsAggro) ? Color.Red :
-                                            ((unit.IsDead) ? Color.Silver :
-                                              ((unit.IsGhost ? Color.Gray : Color.Green)))));
+                            case Descriptor.eObjType.OT_PLAYER:
+                                // Add Player
+                                unit = (WowUnit)wobj;
+                                if (unit.Guid != Player.Guid)
+                                    Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
+                                        ((unit.IsAggro) ? Color.Red :
+                                        ((unit.IsDead) ? Color.Silver :
+                                            ((unit.IsGhost ? Color.Gray : Color.Green)))));
 
-                                    break;
+                                break;
 
-                                case Descriptor.eObjType.OT_ITEM:
-                                    // Add Item
-                                    WowItem item = (WowItem)wobj;
-                                    // item.Name;
-                                    break;
+                            case Descriptor.eObjType.OT_ITEM:
+                                // Add Item
+                                WowItem item = (WowItem)wobj;
+                                // item.Name;
+                                break;
 
-                                // Resources - fish, herb, vein
-                                /* case Descriptor.eObjType.
-                                 */
-                            }
+                            // Resources - fish, herb, vein
+                            /* case Descriptor.eObjType.
+                             */
                         }
-                        Radar.Update();
-
-                        tbCorpseX.Text = ProcessManager.Player.CorpseLocation.X.ToString();
-                        tbCorpseY.Text = ProcessManager.Player.CorpseLocation.Y.ToString();
-                        tbCorpseZ.Text = ProcessManager.Player.CorpseLocation.Z.ToString();
-
-                        txtCurrentX.Text = ProcessManager.Player.Location.X.ToString();
-                        txtCurrentY.Text = ProcessManager.Player.Location.Y.ToString();
-                        txtCurrentZ.Text = ProcessManager.Player.Location.Z.ToString();
-                        txtLastDistance.Text = ProcessManager.Player.LastDistance.ToString();
-                        txtFaceRadian.Text = ProcessManager.Player.LastFaceRadian.ToString();
-
-                        var orientation = (float)((ProcessManager.Player.Orientation * 180) / Math.PI);
-                        txtCurrentFace.Text = string.Format("{0}°", orientation);
-
-                        var facing = (float)((ProcessManager.Player.LastFaceRadian * 180) / Math.PI);
-                        txtComputedFacing.Text = string.Format("{0}°", facing);
-
-                        tbPlayerIsSitting.Text = ProcessManager.Player.IsSitting.ToString();
-                        txtTravelTime.Text = string.Format("{0} ms", ProcessManager.Player.TravelTime);
-
-                        tbCountNormal.Text = WayPointManager.Instance.NormalNodeCount.ToString();
-                        tbCountVendor.Text = WayPointManager.Instance.VendorNodeCount.ToString();
-                        tbCountGhost.Text = WayPointManager.Instance.GhostNodeCount.ToString();
-                        tbCountRepair.Text = WayPointManager.Instance.RepairNodeCount.ToString();
                     }
-                    catch (Exception e)
-                    {
-                        // Skip and continue
-                        Output.Instance.Debug("char", e.Message);
-                    }
+                    
+                    Radar.Update();
+
+                    tbCorpseX.Text = ProcessManager.Player.CorpseLocation.X.ToString();
+                    tbCorpseY.Text = ProcessManager.Player.CorpseLocation.Y.ToString();
+                    tbCorpseZ.Text = ProcessManager.Player.CorpseLocation.Z.ToString();
+
+                    txtCurrentX.Text = ProcessManager.Player.Location.X.ToString();
+                    txtCurrentY.Text = ProcessManager.Player.Location.Y.ToString();
+                    txtCurrentZ.Text = ProcessManager.Player.Location.Z.ToString();
+                    txtLastDistance.Text = ProcessManager.Player.LastDistance.ToString();
+                    txtFaceRadian.Text = ProcessManager.Player.LastFaceRadian.ToString();
+
+                    var orientation = (float)((ProcessManager.Player.Orientation * 180) / Math.PI);
+                    txtCurrentFace.Text = string.Format("{0}°", orientation);
+
+                    var facing = (float)((ProcessManager.Player.LastFaceRadian * 180) / Math.PI);
+                    txtComputedFacing.Text = string.Format("{0}°", facing);
+
+                    tbPlayerIsSitting.Text = ProcessManager.Player.IsSitting.ToString();
+                    txtTravelTime.Text = string.Format("{0} ms", ProcessManager.Player.TravelTime);
+
+                    tbCountNormal.Text = WayPointManager.Instance.NormalNodeCount.ToString();
+                    tbCountVendor.Text = WayPointManager.Instance.VendorNodeCount.ToString();
+                    tbCountGhost.Text = WayPointManager.Instance.GhostNodeCount.ToString();
+                    tbCountRepair.Text = WayPointManager.Instance.RepairNodeCount.ToString();
+                }
+                catch (Exception e)
+                {
+                    // We migh disconnected
+                    Output.Instance.LogError("char",
+                        "PlayerUpdate() - caugth exception. See error log for details");
+                    Output.Instance.LogError("errors", "PlayerUpdate() - ", e);
+                    ProcessManager.ResetGameStatus();
                 }
             }
         }
@@ -386,9 +394,43 @@ namespace BabBot.Forms
             showAppOptionsForm("Configuration file changed.\nCheck and save new configuration");
         }
         
-        private void UpdateStatus(string iStatus)
+        private void UpdateAppStatus(string status)
         {
-            statusLabel.Text = iStatus;
+            // Cross thread calls
+            if (InvokeRequired)
+            {
+                StatusUpdateDelegate del = UpdateAppStatus;
+                object[] parameters = { status };
+                Invoke(del, parameters);
+            }
+            else
+                slAppStatus.Text = status;
+        }
+
+        private void UpdateGameStatus(string status)
+        {
+            // Cross thread calls
+            if (InvokeRequired)
+            {
+                StatusUpdateDelegate del = UpdateGameStatus;
+                object[] parameters = { status };
+                Invoke(del, parameters);
+            }
+            else
+                slGameStatus.Text = status;
+        }
+
+        private void UpdateBotStatus(string status)
+        {
+            // Cross thread calls
+            if (InvokeRequired)
+            {
+                StatusUpdateDelegate del = UpdateBotStatus;
+                object[] parameters = { status };
+                Invoke(del, parameters);
+            }
+            else
+                slBotStatus.Text = status;
         }
 
         private void ActivateDebugMode()
@@ -591,6 +633,11 @@ namespace BabBot.Forms
                     ActivateDebugMode();
                 else
                     DeactivateDebugMode();
+
+                // Reload bot with new configuration
+                BotManager bm = ProcessManager.BotManager;
+                if (bm != null)
+                    bm.OnConfigChanged();
             }
             else
             {
@@ -739,22 +786,17 @@ namespace BabBot.Forms
 
         #endregion
 
-        #region Nested type: PlayerUpdateDelegate
+        #region Delegates
 
         private delegate void PlayerUpdateDelegate();
 
-        #endregion
-
-        #region Nested type: PlayerWayPointDelegate
-
         private delegate void PlayerWayPointDelegate(Vector3D waypoint);
 
-        #endregion
-
-        #region Nested type: ProcessEndedDelegate
-
         private delegate void ProcessEndedDelegate(int process);
+        
         private delegate void InGameDelegate();
+        
+        private delegate void StatusUpdateDelegate(string status);
 
         #endregion
 

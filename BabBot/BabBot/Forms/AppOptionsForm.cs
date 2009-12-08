@@ -29,11 +29,12 @@ using BabBot.Common;
 
 namespace BabBot.Forms
 {
-    public partial class AppOptionsForm : Form
+    public partial class AppOptionsForm : GenericDialog
     {
         public string Msg;
         
-        public AppOptionsForm()
+        public AppOptionsForm() 
+            : base("app_config")
         {
             InitializeComponent();
             cbWoWVersion.DataSource = ProcessManager.WoWVersions;
@@ -42,11 +43,10 @@ namespace BabBot.Forms
         private void btnOk_Click(object sender, EventArgs e)
         {
             if (tbLuaCallback.Text.Equals(""))
-            {
                 MessageBox.Show(this, "Lua Callback Address is empty");
-            } else if (cbWoWVersion.SelectedIndex < 0) {
+            else if (cbWoWVersion.SelectedIndex < 0)
                 MessageBox.Show(this, "WoW Version field is empty");
-            } else {
+            else {
                 try
                 {
                     ProcessManager.Config.WoWInfo.ExePath = tbWowExePath.Text;
@@ -56,6 +56,8 @@ namespace BabBot.Forms
                     ProcessManager.Config.WoWInfo.Windowed = cbWindowed.Checked;
                     ProcessManager.Config.WoWInfo.Resize = cbResize.Checked;
                     ProcessManager.Config.WoWInfo.Version = cbWoWVersion.Text;
+                    ProcessManager.Config.WoWInfo.RefreshTime = (int)numRefresh.Value;
+                    ProcessManager.Config.WoWInfo.IdleSleepTime = (int)numIdleSleep.Value * 1000;
 
                     ProcessManager.Config.LogParams.Dir = tbLogsPath.Text;
                     ProcessManager.Config.LogParams.DisplayLogs = chkLogOutput.Checked;
@@ -66,8 +68,8 @@ namespace BabBot.Forms
                     ProcessManager.Config.CustomParams.LuaCallback = tbLuaCallback.Text;
                     ProcessManager.Config.CustomParams.WinTitle = tbWinTitle.Text;
 
+                    IsChanged = false;
                     this.DialogResult = DialogResult.OK;
-                    this.Close();
                 }
                 catch (Exception ex)
                 {
@@ -101,31 +103,32 @@ namespace BabBot.Forms
 
             tbLuaCallback.Text = config.CustomParams.LuaCallback;
             tbWinTitle.Text = config.CustomParams.WinTitle;
-            
+
+            numRefresh.Minimum = ProcessManager.AppConfig.MinBotRefreshTime;
+            numRefresh.Value = config.WoWInfo.RefreshTime;
+            numIdleSleep.Value = (int)(config.WoWInfo.IdleSleepTime/1000);
+
             if (Msg != null)
-                MessageBox.Show(this,Msg);
+            {
+                MessageBox.Show(this, Msg);
+                btnSave.Enabled = true;
+            }
         }
 
         private void btnBrowseWowExec_Click(object sender, EventArgs e)
         {
             var dlg = new OpenFileDialog { Multiselect = false, Filter = "WoW Executable (*.exe)|*.exe" };
             if (dlg.ShowDialog() == DialogResult.OK)
-            {
                 tbWowExePath.Text = dlg.FileName;
-            }
         }
 
         private void btnFindWowExePath_Click(object sender, EventArgs e)
         {
             string wowPath = AppHelper.GetWowInstallationPath();
             if (!string.IsNullOrEmpty(wowPath))
-            {
                 tbWowExePath.Text = wowPath;
-            }
             else
-            {
                 MessageBox.Show("Cannot find WoW's installation path.");
-            }
         }
 
         private void btnBrowseLogPath_Click(object sender, EventArgs e)
@@ -140,6 +143,11 @@ namespace BabBot.Forms
             var dlg = new FolderBrowserDialog();
             if (dlg.ShowDialog() == DialogResult.OK)
                 tbProfilesPath.Text = dlg.SelectedPath;
+        }
+
+        protected override void RegisterChange(object sender, EventArgs e)
+        {
+            base.RegisterChange(sender, e);
         }
     }
 }

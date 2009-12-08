@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AppOptionsForm));
-            this.btnOk = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tbWinTitle = new System.Windows.Forms.TextBox();
             this.tbLuaCallback = new System.Windows.Forms.TextBox();
@@ -38,6 +36,12 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.numIdleSleep = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
+            this.numRefresh = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.cbWoWVersion = new System.Windows.Forms.ComboBox();
             this.cbResize = new System.Windows.Forms.CheckBox();
@@ -63,31 +67,24 @@
             this.btnProfilesPath = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numIdleSleep)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRefresh)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btnOk
+            // btnHelp
             // 
-            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.Location = new System.Drawing.Point(341, 363);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(75, 23);
-            this.btnOk.TabIndex = 7;
-            this.btnOk.Text = "Save";
-            this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            this.btnHelp.Location = new System.Drawing.Point(12, 363);
             // 
-            // button1
+            // btnClose
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(422, 363);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Cancel";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnClose.Location = new System.Drawing.Point(423, 363);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(335, 363);
+            this.btnSave.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // groupBox1
             // 
@@ -109,6 +106,7 @@
             this.tbWinTitle.Name = "tbWinTitle";
             this.tbWinTitle.Size = new System.Drawing.Size(136, 20);
             this.tbWinTitle.TabIndex = 11;
+            this.tbWinTitle.Click += new System.EventHandler(this.RegisterChange);
             // 
             // tbLuaCallback
             // 
@@ -116,6 +114,7 @@
             this.tbLuaCallback.Name = "tbLuaCallback";
             this.tbLuaCallback.Size = new System.Drawing.Size(86, 20);
             this.tbLuaCallback.TabIndex = 10;
+            this.tbLuaCallback.Click += new System.EventHandler(this.RegisterChange);
             // 
             // label5
             // 
@@ -146,6 +145,12 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label12);
+            this.groupBox2.Controls.Add(this.label11);
+            this.groupBox2.Controls.Add(this.numIdleSleep);
+            this.groupBox2.Controls.Add(this.label10);
+            this.groupBox2.Controls.Add(this.numRefresh);
+            this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.cbWoWVersion);
             this.groupBox2.Controls.Add(this.cbResize);
@@ -164,7 +169,84 @@
             this.groupBox2.Size = new System.Drawing.Size(486, 148);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "WoW Start Options";
+            this.groupBox2.Text = "WoW Options";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(318, 75);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(80, 13);
+            this.label12.TabIndex = 279;
+            this.label12.Text = "Idle Sleep Time";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(451, 75);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(24, 13);
+            this.label11.TabIndex = 278;
+            this.label11.Text = "sec";
+            // 
+            // numIdleSleep
+            // 
+            this.numIdleSleep.Location = new System.Drawing.Point(402, 73);
+            this.numIdleSleep.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numIdleSleep.Name = "numIdleSleep";
+            this.numIdleSleep.Size = new System.Drawing.Size(41, 20);
+            this.numIdleSleep.TabIndex = 277;
+            this.numIdleSleep.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numIdleSleep.ValueChanged += new System.EventHandler(this.RegisterChange);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(447, 101);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(32, 13);
+            this.label10.TabIndex = 276;
+            this.label10.Text = "msec";
+            // 
+            // numRefresh
+            // 
+            this.numRefresh.Increment = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.numRefresh.Location = new System.Drawing.Point(394, 99);
+            this.numRefresh.Maximum = new decimal(new int[] {
+            60000,
+            0,
+            0,
+            0});
+            this.numRefresh.Name = "numRefresh";
+            this.numRefresh.Size = new System.Drawing.Size(49, 20);
+            this.numRefresh.TabIndex = 275;
+            this.numRefresh.Value = new decimal(new int[] {
+            250,
+            0,
+            0,
+            0});
+            this.numRefresh.ValueChanged += new System.EventHandler(this.RegisterChange);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(318, 101);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(70, 13);
+            this.label9.TabIndex = 274;
+            this.label9.Text = "Refresh Time";
             // 
             // label7
             // 
@@ -183,6 +265,7 @@
             this.cbWoWVersion.Name = "cbWoWVersion";
             this.cbWoWVersion.Size = new System.Drawing.Size(121, 21);
             this.cbWoWVersion.TabIndex = 272;
+            this.cbWoWVersion.SelectedIndexChanged += new System.EventHandler(this.RegisterChange);
             // 
             // cbResize
             // 
@@ -193,6 +276,7 @@
             this.cbResize.TabIndex = 271;
             this.cbResize.Text = "Resize to min.";
             this.cbResize.UseVisualStyleBackColor = true;
+            this.cbResize.CheckedChanged += new System.EventHandler(this.RegisterChange);
             // 
             // cbNoSound
             // 
@@ -203,6 +287,7 @@
             this.cbNoSound.TabIndex = 270;
             this.cbNoSound.Text = "No sound";
             this.cbNoSound.UseVisualStyleBackColor = true;
+            this.cbNoSound.CheckedChanged += new System.EventHandler(this.RegisterChange);
             // 
             // cbWindowed
             // 
@@ -213,6 +298,7 @@
             this.cbWindowed.TabIndex = 269;
             this.cbWindowed.Text = "Windows mode";
             this.cbWindowed.UseVisualStyleBackColor = true;
+            this.cbWindowed.CheckedChanged += new System.EventHandler(this.RegisterChange);
             // 
             // btnFindWowExePath
             // 
@@ -267,6 +353,7 @@
             this.tbGuestPassword.Name = "tbGuestPassword";
             this.tbGuestPassword.Size = new System.Drawing.Size(170, 20);
             this.tbGuestPassword.TabIndex = 260;
+            this.tbGuestPassword.TextChanged += new System.EventHandler(this.RegisterChange);
             // 
             // tbGuestUsername
             // 
@@ -274,6 +361,7 @@
             this.tbGuestUsername.Name = "tbGuestUsername";
             this.tbGuestUsername.Size = new System.Drawing.Size(170, 20);
             this.tbGuestUsername.TabIndex = 259;
+            this.tbGuestUsername.TextChanged += new System.EventHandler(this.RegisterChange);
             // 
             // tbWowExePath
             // 
@@ -281,6 +369,8 @@
             this.tbWowExePath.Name = "tbWowExePath";
             this.tbWowExePath.Size = new System.Drawing.Size(241, 20);
             this.tbWowExePath.TabIndex = 258;
+            this.tbWowExePath.TextChanged += new System.EventHandler(this.RegisterChange);
+            this.tbWowExePath.Click += new System.EventHandler(this.RegisterChange);
             // 
             // btnBrowseLogPath
             // 
@@ -307,6 +397,7 @@
             this.tbLogsPath.Name = "tbLogsPath";
             this.tbLogsPath.Size = new System.Drawing.Size(191, 20);
             this.tbLogsPath.TabIndex = 266;
+            this.tbLogsPath.Click += new System.EventHandler(this.RegisterChange);
             // 
             // groupBox3
             // 
@@ -330,6 +421,7 @@
             this.chkLogOutput.TabIndex = 269;
             this.chkLogOutput.Text = "Display Log";
             this.chkLogOutput.UseVisualStyleBackColor = true;
+            this.chkLogOutput.CheckedChanged += new System.EventHandler(this.RegisterChange);
             // 
             // cbDebugMode
             // 
@@ -340,6 +432,7 @@
             this.cbDebugMode.TabIndex = 12;
             this.cbDebugMode.Text = "Debug Mode";
             this.cbDebugMode.UseVisualStyleBackColor = true;
+            this.cbDebugMode.CheckedChanged += new System.EventHandler(this.RegisterChange);
             // 
             // groupBox4
             // 
@@ -369,6 +462,7 @@
             this.tbProfilesPath.Name = "tbProfilesPath";
             this.tbProfilesPath.Size = new System.Drawing.Size(318, 20);
             this.tbProfilesPath.TabIndex = 269;
+            this.tbProfilesPath.TextChanged += new System.EventHandler(this.RegisterChange);
             // 
             // btnProfilesPath
             // 
@@ -389,18 +483,25 @@
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.btnOk);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(253, 188);
             this.Name = "AppOptionsForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Application Options";
             this.Load += new System.EventHandler(this.AppOptionsForm_Load);
+            this.Controls.SetChildIndex(this.btnClose, 0);
+            this.Controls.SetChildIndex(this.groupBox1, 0);
+            this.Controls.SetChildIndex(this.groupBox2, 0);
+            this.Controls.SetChildIndex(this.btnHelp, 0);
+            this.Controls.SetChildIndex(this.groupBox3, 0);
+            this.Controls.SetChildIndex(this.btnSave, 0);
+            this.Controls.SetChildIndex(this.groupBox4, 0);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numIdleSleep)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRefresh)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -411,8 +512,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnOk;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox tbWinTitle;
         private System.Windows.Forms.TextBox tbLuaCallback;
@@ -443,5 +542,11 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox tbProfilesPath;
         private System.Windows.Forms.Button btnProfilesPath;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown numRefresh;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.NumericUpDown numIdleSleep;
     }
 }

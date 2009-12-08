@@ -85,6 +85,10 @@ namespace BabBot
         public string RealmLocation = "";
         [XmlAttribute("game_type")]
         public string GameType = "";
+        [XmlAttribute("reconnect")]
+        public bool ReConnect = false;
+        [XmlAttribute("relogin")]
+        public bool ReStart = false;
 
         // Private fields not included into serializer
         private string AutoLoginPassword = "";
@@ -182,6 +186,12 @@ namespace BabBot
         public string Version;
         [XmlAttribute("auto-login")]
         public bool AutoLogin = false;
+        // Bot refresh rate in msec
+        [XmlAttribute("refresh_time")]
+        public int RefreshTime = 250;
+        // Bot idle sleep time (if game not started)
+        [XmlAttribute("idle_sleep_time")]
+        public int IdleSleepTime = 5000;
 
         public WoWInfo() { }
     }
