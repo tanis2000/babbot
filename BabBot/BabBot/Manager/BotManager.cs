@@ -141,7 +141,9 @@ namespace BabBot.Manager
             {
                 case ProcessManager.ProcessStatuses.WOW_STARTING:
                     // Start Wow
-                    ProcessManager.StartWow();
+                    if (!ProcessManager.StartWow())
+                        // Something wrong with system. Doesn't make sense to continue
+                        Stop();
                     break;
 
                 case ProcessManager.ProcessStatuses.WOW_RUNNING:

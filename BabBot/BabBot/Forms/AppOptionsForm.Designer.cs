@@ -106,7 +106,7 @@
             this.tbWinTitle.Name = "tbWinTitle";
             this.tbWinTitle.Size = new System.Drawing.Size(136, 20);
             this.tbWinTitle.TabIndex = 11;
-            this.tbWinTitle.Click += new System.EventHandler(this.RegisterChange);
+            this.tbWinTitle.TextChanged += new System.EventHandler(this.RegisterChange);
             // 
             // tbLuaCallback
             // 
@@ -114,7 +114,7 @@
             this.tbLuaCallback.Name = "tbLuaCallback";
             this.tbLuaCallback.Size = new System.Drawing.Size(86, 20);
             this.tbLuaCallback.TabIndex = 10;
-            this.tbLuaCallback.Click += new System.EventHandler(this.RegisterChange);
+            this.tbLuaCallback.TextChanged += new System.EventHandler(this.RegisterChange);
             // 
             // label5
             // 
@@ -370,7 +370,6 @@
             this.tbWowExePath.Size = new System.Drawing.Size(241, 20);
             this.tbWowExePath.TabIndex = 258;
             this.tbWowExePath.TextChanged += new System.EventHandler(this.RegisterChange);
-            this.tbWowExePath.Click += new System.EventHandler(this.RegisterChange);
             // 
             // btnBrowseLogPath
             // 
@@ -397,7 +396,7 @@
             this.tbLogsPath.Name = "tbLogsPath";
             this.tbLogsPath.Size = new System.Drawing.Size(191, 20);
             this.tbLogsPath.TabIndex = 266;
-            this.tbLogsPath.Click += new System.EventHandler(this.RegisterChange);
+            this.tbLogsPath.TextChanged += new System.EventHandler(this.RegisterChange);
             // 
             // groupBox3
             // 

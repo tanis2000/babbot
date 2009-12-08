@@ -40,7 +40,10 @@ namespace BabBot.Forms
         protected bool IsChanged
         {
             get { return _changed; }
-            set { _changed = value; }
+            set { 
+                _changed = value;
+                btnSave.Enabled = _changed;
+            }
         }
 
         GenericDialog()

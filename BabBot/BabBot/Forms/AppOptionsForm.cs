@@ -108,6 +108,8 @@ namespace BabBot.Forms
             numRefresh.Value = config.WoWInfo.RefreshTime;
             numIdleSleep.Value = (int)(config.WoWInfo.IdleSleepTime/1000);
 
+            IsChanged = false;
+
             if (Msg != null)
             {
                 MessageBox.Show(this, Msg);

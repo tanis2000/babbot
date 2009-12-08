@@ -593,7 +593,7 @@ namespace BabBot.Manager
         /// <summary>
         /// Try to run the WoW process 
         /// </summary>
-        public static void StartWow()
+        public static bool StartWow()
         {
 
             try
@@ -621,7 +621,7 @@ namespace BabBot.Manager
                                 "' is not equal version from config.xml '" + wversion + "'"))
                             Environment.Exit(4);
 
-                        return;
+                        return false;
                     } else
                         Log("char", "Continuing with WoW.exe version '" + version + "'");
                         
@@ -648,7 +648,7 @@ namespace BabBot.Manager
                               "Check that the path is correct and the Guest account is enabled." );
                         }
 
-                        return;
+                        return false;
 
                     }
                     // The process is now being started as suspended. We should actually
@@ -671,30 +671,31 @@ namespace BabBot.Manager
                     {
                         AfterProcessStart();
                         Log("char", "WoW started.");
+                        return true;
                     }
                     else
                     {
                         Log("char", "Failed start WoW.");
+                        return false;
                     }
                 }
                 else
                 {
-                    throw new Exception("Wow is not installed or the registry key is missing.");
+                    ShowError("Wow is not installed or the registry key is missing.");
+                    return false;
                 }
             }
             catch (Win32Exception w32e)
             {
                 if (WoWProcessFailed != null)
-                {
                     WoWProcessFailed(w32e.Message);
-                }
+                return false;
             }
             catch (Exception ex)
             {
                 if (WoWProcessAccessFailed != null)
-                {
                     WoWProcessAccessFailed(ex.Message);
-                }
+                return false;
             }
         }
 
