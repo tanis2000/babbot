@@ -637,7 +637,7 @@ namespace BabBot.Forms
                 // Reload bot with new configuration
                 BotManager bm = ProcessManager.BotManager;
                 if (bm != null)
-                    bm.OnConfigChanged();
+                    bm.ChangeConfig();
             }
             else
             {

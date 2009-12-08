@@ -421,7 +421,7 @@ namespace BabBot.Manager
             if (config.Account.ReStart)
             {
                 // StartBot();
-                Log("char", "Suppose to restart WoW.exe now now but ... ");
+                Log("char", "Suppose to restart WoW.exe now but ... ");
                 Log("char", "Auto Restart not implemented yet");
             }
             else

@@ -26,6 +26,8 @@ namespace BabBot.Common
     {
         #region Delegates
 
+        public delegate void DlgCommon();
+
         public delegate void DlgThreadBeforeStart();
 
         public delegate void DlgThreadBeforeStop();
@@ -37,8 +39,6 @@ namespace BabBot.Common
         public delegate void DlgThreadInitialize();
 
         public delegate void DlgThreadRun();
-
-        public delegate void DlgConigChanged();
 
         #endregion
 
@@ -105,7 +105,7 @@ namespace BabBot.Common
         // Evento che viene generato se avviene un'eccezione durante la vita del thread  
 
         // Reinitialize internal parameters 
-        public event DlgConigChanged OnConfigChanged;
+        public event DlgCommon OnInit;
 
         public void Start()
         {
@@ -113,6 +113,13 @@ namespace BabBot.Common
             if (m_thread != null)
             {
                 return;
+            }
+
+            // First load configuratin parameters
+            if (OnInit != null)
+            {
+                Output.Instance.Debug("char", "Initialize bot parameters ...", this);
+                OnInit();
             }
 
             // Genere l'evento OnBeforeStart prima di far partire il thread  

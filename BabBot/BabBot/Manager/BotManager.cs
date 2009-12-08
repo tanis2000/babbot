@@ -58,7 +58,7 @@ namespace BabBot.Manager
             workerThread.OnBeforeStart += OnBeforeStart;
             workerThread.OnBeforeStop += OnBeforeStop;
             workerThread.OnFinalize += OnFinalize;
-            workerThread.OnConfigChanged += OnConfigChanged;
+            workerThread.OnInit += InitConfigParams;
         }
 
         public void Start()
@@ -97,18 +97,16 @@ namespace BabBot.Manager
         private void OnBeforeStart()
         {
             //Output.Instance.Debug("OnBeforeStart", this);
-            Output.Instance.Debug("char", "Loading bot parameters ...", this);
-            LoadConfig();
         }
 
-        public void OnConfigChanged()
+        public void ChangeConfig()
         {
-            // Inter-thread call but we safe now
+            // Inter-thread call but we safe since changes are minor
             Output.Instance.Debug("char", "Re-Loading bot parameters ...", this);
-            LoadConfig();
+            InitConfigParams();
         }
 
-        private void LoadConfig()
+        private void InitConfigParams()
         {
             refresh_time = ProcessManager.Config.WoWInfo.RefreshTime;
             idle_sleep_time = ProcessManager.Config.WoWInfo.IdleSleepTime;
