@@ -189,12 +189,8 @@ namespace BabBot.Wow
 
             for (int i = 0; i < 5; i++)
             {
-                uint BagsPointer =
-                    ProcessManager.WowProcess.ReadUInt(ObjectPointer + (uint)
-                                                                       ((uint)
-                                                                        Descriptor.ePlayerFields.
-                                                                            PLAYER_FIELD_PACK_SLOT_1 + i * 2) *
-                                                                       0x04);
+                uint BagsPointer = ProcessManager.WowProcess.ReadUInt(ObjectPointer + (uint)
+                    ((uint) Descriptor.ePlayerFields.PLAYER_FIELD_PACK_SLOT_1 + i * 2) * 0x04);
                 Descriptor.eObjType type = ProcessManager.ObjectManager.GetTypeByObject(BagsPointer);
                 if (type == Descriptor.eObjType.OT_CONTAINER)
                 {
@@ -221,9 +217,13 @@ namespace BabBot.Wow
         {
             get
             {
-                return new Vector3D(ProcessManager.WowProcess.ReadFloat(Globals.LocalPlayerCorpseOffset),
-                                    ProcessManager.WowProcess.ReadFloat(Globals.LocalPlayerCorpseOffset + 0x04),
-                                    ProcessManager.WowProcess.ReadFloat(Globals.LocalPlayerCorpseOffset + 0x08));
+                return new Vector3D(
+                    ProcessManager.WowProcess.ReadFloat(
+                        ProcessManager.CurWoWVersion.Globals.LocalPlayerCorpseOffset),
+                    ProcessManager.WowProcess.ReadFloat(
+                        ProcessManager.CurWoWVersion.Globals.LocalPlayerCorpseOffset + 0x04),
+                    ProcessManager.WowProcess.ReadFloat(
+                    ProcessManager.CurWoWVersion.Globals.LocalPlayerCorpseOffset + 0x08));
             }
         }
 
@@ -236,7 +236,8 @@ namespace BabBot.Wow
                 List<WowObject> l = GetNearObjects();
                 foreach (WowObject obj in l)
                 {
-                    s += string.Format("GUID:{0:X}|Type:{1:X}\r" + Environment.NewLine, obj.Guid, obj.Type);
+                    s += string.Format("GUID:{0:X}|Type:{1:X}\r" + 
+                            Environment.NewLine, obj.Guid, obj.Type);
                 }
                 return s;
             }
@@ -251,8 +252,8 @@ namespace BabBot.Wow
                 List<WowUnit> l = GetNearMobs();
                 foreach (WowUnit obj in l)
                 {
-                    s += string.Format("{0:X}|{1}|Lootable:{2}" + Environment.NewLine, obj.Guid, obj.Name,
-                                       obj.IsLootable);
+                    s += string.Format("{0:X}|{1}|Lootable:{2}" + 
+                        Environment.NewLine, obj.Guid, obj.Name, obj.IsLootable);
                 }
                 return s;
             }
@@ -268,7 +269,8 @@ namespace BabBot.Wow
                     List<WowContainer> l = GetBags();
                     foreach (WowContainer obj in l)
                     {
-                        s += string.Format("{0:X}|Slots:{1}|Empty:{2}" + Environment.NewLine, obj.Guid, obj.GetSlots(),
+                        s += string.Format("{0:X}|Slots:{1}|Empty:{2}" + 
+                            Environment.NewLine, obj.Guid, obj.GetSlots(),
                                            obj.GetEmptySlots());
                     }
                 }
@@ -349,7 +351,8 @@ end)()");
         public void AddLastTargetToLootList()
         {
             //Thread.Sleep(2000);
-            Output.Instance.Debug("AddLastTargetToLootList() - Adding our last target to the list of lootable mobs", this);
+            Output.Instance.Debug("AddLastTargetToLootList() - " + 
+                "Adding our last target to the list of lootable mobs", this);
             ProcessManager.Injector.Lua_DoString("TargetLastTarget()");
             Thread.Sleep(2000);
             if (HasTarget)
@@ -357,16 +360,17 @@ end)()");
                 if (CurTarget.IsLootable)
                 {
                     LootableList.Add(CurTarget);
-                    Output.Instance.Debug("AddLastTargetToLootList() - Mob added to the list of llotable mobs", this);
+                    Output.Instance.Debug("AddLastTargetToLootList() - " + 
+                                "Mob added to the list of llotable mobs", this);
                 }
                 else
-                {
-                    Output.Instance.Debug("AddLastTargetToLootList() - It looks like our last kill is not lootable for some reason", this);
-                }
+                    Output.Instance.Debug("AddLastTargetToLootList() - " +
+                        "It looks like our last kill is not lootable for some reason", this);
             }
             else
             {
-                Output.Instance.Debug("AddLastTargetToLootList() - Something bad happened. We couldn't target our last target", this);
+                Output.Instance.Debug("AddLastTargetToLootList() - " + 
+                    "Something bad happened. We couldn't target our last target", this);
             }
         }
 
@@ -454,7 +458,8 @@ end)()");
 
             if (firstGuid == 0)
             {
-                Output.Instance.Debug("We tried targeting but the first TAB didn't land on anything", this);
+                Output.Instance.Debug("We tried targeting but " + 
+                    "the first TAB didn't land on anything", this);
                 return false;
             }
 
@@ -471,14 +476,17 @@ end)()");
                     Output.Instance.Debug("We found a target while TABbing", this);
                     return true;
                 }
-            } while ((CurTargetGuid != u.Guid) && (CurTargetGuid != firstGuid) && (tsTimeSpent.TotalMilliseconds < 10000));
+            } while ((CurTargetGuid != u.Guid) && 
+                (CurTargetGuid != firstGuid) && 
+                (tsTimeSpent.TotalMilliseconds < 10000));
 
             if (tsTimeSpent.TotalMilliseconds >= 10000)
             {
                 // If we couldn't find the target we were looking for we clear the target
                 ProcessManager.Injector.Lua_DoString(@"ClearTarget()");
             }
-            Output.Instance.Debug("We cycled through all the targets but nothing good could be found", this);
+            Output.Instance.Debug("We cycled through all the targets " + 
+                                            "but nothing good could be found", this);
             return false;
         }
 
@@ -573,16 +581,11 @@ end)()");
                     if ((obj.Name == enemy.Name) && (!obj.IsDead) && !IsInMobBlackList(obj))
                     {
                         if (closest == null)
-                        {
                             closest = obj;
-                        }
                         else
-                        {
-                            if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(obj.Location, Location, false))
-                            {
+                            if (MathFuncs.GetDistance(closest.Location, Location, false) > 
+                                        MathFuncs.GetDistance(obj.Location, Location, false))
                                 closest = obj;
-                            }
-                        }
                     }
                 }
             }
@@ -598,9 +601,7 @@ end)()");
             foreach (Enemy enemy in ProcessManager.Profile.Enemies)
             {
                 if (CurTarget.Name == enemy.Name)
-                {
                     return true;
-                }
             }
             return false;
         }
@@ -610,9 +611,7 @@ end)()");
             foreach (var ent in MobBlackList)
             {
                 if (ent.Guid == mob.Guid)
-                {
                     return true;
-                }
             }
             return false;
         }
@@ -629,16 +628,11 @@ end)()");
                     if ((obj.Name == enemy.Name) && (!obj.IsDead) && !IsInMobBlackList(obj))
                     {
                         if (closest == null)
-                        {
                             closest = obj;
-                        }
                         else
-                        {
-                            if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(obj.Location, Location, false))
-                            {
+                            if (MathFuncs.GetDistance(closest.Location, Location, false) > 
+                                        MathFuncs.GetDistance(obj.Location, Location, false))
                                 closest = obj;
-                            }
-                        }
                     }
                 }
             }
@@ -674,16 +668,11 @@ end)()");
                     if ((obj.Name == enemy.Name) && (!obj.IsDead) && !IsInMobBlackList(obj))
                     {
                         if (closest == null)
-                        {
                             closest = obj;
-                        }
                         else
-                        {
-                            if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(obj.Location, Location, false))
-                            {
+                            if (MathFuncs.GetDistance(closest.Location, Location, false) > 
+                                        MathFuncs.GetDistance(obj.Location, Location, false))
                                 closest = obj;
-                            }
-                        }
                     }
                 }
             }
@@ -711,16 +700,11 @@ end)()");
                     if ((obj.Name == enemy.Name) && (!obj.IsDead))
                     {
                         if (closest == null)
-                        {
                             closest = obj;
-                        }
                         else
-                        {
-                            if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(obj.Location, Location, false))
-                            {
+                            if (MathFuncs.GetDistance(closest.Location, Location, false) > 
+                                        MathFuncs.GetDistance(obj.Location, Location, false))
                                 closest = obj;
-                            }
-                        }
                     }
                 }
             }
@@ -747,16 +731,11 @@ end)()");
             foreach (WowUnit lootable in LootableList)
             {
                 if (closest == null)
-                {
                     closest = lootable;
-                }
                 else
-                {
-                    if (MathFuncs.GetDistance(closest.Location, Location, false) > MathFuncs.GetDistance(lootable.Location, Location, false))
-                    {
+                    if (MathFuncs.GetDistance(closest.Location, Location, false) > 
+                            MathFuncs.GetDistance(lootable.Location, Location, false))
                         closest = lootable;
-                    }
-                }
             }
 
             if (closest != null)
@@ -793,12 +772,9 @@ end)()");
         {
             Output.Instance.Debug("===Lootable List===", this);
             foreach (WowUnit wowUnit in LootableList)
-            {
                 if (wowUnit != null)
-                {
                     Output.Instance.Debug(wowUnit.Guid + " - " + wowUnit.Name, this);
-                }
-            }
+
             Output.Instance.Debug("LootClosestLootableMob() - Finding closest lootable mob", this);
             WowUnit mob = FindClosestLootableMob();
             if (mob != null)
@@ -841,26 +817,42 @@ end)()");
         public void ClickToMove(Vector3D dest)
         {
             ProcessManager.WowProcess.SuspendThread();
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveUnknown, 9.0f);
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveTurnScale, 13.962634f);
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveUnknown2, 14.0f);
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveInteractDistance, 0.5f);
-            ProcessManager.WowProcess.WriteUInt(Globals.ClickToMoveActionType, (uint)Descriptor.eClickToMoveActionType.WalkTo);
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveDestX, dest.X);
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveDestY, dest.Y);
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveDestZ, dest.Z);
+            ProcessManager.WowProcess.WriteFloat(
+                ProcessManager.CurWoWVersion.Globals.ClickToMoveUnknown, 9.0f);
+            ProcessManager.WowProcess.WriteFloat(
+                ProcessManager.CurWoWVersion.Globals.ClickToMoveTurnScale, 13.962634f);
+            ProcessManager.WowProcess.WriteFloat(
+                ProcessManager.CurWoWVersion.Globals.ClickToMoveUnknown2, 14.0f);
+            ProcessManager.WowProcess.WriteFloat(
+                ProcessManager.CurWoWVersion.Globals.ClickToMoveInteractDistance, 0.5f);
+            ProcessManager.WowProcess.WriteUInt(
+                ProcessManager.CurWoWVersion.Globals.ClickToMoveActionType, 
+                                    (uint)Descriptor.eClickToMoveActionType.WalkTo);
+            ProcessManager.WowProcess.WriteFloat(
+                ProcessManager.CurWoWVersion.Globals.ClickToMoveDestX, dest.X);
+            ProcessManager.WowProcess.WriteFloat(
+                ProcessManager.CurWoWVersion.Globals.ClickToMoveDestY, dest.Y);
+            ProcessManager.WowProcess.WriteFloat(
+                ProcessManager.CurWoWVersion.Globals.ClickToMoveDestZ, dest.Z);
             ProcessManager.WowProcess.ResumeThread();
         }
 
         public void ClickToMoveAttack(ulong guid)
         {
             ProcessManager.WowProcess.SuspendThread();
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveUnknown, 9.0f);
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveTurnScale, 13.962634f);
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveUnknown2, 14.0f);
-            ProcessManager.WowProcess.WriteFloat(Globals.ClickToMoveInteractDistance, 0.366f);
-            ProcessManager.WowProcess.WriteUInt64(Globals.ClickToMoveTarget, guid);
-            ProcessManager.WowProcess.WriteUInt(Globals.ClickToMoveActionType, (uint)Descriptor.eClickToMoveActionType.AttackGuid);
+            ProcessManager.WowProcess.WriteFloat(
+                    ProcessManager.CurWoWVersion.Globals.ClickToMoveUnknown, 9.0f);
+            ProcessManager.WowProcess.WriteFloat(
+                    ProcessManager.CurWoWVersion.Globals.ClickToMoveTurnScale, 13.962634f);
+            ProcessManager.WowProcess.WriteFloat(
+                    ProcessManager.CurWoWVersion.Globals.ClickToMoveUnknown2, 14.0f);
+            ProcessManager.WowProcess.WriteFloat(
+                    ProcessManager.CurWoWVersion.Globals.ClickToMoveInteractDistance, 0.366f);
+            ProcessManager.WowProcess.WriteUInt64(
+                ProcessManager.CurWoWVersion.Globals.ClickToMoveTarget, guid);
+            ProcessManager.WowProcess.WriteUInt(
+                    ProcessManager.CurWoWVersion.Globals.ClickToMoveActionType, 
+                                (uint)Descriptor.eClickToMoveActionType.AttackGuid);
             ProcessManager.WowProcess.ResumeThread();
         }
 
@@ -948,11 +940,14 @@ end)()");
 
                 TravelTime = tsTravelTime.Milliseconds + tsTravelTime.Seconds*1000;
 
-                // we take as granted that we should move at least 0.1 yards per cycle (might be a good idea to get this routine synchronized so that 
+                // we take as granted that we should move at least 0.1 yards 
+                // per cycle (might be a good idea to get this routine synchronized so that 
                 // we can actually know exactly how much we move "per-tick")
-                if (Math.Abs(currentDistance - distance) < 0.1f && Math.Abs(currentDistance - distance) > 0.0001f) 
+                if (Math.Abs(currentDistance - distance) < 0.1f && 
+                            Math.Abs(currentDistance - distance) > 0.0001f) 
                 {
-                    Output.Instance.Debug(string.Format("Stuck! Distance difference: {0}", Math.Abs(currentDistance - distance)), this);
+                    Output.Instance.Debug(string.Format("Stuck! Distance difference: {0}", 
+                                                Math.Abs(currentDistance - distance)), this);
                     Unstuck();
                 }
                 else if (TravelTime >= MAX_REACHTIME)
@@ -961,7 +956,8 @@ end)()");
                     res = NavigationState.WayPointTimeout;
                     break;
                 }
-                Output.Instance.Debug(string.Format("Tolerance: {0} - Distance: {1}", tolerance, distance), this);
+                Output.Instance.Debug(string.Format("Tolerance: {0} - Distance: {1}", 
+                                                            tolerance, distance), this);
             }
 
             PlayerCM.ArrowKeyUp(key);
@@ -1001,23 +997,26 @@ end)()");
 
             if (path == null)
             {
-                Output.Instance.Debug(string.Format("Cannot find a path from X:{0} Y:{1} Z:{2} to X:{3} Y:{4} Z:{5}", Location.X, Location.Y, Location.Z, target.Location.X, target.Location.Y, target.Location.Z), this);
+                Output.Instance.Debug(string.Format(
+                    "Cannot find a path from X:{0} Y:{1} Z:{2} to X:{3} Y:{4} Z:{5}", 
+                    Location.X, Location.Y, Location.Z, target.Location.X, target.Location.Y, 
+                        target.Location.Z), this);
                 return NavigationState.Ready;
             }
 
             foreach (Location loc in path.locations)
-            {
-                Output.Instance.Debug(string.Format("X: {0}  Y: {1}   Z: {2}", loc.X, loc.Y, loc.Z), this);
-            }
+                Output.Instance.Debug(string.Format(
+                    "X: {0}  Y: {1}   Z: {2}", loc.X, loc.Y, loc.Z), this); 
 
 
             steps = path.locations.Count;
             if (steps > 0)
             {
                 currentStep = 1;
-                angle =
-                    MathFuncs.GetFaceRadian(new Vector3D(path.locations[currentStep].X, path.locations[currentStep].Y,
-                                               path.locations[currentStep].Z), Location);
+                angle = MathFuncs.GetFaceRadian(
+                    new Vector3D(path.locations[currentStep].X, 
+                        path.locations[currentStep].Y, 
+                        path.locations[currentStep].Z), Location);
             }
             else
             {
@@ -1030,9 +1029,7 @@ end)()");
             int rndJmp = MathFuncs.RandomNumber(1, 8);
             bool doJmp = false;
             if (rndJmp == 1 || rndJmp == 3)
-            {
                 doJmp = true;
-            }
 
             // Move on...
 
@@ -1091,10 +1088,12 @@ end)()");
                             {
                                 angle = MathFuncs.GetFaceRadian(target.Location, Location);
                             }
-                            // NOTE: tanis - I've switched this to the memory write one. I dunno if it's better yet
+                            // NOTE: tanis - I've switched this to the memory write one. 
+                            // I dunno if it's better yet
                             //Face(angle);
-                            angle = MathFuncs.GetFaceRadian(WaypointVector3DHelper.LocationToVector3D(path.locations[currentStep]),
-                                      Location);
+                            angle = MathFuncs.GetFaceRadian(
+                                WaypointVector3DHelper.LocationToVector3D(
+                                        path.locations[currentStep]),Location);
                             FaceUsingMemoryWrite(angle, true);
                             // NOTE: tanis - end
                         }
@@ -1121,7 +1120,8 @@ end)()");
                     res = NavigationState.WayPointTimeout;
                     break;
                 }
-                Output.Instance.Debug(string.Format("Tolerance: {0} - Distance: {1}", tolerance, distance), this);
+                Output.Instance.Debug(string.Format(
+                    "Tolerance: {0} - Distance: {1}", tolerance, distance), this);
             }
 
             PlayerCM.ArrowKeyUp(key);
@@ -1253,7 +1253,8 @@ end)()");
             if (!Timed)
             {
                 ProcessManager.WowProcess.SuspendThread();
-                ProcessManager.WowProcess.WriteFloat(ObjectPointer + Globals.PlayerRotationOffset, angle);
+                ProcessManager.WowProcess.WriteFloat(ObjectPointer + 
+                    ProcessManager.CurWoWVersion.Globals.PlayerRotationOffset, angle);
                 ProcessManager.WowProcess.ResumeThread();
 
                 Thread.Sleep(50);
@@ -1266,7 +1267,8 @@ end)()");
                 return;
             }
 
-            //the max distance we need to turn is Pi.  To turn that distance in 1 second we need to turn Pi/10 every 100 miliseconds
+            //the max distance we need to turn is Pi.  
+            // To turn that distance in 1 second we need to turn Pi/10 every 100 miliseconds
             float dPerCycle = (float)Math.PI / 10f;
 
             //determine which direction to turn
@@ -1280,7 +1282,8 @@ end)()");
             //while the distance left to turn is greater then that covered in a single cycle
             while (Math.Abs(angle - (Orientation % (2 * System.Math.PI))) > Math.Abs(dPerCycle))
             {
-                //get new angle by adding the positive or negative dpercycle value to our current orientation and setting it as our players angle
+                //get new angle by adding the positive or negative dpercycle value to our 
+                // current orientation and setting it as our players angle
                 float newOrientation = (float)(Orientation % (2 * System.Math.PI)) + dPerCycle;
 
                 if (newOrientation < 0f)
@@ -1289,7 +1292,8 @@ end)()");
                 }
 
                 ProcessManager.WowProcess.SuspendThread();
-                ProcessManager.WowProcess.WriteFloat(ObjectPointer + Globals.PlayerRotationOffset, newOrientation);
+                ProcessManager.WowProcess.WriteFloat(ObjectPointer + 
+                    ProcessManager.CurWoWVersion.Globals.PlayerRotationOffset, newOrientation);
                 ProcessManager.WowProcess.ResumeThread();
 
                 PlayerCM.ArrowKeyDown(nextKey);
@@ -1306,7 +1310,8 @@ end)()");
 
             //write the new location memory
             ProcessManager.WowProcess.SuspendThread();
-            ProcessManager.WowProcess.WriteFloat(ObjectPointer + Globals.PlayerRotationOffset, angle);
+            ProcessManager.WowProcess.WriteFloat(ObjectPointer + 
+                ProcessManager.CurWoWVersion.Globals.PlayerRotationOffset, angle);
             ProcessManager.WowProcess.ResumeThread();
             Thread.Sleep(50);
 
@@ -1419,9 +1424,8 @@ end)()");
             else
             {
                 if (act.Binding.Bar > 0)
-                {
-                    PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + act.Binding.Bar + CommandManager.SK_SHIFT_UP);
-                }
+                    PlayerCM.SendKeys(CommandManager.SK_SHIFT_DOWN + 
+                        act.Binding.Bar + CommandManager.SK_SHIFT_UP);
                 PlayerCM.SendKeys(act.Binding.Key);
             }
         }
@@ -1507,12 +1511,11 @@ end)()", iName));
 
             Int32 realCost = Convert.ToInt32(cost);
 
-            // TODO: We should do all the checks based on our class. For now we take for granted we're talking about mana
+            // TODO: We should do all the checks based on our class. 
+            // For now we take for granted we're talking about mana
 
             if (realCost <= Mp)
-            {
                 return true;
-            }
 
             return false;
         }
@@ -1602,7 +1605,8 @@ end)()", iName));
                 ItemLink il = bag.Find(item);
                 if (il != null)
                 {
-                    ProcessManager.Injector.Lua_DoString(string.Format("UseContainerItem({0}, {1});", bag.BagID, il.Slot));
+                    ProcessManager.Injector.Lua_DoString(string.Format(
+                            "UseContainerItem({0}, {1});", bag.BagID, il.Slot));
                 }
             }
              */

@@ -742,6 +742,42 @@ end)()]]></text>
       armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
     <quests header_pattern="^\d+::.*::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
             detail_pattern="^.*||.*||.*$" />
+    <globals 
+        game_offset="0x12D4EA8"
+        move_mouse_over_guid_offset="0x113D798"
+        name_store_pointer="0x12541C8"
+        player_base_offset1="0x34"
+        player_base_offset2="0x24"
+        player_cur_target_guil_offset="0x113D7A8"
+        player_rotation_offset="0x7A8"
+        player_x_offset="0x798"
+        player_y_offset="0x79C"
+        player_z_offset="0x7A0"
+        local_player_corpse_offset="0x113DA34"
+        camera_offset="0x00007da0"
+        camera_pointer="0x10e1824"
+        descriptor_offset="0x08"
+        first_object="0xAC"
+        guid_offset="0x30"
+        local_guid_offset="0xC0"
+        next_object="0x3C"
+        type_offset="0x14"
+        first_buff="0xEBC"
+        next_buff="0x4"
+        unit_name_base_offset1="0x968"
+        unit_name_base_offset2="0x5C"
+        unit_name_len="0x40"
+        click_to_move_base="0x01297920"
+        click_to_move_unknown="0x0"
+        click_to_move_turn_scale="0x4"
+        click_to_move_unknown_2="0x8"
+        click_to_move_interact_distance="0xc"
+        click_to_move_action_type="0x1c"
+        click_to_move_target="0x20"
+        click_to_move_dest_x="0x8c"
+        click_to_move_dest_y="0x90"
+        click_to_move_dest_z="0x94"
+     />
   </version>
   <app_config  min_refresh_time="100" />
 </wow_data>

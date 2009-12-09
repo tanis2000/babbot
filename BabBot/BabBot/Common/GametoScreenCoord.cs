@@ -39,8 +39,8 @@ namespace BabBot.Common
             var camera = new CameraInfo();
             //Read information
             uint pAddr2 =
-                ProcessManager.WowProcess.ReadUInt((ProcessManager.WowProcess.ReadUInt(Globals.cameraPointer)) +
-                                                   Globals.cameraOffset);
+                ProcessManager.WowProcess.ReadUInt((ProcessManager.WowProcess.ReadUInt(ProcessManager.CurWoWVersion.Globals.cameraPointer)) +
+                                                   ProcessManager.CurWoWVersion.Globals.cameraOffset);
             var bCamera = new byte[68];
             bCamera = ProcessManager.WowProcess.ReadBytes(pAddr2, 68);
 

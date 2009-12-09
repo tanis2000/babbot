@@ -68,6 +68,9 @@ namespace BabBot.Wow
         [XmlElement("continents")]
         public ContinentList Continents;
 
+        [XmlElement("globals")]
+        public GlobalOffsets Globals;
+
         [XmlIgnore]
         public NPCVersion NPCData;
 
@@ -275,6 +278,14 @@ namespace BabBot.Wow
         public QuestConfig() { }
     }
 
+    public class AppConfig
+    {
+        [XmlAttribute("min_refresh_time")]
+        public int MinBotRefreshTime;
+
+        AppConfig() { }
+    }
+
     #endregion
 
     #region Continets
@@ -307,11 +318,79 @@ namespace BabBot.Wow
 
     #endregion
 
-    public class AppConfig
-    {
-        [XmlAttribute("min_refresh_time")]
-        public int MinBotRefreshTime;
+    #region Globals
 
-        AppConfig() { }
+    public class GlobalOffsets
+    {
+        [XmlAttribute("game_offset")]
+        public uint GameOffset;
+        [XmlAttribute("move_mouse_over_guid_offset")]
+        public uint MouseOverGuidOffset;
+        [XmlAttribute("name_store_pointer")]
+        public uint NameStorePointer;
+        [XmlAttribute("player_base_offset1")]
+        public uint PlayerBaseOffset1;
+        [XmlAttribute("player_base_offset2")]
+        public uint PlayerBaseOffset2;
+        [XmlAttribute("player_cur_target_guil_offset")]
+        public uint PlayerCurTargetGuidOffset;
+        [XmlAttribute("player_rotation_offset")]
+        public uint PlayerRotationOffset;
+        [XmlAttribute("player_x_offset")]
+        public uint PlayerXOffset;
+        [XmlAttribute("player_y_offset")]
+        public uint PlayerYOffset;
+        [XmlAttribute("player_z_offset")]
+        public uint PlayerZOffset;
+        [XmlAttribute("local_player_corpse_offset")]
+        public uint LocalPlayerCorpseOffset;
+        [XmlAttribute("camera_offset")]
+        public uint cameraOffset;
+        [XmlAttribute("camera_pointer")]
+        public uint cameraPointer;
+        [XmlAttribute("descriptor_offset")]
+        public uint DescriptorOffset;
+        [XmlAttribute("first_object")]
+        public uint FirstObject;
+        [XmlAttribute("guid_offset")]
+        public uint GuidOffset;
+        [XmlAttribute("local_guid_offset")]
+        public uint LocalGuidOffset;
+        [XmlAttribute("next_object")]
+        public uint NextObject;
+        [XmlAttribute("type_offset")]
+        public uint TypeOffset;
+        [XmlAttribute("first_buff")]
+        public uint FirstBuff;
+        [XmlAttribute("next_buff")]
+        public uint NextBuff;
+        [XmlAttribute("unit_name_base_offset1")]
+        public uint UnitNameBaseOffset1;
+        [XmlAttribute("unit_name_base_offset2")]
+        public uint UnitNameBaseOffset2;
+        [XmlAttribute("unit_name_len")]
+        public int UnitNameLen;
+        [XmlAttribute("click_to_move_base")]
+        public uint ClickToMoveBase;
+        [XmlAttribute("click_to_move_unknown")]
+        public uint ClickToMoveUnknown;
+        [XmlAttribute("click_to_move_turn_scale")]
+        public uint ClickToMoveTurnScale;
+        [XmlAttribute("click_to_move_unknown_2")]
+        public uint ClickToMoveUnknown2;
+        [XmlAttribute("click_to_move_interact_distance")]
+        public uint ClickToMoveInteractDistance;
+        [XmlAttribute("click_to_move_action_type")]
+        public uint ClickToMoveActionType;
+        [XmlAttribute("click_to_move_target")]
+        public uint ClickToMoveTarget;
+        [XmlAttribute("click_to_move_dest_x")]
+        public uint ClickToMoveDestX;
+        [XmlAttribute("click_to_move_dest_y")]
+        public uint ClickToMoveDestY;
+        [XmlAttribute("click_to_move_dest_z")]
+        public uint ClickToMoveDestZ;
     }
+
+    #endregion
 }

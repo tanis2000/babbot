@@ -759,8 +759,10 @@ namespace BabBot.Manager
         {
             try
             {
-                WowProcess.ReadUInt(WowProcess.ReadUInt(WowProcess.ReadUInt(Globals.GameOffset) +
-                                                        Globals.PlayerBaseOffset1) + Globals.PlayerBaseOffset2);
+                WowProcess.ReadUInt(WowProcess.ReadUInt(WowProcess.ReadUInt(
+                    ProcessManager.CurWoWVersion.Globals.GameOffset) +
+                        ProcessManager.CurWoWVersion.Globals.PlayerBaseOffset1) +
+                            ProcessManager.CurWoWVersion.Globals.PlayerBaseOffset2);
                 // Read successful. Check if we need initialize
                 if ((_gstatus != GameStatuses.INITIALIZED) && 
                         (_gstatus != GameStatuses.DISCONNECTED))
@@ -796,7 +798,7 @@ namespace BabBot.Manager
             {
                 // search for the code pattern that we want (in this case, WoW TLS)
                 TLS = SPattern.FindPattern(process.Handle, process.MainModule,
-                                           "EB 02 33 C0 8B D 00 00 00 00 64 8B 15 00 00 00 00 8B 34 8A 8B D 00 00 00 00 89 81 00 00 00 00",
+      "EB 02 33 C0 8B D 00 00 00 00 64 8B 15 00 00 00 00 8B 34 8A 8B D 00 00 00 00 89 81 00 00 00 00",
                                            "xxxxxx????xxx????xxxxx????xx????");
 
 
