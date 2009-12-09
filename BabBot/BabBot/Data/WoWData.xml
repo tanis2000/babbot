@@ -779,5 +779,43 @@ end)()]]></text>
         click_to_move_dest_z="0x94"
      />
   </version>
+  <version name="3.3.0.10958" max_lvl="80">
+    <globals
+        game_offset="0"
+        move_mouse_over_guid_offset="0"
+        name_store_pointer="0"
+        player_base_offset1="0"
+        player_base_offset2="0"
+        player_cur_target_guil_offset="0"
+        player_rotation_offset="0"
+        player_x_offset="0"
+        player_y_offset="0"
+        player_z_offset="0"
+        local_player_corpse_offset="0"
+        camera_offset="0"
+        camera_pointer="0"
+        descriptor_offset="0"
+        first_object="0"
+        guid_offset="0"
+        local_guid_offset="0"
+        next_object="0"
+        type_offset="0"
+        first_buff="0"
+        next_buff="0"
+        unit_name_base_offset1="0"
+        unit_name_base_offset2="0"
+        unit_name_len="0"
+        click_to_move_base="0"
+        click_to_move_unknown="0"
+        click_to_move_turn_scale="0"
+        click_to_move_unknown_2="0"
+        click_to_move_interact_distance="0"
+        click_to_move_action_type="0"
+        click_to_move_target="0"
+        click_to_move_dest_x="0"
+        click_to_move_dest_y="0"
+        click_to_move_dest_z="0"
+     />
+  </version>
   <app_config  min_refresh_time="100" />
 </wow_data>

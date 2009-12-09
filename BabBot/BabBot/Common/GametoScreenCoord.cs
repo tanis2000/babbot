@@ -39,20 +39,21 @@ namespace BabBot.Common
             var camera = new CameraInfo();
             //Read information
             uint pAddr2 =
-                ProcessManager.WowProcess.ReadUInt((ProcessManager.WowProcess.ReadUInt(ProcessManager.CurWoWVersion.Globals.cameraPointer)) +
-                                                   ProcessManager.CurWoWVersion.Globals.cameraOffset);
+                ProcessManager.WowProcess.ReadUInt((ProcessManager.WowProcess.ReadUInt(
+                    ProcessManager.CurWoWVersion.Globals.CameraPointer)) +
+                        ProcessManager.CurWoWVersion.Globals.CameraOffset);
             var bCamera = new byte[68];
             bCamera = ProcessManager.WowProcess.ReadBytes(pAddr2, 68);
 
             //Convert bytes to usable data
-            camera.Pos = new Vector3D(BitConverter.ToSingle(bCamera, 8), BitConverter.ToSingle(bCamera, 12),
-                                    BitConverter.ToSingle(bCamera, 16));
-            camera.ViewMat = new Matrix(BitConverter.ToSingle(bCamera, 20), BitConverter.ToSingle(bCamera, 24),
-                                        BitConverter.ToSingle(bCamera, 28),
-                                        BitConverter.ToSingle(bCamera, 32), BitConverter.ToSingle(bCamera, 36),
-                                        BitConverter.ToSingle(bCamera, 40),
-                                        BitConverter.ToSingle(bCamera, 44), BitConverter.ToSingle(bCamera, 48),
-                                        BitConverter.ToSingle(bCamera, 52));
+            camera.Pos = new Vector3D(BitConverter.ToSingle(bCamera, 8), 
+                                    BitConverter.ToSingle(bCamera, 12),
+                                        BitConverter.ToSingle(bCamera, 16));
+            camera.ViewMat = new Matrix(BitConverter.ToSingle(bCamera, 20), 
+                BitConverter.ToSingle(bCamera, 24), BitConverter.ToSingle(bCamera, 28),
+                BitConverter.ToSingle(bCamera, 32), BitConverter.ToSingle(bCamera, 36),
+                BitConverter.ToSingle(bCamera, 40), BitConverter.ToSingle(bCamera, 44), 
+                BitConverter.ToSingle(bCamera, 48), BitConverter.ToSingle(bCamera, 52));
             camera.Foc = BitConverter.ToSingle(bCamera, 64);
             //Get windoesize
             var rc = new Rect();

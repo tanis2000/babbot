@@ -323,73 +323,289 @@ namespace BabBot.Wow
     public class GlobalOffsets
     {
         [XmlAttribute("game_offset")]
-        public uint GameOffset;
+        public string StrGameOffset
+        {
+            get { return Convert.ToString(GameOffset); }
+            set { GameOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint GameOffset;
+
         [XmlAttribute("move_mouse_over_guid_offset")]
-        public uint MouseOverGuidOffset;
+        public string StrMouseOverGuidOffset
+        {
+            get { return Convert.ToString(MouseOverGuidOffset); }
+            set { MouseOverGuidOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint MouseOverGuidOffset;
+
         [XmlAttribute("name_store_pointer")]
-        public uint NameStorePointer;
+        public string StrNameStorePointer
+        {
+            get { return Convert.ToString(NameStorePointer); }
+            set { NameStorePointer = Convert.ToUInt32(value, 16); }
+        }
+        internal uint NameStorePointer;
+
         [XmlAttribute("player_base_offset1")]
-        public uint PlayerBaseOffset1;
+        public string StrPlayerBaseOffset1
+        {
+            get { return Convert.ToString(PlayerBaseOffset1); }
+            set { PlayerBaseOffset1 = Convert.ToUInt32(value, 16); }
+        }
+        internal uint PlayerBaseOffset1;
+
         [XmlAttribute("player_base_offset2")]
-        public uint PlayerBaseOffset2;
+        public string StrPlayerBaseOffset2
+        {
+            get { return Convert.ToString(PlayerBaseOffset2); }
+            set { PlayerBaseOffset2 = Convert.ToUInt32(value, 16); }
+        }
+        internal uint PlayerBaseOffset2;
+
         [XmlAttribute("player_cur_target_guil_offset")]
-        public uint PlayerCurTargetGuidOffset;
+        public string StrPlayerCurTargetGuidOffset
+        {
+            get { return Convert.ToString(PlayerCurTargetGuidOffset); }
+            set { PlayerCurTargetGuidOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint PlayerCurTargetGuidOffset;
+
         [XmlAttribute("player_rotation_offset")]
-        public uint PlayerRotationOffset;
+        public string StrPlayerRotationOffset
+        {
+            get { return Convert.ToString(PlayerRotationOffset); }
+            set { PlayerRotationOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint PlayerRotationOffset;
+
         [XmlAttribute("player_x_offset")]
-        public uint PlayerXOffset;
+        public string StrPlayerXOffset
+        {
+            get { return Convert.ToString(PlayerXOffset); }
+            set { PlayerXOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint PlayerXOffset;
+
         [XmlAttribute("player_y_offset")]
-        public uint PlayerYOffset;
+        public string StrPlayerYOffset
+        {
+            get { return Convert.ToString(PlayerYOffset); }
+            set { PlayerYOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint PlayerYOffset;
+
         [XmlAttribute("player_z_offset")]
-        public uint PlayerZOffset;
+        public string StrPlayerZOffset
+        {
+            get { return Convert.ToString(PlayerZOffset); }
+            set { PlayerZOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint PlayerZOffset;
+
         [XmlAttribute("local_player_corpse_offset")]
-        public uint LocalPlayerCorpseOffset;
+        public string StrLocalPlayerCorpseOffset
+        {
+            get { return Convert.ToString(LocalPlayerCorpseOffset); }
+            set { LocalPlayerCorpseOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint LocalPlayerCorpseOffset;
+
         [XmlAttribute("camera_offset")]
-        public uint cameraOffset;
+        public string StrCameraOffset
+        {
+            get { return Convert.ToString(CameraOffset); }
+            set { CameraOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint CameraOffset;
+
         [XmlAttribute("camera_pointer")]
-        public uint cameraPointer;
+        public string StrCameraPointer
+        {
+            get { return Convert.ToString(CameraPointer); }
+            set { CameraPointer = Convert.ToUInt32(value, 16); }
+        }
+        internal uint CameraPointer;
+
         [XmlAttribute("descriptor_offset")]
-        public uint DescriptorOffset;
+        public string StrDescriptorOffset
+        {
+            get { return Convert.ToString(DescriptorOffset); }
+            set { DescriptorOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint DescriptorOffset;
+
         [XmlAttribute("first_object")]
-        public uint FirstObject;
+        public string StrFirstObject
+        {
+            get { return Convert.ToString(FirstObject); }
+            set { FirstObject = Convert.ToUInt32(value, 16); }
+        }
+        internal uint FirstObject;
+
         [XmlAttribute("guid_offset")]
-        public uint GuidOffset;
+        public string StrGuidOffset
+        {
+            get { return Convert.ToString(GuidOffset); }
+            set { GuidOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint GuidOffset;
+
         [XmlAttribute("local_guid_offset")]
-        public uint LocalGuidOffset;
+        public string StrLocalGuidOffset
+        {
+            get { return Convert.ToString(LocalGuidOffset); }
+            set { LocalGuidOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint LocalGuidOffset;
+
         [XmlAttribute("next_object")]
-        public uint NextObject;
+        public string StrNextObject
+        {
+            get { return Convert.ToString(NextObject); }
+            set { NextObject = Convert.ToUInt32(value, 16); }
+        }
+        internal uint NextObject;
+
         [XmlAttribute("type_offset")]
-        public uint TypeOffset;
+        public string StrTypeOffset
+        {
+            get { return Convert.ToString(TypeOffset); }
+            set { TypeOffset = Convert.ToUInt32(value, 16); }
+        }
+        internal uint TypeOffset;
+
         [XmlAttribute("first_buff")]
-        public uint FirstBuff;
+        public string StrFirstBuff
+        {
+            get { return Convert.ToString(FirstBuff); }
+            set { FirstBuff = Convert.ToUInt32(value, 16); }
+        }
+        internal uint FirstBuff;
+
         [XmlAttribute("next_buff")]
-        public uint NextBuff;
+        public string StrNextBuff
+        {
+            get { return Convert.ToString(NextBuff); }
+            set { NextBuff = Convert.ToUInt32(value, 16); }
+        }
+        internal uint NextBuff;
+
         [XmlAttribute("unit_name_base_offset1")]
-        public uint UnitNameBaseOffset1;
+        public string StrUnitNameBaseOffset1
+        {
+            get { return Convert.ToString(UnitNameBaseOffset1); }
+            set { UnitNameBaseOffset1 = Convert.ToUInt32(value, 16); }
+        }
+        internal uint UnitNameBaseOffset1;
+
         [XmlAttribute("unit_name_base_offset2")]
-        public uint UnitNameBaseOffset2;
+        public string StrUnitNameBaseOffset2
+        {
+            get { return Convert.ToString(UnitNameBaseOffset2); }
+            set { UnitNameBaseOffset2 = Convert.ToUInt32(value, 16); }
+        }
+        internal uint UnitNameBaseOffset2;
+
         [XmlAttribute("unit_name_len")]
-        public int UnitNameLen;
+        public string StrUnitNameLen
+        {
+            get { return Convert.ToString(UnitNameLen); }
+            set { UnitNameLen = Convert.ToInt32(value, 16); }
+        }
+        internal int UnitNameLen;
+
         [XmlAttribute("click_to_move_base")]
-        public uint ClickToMoveBase;
+        public string StrClickToMoveBase
+        {
+            get { return Convert.ToString(ClickToMoveBase); }
+            set { ClickToMoveBase = Convert.ToUInt32(value, 16); }
+        }
+        internal uint ClickToMoveBase;
+
         [XmlAttribute("click_to_move_unknown")]
-        public uint ClickToMoveUnknown;
+        public string StrClickToMoveUnknown
+        {
+            get { return Convert.ToString(ClickToMoveUnknown); }
+            set { ClickToMoveUnknown = 
+                        ClickToMoveBase + Convert.ToUInt32(value, 16); }
+        }
+        internal uint ClickToMoveUnknown;
+
         [XmlAttribute("click_to_move_turn_scale")]
-        public uint ClickToMoveTurnScale;
+        public string StrClickToMoveTurnScale
+        {
+            get { return Convert.ToString(ClickToMoveTurnScale); }
+            set { ClickToMoveTurnScale = 
+                        ClickToMoveBase + Convert.ToUInt32(value, 16); }
+        }
+        internal uint ClickToMoveTurnScale;
+
         [XmlAttribute("click_to_move_unknown_2")]
-        public uint ClickToMoveUnknown2;
+        public string StrClickToMoveUnknown2
+        {
+            get { return Convert.ToString(ClickToMoveUnknown2); }
+            set { ClickToMoveUnknown2 = 
+                        ClickToMoveBase + Convert.ToUInt32(value, 16); }
+        }
+        internal uint ClickToMoveUnknown2;
+
         [XmlAttribute("click_to_move_interact_distance")]
-        public uint ClickToMoveInteractDistance;
+        public string StrClickToMoveInteractDistance
+        {
+            get { return Convert.ToString(ClickToMoveInteractDistance); }
+            set { ClickToMoveInteractDistance = 
+                        ClickToMoveBase + Convert.ToUInt32(value, 16); }
+        }
+        internal uint ClickToMoveInteractDistance;
+
         [XmlAttribute("click_to_move_action_type")]
-        public uint ClickToMoveActionType;
+        public string StrClickToMoveActionType
+        {
+            get { return Convert.ToString(ClickToMoveActionType); }
+            set { ClickToMoveActionType = 
+                        ClickToMoveBase + Convert.ToUInt32(value, 16); }
+        }
+        internal uint ClickToMoveActionType;
+
         [XmlAttribute("click_to_move_target")]
-        public uint ClickToMoveTarget;
+        public string StrClickToMoveTarget
+        {
+            get { return Convert.ToString(ClickToMoveTarget); }
+            set { ClickToMoveTarget =
+                        ClickToMoveBase + Convert.ToUInt32(value, 16);
+            }
+        }
+        internal uint ClickToMoveTarget;
+
         [XmlAttribute("click_to_move_dest_x")]
-        public uint ClickToMoveDestX;
+        public string StrClickToMoveDestX
+        {
+            get { return Convert.ToString(ClickToMoveDestX); }
+            set { ClickToMoveDestX =
+                        ClickToMoveBase + Convert.ToUInt32(value, 16);
+            }
+        }
+        internal uint ClickToMoveDestX;
+
         [XmlAttribute("click_to_move_dest_y")]
-        public uint ClickToMoveDestY;
+        public string StrClickToMoveDestY
+        {
+            get { return Convert.ToString(ClickToMoveDestY); }
+            set { ClickToMoveDestY =
+                        ClickToMoveBase + Convert.ToUInt32(value, 16);
+            }
+        }
+        internal uint ClickToMoveDestY;
+
         [XmlAttribute("click_to_move_dest_z")]
-        public uint ClickToMoveDestZ;
+        public string StrClickToMoveDestZ
+        {
+            get { return Convert.ToString(ClickToMoveDestZ); }
+            set { ClickToMoveDestZ =
+                        ClickToMoveBase + Convert.ToUInt32(value, 16);
+            }
+        }
+        internal uint ClickToMoveDestZ;
     }
 
     #endregion
