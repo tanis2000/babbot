@@ -29,8 +29,8 @@ namespace BabBot.Scripts.Common
 {
     public class MoveToState : State<WowPlayer>
     {
-        protected float _LastDistance;
-        protected static Vector3D _LastDestination;
+        protected float LastDistance;
+        protected Vector3D LastDestination;
 
         public MoveToState(Vector3D Destination)
         {
@@ -80,12 +80,12 @@ namespace BabBot.Scripts.Common
                 Output.Instance.Script("Calculating path finished.", this);
             }
 
-            if (_LastDestination != null)
+            if (LastDestination != null)
             {
-                _LastDistance = Entity.Location.GetDistanceTo(_LastDestination);
-                if (_LastDistance > 3f)
+                LastDistance = Entity.Location.GetDistanceTo(LastDestination);
+                if (LastDistance > 3f)
                 {
-                    CurrentWaypoint = WaypointVector3DHelper.Vector3DToLocation(_LastDestination);
+                    CurrentWaypoint = WaypointVector3DHelper.Vector3DToLocation(LastDestination);
                 }
             }
             else
@@ -99,14 +99,14 @@ namespace BabBot.Scripts.Common
                     if (CurrentWaypoint == null) return;
 
                     //Entity.Face(new Vector3D(CurrentWaypoint.X, CurrentWaypoint.Y, CurrentWaypoint.Z));
-                    _LastDistance =
+                    LastDistance =
                         WaypointVector3DHelper.Vector3DToLocation(Entity.Location).GetDistanceTo(CurrentWaypoint);
 
                     //if the distance to the next waypoint is less then 1f, use the get next waypoint method
-                    if (_LastDistance < 3f)
+                    if (LastDistance < 3f)
                     {
                         CurrentWaypoint = GetNextWayPoint();
-                        _LastDistance =
+                        LastDistance =
                             WaypointVector3DHelper.Vector3DToLocation(Entity.Location).GetDistanceTo(CurrentWaypoint);
                     }
                 }
@@ -125,7 +125,7 @@ namespace BabBot.Scripts.Common
             // Move on...
             float distance = MathFuncs.GetDistance(WaypointVector3DHelper.LocationToVector3D(CurrentWaypoint),
                                                    Entity.Location, false);
-            if (Math.Abs(distance - _LastDistance) < 1.0)
+            if (Math.Abs(distance - LastDistance) < 1.0)
             {
                 TravelPath = null;
                 // TODO: Fix the stuck detection code
@@ -173,7 +173,7 @@ namespace BabBot.Scripts.Common
 
         protected override void DoExit(WowPlayer Entity)
         {
-            _LastDestination = Destination;
+            LastDestination = Destination;
             //on exit, if there is a previous state, go back to it
             if (PreviousState != null)
             {
