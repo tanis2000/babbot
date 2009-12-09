@@ -28,10 +28,11 @@ using BabBot.Manager;
 using BabBot.Wow;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using BabBot.Forms.Radar;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Pather.Graph;
+using BabBot.Scripts.Common;
 
 namespace BabBot.Forms
 {
@@ -1620,7 +1621,7 @@ namespace BabBot.Forms
             qh = null;
 
             string npc_name = ProcessManager.Player.CurTarget.Name;
-            ProcessManager.Player.setCurrentZoneText();
+            ProcessManager.Player.setCurrentMapInfo();
 
             string[] npc_info = ProcessManager.Injector.
                 Lua_ExecByName("GetUnitInfo", new object[] {"target"});
@@ -1688,9 +1689,7 @@ namespace BabBot.Forms
                     // string name = "Melithar Staghelm";
                     // string name = "Conservator Ilthalaine";
                     string name = "Tarindrella";
-                    ProcessManager.Injector.Lua_ExecByName("TargetUnit",
-                        new string[] { name });
-                    Thread.Sleep(500);
+                    TargetUnitByName(name);
                 }
 #endif
 
@@ -1712,6 +1711,13 @@ namespace BabBot.Forms
                 npcListToolStripMenuItem_Click(sender, e);
         }
 
+        private void TargetUnitByName(string name)
+        {
+            ProcessManager.Injector.Lua_ExecByName("TargetUnit",
+                        new string[] { name });
+            // TODO Replace with Player CurTarget check
+            Thread.Sleep(500);
+        }
         private bool CheckInGame()
         {
             // Check if InGame
@@ -1911,12 +1917,153 @@ namespace BabBot.Forms
 
         #region Quest Test
 
+        public class QuestProcessingException : Exception
+        {
+            public QuestProcessingException(string msg) :
+                base(msg) { }
+        }
+
+        private void MoveToDest(Vector3D dest, bool use_state)
+        {
+            if (use_state)
+            {
+                // Use MoveToState
+                MoveToState mt = new MoveToState(dest, 5F);
+                ProcessManager.Player.StateMachine.SetGlobalState(mt);
+                Output.Instance.Debug("char", "State: " +
+                    ProcessManager.Player.StateMachine.CurrentState);
+
+                Output.Instance.Log("char", "NPC coordinates located. Moving to NPC ...");
+                ProcessManager.Player.StateMachine.IsRunning = true;
+
+                Output.Instance.Debug("char", "State: " +
+                    ProcessManager.Player.StateMachine.CurrentState);
+                while (ProcessManager.Player.StateMachine.IsInState(typeof (MoveToState)))
+                {
+                    Thread.Sleep(1000);
+                    Output.Instance.Debug("char", "State: " +
+                        ProcessManager.Player.StateMachine.CurrentState);
+                }
+            }
+            else
+            {
+                // Click to move on each waypoint
+                // dynamically calculate time between each click 
+                // based on distance to the next waypoint
+
+                // Lets calculate path from character to NPC and move
+                Path p = ProcessManager.Caronte.CalculatePath(
+                    WaypointVector3DHelper.Vector3DToLocation(ProcessManager.Player.Location),
+                    WaypointVector3DHelper.Vector3DToLocation(dest));
+
+                // Travel path
+                int max = p.Count();
+                Vector3D vprev = dest;
+                Vector3D vnext;
+                for (int i = 0; i < max; i++)
+                {
+                    vnext = WaypointVector3DHelper.LocationToVector3D(p.Get(i));
+
+                    // Calculate travel time
+                    float distance = vprev.GetDistanceTo(vnext);
+                    int t = (int)((distance / 7F) * 1000);
+
+                    ProcessManager.Player.ClickToMove(vnext);
+                    Thread.Sleep(t);
+                    vprev = vnext;
+                }
+            }
+
+        }
+
+        private void AcceptQuest(Quest q, bool use_state)
+        {
+            // Set player current zone
+            WowPlayer player = ProcessManager.Player;
+                
+            player.setCurrentMapInfo();
+
+            // Get quest giver npc
+            NPC npc = ((Quest) cbQuestList.SelectedItem).SrcNpc;
+            if (npc == null)
+                throw new QuestProcessingException("Quest giver NPC not found for quest '" + 
+                    q.Name + "'. Skipping quest.");
+
+            Output.Instance.Log("char", "Located NPC '" + npc.Name + 
+                "' as quest giver for quest '" + q.Name + "'");
+
+            Output.Instance.Log("char", "Checking NPC coordinates ...");
+            // Check if NPC has coordinates in the same continent
+            ContinentId c = npc.Continents.FindContinentById(player.ContinentID);
+            if (c == null)
+                throw new QuestProcessingException("Quest giver NPC for quest '" + 
+                    q.Name + "' located on different continent. Skipping the quest.");
+
+            // Check if NPC located in the same zone
+            Zone z = c.FindZoneByName(player.ZoneText);
+
+            if (z == null)
+                throw new QuestProcessingException("Quest giver NPC for quest '" + 
+                    q.Name + "' located on different zone. " + 
+                    "Multi-zone traveling not implemented yet. Skipping the quest.");
+
+            // Check if NPC has any waypoints assigned
+            if (z.Items.Length == 0)
+                throw new QuestProcessingException("Quest giver NPC for quest '" + 
+                    q.Name + "' doesn't have any waypoints assigned. " + 
+                    "Check NPCData.xml and try again. Skipping the quest.");
+
+            // By default check first waypoint
+            Vector3D npc_loc = z.Items[0];
+            Output.Instance.Debug("char", "Usning NPC waypoint: " + npc_loc);
+
+
+            MoveToDest(npc_loc, use_state);
+
+            if (npc_loc.GetDistanceTo(player.Location) < 5F)
+            {
+                Output.Instance.Log("char", "We have reached the destination");
+                TargetUnitByName(npc.Name);
+                InteractNpc(npc.Name);
+            }
+
+            // ProcessManager.Player.ClickToMove(npc_loc);
+
+                //    Caronte.CalculatePath(
+                //        WaypointVector3DHelper.Vector3DToLocation(Player.Location),
+                //        new Location(-6003.86f, -232.1742f, 410.5543f));
+        }
+
         private void btnGetQuest_Click(object sender, EventArgs e)
         {
             if (!CheckInGame())
                 return;
 
-            ShowErrorMessage("Coming soon ...");
+            Quest q = (Quest)cbQuestList.SelectedItem;
+
+            if (q == null)
+            {
+                ShowErrorMessage("No quest selected");
+                return;
+            }
+
+            try
+            {
+                btnGetQuest.Enabled = false;
+                AcceptQuest(q, cbUseState.Checked);
+            }
+            catch (QuestProcessingException qe)
+            {
+                ShowErrorMessage("Quest processing error - " + qe.Message);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex.Message);
+            }
+            finally
+            {
+                btnGetQuest.Enabled = true;
+            }
         }
 
         private void btnReturnQuest_Click(object sender, EventArgs e)

@@ -44,7 +44,7 @@ namespace BabBot.Wow
         public int TravelTime;
         public readonly List<WowUnit> MobBlackList;
         // The continent id currently player in
-        private int continent = -1;
+        private int _continent = -1;
         // Player class
         string _class;
         // Player race
@@ -101,7 +101,7 @@ namespace BabBot.Wow
 
         public int ContinentID
         {
-            get { return continent; }
+            get { return _continent; }
         }
 
         public string CharClass
@@ -1432,28 +1432,21 @@ end)()");
         }
 
         /// <summary>
-        /// Sets the id of the continent we're in
+        /// Sets the id of the continent and text of the zone we're in
         /// </summary>
-        public void SetCurrentMapContinentId()
+        public void setCurrentMapInfo()
         {
+            string[] lret = ProcessManager.
+                    Injector.Lua_ExecByName("GetCurrentMapInfo");
             try
             {
-                string [] lret = ProcessManager.
-                    Injector.Lua_ExecByName("GetCurrentMapContinentId");
-                string sId = lret[0];
-                continent = Convert.ToInt32(sId);
+                _continent = Convert.ToInt32(lret[0]);
+                _zone = lret[1];
             }
             catch
             {
-                continent = -1;
+                _continent = -1;
             }
-        }
-
-        public void setCurrentZoneText()
-        {
-            string[] lret = ProcessManager.
-                Injector.Lua_ExecByName("GetZoneText");
-            _zone = lret[0];
         }
 
         public void SetCharInfo()

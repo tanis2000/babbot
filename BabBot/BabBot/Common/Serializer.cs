@@ -16,6 +16,10 @@
   
     Copyright 2009 BabBot Team
 */
+
+// Disable warning about missing GetHashCode override method
+#pragma warning disable 0659
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -99,11 +103,6 @@ namespace BabBot.Common
         {
             return (obj != null) && ToString().Equals(obj.ToString());
         }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
     }
 
     /// <summary>
@@ -154,11 +153,6 @@ namespace BabBot.Common
         public override bool Equals(object obj)
         {
             return base.Equals(obj) && (((CommonQty) obj).Qty == Qty);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
         }
     }
 
@@ -282,11 +276,6 @@ namespace BabBot.Common
             return true;
         }
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
         public T FindItemByName(string name)
         {
             return (T)_htable[name];
@@ -337,11 +326,6 @@ namespace BabBot.Common
             return base.Equals(obj) && 
                 (((CommonNameTable<T>)obj).Name.Equals(Name));
         }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
     }
 
     /// <summary>
@@ -368,11 +352,6 @@ namespace BabBot.Common
         public override bool Equals(object obj)
         {
             return base.Equals(obj) && (((CommonIdTable<T>)obj).Id == Id);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
         }
     }
 
@@ -439,11 +418,6 @@ namespace BabBot.Common
             return true;
         }
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
         public void Add(T item)
         {
             _list.Add(item);
@@ -483,11 +457,6 @@ namespace BabBot.Common
         public override bool Equals(object obj)
         {
             return base.Equals(obj) && ((CommonNameList<T>) obj).Name.Equals(Name);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
         }
 
         public override string ToString()

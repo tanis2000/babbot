@@ -19,7 +19,6 @@
 using System;
 using System.IO;
 using System.Collections;
-using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using BabBot.Manager;

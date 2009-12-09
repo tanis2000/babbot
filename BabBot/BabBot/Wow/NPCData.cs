@@ -18,7 +18,6 @@
 */
 using System;
 using System.Collections;
-using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -490,6 +489,11 @@ namespace BabBot.Wow
             : this(id) 
         {
             Table.Add(z.Name, z);
+        }
+
+        public Zone FindZoneByName(string name)
+        {
+            return FindItemByName(name);
         }
     }
 

@@ -172,7 +172,7 @@ namespace BabBot
         [XmlAttribute("no_sound")]
         public bool NoSound = false;
         [XmlAttribute("window_mode")]
-        public bool Windowed = false;
+        public bool Windowed = true;
         [XmlAttribute("min_resize")]
         public bool Resize = false;
 

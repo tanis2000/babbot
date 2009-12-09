@@ -197,11 +197,21 @@ namespace BabBot.Manager
         // In-Game statuses
         public enum GameStatuses : byte
         {
+            // self explaining
             NOT_STARTED = 0,
+            // wow started and we on login page
             INIT = 1,
+            // on login page (but no auto-login set or auto-login failed)
+            // on disconnect page with reason above
             IDLE = 2,
-            IN_WORLD = 3,
-            INITIALIZED = 4,
+            // Executing auto-login
+            // Next state IDLE or ENTERING_WORLD
+            LOGGING = 3,
+            // After Auto-Login successfull we assume that world is loading
+            ENTERING_WORLD = 4,
+            // Connection manager found and character initialized with zone & continent
+            INITIALIZED = 5,
+            // Happened ..
             DISCONNECTED = 255
         }
 
@@ -219,7 +229,7 @@ namespace BabBot.Manager
         public static GameStatuses GameStatus
         {
             get { return _gstatus; }
-            private set 
+            set 
             {
                 if (_gstatus != value)
                 {
@@ -331,7 +341,7 @@ namespace BabBot.Manager
         public static bool InWorld
         {
             get { return ((_gstatus == GameStatuses.INITIALIZED) || 
-                    (_gstatus == GameStatuses.IN_WORLD)); }
+                    (_gstatus == GameStatuses.ENTERING_WORLD)); }
         }
 
         #endregion
@@ -755,7 +765,7 @@ namespace BabBot.Manager
                 if ((_gstatus != GameStatuses.INITIALIZED) && 
                         (_gstatus != GameStatuses.DISCONNECTED))
                 {
-                    GameStatus = GameStatuses.IN_WORLD;
+                    GameStatus = GameStatuses.ENTERING_WORLD;
                     InitializeBot();
                 }
 
@@ -846,10 +856,9 @@ namespace BabBot.Manager
         {
             ObjectManager = new ObjectManager();
             Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
-            Player.SetCurrentMapContinentId();
+            Player.setCurrentMapInfo();
             Player.SetCharInfo();
-            // TODO
-            // Player.SetCharRace();
+
             if (WoWInGame != null)
                 WoWInGame();
         }
@@ -1179,11 +1188,6 @@ namespace BabBot.Manager
         }
 
         #endregion
-
-        public static void AfterLogin()
-        {
-            GameStatus = GameStatuses.IN_WORLD;
-        }
 
         public static void SetGameIdle(int sleep_time)
         {

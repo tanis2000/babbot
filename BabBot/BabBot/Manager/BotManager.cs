@@ -164,7 +164,8 @@ namespace BabBot.Manager
                         case ProcessManager.GameStatuses.DISCONNECTED:
                             // Wait 5 sec it might be a crush
                             Debug("Entered 'DISCONNECTED' state. Waiting " +
-                                (int)(idle_sleep_time / 1000) + " sec to make sure it's not the crash");
+                                (int)(idle_sleep_time / 1000) + 
+                                " sec to make sure it's not the crash");
                             Thread.Sleep(idle_sleep_time);
                             if (!ProcessManager.ProcessRunning)
                             {
@@ -196,8 +197,8 @@ namespace BabBot.Manager
                             ProcessManager.Player.StateMachine.Update();
 
                             break;
-                        
-                        case ProcessManager.GameStatuses.IN_WORLD:
+
+                        case ProcessManager.GameStatuses.ENTERING_WORLD:
                         case ProcessManager.GameStatuses.IDLE:
                             // Just wait
                             Thread.Sleep(idle_sleep_time);
@@ -243,6 +244,8 @@ namespace BabBot.Manager
         /// Auto login in WoW with profile's parameters
         /// </summary>
         private void AutoLogin() {
+            ProcessManager.GameStatus = ProcessManager.GameStatuses.LOGGING;
+
             ProcessManager.Injector.Lua_RegisterInputHandler();
             try
             {
@@ -250,7 +253,7 @@ namespace BabBot.Manager
                 if (Login.AutoLogin(config.Account.RealmLocation, config.Account.GameType,
                         config.Account.Realm, config.Account.LoginUsername,
                             config.Account.getAutoLoginPassword(), config.Character, 5))
-                    ProcessManager.AfterLogin();
+                    ProcessManager.GameStatus = ProcessManager.GameStatuses.ENTERING_WORLD;
                 else
                     ProcessManager.SetGameIdle(idle_sleep_time);
 

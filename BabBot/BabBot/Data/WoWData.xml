@@ -227,20 +227,6 @@ end)()]]>
 end)()]]></text>
       </function>
 
-      <!-- GetCurrentMapContinentId -->
-      <function name="GetCurrentMapContinentId">
-        <parameters />
-        <return size="1">
-          0 - Continent ID
-        </return>
-        <text>
-          <![CDATA[(function()
-	SetMapToCurrentZone()
-	local continent = GetCurrentMapContinent()
-	return continent
-end)()]]></text>
-      </function>
-      
       <!-- GetAvailTalentPoints -->
       <function name="GetAvailTalentPoints">
         <parameters />
@@ -482,19 +468,6 @@ end)()]]></text>
         </text>
       </function>
 
-      <!-- GetZoneText -->
-      <function name="GetZoneText">
-        <return size="1">
-          zoneName
-          String - zone name (localized).
-        </return>
-        <text>
-          <![CDATA[(function()
-  return GetZoneText()
-end)()]]>
-        </text>
-      </function>
-      
       <!-- IsGossipFrameOpen -->
       <function name="IsNpcFrameOpen">
         <return size="4">
@@ -727,7 +700,25 @@ end)()]]>
 end)()]]>
         </text>
       </function>
-        
+
+      <!-- GetCurrentMapInfo -->
+      <function name="GetCurrentMapInfo">
+        <parameters />
+        <return size="2">
+          0 - Continent ID
+          1 - zoneName
+            String - zone name (localized).
+        </return>
+        <text>
+          <![CDATA[(function()
+	SetMapToCurrentZone()
+	local continent = GetCurrentMapContinent()
+  local zone = GetZoneText()
+	return continent, zone
+end)()]]>
+        </text>
+      </function>
+      
       <!-- Template for new function
       <!- - name - ->
       <function name="">
@@ -740,7 +731,7 @@ end)()]]>
 end)()]]></text>
       </function>
       -->
-	  
+      
     </lua>
     
     <!-- 
@@ -751,9 +742,6 @@ end)()]]></text>
       armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
     <quests header_pattern="^\d+::.*::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
             detail_pattern="^.*||.*||.*$" />
-    3 - details about each quest type ("required", "reward", "choice")
-    in format according "quests.details_pattern" below:
-    [[qty, name],[qty, name]][[..],[..]][]
   </version>
   <app_config  min_refresh_time="100" />
 </wow_data>

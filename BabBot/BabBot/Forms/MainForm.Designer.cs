@@ -208,12 +208,13 @@
             this.tbLuaResult = new System.Windows.Forms.TextBox();
             this.btnDoString = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.slAppStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.slGameStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.cbUseState = new System.Windows.Forms.CheckBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -1749,6 +1750,7 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.cbUseState);
             this.groupBox7.Controls.Add(this.btnReturnQuest);
             this.groupBox7.Controls.Add(this.label39);
             this.groupBox7.Controls.Add(this.label40);
@@ -2056,12 +2058,24 @@
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(64, 17);
+            this.toolStripStatusLabel1.Text = "AppStatus: ";
+            // 
             // slAppStatus
             // 
             this.slAppStatus.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             this.slAppStatus.Name = "slAppStatus";
             this.slAppStatus.Size = new System.Drawing.Size(29, 17);
             this.slAppStatus.Text = "IDLE";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(72, 17);
+            this.toolStripStatusLabel2.Text = "GameStatus: ";
             // 
             // slGameStatus
             // 
@@ -2077,24 +2091,22 @@
             this.slBotStatus.Size = new System.Drawing.Size(58, 17);
             this.slBotStatus.Text = "BotStatus:";
             // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(64, 17);
-            this.toolStripStatusLabel1.Text = "AppStatus: ";
-            // 
-            // toolStripStatusLabel2
-            // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(72, 17);
-            this.toolStripStatusLabel2.Text = "GameStatus: ";
-            // 
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
             this.toolStripStatusLabel3.Size = new System.Drawing.Size(59, 17);
             this.toolStripStatusLabel3.Text = "UNKNOWN";
+            // 
+            // cbUseState
+            // 
+            this.cbUseState.AutoSize = true;
+            this.cbUseState.Location = new System.Drawing.Point(312, 50);
+            this.cbUseState.Name = "cbUseState";
+            this.cbUseState.Size = new System.Drawing.Size(116, 17);
+            this.cbUseState.TabIndex = 70;
+            this.cbUseState.Text = "Use MoveTo State";
+            this.cbUseState.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -2353,6 +2365,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.CheckBox cbUseState;
     }
 }
 

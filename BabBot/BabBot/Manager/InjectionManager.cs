@@ -36,7 +36,6 @@ namespace BabBot.Manager
     {
         // cache of GUID vs Relation to local player. These are static (more or less)
 
-        private static String ChannelName;
         private static DanteInterface RemoteObject;
 
         private readonly IDictionary<ulong, Descriptor.eUnitReaction> RelationCache =
