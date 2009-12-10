@@ -1563,7 +1563,7 @@ namespace BabBot.Forms
             try
             {
                 btnGetQuest.Enabled = false;
-                QuestHelper.AcceptQuest(q, cbUseState.Checked);
+                QuestHelper.AcceptQuest(q, cbUseState.Checked, "npc");
             }
             catch (QuestProcessingException qe)
             {

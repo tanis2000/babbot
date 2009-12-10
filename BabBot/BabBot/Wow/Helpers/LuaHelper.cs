@@ -27,12 +27,16 @@ namespace BabBot.Wow.Helpers
 
             // Max wait 1 sec
             DateTime dt = DateTime.Now;
+            WowUnit target = player.CurTarget;
 
-            while (((player.CurTarget == null) || !player.CurTarget.Name.Equals(name)) 
+            while (((target == null) || !target.Name.Equals(name)) 
                     && ((DateTime.Now - dt).TotalMilliseconds <= 1000))
+            {
                 Thread.Sleep(50);
+                target = player.CurTarget;
+            }
 
-            return ((player.CurTarget != null) && player.CurTarget.Name.Equals(name));
+            return ((target != null) && target.Name.Equals(name));
         }
     }
 

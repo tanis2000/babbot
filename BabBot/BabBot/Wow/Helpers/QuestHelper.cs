@@ -19,9 +19,9 @@ namespace BabBot.Wow.Helpers
     /// <summary>
     /// Generate exception that causes bot abandom quest
     /// </summary>
-    public class QuestSkippingException : Exception
+    public class QuestSkipException : Exception
     {
-        public QuestSkippingException(string msg) :
+        public QuestSkipException(string msg) :
             base(msg + ". Skipping the quest") { }
     }
 
@@ -65,7 +65,7 @@ namespace BabBot.Wow.Helpers
         /// </summary>
         /// <param name="q">Quest</param>
         /// <param name="use_state">Test flag for movement</param>
-        public static void AcceptQuest(Quest q, bool use_state)
+        public static void AcceptQuest(Quest q, bool use_state, string log_facility)
         {
             // Set player current zone
             WowPlayer player = ProcessManager.Player;
@@ -75,43 +75,27 @@ namespace BabBot.Wow.Helpers
             // Get quest giver npc
             NPC npc = q.SrcNpc;
             if (npc == null)
-                throw new QuestSkippingException("Quest giver NPC not found for quest '" +
+                throw new QuestSkipException("Quest giver NPC not found for quest '" +
                     q.Name + "'.");
 
-            Output.Instance.Log("char", "Located NPC '" + npc.Name +
+            Output.Instance.Log(log_facility, "Located NPC '" + npc.Name +
                 "' as quest giver for quest '" + q.Name + "'");
 
-            Output.Instance.Log("char", "Checking NPC coordinates ...");
+            try
+            {
+                Output.Instance.Log(log_facility, "Moving to quest giver ... ");
+                NpcHelper.MoveToNPC(npc, use_state);
+            }
+            catch (CantReachNpcException e1)
+            {
+                throw new QuestSkipException(e1.Message);
+            }
+            catch (Exception e)
+            {
+                throw new QuestSkipException("Unable reach NPC. " + e.Message);
+            }
 
-            // Check if NPC has coordinates in the same continent
-            ContinentId c = npc.Continents.FindContinentById(player.ContinentID);
-            if (c == null)
-                throw new QuestSkippingException("Quest giver NPC for quest '" +
-                    q.Name + "' located on different continent.");
-
-            // Check if NPC located in the same zone
-            Zone z = c.FindZoneByName(player.ZoneText);
-
-            if (z == null)
-                throw new QuestSkippingException("Quest giver NPC for quest '" +
-                    q.Name + "' located on different zone. " +
-                    "Multi-zone traveling not implemented yet.");
-
-            // Check if NPC has any waypoints assigned
-            if (z.Items.Length == 0)
-                throw new QuestSkippingException("Quest giver NPC for quest '" +
-                    q.Name + "' doesn't have any waypoints assigned. " +
-                    "Check NPCData.xml and try again.");
-
-            // By default check first waypoint
-            Vector3D npc_loc = z.Items[0];
-            Output.Instance.Debug("char", "Usning NPC waypoint: " + npc_loc);
-
-            // TODO add retries
-            if (!NpcHelper.MoveToDest(npc_loc, use_state))
-                throw new QuestProcessingException("Unable reach NPC");
-            
-            Output.Instance.Log("char", "Bot has reached the destination");
+            Output.Instance.Debug(log_facility, "Reached the quest giver");
             if (!LuaHelper.TargetUnitByName(npc.Name))
                     throw new QuestProcessingException("Unable target NPC");
 
@@ -119,11 +103,14 @@ namespace BabBot.Wow.Helpers
 
             // Check if quest available
             if (!CheckQuestAvail(q))
-                throw new QuestSkippingException("NPC doesn't have quest.");
+                throw new QuestSkipException("NPC doesn't have quest.");
 
             // Accept quest
+            Output.Instance.Debug(log_facility, "Accepting quest ...");
             ProcessManager.Injector.Lua_ExecByName("AcceptQuest");
+
             // Check quest in toon log
+            Output.Instance.Log(log_facility, "Quest '" + q.Name + "' successfully accepted'");
         }
 
         /// <summary>

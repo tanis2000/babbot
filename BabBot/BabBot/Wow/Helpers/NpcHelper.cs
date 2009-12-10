@@ -18,6 +18,12 @@ namespace BabBot.Wow.Helpers
                     ProcessManager.AppConfig.MaxNpcInteractTime / 1000)) { }
     }
 
+    public class CantReachNpcException : Exception
+    {
+        public CantReachNpcException(string name, string reason)
+            : base("Can't reach NPC '" + name + "'." + reason) { }
+    }
+
     public class NpcProcessingException : Exception
     {
         public NpcProcessingException(string msg)
@@ -101,12 +107,45 @@ namespace BabBot.Wow.Helpers
             return fparams;
         }
 
+        public static void MoveToNPC(NPC npc, bool use_state)
+        {
+            WowPlayer player = ProcessManager.Player;
+
+            Output.Instance.Log("char", "Checking coordinates for NPC ." +
+                npc.Name + " ...");
+
+            // Check if NPC has coordinates in the same continent
+            ContinentId c = npc.Continents.FindContinentById(player.ContinentID);
+            if (c == null)
+                throw new CantReachNpcException(npc.Name, "NPC located on different continent.");
+
+            // Check if NPC located in the same zone
+            Zone z = c.FindZoneByName(player.ZoneText);
+
+            if (z == null)
+                throw new CantReachNpcException(npc.Name, "NPC located on different zone. " +
+                    "Multi-zone traveling not implemented yet.");
+
+            // Check if NPC has any waypoints assigned
+            if (z.Items.Length == 0)
+                throw new CantReachNpcException(npc.Name, "NPC doesn't have any waypoints assigned. " +
+                    "Check NPCData.xml and try again.");
+
+            // By default check first waypoint
+            Vector3D npc_loc = z.Items[0];
+            Output.Instance.Debug("char", "Usning NPC waypoint: " + npc_loc);
+
+            if (!MoveToDest(npc_loc, use_state))
+                throw new CantReachNpcException(npc.Name, "NPC still away after " +
+                    (ProcessManager.AppConfig.MaxTargetGetRetries + 1) + " tries");
+        }
+
         /// <summary>
         /// Move character to destination
         /// </summary>
         /// <param name="dest"></param>
         /// <param name="use_state">Test flag</param>
-        public static bool MoveToDest(Vector3D dest, bool use_state)
+        private static bool MoveToDest(Vector3D dest, bool use_state)
         {
             WowPlayer player = ProcessManager.Player;
 
