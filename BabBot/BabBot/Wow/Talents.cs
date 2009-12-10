@@ -217,22 +217,4 @@ namespace BabBot.Wow
             return string.Format("{0}/{1}/{2}", TabId, TalentId, Rank);
         }
     }
-/*
-Talents tlist = new Talents();
-tlist.AddItem( new Talent( 10, 1, 1 ) );
-tlist.AddItem( new Talent( 11, 1, 2 ) );
-tlist.AddItem( new Talent( 12, 1, 3 ) );
-
-// Serialization
-XmlSerializer s = new XmlSerializer( typeof( Talents ) );
-TextWriter w = new StreamWriter( "Profiles\Talents\HunterBM.txt" );
-s.Serialize( w, Talents );
-w.Close();
-
-// Deserialization
-Talents talents;
-TextReader r = new StreamReader( "Profiles\Talents\HunterBM.txt" );
-Talents = (Talents)s.Deserialize( r );
-r.Close();
-*/
 }

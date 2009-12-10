@@ -10,7 +10,7 @@
         </continent>
       </wp_list>
       <services>
-        <service d5p1:type="VendorService" type="vendor" can_repair="false" has_water="true" has_food="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+        <service d5p1:type="VendorService" name="vendor" can_repair="false" has_water="true" has_food="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
       </services>
       <quests />
     </npc>
@@ -23,7 +23,7 @@
         </continent>
       </wp_list>
       <services>
-        <service d5p1:type="VendorService" type="vendor" can_repair="true" has_water="false" has_food="false" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+        <service d5p1:type="VendorService" name="vendor" can_repair="true" has_water="false" has_food="false" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
       </services>
       <quests />
     </npc>

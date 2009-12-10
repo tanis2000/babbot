@@ -26,9 +26,29 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Collections;
 using System.Xml;
+using System.Collections.Generic;
 
 namespace BabBot.Common
 {
+    public interface IMergeable
+    {
+        void MergeWith(object obj);
+    }
+
+    public static class MergeHelper
+    {
+        /// <summary>
+        /// Check if obj2 can be merged with obj1
+        /// </summary>
+        /// <param name="obj1">Base object</param>
+        /// <param name="obj2">Object with possible new items</param>
+        /// <returns>True if obj2 can be merged with obj1</returns>
+        public static bool IsMergeable(object obj1, object obj2)
+        {
+            return (obj2 != null) &&  obj1.GetType().Equals(obj2.GetType());
+        }
+    }
+
     public class Serializer<T> where T : new()
     {
         public T Load(string FileName)
@@ -77,7 +97,7 @@ namespace BabBot.Common
     /// <summary>
     /// Common class for collection item that has a unique name 
     /// </summary>
-    public abstract class CommonItem : IComparable
+    public abstract class CommonItem : IComparable, IMergeable
     {
         [XmlAttribute("name")]
         public string Name { get; set; }
@@ -102,6 +122,28 @@ namespace BabBot.Common
         public override bool Equals(object obj)
         {
             return (obj != null) && ToString().Equals(obj.ToString());
+        }
+
+        // By default do nothing
+        public virtual void MergeWith(object obj) {}
+    }
+
+    public abstract class CommonMergeListItem : CommonItem
+    {
+        protected IMergeable[] MergeList;
+
+        public override void MergeWith(object obj)
+        {
+            if (!MergeHelper.IsMergeable(this, obj))
+                return;
+
+            CommonMergeListItem item = (CommonMergeListItem) obj;
+
+            for (int i = 0; i < MergeList.Length; i++)
+                if (MergeList[i] == null)
+                    MergeList[i] = item.MergeList[i];
+                else
+                    MergeList[i].MergeWith(item.MergeList[i]);
         }
     }
 
@@ -219,7 +261,7 @@ namespace BabBot.Common
     /// Class with internal hashtable that needs to be serialized
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonTable<T>
+    public abstract class CommonTable<T> : IMergeable where T : IMergeable
     {
         private readonly Hashtable _htable;
 
@@ -276,7 +318,7 @@ namespace BabBot.Common
             return true;
         }
 
-        public T FindItemByName(string name)
+        protected T FindItemByName(string name)
         {
             return (T)_htable[name];
         }
@@ -291,18 +333,123 @@ namespace BabBot.Common
             return _htable.Count;
         }
 
-        public void Merge(CommonTable<T> t)
+        public void MergeWith(object obj)
         {
-            if (t == null)
+            if (!MergeHelper.IsMergeable(this, obj))
                 return;
+
+            CommonTable<T> t = (CommonTable<T>)obj;
 
             // Check values
             foreach (DictionaryEntry item in t.Table)
             {
                 if (!_htable.ContainsKey(item.Key))
                     _htable.Add(item.Key, item.Value);
-                else if (!item.Value.Equals(_htable[item.Key]))
-                    _htable[item.Key] = item.Value;
+                else 
+                    ((T)_htable[item.Key]).MergeWith(item.Value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Class with internal sorted table that needs to be serialized
+    /// </summary>
+    /// <typeparam name="T">Type of elements in the table</typeparam>
+    public abstract class CommonSortedList<T> where T : CommonItem
+    {
+        private readonly SortedList _slist;
+
+        [XmlIgnore]
+        internal T[] Items
+        {
+            get
+            {
+                T[] res = new T[_slist.Count];
+                _slist.Values.CopyTo(res, 0);
+                return res;
+            }
+            set
+            {
+                if (value == null) return;
+                T[] items = (T[])value;
+                _slist.Clear();
+                foreach (T item in items)
+                    _slist.Add(item.ToString(), item);
+            }
+        }
+
+        public CommonSortedList()
+        {
+            _slist = new SortedList();
+        }
+
+        [XmlIgnore]
+        public SortedList SList
+        {
+            get { return _slist; }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            CommonSortedList<T> t = (CommonSortedList<T>)obj;
+
+            // Check size first
+            int cnt = _slist.Count;
+            if (cnt != t.SList.Count)
+                return false;
+
+            // Check keys and values. List is sorted
+            for ( int i = 0; i < cnt; i++)
+            {
+                T item2 = (T) t.SList.GetByIndex(i);
+
+                if ((item2 == null) || !_slist.GetByIndex(i).Equals(item2))
+                    return false;
+            }
+
+            // No differences found
+            return true;
+        }
+
+        public T FindItemByName(string name)
+        {
+            return (T)_slist[name];
+        }
+
+        public T FindItemByIndex(int idx)
+        {
+            return ((idx < 0) || (idx >= _slist.Count)) ? 
+                    default(T) :  (T) _slist.GetByIndex(idx);
+        }
+
+        public void Add(T item)
+        {
+            _slist.Add(item.ToString(), item);
+        }
+
+        public int ItemCount()
+        {
+            return _slist.Count;
+        }
+
+        public void Merge(CommonTable<T> t)
+        {
+            if (t == null)
+                return;
+
+            // Check values
+            foreach (DictionaryEntry de in t.Table)
+            {
+                T item1 = (T) _slist[de.Key];
+                T item2 = (T) de.Value;
+
+                if (item1 == null)
+                    _slist[de.Key] = item2;
+                else if (!item1.Equals(item2))
+                    item1.MergeWith(item2);
             }
         }
     }
@@ -311,7 +458,7 @@ namespace BabBot.Common
     /// Class with internal hashtable that needs to be serialized and have a unique name
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonNameTable<T> : CommonTable<T>
+    public abstract class CommonNameTable<T> : CommonTable<T> where T : IMergeable
     {
         [XmlAttribute("name")]
         public string Name;
@@ -332,7 +479,7 @@ namespace BabBot.Common
     /// Class with internal hashtable that needs to be serialized and have a unique id
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonIdTable<T> : CommonTable<T>
+    public abstract class CommonIdTable<T> : CommonTable<T> where T : IMergeable
     {
         [XmlAttribute("id")]
         public int Id;
@@ -357,9 +504,10 @@ namespace BabBot.Common
 
     /// <summary>
     /// Class with internal list that needs to be serialized
+    /// Used for elements like list of waypoints where each element is not meargeable
     /// </summary>
     /// <typeparam name="T">Type of elements in the list</typeparam>
-    public abstract class CommonList<T>
+    public abstract class CommonList<T> : IMergeable
     {
         internal readonly ArrayList _list;
 
@@ -423,8 +571,13 @@ namespace BabBot.Common
             _list.Add(item);
         }
 
-        public void Merge(CommonList<T> l)
+        public void MergeWith(object obj)
         {
+            if (!MergeHelper.IsMergeable(this, obj))
+                return;
+
+            CommonList<T> l = (CommonList<T>)obj;
+
             foreach (T item1 in l.List)
             {
                 foreach (T item2 in _list)

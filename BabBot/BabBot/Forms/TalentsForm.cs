@@ -209,7 +209,6 @@ namespace BabBot.Forms
 
                 cbClass.DisplayMember = "LongName";
                 cbClass.ValueMember = "Name";
-                // cbClass.ValueMember = "LongName";
             }
             cbClass.SelectedItem = null;
         }

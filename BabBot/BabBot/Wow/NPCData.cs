@@ -107,7 +107,7 @@ namespace BabBot.Wow
         }
     }
 
-    public class NPC : CommonItem
+    public class NPC : CommonMergeListItem
     {
         [XmlAttribute("type")] 
         public string Type;
@@ -118,22 +118,32 @@ namespace BabBot.Wow
         [XmlAttribute("sex")]
         public string Sex;
 
-        [XmlElement("wp_list")]
-        public ContinentListId Continents;
-
-        [XmlAttribute("class")] 
+        [XmlAttribute("class")]
         public string Class;
 
+        [XmlElement("wp_list")]
+        public ContinentListId Continents
+        {
+            get { return (ContinentListId)MergeList[0]; }
+            set { MergeList[0] = value; }
+        }
+
         [XmlElement("services")]
-        public NPCServices Services;
+        public NPCServices Services
+        {
+            get { return (NPCServices)MergeList[1]; }
+            set { MergeList[1] = value; }
+        }
 
         [XmlElement("quests")]
-        public Quests QuestList;
+        public Quests QuestList
+        {
+            get { return (Quests)MergeList[2]; }
+            set { MergeList[2] = value; }
+        }
 
         public NPC() {
-            Continents = new ContinentListId();
-            Services = new NPCServices();
-            QuestList = new Quests();
+            MergeList = new IMergeable[3];
         }
 
         public NPC(WowPlayer player, string race, string sex) : this()
@@ -185,21 +195,9 @@ namespace BabBot.Wow
             return base.GetHashCode();
         }
 
-        public void Merge(NPC npc)
-        {
-            // Merge services
-            Services.Merge(npc.Services);
-
-            // Merge Waypoints
-            Continents.Merge(npc.Continents);
-            
-            // Merge Quest List
-            QuestList.Merge(npc.QuestList);
-        }
-
         public Quest FindQuestByTitle(string title)
         {
-            return QuestList.FindItemByName(title);
+            return QuestList.FindQuestByTitle(title);
         }
     }
 
@@ -214,6 +212,11 @@ namespace BabBot.Wow
         {
             get { return Items; }
             set { Items = value; }
+        }
+
+        public Quest FindQuestByTitle(string title)
+        {
+            return FindItemByName(title);
         }
     }
 
@@ -372,7 +375,7 @@ namespace BabBot.Wow
     #region NPC Services
 
     // Service container
-    public class NPCServices : CommonTable<NPCService>
+    public class NPCServices : CommonTable<NPCService>, IMergeable
     {
         [XmlElement("service")]
         public NPCService[] ServiceList
@@ -387,22 +390,17 @@ namespace BabBot.Wow
     [XmlInclude(typeof(TradeSkillTrainingService))]
     [XmlInclude(typeof(TradeSkillTrainingService))]
     [XmlInclude(typeof(VendorService))]
-    public class NPCService
+    public class NPCService : CommonItem
     {
-        [XmlAttribute("type")]
-        public string SType;
-
-        public NPCService() { }
-
-        public NPCService(string stype)
+        [XmlIgnore]
+        public string SType
         {
-            SType = stype;
+            get { return Name; }
         }
 
-        public override string ToString()
-        {
-            return SType;
-        }
+        public NPCService() : base() { }
+
+        public NPCService(string stype) : base(stype) {}
     }
 
     public class ClassTrainingService : NPCService
@@ -410,7 +408,7 @@ namespace BabBot.Wow
         [XmlAttribute("class")]
         public string CharClass;
 
-        ClassTrainingService() { }
+        public ClassTrainingService() : base() { }
 
         public ClassTrainingService(string class_name)
             : base("class_trainer")
@@ -424,7 +422,7 @@ namespace BabBot.Wow
         [XmlAttribute("trade_skill")]
         public string TradeSkill;
 
-        TradeSkillTrainingService() { }
+        public TradeSkillTrainingService() : base() { }
 
         public TradeSkillTrainingService(string trade_skill)
             : base("trade_skill_trainer")
@@ -444,7 +442,7 @@ namespace BabBot.Wow
         [XmlAttribute("has_food")]
         public bool HasFood;
 
-        VendorService() { }
+        public VendorService() : base() { }
 
         public VendorService(bool can_repair, bool has_water, bool has_food)
             : base("vendor")

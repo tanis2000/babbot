@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Pather.Graph;
 using BabBot.Scripts.Common;
+using BabBot.Wow.Helpers;
 
 namespace BabBot.Forms
 {
@@ -1433,13 +1434,12 @@ namespace BabBot.Forms
             // Choose gossip option and check npc again
             ProcessManager.Injector.Lua_ExecByName(
                 lua_fname, new string[] { Convert.ToString(idx) });
-            if (!AddNpcInfo(npc))
+            if (!AddTargetNpcInfo(npc))
                 return false;
 
             // After gossip option processed interact with npc again
-            if (idx < max)
-                if (InteractNpc(npc.Name) == null)
-                    return false;
+            // if (idx < max)
+                // NpcHelper.InteractNpc(npc.Name);
 
             return true;
         }
@@ -1486,36 +1486,6 @@ namespace BabBot.Forms
             return true;
         }
 
-        public string[] InteractNpc(string npc_name)
-        {
-            Output.Instance.Log("npc", "Interacting with NPC '" + npc_name + "' ...");
-            ProcessManager.Injector.Lua_ExecByName("InteractWithTarget");
-
-            // IF NPC doesn't have any quests and just on gossip option the WoW
-            // use it option by default
-
-            DateTime dt = DateTime.Now;
-            Thread.Sleep(100);
-            TimeSpan ts = DateTime.Now.Subtract(dt);
-
-            string[] fparams = null;
-            string cur_service = null;
-            while ((cur_service == null) &&
-              (DateTime.Now.Subtract(dt).TotalMilliseconds <= 10000))
-            {
-                Thread.Sleep(2000);
-                fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
-                cur_service = fparams[0];
-            }
-
-            if (cur_service == null)
-            {
-                ShowErrorMessage("NPC doesn't interact after 10 sec of waiting or it's service unknown");
-                return null;
-            }
-
-            return fparams;
-        }
 
         private bool FindAvailGossips(NPC npc)
         {
@@ -1542,20 +1512,20 @@ namespace BabBot.Forms
             return true;
         }
 
+        
+
         // This method is recursive
-        private bool AddNpcInfo(NPC npc)
+        private bool AddTargetNpcInfo(NPC npc)
         {
-            string[] fparams = ProcessManager.Injector.Lua_ExecByName("IsNpcFrameOpen");
-            string cur_service = fparams[0];
-
-            if (cur_service == null)
+            string[] fparams = NpcHelper.GetTargetNpcDialogInfo(npc.Name);
+            if (fparams == null)
             {
-                fparams = InteractNpc(npc.Name);
-                cur_service = fparams[0];
-
-                if (cur_service == null)
-                    return false;
+                Output.Instance.Log("Unable retrieve NPC gossip information. " + 
+                        "Does it communicate at all ?");
+                return false;
             }
+
+            string cur_service = fparams[0];
 
             if (cur_service == null)
             {
@@ -1629,7 +1599,7 @@ namespace BabBot.Forms
             Output.Instance.Log("Checking NPC Info ...");
             NPC npc = new NPC(ProcessManager.Player, npc_info[3], npc_info[4]);
 
-            if (!AddNpcInfo(npc))
+            if (!AddTargetNpcInfo(npc))
                 return false;
 
             // Check if NPC already exists
@@ -1646,7 +1616,7 @@ namespace BabBot.Forms
                 else
                 {
                     // NPC in database but with different parameters
-                    check.Merge(npc);
+                    check.MergeWith(npc);
                 }
             } else
                 ProcessManager.CurWoWVersion.NPCData.Add(npc);
@@ -1993,6 +1963,7 @@ namespace BabBot.Forms
                 "' as quest giver for quest '" + q.Name + "'");
 
             Output.Instance.Log("char", "Checking NPC coordinates ...");
+
             // Check if NPC has coordinates in the same continent
             ContinentId c = npc.Continents.FindContinentById(player.ContinentID);
             if (c == null)
@@ -2018,13 +1989,29 @@ namespace BabBot.Forms
             Output.Instance.Debug("char", "Usning NPC waypoint: " + npc_loc);
 
 
-            MoveToDest(npc_loc, use_state);
+            // We have a 3 tries to reach target NPC
+            int retry = 0;
+            int max_retry = ProcessManager.AppConfig.MaxTargetGetRetries;
+            float distance = npc_loc.GetDistanceTo(player.Location);
 
-            if (npc_loc.GetDistanceTo(player.Location) < 5F)
+            // We might be already at the target
+            while (distance > 5F)
             {
-                Output.Instance.Log("char", "We have reached the destination");
+                // TODO add retries
+                MoveToDest(npc_loc, use_state);
+                distance = npc_loc.GetDistanceTo(player.Location);
+            }
+
+            if (distance <= 5F)
+            {
+                Output.Instance.Log("char", "Bot has reached the destination");
                 TargetUnitByName(npc.Name);
-                InteractNpc(npc.Name);
+                
+                // Just for TEST
+                NpcHelper.InteractNpc(npc.Name);
+
+                // Check if quest available
+
             }
 
             // ProcessManager.Player.ClickToMove(npc_loc);

@@ -27,7 +27,7 @@ using System.Text.RegularExpressions;
 namespace BabBot.Wow
 {
     [XmlRoot("wow_data")]
-    public class WoWData : CommonTable<WoWVersion>
+    public class WoWData : CommonSortedList<WoWVersion>
     {
         [XmlElement("version")]
         public WoWVersion[] Versions
@@ -44,40 +44,108 @@ namespace BabBot.Wow
             return (WoWVersion) FindItemByName(version);
         }
     }
-    
-    public class WoWVersion : CommonItem
+
+    public class WoWVersion : CommonMergeListItem
     {
         [XmlAttribute("max_lvl")]
         public int MaxLvl;
 
-        [XmlElement("lua")]
-        public LuaProc LuaList;
-
-        [XmlElement("talents")]
+        [XmlElement("talent_config")]
         public TalentConfig TalentConfig;
 
-        [XmlElement("quests")]
+        [XmlElement("quest_config")]
         public QuestConfig QuestConfig;
 
+        // Mergeable elements start
+        // Must be not-null and included into MergeList
+
         [XmlElement("classes")]
-        public CharClasses Classes;
+        public CharClasses Classes
+        {
+            get { return (CharClasses) MergeList[0]; }
+            set { MergeList[0] = value; }
+        }
 
         [XmlElement("races")]
-        public Races Races;
+        public Races Races
+        {
+            get { return (Races)MergeList[1]; }
+            set { MergeList[1] = value; }
+        }
 
         [XmlElement("continents")]
-        public ContinentList Continents;
+        public ContinentList Continents
+        {
+            get { return (ContinentList)MergeList[2]; }
+            set { MergeList[2] = value; }
+        }
 
+        [XmlElement("lua")]
+        public LuaProc LuaList
+        {
+            get { return (LuaProc)MergeList[3]; }
+            set { MergeList[3] = value; }
+        }
+
+        // Mergeable elements end
+
+        // Globals unique for each version and not include into merge
         [XmlElement("globals")]
         public GlobalOffsets Globals;
 
         [XmlIgnore]
         public NPCVersion NPCData;
 
+        public WoWVersion() 
+            : base()
+        {
+
+            MergeList = new IMergeable[4];
+        }
+
         public LuaFunction FindLuaFunction(string name)
         {
             return LuaList.FindLuaFunction(name);
         }
+
+        public override void MergeWith(object obj)
+        {
+            if (!MergeHelper.IsMergeable(this, obj))
+                return;
+
+            WoWVersion pver = (WoWVersion) obj;
+
+            // Manually check confuration elements
+            TalentConfig = TalentConfig ?? pver.TalentConfig;
+            QuestConfig = QuestConfig ?? pver.QuestConfig;
+
+            base.MergeWith(pver);
+        }
+
+        
+        public override int CompareTo(object obj)
+        {
+            if (obj == null)
+                return -1;
+
+            string[] v1 = Name.Split('.');
+            string[] v2 = ((WoWVersion)obj).Name.Split('.');
+
+            int num = Math.Min(v1.Length, v2.Length);
+            for (int i = 0; i < num; i++)
+            {
+                int i1 = Convert.ToInt32(v1);
+                int i2 = Convert.ToInt32(v2);
+
+                if (i1 < i2)
+                    return -1;
+                else if (i1 > i2)
+                    return 1;
+            }
+
+            return 0;
+        }
+
     }
 
     #region Lua Function
@@ -282,6 +350,12 @@ namespace BabBot.Wow
     {
         [XmlAttribute("min_refresh_time")]
         public int MinBotRefreshTime;
+
+        [XmlAttribute("max_get_target_retries")]
+        public int MaxTargetGetRetries;
+
+        [XmlAttribute("max_npc_interact_time")]
+        public int MaxNpcInteractTime;
 
         AppConfig() { }
     }

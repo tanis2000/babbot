@@ -517,6 +517,21 @@ namespace BabBot.Manager
             wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
             ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
 
+            // Auto Merge data from earlier version with latest one
+            WoWVersion wprev = (WoWVersion)wdata.SList.GetByIndex(0);
+            for (int i = 1; i < wdata.SList.Count; i++ )
+            {
+                WoWVersion wnew = (WoWVersion)wdata.SList.GetByIndex(i);
+
+                // Merge WoW data
+                wnew.MergeWith(wprev);
+
+                // Merge NPCData. Ordering is not an issues since it defined in WoWData already
+                ndata.FindVersion(wnew.Name).MergeWith(ndata.FindVersion(wprev.Name));
+
+                wprev = wnew;
+            }
+
             // Check if NPC data version the same
             if (ndata.Version != NPCDataVersion)
             {

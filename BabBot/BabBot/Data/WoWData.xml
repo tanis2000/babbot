@@ -469,7 +469,7 @@ end)()]]></text>
       </function>
 
       <!-- IsGossipFrameOpen -->
-      <function name="IsNpcFrameOpen">
+      <function name="GetNpcDialogInfo">
         <return size="4">
           0 - type of chosen gossip service as:
             * "wep_skill_trainer" - SkillFrame (weapon skills)
@@ -738,9 +738,9 @@ end)()]]></text>
       "delay" parameter define delay between learning each talent from list
        "retry" parameters control how many retries need if learning too fast
     -->
-    <talents lvl_start="10" delay="1000" retry="5"
+    <talent_config lvl_start="10" delay="1000" retry="5"
       armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
-    <quests header_pattern="^\d+::.*::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
+    <quest_config header_pattern="^\d+::.*::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
             detail_pattern="^.*||.*||.*$" />
     <globals 
         game_offset="0x12D4EA8"
@@ -817,5 +817,9 @@ end)()]]></text>
         click_to_move_dest_z="0"
      />
   </version>
-  <app_config  min_refresh_time="100" />
+  <app_config 
+      min_refresh_time="100" 
+      max_get_target_retries="3" 
+      max_npc_interact_time="10000"
+   />
 </wow_data>
