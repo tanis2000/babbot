@@ -453,7 +453,7 @@ end)()]]>
 end)()]]></text>
       </function>
 
-      <function name="GetAvailQuests">
+      <function name="GetAvailGossipQuests">
         <return size="-1">
           *  name - Name of the quest (string)
           * level - Suggested character level for attempting the quest (number)
@@ -657,7 +657,7 @@ end)()]]>
       </function>
 
       <!-- name -->
-      <function name="SelectAvailableQuest">
+      <function name="SelectGossipAvailableQuest">
         <parameters>
           0 - index 
             Index of a quest available from the current 

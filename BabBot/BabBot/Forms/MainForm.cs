@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using BabBot.Forms.Radar;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Pather.Graph;
 using BabBot.Scripts.Common;
 using BabBot.Wow.Helpers;
 
@@ -1289,346 +1288,6 @@ namespace BabBot.Forms
 
         #endregion
 
-        #region NPC
-
-        private class QuestHeader
-        {
-            internal string Name;
-            internal int Level;
-
-            public QuestHeader(string name, int level)
-            {
-                Name = name;
-                Level = level;
-            }
-        }
-
-        private QuestHeader qh;
-
-        private void AddNpcService(NPC npc, string cur_service, string[] opts) {
-            NPCService npc_service = null;
-
-            switch (cur_service)
-            {
-                case "class_trainer":
-                    npc_service = new ClassTrainingService(ProcessManager.Player.CharClass);
-                    break;
-
-                case "trade_skill_trainer":
-                    npc_service = new TradeSkillTrainingService("");
-                    break;
-
-                case "vendor":
-                    npc_service = new VendorService(
-                            ((opts[1] != null) && opts[1].Equals("1")),
-                            ((opts[2] != null) && opts[2].Equals("1")),
-                            ((opts[3] != null) && opts[3].Equals("1")));
-                    break;
-                case "wep_skill_trainer":
-                case "taxi":
-                case "banker":
-                case "battlemaster":
-                    npc_service = new NPCService(cur_service);
-                    break;
-
-                default:
-                    Output.Instance.Log("npc", "Unknown npc service type '" +
-                                cur_service + "'");
-                    break;
-            }
-
-            if (npc_service != null)
-                npc.AddService(npc_service);
-        }
-
-        private void AddNpcQuestEnd(NPC npc, string[] opts)
-        {
-            if ((opts.Length < 2) || (opts[1] == null))
-            {
-                Output.Instance.LogError("npc", "Not enough " +
-                        opts.Length + " parameters to add quest end");
-                return;
-            }
-
-            string qtitle = opts[1];
-
-            // Now find NPC who has an original quest
-
-            Quest q = ProcessManager.CurWoWVersion.NPCData.FindQuestByTitle(qtitle);
-
-            if (q != null)
-            {
-                Output.Instance.Log("Assign current NPC as end for quest '" +
-                                                                qtitle + "'");
-
-                q.DestNpc = npc.Name;
-            }
-        }
-
-        private void AddNpcQuestStart(NPC npc, string[] opts)
-        {
-            Quest q = null;
-
-            // Checking parameters first
-            if (opts.Length < 4)
-            {
-                Output.Instance.LogError("npc", "Not enough " + 
-                        opts.Length + " parameters to add quest start");
-                return;
-            }
-
-            // Check parsing result
-            for (int i = 1; i < 4; i++)
-            {
-                string s = opts[i];
-
-                if (string.IsNullOrEmpty(opts[i]))
-                {
-                    Output.Instance.LogError("npc", i + 
-                        " parameter from quest info result is empty");
-                    return;
-                }
-
-                // Check each value against pattern
-                Regex rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[i - 1];
-                if (!rx.IsMatch(s))
-                {
-                    Output.Instance.LogError("npc", i +
-                        " parameter '" + s + "' from quest scan" + 
-                        " doesn't match template '" + rx.ToString() + "'");
-                    return;
-                }
-            }
-
-            // Read header
-            string[] headers = opts[1].Split(new string[] {"::"}, StringSplitOptions.None);
-            string[] info = opts[2].Split(',');
-            string[] details = opts[3].Split(new string[] {"||"}, StringSplitOptions.None);
-
-            try
-            {
-                int qlevel = Convert.ToInt32(headers[0]);
-                if (qh != null)
-                    qlevel = qh.Level;
-
-                Output.Instance.Log("Assign current NPC as start for quest '" + 
-                                                                        headers[1] + "'");
-
-                q = new Quest(headers[1], headers[2], headers[3], qlevel, 
-                    new int[] { Convert.ToInt32(info[3]), Convert.ToInt32(info[4]), 
-                        Convert.ToInt32(info[5]) }, details, info[0]);
-            }
-            catch
-            {
-                Output.Instance.LogError("npc", "Error creating quest with parameters " +
-                    "Header: " + headers[1] + "; Text: " + headers[2] + "; Level: " + headers[3]);
-                return;
-            }
-
-            if (q != null)
-                npc.AddQuest(q);
-        }
-
-        public bool SelectNpcOption(NPC npc, string lua_fname, int idx, int max)
-        {
-            // Choose gossip option and check npc again
-            ProcessManager.Injector.Lua_ExecByName(
-                lua_fname, new string[] { Convert.ToString(idx) });
-            if (!AddTargetNpcInfo(npc))
-                return false;
-
-            // After gossip option processed interact with npc again
-            // if (idx < max)
-                // NpcHelper.InteractNpc(npc.Name);
-
-            return true;
-        }
-
-        private bool FindAvailQuests(NPC npc)
-        {
-            Output.Instance.Debug("npc", "Checking available quests ...");
-
-            // Get list of quests
-            string[] quests = ProcessManager.
-                Injector.Lua_ExecByName("GetAvailQuests");
-            if (quests == null || (quests.Length == 0))
-                Output.Instance.Debug("npc", "No quests detected.");
-            else
-            {
-                Output.Instance.Debug("npc", (int)(quests.Length / 3) + " quests(s) detected.");
-
-                // Parse list of quests
-                int max_num = (int)(quests.Length / 3);
-                for (int i = 0; i < max_num; i++)
-                {
-                    string sqlevel = quests[i * 3 + 1];
-
-                    try
-                    {
-                        qh = new QuestHeader(quests[i * 3], Convert.ToInt32(sqlevel));
-
-                        // Last parameter we not interested in
-                        Output.Instance.Debug("npc", "Adding quest '" +
-                                                    qh.Name + "'; Level: " + qh.Level);
-
-                        SelectNpcOption(npc, "SelectAvailableQuest", i + 1, max_num);
-                    }
-                    catch (Exception e)
-                    {
-                        Output.Instance.LogError("npc", "Failed convert quests level '" +
-                        sqlevel + "' to integer. " + e.Message);
-                        return false;
-                    }
-
-                }
-            }
-
-            return true;
-        }
-
-
-        private bool FindAvailGossips(NPC npc)
-        {
-            // Get list of options
-            string [] opts = ProcessManager.
-                Injector.Lua_ExecByName("GetGossipOptions");
-            if (opts == null || (opts.Length == 0))
-                Output.Instance.Debug("No service detected.");
-            else
-            {
-                Output.Instance.Debug((int)(opts.Length / 2) + " service(s) detected.");
-
-                // Parse list of services
-                int max_opts = (int)(opts.Length / 2);
-                for (int i = 0; i < max_opts; i++)
-                {
-                    string gossip = opts[i * 2];
-                    string service = opts[i * 2 + 1];
-
-                    SelectNpcOption(npc, "SelectGossipOption", i + 1, max_opts); 
-                }
-            }
-
-            return true;
-        }
-
-        
-
-        // This method is recursive
-        private bool AddTargetNpcInfo(NPC npc)
-        {
-            string[] fparams = NpcHelper.GetTargetNpcDialogInfo(npc.Name);
-            if (fparams == null)
-            {
-                Output.Instance.Log("Unable retrieve NPC gossip information. " + 
-                        "Does it communicate at all ?");
-                return false;
-            }
-
-            string cur_service = fparams[0];
-
-            if (cur_service == null)
-            {
-                Output.Instance.Log("NPC is useless. No services or quests are detected");
-                return true ;
-            }
-
-            if (cur_service.Equals("gossip"))
-            {
-                Output.Instance.Debug("npc", "GossipFrame opened.");
-
-                Output.Instance.Debug("npc", "Checking available options ...");
-                // Get number of gossips and quests
-                string[] opts = ProcessManager.
-                    Injector.Lua_ExecByName("GetNpcGossipInfo");
-
-                // Convert result to int format
-                int[] opti = new int[opts.Length];
-                for (int i = 0; i < opti.Length; i++)
-                {
-                    try
-                    {
-                        opti[i] = Convert.ToInt32(opts[i]);
-                    }
-                    catch (Exception e)
-                    {
-                        ShowErrorMessage("Unable convert " + i + " parameter '" +
-                            opts[i] + "' from  'GetNpcGossipInfo' result to integer. " + e);
-                        return false;
-                    }
-                }
-
-                if (opti[0] > 0)
-                    if (!FindAvailQuests(npc))
-                        return false;
-
-                // TODO CheckActiveQuests
-                // if (opti[1] > 0)
-                //      if (!FindActiveQuests(npc))
-                //            return false;
-
-                if (opti[2] > 0)
-                    if (!FindAvailGossips(npc))
-                        return false;
-            
-            }
-            else if (cur_service.Equals("quest_start"))
-                AddNpcQuestStart(npc, fparams);
-            else if (cur_service.Equals("quest_progress"))
-                Output.Instance.Log("Ignoring quest progress. If you need add initial quest " + 
-                    "than drop it and talk to NPC again");
-            else if (cur_service.Equals("quest_end"))
-                AddNpcQuestEnd(npc, fparams);
-            else
-                AddNpcService(npc, cur_service, fparams);
-
-            return true;
-        }
-
-        private bool AddNpc()
-        {
-            // Initialize parameters
-            qh = null;
-
-            string npc_name = ProcessManager.Player.CurTarget.Name;
-            ProcessManager.Player.setCurrentMapInfo();
-
-            string[] npc_info = ProcessManager.Injector.
-                Lua_ExecByName("GetUnitInfo", new object[] {"target"});
-
-            Output.Instance.Log("Checking NPC Info ...");
-            NPC npc = new NPC(ProcessManager.Player, npc_info[3], npc_info[4]);
-
-            if (!AddTargetNpcInfo(npc))
-                return false;
-
-            // Check if NPC already exists
-            NPC check = ProcessManager.
-                CurWoWVersion.NPCData.FindNpcByName(npc.Name);
-            if ((check != null))
-            {
-                if (npc.Equals(check))
-                {
-                    ShowErrorMessage("NPC '" + npc.Name +
-                        "' already added with identicall parameters");
-                    return false;
-                }
-                else
-                {
-                    // NPC in database but with different parameters
-                    check.MergeWith(npc);
-                }
-            } else
-                ProcessManager.CurWoWVersion.NPCData.Add(npc);
-
-            if (ProcessManager.SaveNpcData())
-                Output.Instance.Log("npc", "NPC '" + npc_name + 
-                        "' successfully added to NPCData.xml");
-            return true;
-        }
-
-        #endregion
-
         private void contentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Help.ShowHelp(this, "doc/index.html");
@@ -1659,7 +1318,7 @@ namespace BabBot.Forms
                     // string name = "Melithar Staghelm";
                     // string name = "Conservator Ilthalaine";
                     string name = "Tarindrella";
-                    TargetUnitByName(name);
+                    LuaHelper.TargetUnitByName(name);
                 }
 #endif
 
@@ -1676,18 +1335,19 @@ namespace BabBot.Forms
             TabPage npc_tab = tabLogs.TabPages["Npc"];
             tabLogs.SelectedTab = npc_tab;
 
-            if (AddNpc())
-                // Open NPC List for configuration
-                npcListToolStripMenuItem_Click(sender, e);
+            try
+            {
+                if (NpcHelper.AddNpc())
+                    // Open NPC List for configuration
+                    npcListToolStripMenuItem_Click(sender, e);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("Can't add current NPC. " + ex.Message);
+            }
         }
 
-        private void TargetUnitByName(string name)
-        {
-            ProcessManager.Injector.Lua_ExecByName("TargetUnit",
-                        new string[] { name });
-            // TODO Replace with Player CurTarget check
-            Thread.Sleep(500);
-        }
+        
         private bool CheckInGame()
         {
             // Check if InGame
@@ -1887,140 +1547,6 @@ namespace BabBot.Forms
 
         #region Quest Test
 
-        public class QuestProcessingException : Exception
-        {
-            public QuestProcessingException(string msg) :
-                base(msg) { }
-        }
-
-        private void MoveToDest(Vector3D dest, bool use_state)
-        {
-            if (use_state)
-            {
-                // Use MoveToState
-                MoveToState mt = new MoveToState(dest, 5F);
-                ProcessManager.Player.StateMachine.SetGlobalState(mt);
-                Output.Instance.Debug("char", "State: " +
-                    ProcessManager.Player.StateMachine.CurrentState);
-
-                Output.Instance.Log("char", "NPC coordinates located. Moving to NPC ...");
-                ProcessManager.Player.StateMachine.IsRunning = true;
-
-                Output.Instance.Debug("char", "State: " +
-                    ProcessManager.Player.StateMachine.CurrentState);
-                while (ProcessManager.Player.StateMachine.IsInState(typeof (MoveToState)))
-                {
-                    Thread.Sleep(1000);
-                    Output.Instance.Debug("char", "State: " +
-                        ProcessManager.Player.StateMachine.CurrentState);
-                }
-            }
-            else
-            {
-                // Click to move on each waypoint
-                // dynamically calculate time between each click 
-                // based on distance to the next waypoint
-
-                // Lets calculate path from character to NPC and move
-                Path p = ProcessManager.Caronte.CalculatePath(
-                    WaypointVector3DHelper.Vector3DToLocation(ProcessManager.Player.Location),
-                    WaypointVector3DHelper.Vector3DToLocation(dest));
-
-                // Travel path
-                int max = p.Count();
-                Vector3D vprev = dest;
-                Vector3D vnext;
-                for (int i = 0; i < max; i++)
-                {
-                    vnext = WaypointVector3DHelper.LocationToVector3D(p.Get(i));
-
-                    // Calculate travel time
-                    float distance = vprev.GetDistanceTo(vnext);
-                    int t = (int)((distance / 7F) * 1000);
-
-                    ProcessManager.Player.ClickToMove(vnext);
-                    Thread.Sleep(t);
-                    vprev = vnext;
-                }
-            }
-
-        }
-
-        private void AcceptQuest(Quest q, bool use_state)
-        {
-            // Set player current zone
-            WowPlayer player = ProcessManager.Player;
-                
-            player.setCurrentMapInfo();
-
-            // Get quest giver npc
-            NPC npc = ((Quest) cbQuestList.SelectedItem).SrcNpc;
-            if (npc == null)
-                throw new QuestProcessingException("Quest giver NPC not found for quest '" + 
-                    q.Name + "'. Skipping quest.");
-
-            Output.Instance.Log("char", "Located NPC '" + npc.Name + 
-                "' as quest giver for quest '" + q.Name + "'");
-
-            Output.Instance.Log("char", "Checking NPC coordinates ...");
-
-            // Check if NPC has coordinates in the same continent
-            ContinentId c = npc.Continents.FindContinentById(player.ContinentID);
-            if (c == null)
-                throw new QuestProcessingException("Quest giver NPC for quest '" + 
-                    q.Name + "' located on different continent. Skipping the quest.");
-
-            // Check if NPC located in the same zone
-            Zone z = c.FindZoneByName(player.ZoneText);
-
-            if (z == null)
-                throw new QuestProcessingException("Quest giver NPC for quest '" + 
-                    q.Name + "' located on different zone. " + 
-                    "Multi-zone traveling not implemented yet. Skipping the quest.");
-
-            // Check if NPC has any waypoints assigned
-            if (z.Items.Length == 0)
-                throw new QuestProcessingException("Quest giver NPC for quest '" + 
-                    q.Name + "' doesn't have any waypoints assigned. " + 
-                    "Check NPCData.xml and try again. Skipping the quest.");
-
-            // By default check first waypoint
-            Vector3D npc_loc = z.Items[0];
-            Output.Instance.Debug("char", "Usning NPC waypoint: " + npc_loc);
-
-
-            // We have a 3 tries to reach target NPC
-            int retry = 0;
-            int max_retry = ProcessManager.AppConfig.MaxTargetGetRetries;
-            float distance = npc_loc.GetDistanceTo(player.Location);
-
-            // We might be already at the target
-            while (distance > 5F)
-            {
-                // TODO add retries
-                MoveToDest(npc_loc, use_state);
-                distance = npc_loc.GetDistanceTo(player.Location);
-            }
-
-            if (distance <= 5F)
-            {
-                Output.Instance.Log("char", "Bot has reached the destination");
-                TargetUnitByName(npc.Name);
-                
-                // Just for TEST
-                NpcHelper.InteractNpc(npc.Name);
-
-                // Check if quest available
-
-            }
-
-            // ProcessManager.Player.ClickToMove(npc_loc);
-
-                //    Caronte.CalculatePath(
-                //        WaypointVector3DHelper.Vector3DToLocation(Player.Location),
-                //        new Location(-6003.86f, -232.1742f, 410.5543f));
-        }
-
         private void btnGetQuest_Click(object sender, EventArgs e)
         {
             if (!CheckInGame())
@@ -2037,7 +1563,7 @@ namespace BabBot.Forms
             try
             {
                 btnGetQuest.Enabled = false;
-                AcceptQuest(q, cbUseState.Checked);
+                QuestHelper.AcceptQuest(q, cbUseState.Checked);
             }
             catch (QuestProcessingException qe)
             {

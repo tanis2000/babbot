@@ -289,7 +289,9 @@
     <Compile Include="States\StateEventArgs.cs" />
     <Compile Include="States\StateMachine.cs" />
     <Compile Include="States\State.cs" />
+    <Compile Include="Wow\Helpers\LuaHelper.cs" />
     <Compile Include="Wow\Helpers\NpcHelper.cs" />
+    <Compile Include="Wow\Helpers\QuestHelper.cs" />
     <Compile Include="Wow\Login.cs" />
     <Compile Include="Wow\NPCData.cs" />
     <Compile Include="Wow\PlayerState.cs" />

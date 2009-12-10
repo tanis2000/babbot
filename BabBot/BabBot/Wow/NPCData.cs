@@ -222,6 +222,12 @@ namespace BabBot.Wow
 
     public class Quest : CommonText
     {
+        [XmlIgnore]
+        public string Title
+        {
+            get { return Name; }
+        }
+
         [XmlAttribute("level")]
         public int Level;
 
