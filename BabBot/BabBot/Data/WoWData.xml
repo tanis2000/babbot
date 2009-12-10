@@ -20,6 +20,7 @@ Lots of credits to http://wowprogramming.com/
 -->
 <wow_data>
   <version name="3.2.2.10505" max_lvl="80">
+    <!-- List of unit classes -->
     <classes>
         <class armory_id="1" long_name="Warrior" name="WARRIOR" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
         <class armory_id="2" long_name="Paladin" name="PALADIN" tab_1_max="26" tab_2_max="26" tab_3_max="26" />
@@ -32,6 +33,8 @@ Lots of credits to http://wowprogramming.com/
         <class armory_id="9" long_name="Warlock" name="WARLOCK" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
         <class armory_id="11" long_name="Druid" name="DRUID" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
     </classes>
+    
+    <!-- List of characters (not NPC) races -->
     <races>
       <race name="NONE" long_name="" id="0" />
       <race name="BLOODELF" long_name="Blood Elf" id="10" />
@@ -45,20 +48,24 @@ Lots of credits to http://wowprogramming.com/
       <race name="TAUREN" long_name="Tauren" id="6" />
       <race name="TROLL" long_name="Trol" id="8" />
     </races>
+    
+    <!-- List of World Continents -->
     <continents>
       <continent id="0" name="All" />
       <continent id="1" name="Kalimdor" />
       <continent id="2" name="Azeroth" />
       <continent id="3" name="Expansion01" />
       <continent id="4" name="Northrend" />
-    </continents>      
+    </continents>
+
+    <!-- Lua Functions -->
     <lua fnew_pattern="(function()\r\n  \r\nend)()">
       <!-- SetGlueState -->
       <function name="SetGlueState">
-        <parameters>
-          1 - realm
-          2 - location (US, EU)
-          3 - realm type (NORMAL_PVE or others
+        <parameters size="4">
+          0 - realm
+          1 - location (US, EU)
+          2 - realm type (NORMAL_PVE or others
           3 - Sleeping time if some process pending
         </parameters>
         <return size="6">
@@ -110,10 +117,10 @@ Lots of credits to http://wowprogramming.com/
 
                                 realm = _G['RealmListRealmButton'..realmIndex]
                                 RealmList.currentRealm = realm:GetID()
-		                        RealmList.selectedName = realm.name
+                                RealmList.selectedName = realm.name
 
                                 realm:LockHighlight()
-						        RealmListHighlight:SetPoint('TOPLEFT', realm, 'TOPLEFT', 0, 0)
+                                RealmListHighlight:SetPoint('TOPLEFT', realm, 'TOPLEFT', 0, 0)
                                 RealmListHighlight:Show()
                             end
                         
@@ -181,8 +188,8 @@ end)()]]>
 
       <!-- SelectCharacter -->
       <function name="SelectCharacter">
-        <parameters>
-          1 - Character Name
+        <parameters size="1">
+          0 - Character Name
         </parameters>
         <return size="1">
           0 - Character ID in list or null if not found
@@ -209,10 +216,10 @@ end)()]]>
       
       <!-- SendLogin -->
       <function name="SendLogin">
-        <parameters>
-          1 - realm
-          2 - user
-          3 - password
+        <parameters size="3">
+          0 - realm
+          1 - user
+          2 - password
         </parameters>
         <text>
           <![CDATA[(function()
@@ -229,10 +236,9 @@ end)()]]></text>
 
       <!-- GetAvailTalentPoints -->
       <function name="GetAvailTalentPoints">
-        <parameters />
         <return size="2">
-        0 - Number of available talent points
-        1 - Number of proffessions slot available
+          0 - Number of available talent points
+          1 - Number of proffessions slot available
         </return>
         <text><![CDATA[(function()
   return UnitCharacterPoints("player")
@@ -240,10 +246,10 @@ end)()]]></text>
       </function>
       
       <!-- LearnTalent -->
-      <function name="LearnTalent">
-        <parameters>
-        1 - Tab ID
-        2 - Talent ID
+      <function name="LearnTalent" size="">
+        <parameters size="2">
+          0 - Tab ID
+          1 - Talent ID
         </parameters>
         <return />
         <text><![CDATA[(function()
@@ -253,9 +259,9 @@ end)()]]></text>
 
       <!-- GetTalentInfo -->
       <function name="GetTalentInfo">
-        <parameters>
-        1 - Tab ID
-        2 - Talent ID
+        <parameters size="2">
+          0 - Tab ID
+          1 - Talent ID
         </parameters>
         <return size="10">
           0 - name String - The name of the talent in that tab, 
@@ -291,9 +297,9 @@ end)()]]></text>
       </function>
 
       <!-- GetNumTrainerServices -->
-	    <function name="GetNumTrainerServices">
+        <function name="GetNumTrainerServices">
         <return size="1">
-		  0 - the number of entries in the trainer service listing. 
+          0 - the number of entries in the trainer service listing. 
 			Entries include both group headers and individual trainer services 
 			(i.e spells or recipes to be purchased). Reflects the list as it should 
 			currently be displayed, not necessarily the complete list -- if headers 
@@ -305,9 +311,9 @@ end)()]]></text>
       </function>
 
       <!-- BuyTrainerService -->
-	    <function name="BuyTrainerService">
-        <parameters>
-		  0 - Index of the trainer service
+        <function name="BuyTrainerService">
+        <parameters size="1">
+            0 - Index of the trainer service
         </parameters>
         <text><![CDATA[(function()
   BuyTrainerService({0})
@@ -340,45 +346,44 @@ end)()]]>
 
     <!-- ChooseGossipOption -->
     <function name="SelectGossipOption">
-        <parameters>
+        <parameters size="1">
           0 - "gossip" index (see FindGossipIndex)
         </parameters>
         <text><![CDATA[(function()
   SelectGossipOption({0})
 end)()]]></text>
       </function>
-	  
+
       <!-- FindGossipIndex -->
       <function name="FindGossipIndex">
-        <parameters>
-		0 - gossipType - Non-localized string indicating the type of gossip option (string)
-    * banker - Begin a Bank interaction
-    * battleMaster - Queue for a battleground instance
-    * binder - Set the player's Hearthstone location
-    * gossip - Talk to the NPC
-    * tabard - Begin a Tabard design interaction
-    * taxi - Begin a Taxi (flight master) interaction
-    * trainer - Begin a Trainer interaction
-    * vendor - Begin a Merchant interaction
-	* gossip
-		- Custom gossip types
+        <parameters size="1">
+          0 - gossipType - Non-localized string indicating the type of gossip option (string)
+            * banker - Begin a Bank interaction
+            * battleMaster - Queue for a battleground instance
+            * binder - Set the player's Hearthstone location
+            * gossip - Talk to the NPC
+            * tabard - Begin a Tabard design interaction
+            * taxi - Begin a Taxi (flight master) interaction
+            * trainer - Begin a Trainer interaction
+            * vendor - Begin a Merchant interaction
+            * gossip
+            - Custom gossip types
         </parameters>
         <return size="1">
-		0 - index if gossip type found in NPC gossip dialog or null if not found
+            0 - index if gossip type found in NPC gossip dialog or null if not found
         </return>
         <text><![CDATA[(function()
-	local idx, txt
+    local idx, txt
     local arg = GetGossipOptions()
-	for i = 1, table.getn(arg), 2 do
-		local title, type = arg[i], arg[i+1]
-		if (type == "{0}") then
-			idx = i
-			txt = title
-			
-			break
-		end
-	end
-	return idx, txt
+    for i = 1, table.getn(arg), 2 do
+        local title, type = arg[i], arg[i+1]
+        if (type == "{0}") then
+            idx = i
+            txt = title
+            break
+        end
+    end
+    return idx, txt
 end)()]]></text>
       </function>
       
@@ -409,25 +414,25 @@ end)()]]></text>
 
       <!-- UnitClass -->
       <function name="GetUnitInfo">
-        <parameters>
+        <parameters size="1">
           0 - unit String - the unitId to query, e.g. "player"
         </parameters>
         <return size="5">
         </return>
-        0 - localized class
-        The localized class of the specified unit as a string. e.g. "Mage", "Warrior", "Guerrier", etc.
+          0 - localized class
+            The localized class of the specified unit as a string. e.g. "Mage", "Warrior", "Guerrier", etc.
 
-        1 - english class
-        The fully capitalized english class name with no spaces, e.g. "MAGE", "WARRIOR", "DEATHKNIGHT", etc.
+          1 - english class
+            The fully capitalized english class name with no spaces, e.g. "MAGE", "WARRIOR", "DEATHKNIGHT", etc.
 
-        2 - localized race
+          2 - localized race
         
-        3 - english race (TROLL, HUMAN)
+          3 - english race (TROLL, HUMAN)
         
-        4 - gender - The unit's gender (number)
-          o 1 - Neuter / Unknown
-          o 2 - Male
-          o 3 - Female
+          4 - gender - The unit's gender (number)
+            * 1 - Neuter / Unknown
+            * 2 - Male
+            * 3 - Female
 
         <text>
           <![CDATA[(function()
@@ -523,13 +528,13 @@ end)()]]></text>
           break
         end
       end
-	  
+
       -- done with merchant
       CloseMerchant()
       
     else 
       if (QuestFrame:IsShown()) then
-		    service = "quest"
+        service = "quest"
         
         title = GetTitleText()
         if (GetQuestText() ~= "") then
@@ -552,7 +557,7 @@ end)()]]></text>
           return service, d1
         end
         
-		    -- Returning quest level as char level
+        -- Returning quest level as char level
         d1 = UnitLevel("player") .. "::" .. title .. 
                "::" .. GetQuestText() .. "::" .. GetObjectiveText()
                     
@@ -567,7 +572,7 @@ end)()]]></text>
         texture, name, isTradeskillSpell, isSpellLearned = GetRewardSpell()
         if (name) then
           d2 = name .. "," .. isTradeskillSpell .. "," .. isSpellLearned
-		    else
+        else
           d2 = ",,";
         end
                     
@@ -594,8 +599,8 @@ end)()]]></text>
         -- Done with quest
         CloseQuest()
       else
-        if (BankFrame:IsShown()) then
-			    service = "banker"
+              if (BankFrame:IsShown()) then
+                service = "banker"
 			    CloseBankFrame()
 			  else
 				  if (SkillFrame:IsShown()) then
@@ -632,8 +637,6 @@ end)()]]></text>
       
       <!-- GetNpcInfo -->
       <function name="GetNpcGossipInfo">
-        <parameters>
-        </parameters>
         <return size="3">
         0 - number of available quests
         1 - number of active quests
@@ -646,7 +649,7 @@ end)()]]></text>
 
       <!-- name -->
       <function name="TargetUnit">
-        <parameters>
+        <parameters size="1">
           0 - Exact Unit Name
         </parameters>
         <text>
@@ -658,7 +661,7 @@ end)()]]>
 
       <!-- name -->
       <function name="SelectGossipAvailableQuest">
-        <parameters>
+        <parameters size="1">
           0 - index 
             Index of a quest available from the current 
             Gossip NPC (between 1 and GetNumGossipAvailableQuests()) (number)
@@ -691,7 +694,7 @@ end)()]]>
 
       <!-- GetQuestReward -->
         <function name="GetQuestReward">
-        <parameters>
+        <parameters size="1">
           0 - Quest choice
         </parameters>
         <text>
@@ -718,11 +721,34 @@ end)()]]>
 end)()]]>
         </text>
       </function>
-      
+
+      <!-- name -->
+      <function name="FindQuestInLog">
+        <parameters size="1">
+          0 - Quest Title
+        </parameters>
+        <return size="1">
+          0 - Index of the quest in Quest Log or null if quest not found
+        </return>
+        <text><![CDATA[(function()
+  local idx
+  numEntries, numQuests = GetNumQuestLogEntries()
+  for i = 1, numQuests
+    title = GetQuestLogTitle(questIndex)
+    if (title == "{0}") then
+      idx = i
+      break
+    end
+  end
+  return idx
+end)()]]></text>
+      </function>
+      -->
+
       <!-- Template for new function
       <!- - name - ->
       <function name="">
-        <parameters>
+        <parameters size="">
         </parameters>
         <return size="">
         </return>
@@ -734,14 +760,16 @@ end)()]]></text>
       
     </lua>
     
-    <!-- 
+    <!-- Set of configuration for talent processing
       "delay" parameter define delay between learning each talent from list
        "retry" parameters control how many retries need if learning too fast
     -->
     <talent_config lvl_start="10" delay="1000" retry="5"
       armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
+    <!-- Set of configuration for quest processing -->
     <quest_config header_pattern="^\d+::.*::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
             detail_pattern="^.*||.*||.*$" />
+    <!-- global WoW version related offset and variables -->
     <globals 
         game_offset="0x12D4EA8"
         move_mouse_over_guid_offset="0x113D798"

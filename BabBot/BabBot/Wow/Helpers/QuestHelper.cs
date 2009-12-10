@@ -163,6 +163,20 @@ namespace BabBot.Wow.Helpers
                 return false;
         }
 
+        public static int FindQuestInLog(string title)
+        {
+            string[] ret = ProcessManager.Injector.Lua_ExecByName("FindQuestInLog", 
+                new string[] {title});
+ 
+            // Trying convert result
+            int idx = -1;
+            try
+            {
+                idx = Convert.ToInt32(ret[0]);
+            }
+            catch {}
 
+            return idx;
+        }
     }
 }

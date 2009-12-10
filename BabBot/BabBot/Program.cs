@@ -54,8 +54,9 @@ namespace BabBot
             }
             catch (ApplicationException)
             {
-                MessageBox.Show("This is an administrative task!", 
-                            "Permission denied...", MessageBoxButtons.OK);
+                MessageBox.Show("Access denied !!!" + Environment.NewLine +
+                    "You don't have administrative right to run this application.", 
+                    "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Process.GetCurrentProcess().Kill();
             }
 
@@ -70,7 +71,19 @@ namespace BabBot
                     if (arg.Equals("-a"))
                     {
                         // Set auto-mode
+                        // TODO automode required profile name
                         ProcessManager.SetAutoRun();
+                    } else if (arg.StartsWith("-p")) {
+                        // Read profile file
+                        int idx = arg.IndexOf("=");
+                        if (idx < 0)
+                            MessageBox.Show("Parameter name missing");
+                        // Keep as usual
+                        else
+                        {
+                            string fname = arg.Substring(idx + 1);
+                            // TODO use profile
+                        }
                     }
                 }
             }

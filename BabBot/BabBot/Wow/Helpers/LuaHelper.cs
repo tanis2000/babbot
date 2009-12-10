@@ -39,11 +39,4 @@ namespace BabBot.Wow.Helpers
             return ((target != null) && target.Name.Equals(name));
         }
     }
-
-    public class LuaExecutionError : Exception
-    {
-        public LuaExecutionError(string fname)
-            : base("Returning result from '" + fname + 
-                " different from expected. Check the lua code") { }
-    }
 }

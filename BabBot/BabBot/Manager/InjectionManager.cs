@@ -32,6 +32,13 @@ using System.Collections;
 
 namespace BabBot.Manager
 {
+    public class LuaExecutionError : Exception
+    {
+        public LuaExecutionError(string fname)
+            : base("Number of returning parameter for function '" + fname + 
+                " different from expected. Check the lua code and try again") { }
+    }
+
     public class InjectionManager
     {
         // cache of GUID vs Relation to local player. These are static (more or less)
@@ -426,7 +433,7 @@ end)()",
             // Find Function
             LuaFunction lf = FindLuaFunction(fname);
             int ret_size = lf.RetSize;
-
+            
             int[] ret_list = null;
             bool get_all = ret_size < 0;
             if (!get_all && (ret_size > 0))
@@ -473,6 +480,16 @@ end)()",
         {
             string[] res = null;
             
+            // Check number of parameters
+            int pcount = (param_list == null) ? 0 : param_list.Length;
+            if (lf.ParamSize != pcount)
+                ProcessManager.TerminateOnInternalBug(
+                    ProcessManager.Bugs.WRONG_LUA_PARAMETER_LIST,
+                    "Number of parameters '" + pcount + 
+                    "' different from " + lf.ParamSize +
+                    " that configured for lua function '" + 
+                    lf.Name + "'. Terminating application.");
+
             // format lua code with parameter list
             string code = lf.Code;
             if (param_list != null)
@@ -483,10 +500,11 @@ end)()",
                 }
                 catch (Exception e)
                 {
-                    ShowError("Internal bug. Unable format parameters '" +
+                    ProcessManager.TerminateOnInternalBug(
+                        ProcessManager.Bugs.WRONG_LUA_RESULT_LIST,
+                        "Unable format parameters '" +
                         param_list.ToString() + "' with lua function '" + 
                         lf.Name + "'. " + e.Message);
-                    Environment.Exit(6);
                 }
             }
 
@@ -498,6 +516,13 @@ end)()",
                 Lua_DoStringEx(code);
                 values = RemoteObject.GetValues();
 
+                // Check returning result
+                if (values == null)
+                    ProcessManager.TerminateOnInternalBug(
+                        ProcessManager.Bugs.NULL_LUA_RETURN,
+                        "Null returning result from lua function '" + 
+                        lf.Name + "'");
+                    
                 if (get_all)
                 {
                     res = new string[values.Count];
@@ -505,16 +530,17 @@ end)()",
                 }
                 else
                 {
+                    if (values.Count != res_list.Length)
+                        ProcessManager.TerminateOnInternalBug(
+                            ProcessManager.Bugs.WRONG_LUA_RETURN_LIST,
+                            "Number of returning parameters from lua function '" + 
+                            lf.Name + "' different from expected " + res_list.Length);
+                      
                     res = new string[res_list.Length];
-
+                    
                     // Initialize returning result
-                    int i = 0;
-                    foreach (int id in res_list)
-                    {
-                        if ((values != null) && (id < values.Count) && (values[id] != null))
-                            res[i] = values[id];
-                        i++;
-                    }
+                    for (int i = 0; i < res_list.Length; i++)
+                        res[i] = values[i];
                 }
             }
 
@@ -526,11 +552,9 @@ end)()",
             LuaFunction res = ProcessManager.CurWoWVersion.FindLuaFunction(fname);
 
             if (res == null)
-            {
-                ShowError("Internal bug. The definition of the lua function '" +
+                ProcessManager.TerminateOnInternalBug(ProcessManager.Bugs.LUA_NOT_FOUND,
+                    "Internal bug. The definition of the lua function '" +
                     fname + "' not found in WoWData.xml");
-                Environment.Exit(5);
-            }
 
             return res;
         }

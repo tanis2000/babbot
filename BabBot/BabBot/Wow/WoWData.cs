@@ -171,12 +171,21 @@ namespace BabBot.Wow
     public class LuaFunction : CommonText
     {
         [XmlElement("return")]
-        public LuaResult FRet;
+        public LuaFunctionHelper FRet;
+
+        [XmlElement("parameters")]
+        public LuaFunctionHelper FParams;
 
         [XmlIgnore]
         public int RetSize
         {
             get { return (FRet == null) ? 0 : FRet.Size; }
+        }
+
+        [XmlIgnore]
+        public int ParamSize
+        {
+            get { return (FParams == null) ? 0 : FParams.Size; }
         }
 
         [XmlIgnore]
@@ -188,12 +197,12 @@ namespace BabBot.Wow
         // public LuaFunction() { }
     }
 
-    public class LuaResult
+    public class LuaFunctionHelper
     {
         [XmlAttribute("size")]
         public int Size;
 
-        public LuaResult() { }
+        public LuaFunctionHelper() { }
     }
 
     #endregion

@@ -138,10 +138,72 @@ namespace BabBot.Manager
 
         #endregion
 
-        #region Player Events
+        #region Enumerables
+        
+        /// <summary>
+        /// List of application statuses
+        /// </summary>
+        public enum ProcessStatuses : byte
+        {
+            IDLE = 0,
+            // Starting WoW
+            WOW_STARTING = 1,
+            // Injecting DLL
+            WOW_INJECTING = 2,
+            // Initializing internal parameters
+            WOW_INITIALIZING = 3,
+            // Looking for TLS
+            WOW_LOOK_FOR_TLS = 4,
+            // WoW started and running
+            WOW_RUNNING = 5,
+            // Detected that Wow crushed
+            WOW_CRUSHED = 254,
+            // Detected WoW terminated
+            WOW_CLOSED = 255
+        }
+
+        /// <summary>
+        /// In-Game statuses
+        /// </summary>
+        public enum GameStatuses : byte
+        {
+            // self explaining
+            NOT_STARTED = 0,
+            // wow started and we on login page
+            INIT = 1,
+            // on login page (but no auto-login set or auto-login failed)
+            // on disconnect page with reason above
+            IDLE = 2,
+            // Executing auto-login
+            // Next state IDLE or ENTERING_WORLD
+            LOGGING = 3,
+            // After Auto-Login successfull we assume that world is loading
+            ENTERING_WORLD = 4,
+            // Connection manager found and character initialized with zone & continent
+            INITIALIZED = 5,
+            // Happened ..
+            DISCONNECTED = 255
+        }
+
+        /// <summary>
+        /// Keep list of internal bugs that cause application termination
+        /// </summary>
+        public enum Bugs : byte {
+          CONFIG_NOT_FOUND = 1,
+          WRONG_CONFIG_VERSION = 2,
+          WRONG_WOW_VERSION = 3,
+          WOWDATA_NOT_FOUND= 4,
+          ERROR_LOAD_CONFIG = 5,
+          XML_ERROR = 6,
+          LUA_NOT_FOUND = 7,
+          WRONG_LUA_RESULT_LIST = 8,
+          WRONG_LUA_PARAMETER_LIST = 9,
+          NULL_LUA_RETURN = 10,
+          WRONG_LUA_RETURN_LIST = 11,
+        }
 
         #endregion
-
+        
         #region Public Properties
 
         private static readonly BlackMagic wowProcess;
@@ -181,40 +243,6 @@ namespace BabBot.Manager
             get { return wversion; }
         }
 
-        // Status of application
-        public enum ProcessStatuses : byte
-        {
-            IDLE = 0,
-            WOW_STARTING = 1,
-            WOW_INJECTING = 2,
-            WOW_INITIALIZING = 3,
-            WOW_LOOK_FOR_TLS = 4,
-            WOW_RUNNING = 5,
-            WOW_CRUSHED = 254,
-            WOW_CLOSED = 255
-        }
-
-        // In-Game statuses
-        public enum GameStatuses : byte
-        {
-            // self explaining
-            NOT_STARTED = 0,
-            // wow started and we on login page
-            INIT = 1,
-            // on login page (but no auto-login set or auto-login failed)
-            // on disconnect page with reason above
-            IDLE = 2,
-            // Executing auto-login
-            // Next state IDLE or ENTERING_WORLD
-            LOGGING = 3,
-            // After Auto-Login successfull we assume that world is loading
-            ENTERING_WORLD = 4,
-            // Connection manager found and character initialized with zone & continent
-            INITIALIZED = 5,
-            // Happened ..
-            DISCONNECTED = 255
-        }
-
         private static GameStatuses _gstatus = GameStatuses.NOT_STARTED;
         private static ProcessStatuses _pstatus = ProcessStatuses.IDLE;
 
@@ -252,31 +280,13 @@ namespace BabBot.Manager
             }
         }
 
-        static ProcessManager()
-        {
-            config = new Config();
-            wowProcess = new BlackMagic();
-            CommandManager = new CommandManager();
-            Injector = new InjectionManager();
-            TLS = 0x0;
-            Profile = new Profile();
-            WowHWND = 0;
-            BotManager = new BotManager();
-            ScriptHost = new Host();
-            WayPointManager.Instance.Init();
-            Caronte = new Caronte.Caronte();
-        }
-
         /// <summary>
         /// Get the object for the manipulation of memory and general "hacking"
         /// of another process
         /// </summary>
         public static BlackMagic WowProcess
         {
-            get
-            {
-                return wowProcess;
-            }
+            get { return wowProcess; }
         }
 
         /// <summary>
@@ -292,7 +302,7 @@ namespace BabBot.Manager
         {
             get { return (wdata != null) ? wdata.Versions : null; }
         }
-
+        
         public static ArrayList TalentTemplateList
         {
             get
@@ -492,6 +502,24 @@ namespace BabBot.Manager
         #region Public Methods
 
         /// <summary>
+        /// Class constructor
+        /// </summary>
+        static ProcessManager()
+        {
+            config = new Config();
+            wowProcess = new BlackMagic();
+            CommandManager = new CommandManager();
+            Injector = new InjectionManager();
+            TLS = 0x0;
+            Profile = new Profile();
+            WowHWND = 0;
+            BotManager = new BotManager();
+            ScriptHost = new Host();
+            WayPointManager.Instance.Init();
+            Caronte = new Caronte.Caronte();
+        }
+
+        /// <summary>
         /// Initialize configuration parameters. 
         /// This method must be first called on application start
         /// For GUI mode from Main Form constructor
@@ -591,9 +619,9 @@ namespace BabBot.Manager
             }
             catch (Exception e)
             {
-                ShowError("Unable load " + fname + " : " +
-                            e.Message + Environment.NewLine + e.InnerException);
-                Environment.Exit(1);
+                TerminateOnInternalBug(Bugs.XML_ERROR, 
+                    "Unable load " + fname + " : " +
+                    e.Message + Environment.NewLine + e.InnerException);
             }
             finally
             {
@@ -641,13 +669,11 @@ namespace BabBot.Manager
                             Replace(",", ".").Replace(" ", ""); ;
 
                     if (!wversion.ToString().Equals(version))
-                    {
-                        if (!ShowError("Version of WoW.exe '" + version + 
-                                "' is not equal version from config.xml '" + wversion + "'"))
-                            Environment.Exit(4);
+                        TerminateOnInternalBug(ProcessManager.Bugs.WRONG_WOW_VERSION, 
+                            "Version of loading WoW.exe '" + version + 
+                                "' is not equal version from config.xml '" + wversion + "'");
 
-                        return false;
-                    } else
+                    else
                         Log("char", "Continuing with WoW.exe version '" + version + "'");
                         
                     Log("char", "Starting WoW ...");
@@ -984,6 +1010,13 @@ namespace BabBot.Manager
             GameStatus = GameStatuses.DISCONNECTED;
         }
 
+        public static void TerminateOnInternalBug(Bugs bug_id, string err)
+        {
+            ShowError("Internal bug " + Enum.GetName(typeof(Bugs), bug_id) + 
+                ". " + err + ". Terminating application");
+            Environment.Exit((int) bug_id);
+        }
+        
         #region XML
 
         public static Talents ReadTalents(string fname)
@@ -1036,33 +1069,27 @@ namespace BabBot.Manager
                 if (FirstTimeRun != null)
                     FirstTimeRun();
                 else
-                {
-                    Console.WriteLine("Config file config.xml not found");
-                    Environment.Exit(1);
-                }
-
+                    TerminateOnInternalBug(Bugs.CONFIG_NOT_FOUND,
+                        "Config file config.xml not found");
             }
             catch (ConfigFileChangedException)
             {
                 if (ConfigFileChanged != null)
                     ConfigFileChanged();
                 else
-                {
-                    ShowError("Config file config.xml has version " +
+                    TerminateOnInternalBug(Bugs.WRONG_CONFIG_VERSION,
+                        "Config file config.xml has version " +
                         config.Version + " that different from application version " +
                         ProcessManager.ConfigVersion);
-                    Environment.Exit(2);
-                }
             }
             catch (WoWDataNotFoundException ex)
             {
-                ShowError(ex.Message);
-                Environment.Exit(3);
+                TerminateOnInternalBug(Bugs.WOWDATA_NOT_FOUND, ex.Message);
             }
             catch (Exception e)
             {
-                ShowError("Unable load config.xml : " + e.Message);
-                Environment.Exit(4);
+                TerminateOnInternalBug(Bugs.ERROR_LOAD_CONFIG, 
+                            "Unable load config.xml : " + e.Message);
             }
         }
 
