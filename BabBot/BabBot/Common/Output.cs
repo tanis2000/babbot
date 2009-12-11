@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using BabBot.Manager;
 using System.Drawing;
+using System.Collections;
 
 namespace BabBot.Common
 {
@@ -11,6 +12,7 @@ namespace BabBot.Common
     {
 
         private object Obj = new Object();
+        private static Hashtable FacilityList = new Hashtable();
 
         private static readonly Output instance = new Output();
          
@@ -68,16 +70,29 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        internal void Log(string facility, string message, Color color)
+        internal void Log(string fs, string message, Color color)
         {
             lock (Obj)
             {
-                string fs = char.ToUpper(facility[0]) + facility.Substring(1);
+                object cf = (string)FacilityList[fs];
+                string cur_facility = null;
+
+                if (cf == null)
+                {
+                    // Replace undescore with space and capitailze words
+                    string[] ss = fs.Replace('_', ' ').Split(' ');
+                    for (int i = 0; i < ss.Length; i++)
+                        ss[i] = char.ToUpper(ss[i][0]) + ss[i].Substring(1);
+                    cur_facility = string.Join(" ", ss);
+                    FacilityList.Add(fs, cur_facility);
+                }
+                else
+                    cur_facility = cf.ToString();
 
                 try
                 {
                     using (StreamWriter w = new StreamWriter(Format("{1}\\{0}-Log-{2}.txt",
-                        DateString, ProcessManager.Config.LogParams.Dir, fs), true))
+                        DateString, ProcessManager.Config.LogParams.Dir, cur_facility), true))
                     {
                         w.WriteLine(Format("{0},{1}", BTimeString, message));
                     }
@@ -90,7 +105,7 @@ namespace BabBot.Common
 
                 if (OutputEvent != null)
                 {
-                    OutputEvent(fs, BTimeString, message, color);
+                    OutputEvent(cur_facility, BTimeString, message, color);
                 }
             }
         }

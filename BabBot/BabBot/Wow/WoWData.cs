@@ -370,6 +370,12 @@ namespace BabBot.Wow
         [XmlAttribute("max_npc_interact_time")]
         public int MaxNpcInteractTime;
 
+        internal string MaxNpcInteractSec
+        {
+            get { return Convert.ToString(
+                (int) (MaxNpcInteractTime/1000) + " sec."); }
+        }
+
         AppConfig() { }
     }
 

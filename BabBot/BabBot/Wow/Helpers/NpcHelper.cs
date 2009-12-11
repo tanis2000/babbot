@@ -13,9 +13,13 @@ namespace BabBot.Wow.Helpers
     public class NpcInteractException : Exception
     {
         public NpcInteractException()
-            : base(string.Format("Unable open NPC dialog after {0:0} sec " +
-                " of waiting or it's service(s) unknown",
-                    ProcessManager.AppConfig.MaxNpcInteractTime / 1000)) { }
+            : base("Unable open NPC dialog after " + 
+                ProcessManager.AppConfig.MaxNpcInteractSec +
+                " of waiting or it's service(s) unknown") { }
+
+        public NpcInteractException(string err)
+            : base(err) { }
+
     }
 
     public class CantReachNpcException : Exception
@@ -61,19 +65,20 @@ namespace BabBot.Wow.Helpers
         /// </summary>
         /// <param name="npc_name"></param>
         /// <returns>See description for "GetNpcFrameInfo" lua call</returns>
-        public static string[] GetTargetNpcDialogInfo(string npc_name)
+        public static string[] GetTargetNpcDialogInfo(string npc_name, string lfs)
         {
-            return GetTargetNpcDialogInfo(npc_name, true);
+            return GetTargetNpcDialogInfo(npc_name, true, lfs);
         }
 
-        public static string[] GetTargetNpcDialogInfo(string npc_name, bool auto_close)
+        public static string[] GetTargetNpcDialogInfo(
+                        string npc_name, bool auto_close, string lfs)
         {
             string[] fparams = DoGetNpcDialogInfo(auto_close);
             string cur_service = fparams[0];
 
             if (cur_service == null)
             {
-                fparams = InteractNpc(npc_name);
+                fparams = InteractNpc(npc_name, auto_close, lfs);
                 cur_service = fparams[0];
             }
 
@@ -87,10 +92,12 @@ namespace BabBot.Wow.Helpers
         /// </summary>
         /// <param name="npc_name"></param>
         /// <returns></returns>
-        public static string[] InteractNpc(string npc_name)
+        public static string[] InteractNpc(string npc_name, 
+                            bool auto_close, string lfs)
         {
-            Output.Instance.Log("npc", "Interacting with NPC '" + npc_name + "' ...");
+            Output.Instance.Log(lfs, "Interacting with NPC '" + npc_name + "' ...");
             ProcessManager.Injector.Lua_ExecByName("InteractWithTarget");
+            // ProcessManager.Player.ClickToMoveInteract(ProcessManager.Player.CurTargetGuid);
 
             // IF NPC doesn't have any quests and just on gossip option the WoW
             // use it option by default
@@ -105,9 +112,9 @@ namespace BabBot.Wow.Helpers
               (DateTime.Now.Subtract(dt).TotalMilliseconds <= 
                         ProcessManager.AppConfig.MaxNpcInteractTime))
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(500);
 
-                fparams = DoGetNpcDialogInfo();
+                fparams = DoGetNpcDialogInfo(auto_close);
                 cur_service = fparams[0];
             }
 
@@ -117,35 +124,38 @@ namespace BabBot.Wow.Helpers
             return fparams;
         }
 
-        public static void MoveToNPC(NPC npc, bool use_state)
+        public static void MoveToNPC(NPC npc, bool use_state, string lfs)
         {
             WowPlayer player = ProcessManager.Player;
 
-            Output.Instance.Log("char", "Checking coordinates for NPC ." +
+            Output.Instance.Debug(lfs, "Checking coordinates for NPC ." +
                 npc.Name + " ...");
 
             // Check if NPC has coordinates in the same continent
             ContinentId c = npc.Continents.FindContinentById(player.ContinentID);
             if (c == null)
-                throw new CantReachNpcException(npc.Name, "NPC located on different continent.");
+                throw new CantReachNpcException(npc.Name, 
+                        "NPC located on different continent.");
 
             // Check if NPC located in the same zone
             Zone z = c.FindZoneByName(player.ZoneText);
 
             if (z == null)
-                throw new CantReachNpcException(npc.Name, "NPC located on different zone. " +
+                throw new CantReachNpcException(npc.Name, 
+                    "NPC located on different zone. " +
                     "Multi-zone traveling not implemented yet.");
 
             // Check if NPC has any waypoints assigned
             if (z.Items.Length == 0)
-                throw new CantReachNpcException(npc.Name, "NPC doesn't have any waypoints assigned. " +
+                throw new CantReachNpcException(npc.Name, 
+                    "NPC doesn't have any waypoints assigned. " +
                     "Check NPCData.xml and try again.");
 
             // By default check first waypoint
             Vector3D npc_loc = z.Items[0];
-            Output.Instance.Debug("char", "Usning NPC waypoint: " + npc_loc);
+            Output.Instance.Debug(lfs, "Usning NPC waypoint: " + npc_loc);
 
-            if (!MoveToDest(npc_loc, use_state))
+            if (!MoveToDest(npc_loc, use_state, lfs))
                 throw new CantReachNpcException(npc.Name, "NPC still away after " +
                     (ProcessManager.AppConfig.MaxTargetGetRetries + 1) + " tries");
         }
@@ -155,7 +165,7 @@ namespace BabBot.Wow.Helpers
         /// </summary>
         /// <param name="dest"></param>
         /// <param name="use_state">Test flag</param>
-        private static bool MoveToDest(Vector3D dest, bool use_state)
+        private static bool MoveToDest(Vector3D dest, bool use_state, string lfs)
         {
             WowPlayer player = ProcessManager.Player;
 
@@ -176,18 +186,18 @@ namespace BabBot.Wow.Helpers
                 // Use MoveToState
                 MoveToState mt = new MoveToState(dest, 5F);
                 ProcessManager.Player.StateMachine.SetGlobalState(mt);
-                Output.Instance.Debug("char", "State: " +
+                Output.Instance.Debug(lfs, "State: " +
                     ProcessManager.Player.StateMachine.CurrentState);
 
-                Output.Instance.Log("char", "NPC coordinates located. Moving to NPC ...");
+                Output.Instance.Log(lfs, "NPC coordinates located. Moving to NPC ...");
                 ProcessManager.Player.StateMachine.IsRunning = true;
 
-                Output.Instance.Debug("char", "State: " +
+                Output.Instance.Debug(lfs, "State: " +
                     ProcessManager.Player.StateMachine.CurrentState);
                 while (ProcessManager.Player.StateMachine.IsInState(typeof(MoveToState)))
                 {
                     Thread.Sleep(1000);
-                    Output.Instance.Debug("char", "State: " +
+                    Output.Instance.Debug(lfs, "State: " +
                         ProcessManager.Player.StateMachine.CurrentState);
                 }
             }
@@ -234,7 +244,7 @@ namespace BabBot.Wow.Helpers
         /// </summary>
         /// <param name="npc">NPC</param>
         /// <returns>true if NPC has any service</returns>
-        private static bool FindAvailGossips(NPC npc)
+        private static bool FindAvailGossips(NPC npc, string lfs)
         {
             // Get list of options
             string[] opts = ProcessManager.
@@ -252,19 +262,21 @@ namespace BabBot.Wow.Helpers
                     string gossip = opts[i * 2];
                     string service = opts[i * 2 + 1];
 
-                    SelectNpcOption(npc, "SelectGossipOption", i + 1, max_opts);
+                    SelectNpcOption(npc, "SelectGossipOption", 
+                                    i + 1, max_opts, lfs);
                 }
             }
 
             return true;
         }
 
-        public static bool SelectNpcOption(NPC npc, string lua_fname, int idx, int max)
+        public static bool SelectNpcOption(NPC npc, 
+                string lua_fname, int idx, int max, string lfs)
         {
             // Choose gossip option and check npc again
             ProcessManager.Injector.Lua_ExecByName(
                 lua_fname, new string[] { Convert.ToString(idx) });
-            if (!AddTargetNpcInfo(npc))
+            if (!AddTargetNpcInfo(npc, lfs))
                 return false;
 
             // After gossip option processed interact with npc again
@@ -274,6 +286,29 @@ namespace BabBot.Wow.Helpers
             return true;
         }
 
+        public static void WaitDialogOpen(string fname, string lfs)
+        {
+            bool is_open = false;
+            DateTime dt = DateTime.Now;
+            Output.Instance.Debug(lfs, 
+                "Waiting for the " + fname + "Frame opened");
+
+            do
+            {
+                Thread.Sleep(1000);
+                is_open = ProcessManager.Injector.Lua_ExecByName(
+                    "IsNpcFrameOpen", new string[] { fname })[0].Equals("1");
+            } while (!is_open &&
+                ((DateTime.Now - dt).TotalMilliseconds <=
+                    ProcessManager.AppConfig.MaxNpcInteractTime));
+
+            if (!is_open)
+                throw new NpcInteractException(
+                    "Unable retrieve " + fname + "Frame after " +
+                        ProcessManager.AppConfig.MaxNpcInteractSec + 
+                        " of waiting");
+            Output.Instance.Debug(lfs,fname + "Frame ready");
+        }
         #region Add NPC
 
         private class QuestHeader
@@ -290,7 +325,7 @@ namespace BabBot.Wow.Helpers
 
         private static QuestHeader qh;
 
-        public static bool AddNpc()
+        public static bool AddNpc(string lfs)
         {
             // Initialize parameters
             qh = null;
@@ -304,7 +339,7 @@ namespace BabBot.Wow.Helpers
             Output.Instance.Log("Checking NPC Info ...");
             NPC npc = new NPC(ProcessManager.Player, npc_info[3], npc_info[4]);
 
-            if (!AddTargetNpcInfo(npc))
+            if (!AddTargetNpcInfo(npc, lfs))
                 return false;
 
             // Check if NPC already exists
@@ -328,7 +363,7 @@ namespace BabBot.Wow.Helpers
                 ProcessManager.CurWoWVersion.NPCData.Add(npc);
 
             if (ProcessManager.SaveNpcData())
-                Output.Instance.Log("npc", "NPC '" + npc_name +
+                Output.Instance.Log(lfs, "NPC '" + npc_name +
                         "' successfully added to NPCData.xml");
             return true;
         }
@@ -339,18 +374,19 @@ namespace BabBot.Wow.Helpers
         /// </summary>
         /// <param name="npc"></param>
         /// <returns></returns>
-        private static bool AddAvailQuests(NPC npc)
+        private static bool AddAvailQuests(NPC npc, string lfs)
         {
-            Output.Instance.Debug("npc", "Checking available quests ...");
+            Output.Instance.Debug(lfs, "Checking available quests ...");
 
             // Get list of quests
             string[] quests = QuestHelper.GetAvailGossipQuests();
 
             if (quests == null || (quests.Length == 0))
-                Output.Instance.Debug("npc", "No quests detected.");
+                Output.Instance.Debug(lfs, "No quests detected.");
             else
             {
-                Output.Instance.Debug("npc", (int)(quests.Length / 3) + " quests(s) detected.");
+                Output.Instance.Debug(lfs, 
+                    (int)(quests.Length / 3) + " quests(s) detected.");
 
                 // Parse list of quests
                 int max_num = (int)(quests.Length / 3);
@@ -363,14 +399,15 @@ namespace BabBot.Wow.Helpers
                         qh = new QuestHeader(quests[i * 3], Convert.ToInt32(sqlevel));
 
                         // Last parameter we not interested in
-                        Output.Instance.Debug("npc", "Adding quest '" +
+                        Output.Instance.Debug(lfs, "Adding quest '" +
                                                     qh.Name + "'; Level: " + qh.Level);
 
-                        SelectNpcOption(npc, "SelectAvailableQuest", i + 1, max_num);
+                        SelectNpcOption(npc,
+                            "SelectAvailableQuest", i + 1, max_num, lfs);
                     }
                     catch (Exception e)
                     {
-                        Output.Instance.LogError("npc", "Failed convert quests level '" +
+                        Output.Instance.LogError(lfs, "Failed convert quests level '" +
                         sqlevel + "' to integer. " + e.Message);
                         return false;
                     }
@@ -382,9 +419,9 @@ namespace BabBot.Wow.Helpers
         }
 
         // This method is recursive
-        private static bool AddTargetNpcInfo(NPC npc)
+        private static bool AddTargetNpcInfo(NPC npc, string lfs)
         {
-            string[] fparams = NpcHelper.GetTargetNpcDialogInfo(npc.Name);
+            string[] fparams = NpcHelper.GetTargetNpcDialogInfo(npc.Name, lfs);
             if (fparams == null)
             {
                 Output.Instance.Log("Unable retrieve NPC gossip information. " +
@@ -402,9 +439,9 @@ namespace BabBot.Wow.Helpers
 
             if (cur_service.Equals("gossip"))
             {
-                Output.Instance.Debug("npc", "GossipFrame opened.");
+                Output.Instance.Debug(lfs, "GossipFrame opened.");
 
-                Output.Instance.Debug("npc", "Checking available options ...");
+                Output.Instance.Debug(lfs, "Checking available options ...");
                 // Get number of gossips and quests
                 string[] opts = ProcessManager.
                     Injector.Lua_ExecByName("GetNpcGossipInfo");
@@ -426,7 +463,7 @@ namespace BabBot.Wow.Helpers
                 }
 
                 if (opti[0] > 0)
-                    if (!AddAvailQuests(npc))
+                    if (!AddAvailQuests(npc, lfs))
                         return false;
 
                 // TODO CheckActiveQuests
@@ -435,32 +472,32 @@ namespace BabBot.Wow.Helpers
                 //            return false;
 
                 if (opti[2] > 0)
-                    if (!FindAvailGossips(npc))
+                    if (!FindAvailGossips(npc, lfs))
                         return false;
 
             }
             else if (cur_service.Equals("quest_start"))
-                AddNpcQuestStart(npc, fparams);
+                AddNpcQuestStart(npc, fparams, lfs);
             else if (cur_service.Equals("quest_progress"))
                 Output.Instance.Log("Ignoring quest progress. If you need add initial quest " +
                     "than drop it and talk to NPC again");
             else if (cur_service.Equals("quest_end"))
-                AddNpcQuestEnd(npc, fparams);
+                AddNpcQuestEnd(npc, fparams, lfs);
             else
-                AddNpcService(npc, cur_service, fparams);
+                AddNpcService(npc, cur_service, fparams, lfs);
 
             return true;
         }
 
 
-        private static void AddNpcQuestStart(NPC npc, string[] opts)
+        private static void AddNpcQuestStart(NPC npc, string[] opts, string lfs)
         {
             Quest q = null;
 
             // Checking parameters first
             if (opts.Length < 4)
             {
-                Output.Instance.LogError("npc", "Not enough " +
+                Output.Instance.LogError(lfs, "Not enough " +
                         opts.Length + " parameters to add quest start");
                 return;
             }
@@ -472,7 +509,7 @@ namespace BabBot.Wow.Helpers
 
                 if (string.IsNullOrEmpty(opts[i]))
                 {
-                    Output.Instance.LogError("npc", i +
+                    Output.Instance.LogError(lfs, i +
                         " parameter from quest info result is empty");
                     return;
                 }
@@ -481,7 +518,7 @@ namespace BabBot.Wow.Helpers
                 Regex rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[i - 1];
                 if (!rx.IsMatch(s))
                 {
-                    Output.Instance.LogError("npc", i +
+                    Output.Instance.LogError(lfs, i +
                         " parameter '" + s + "' from quest scan" +
                         " doesn't match template '" + rx.ToString() + "'");
                     return;
@@ -508,7 +545,7 @@ namespace BabBot.Wow.Helpers
             }
             catch
             {
-                Output.Instance.LogError("npc", "Error creating quest with parameters " +
+                Output.Instance.LogError(lfs, "Error creating quest with parameters " +
                     "Header: " + headers[1] + "; Text: " + headers[2] + "; Level: " + headers[3]);
                 return;
             }
@@ -517,7 +554,8 @@ namespace BabBot.Wow.Helpers
                 npc.AddQuest(q);
         }
 
-        private static void AddNpcService(NPC npc, string cur_service, string[] opts)
+        private static void AddNpcService(NPC npc,
+            string cur_service, string[] opts, string lfs)
         {
             NPCService npc_service = null;
 
@@ -545,7 +583,7 @@ namespace BabBot.Wow.Helpers
                     break;
 
                 default:
-                    Output.Instance.Log("npc", "Unknown npc service type '" +
+                    Output.Instance.Log(lfs, "Unknown npc service type '" +
                                 cur_service + "'");
                     break;
             }
@@ -554,11 +592,11 @@ namespace BabBot.Wow.Helpers
                 npc.AddService(npc_service);
         }
 
-        private static void AddNpcQuestEnd(NPC npc, string[] opts)
+        private static void AddNpcQuestEnd(NPC npc, string[] opts, string lfs)
         {
             if ((opts.Length < 2) || (opts[1] == null))
             {
-                Output.Instance.LogError("npc", "Not enough " +
+                Output.Instance.LogError(lfs, "Not enough " +
                         opts.Length + " parameters to add quest end");
                 return;
             }

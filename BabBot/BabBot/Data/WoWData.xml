@@ -121,25 +121,26 @@ Lots of credits to http://wowprogramming.com/
       if (name == '{0}') then
         if (realmDown) then
           d3 = 'down'
-        elseif (RealmList.currentRealm ~= realmIndex) then
-          RealmList.refreshTime = {3}
+        else 
+          if (RealmList.currentRealm ~= realmIndex) then
+            RealmList.refreshTime = {3}
 
-          prealm = _G['RealmListRealmButton'..RealmList.currentRealm]
-          prealm:UnlockHighlight();
+            prealm = _G['RealmListRealmButton'..RealmList.currentRealm]
+            prealm:UnlockHighlight();
 
-          realm = _G['RealmListRealmButton'..realmIndex]
-          RealmList.currentRealm = realm:GetID()
-          RealmList.selectedName = realm.name
+            realm = _G['RealmListRealmButton'..realmIndex]
+            RealmList.currentRealm = realm:GetID()
+            RealmList.selectedName = realm.name
 
-          realm:LockHighlight()
-          RealmListHighlight:SetPoint('TOPLEFT', realm, 'TOPLEFT', 0, 0)
-          RealmListHighlight:Show()
-
+            realm:LockHighlight()
+            RealmListHighlight:SetPoint('TOPLEFT', realm, 'TOPLEFT', 0, 0)
+            RealmListHighlight:Show()
+          end
+                        
           d3 = 'ok'
         end
-        
-        break;
 
+        break;
       end
     end
     
@@ -531,9 +532,9 @@ end)()]]></text>
               <![CDATA[(function()
   local auto_close = {0}
   local service, d1, d2, d3
-  if (GossipFrame:IsShown()) then
+  if (GossipFrame and GossipFrame:IsShown()) then
     service = "gossip"
-  elseif (MerchantFrame:IsShown()) then
+  elseif (MerchantFrame and MerchantFrame:IsShown()) then
     service = "vendor"
     -- check for repair
     d1 = CanMerchantRepair()
@@ -555,7 +556,7 @@ end)()]]></text>
       CloseMerchant()
     end
     
-  elseif (QuestFrame:IsShown()) then
+  elseif (QuestFrame and QuestFrame:IsShown()) then
     service = "quest"
 
     title = GetTitleText()
@@ -573,7 +574,7 @@ end)()]]></text>
         
     service = service .. qt
     if (service ~= "quest_start") then
-      return service, d1
+      return service, d1, d2, d3
     end
 
     -- Returning quest level as char level
@@ -619,29 +620,29 @@ end)()]]></text>
     if (auto_close) then
       CloseQuest()
     end
-  elseif (BankFrame:IsShown()) then
+  elseif (BankFrame and BankFrame:IsShown()) then
     service = "banker"
     if (auto_close) then
       CloseBankFrame()
     end
-  elseif (SkillFrame:IsShown()) then
+  elseif (SkillFrame and SkillFrame:IsShown()) then
     service = "wep_skill_trainer"
-  elseif (ClassTrainerFrame:IsShown()) then
+  elseif (ClassTrainerFrame and ClassTrainerFrame:IsShown()) then
     service = "class_trainer"
     if (auto_close) then
       CloseTrainer()
     end
-  elseif (TradeSkillFrame:IsShown()) then
+  elseif (TradeSkillFrame and TradeSkillFrame:IsShown()) then
     service = "trade_skill_trainer"
     if (auto_close) then
       CloseTradeSkill()
     end
-  elseif (BattlefieldFrame:IsShown()) then
+  elseif (BattlefieldFrame and BattlefieldFrame:IsShown()) then
     service = "battlemaster"
     if (auto_close) then
       CloseBattlefield()
     end
-  elseif (TaxiFrame:IsShown()) then
+  elseif (TaxiFrame and TaxiFrame:IsShown()) then
     service = "taxi"
     if (auto_close) then
       CloseTaxiMap()
@@ -749,7 +750,7 @@ end)()]]>
         </return>
         <text>
     <![CDATA[(function()
-  local idx
+  local idx = 0
   num_entries = GetNumQuestLogEntries()
   for i = 1, num_entries do
     title, _, _, _, header = GetQuestLogTitle(i)
@@ -809,6 +810,64 @@ end)()]]></text>
   
   return res
 end)()]]></text>
+      </function>
+
+      <!-- IsNpcFrameOpen -->
+      <function name="IsNpcFrameOpen">
+        <parameters size="1">
+          0 - Frame Name as "Quest" of "Gossip"
+        </parameters>
+        <return size="1">
+          0 - 1 if open and 0 if not
+        </return>
+        <text>
+          <![CDATA[(function()
+  if ({0}Frame and {0}Frame:IsShown()) then
+    return 1
+  else
+    return 0
+  end
+end)()]]></text>
+      </function>
+
+      <!-- AbandonQuest -->
+      <function name="AbandonQuest">
+        <text>
+          <![CDATA[(function()
+  AbandonQuest()
+  QuestLogFrame:Hide()
+end)()]]>
+        </text>
+      </function>
+
+      <!-- SelectAbandonQuest -->
+      <function name="SelectAbandonQuest">
+        <parameters size="1">
+          0 - Current quest index in toon's quest log.
+        </parameters>
+        <return size="2">
+          0 - name - Name of the quest being abandoned (string)
+          1 - items - A string listing any items that would be destroyed (string)
+        </return>
+        <text>
+          <![CDATA[(function()
+  SetAbandonQuest({0})
+  name = GetAbandonQuestName()
+  items = GetAbandonQuestItems()
+  
+  return name, items
+end)()]]>
+        </text>
+      </function>
+
+      <!-- OpenFrame -->
+      <function name="ToggleFrame">
+        <parameters size="1">
+          0 - Toon frame name as "QuestLog" etc
+        </parameters>
+        <text>
+          <![CDATA[ToggleFrame({0}Frame)]]>
+        </text>
       </function>
       
       <!-- Template for new function
@@ -925,9 +984,18 @@ end)()]]></text>
         lua_getcurrentmapzone = "0"
      />
   </version>
+  
+  <!-- Global application configuration parameters that not included into config.xml 
+    max_get_target_retries - number of retries (plus first try) bot can have to reach target
+      if it's value exceeded than target for some reason unreachable and should be removed from the list
+    max_npc_interact_time - Max time bot waits after interact with NPC 
+      before some dialog (gossip or any) pops up
+    min_refresh_time - minimum time between each bot check cycle. 
+      This is set as minimum value in AppConfig dialog Refresh Time parameter
+  -->
   <app_config 
       min_refresh_time="100" 
       max_get_target_retries="3" 
-      max_npc_interact_time="10000"
+      max_npc_interact_time="30000"
    />
 </wow_data>

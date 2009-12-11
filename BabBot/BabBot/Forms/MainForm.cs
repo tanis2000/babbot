@@ -363,14 +363,15 @@ namespace BabBot.Forms
             }
         }
 
-        private static void wow_ProcessFailed(string error)
+        private void wow_ProcessFailed(string error)
         {
             ShowErrorMessage(error);
         }
 
-        private static void ShowErrorMessage(string error)
+        private void ShowErrorMessage(string error)
         {
-            MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, error, "Error", 
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void wow_ProcessStarted(int process)
@@ -781,8 +782,26 @@ namespace BabBot.Forms
             {
                 WowUnit u = ProcessManager.Player.GetCurTarget();
                 if (u != null)
-                {
                     u.Interact();
+            }
+        }
+
+        private void btnMoveInteractNpc_Click(object sender, EventArgs e)
+        {
+            ulong guid = ProcessManager.Player.CurTargetGuid;
+            if (guid != 0)
+                ProcessManager.Player.ClickToMoveInteractNpc(guid);
+        }
+
+        private void btnMoveAttack_Click(object sender, EventArgs e)
+        {
+            if (ProcessManager.Player.CurTargetGuid != 0)
+            {
+                WowUnit u = ProcessManager.Player.GetCurTarget();
+                if (u != null)
+                {
+                    // u.Interact();
+                    ProcessManager.Player.ClickToMoveAttack(u.Guid);
                 }
             }
         }
@@ -1341,7 +1360,7 @@ namespace BabBot.Forms
 
             try
             {
-                if (NpcHelper.AddNpc())
+                if (NpcHelper.AddNpc("npc"))
                     // Open NPC List for configuration
                     npcListToolStripMenuItem_Click(sender, e);
             }
@@ -1451,6 +1470,8 @@ namespace BabBot.Forms
             
             // Select new tab
             tabLua.SelectedTab = tab;
+            // Clear result screen
+            tbLuaResult.Text = "";
 
             checkDeleteBtn();
         }
@@ -1561,7 +1582,6 @@ namespace BabBot.Forms
             p.StartInfo.RedirectStandardError = true;
             p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             p.StartInfo.FileName = (ProcessManager.Config.LuaExePath);
-            // p.StartInfo.FileName = ("cmd.exe");
             p.StartInfo.Arguments = " -";
 
             try
@@ -1640,23 +1660,38 @@ namespace BabBot.Forms
 
         #region Quest Test
 
-        private void btnGetQuest_Click(object sender, EventArgs e)
+        private bool CheckBeforeQuestTest()
         {
             if (!CheckInGame())
-                return;
+                return false;
 
             Quest q = (Quest)cbQuestList.SelectedItem;
 
             if (q == null)
             {
                 ShowErrorMessage("No quest selected");
-                return;
+                return false;
             }
+
+            // Start NPC channel and switch to main form
+            Output.Instance.Log("quest_test", "Starting quest test ...");
+            tabControlMain.SelectedIndex = 0;
+            TabPage npc_tab = tabLogs.TabPages["Quest Test"];
+            tabLogs.SelectedTab = npc_tab;
+
+            return true;
+        }
+
+        private void btnGetQuest_Click(object sender, EventArgs e)
+        {
+            if (!CheckBeforeQuestTest())
+                return;
 
             try
             {
                 btnGetQuest.Enabled = false;
-                QuestHelper.AcceptQuest(q, cbUseState.Checked, "npc");
+                QuestHelper.AcceptQuest((Quest)cbQuestList.SelectedItem, 
+                    cbUseState.Checked, "quest_test");
             }
             catch (QuestProcessingException qe)
             {
@@ -1664,11 +1699,36 @@ namespace BabBot.Forms
             }
             catch (Exception ex)
             {
-                ShowErrorMessage(ex.Message);
+                ShowErrorMessage("Exception: " + ex.Message);
             }
             finally
             {
                 btnGetQuest.Enabled = true;
+            }
+        }
+
+        private void btnAbandonQuest_Click(object sender, EventArgs e)
+        {
+            if (!CheckBeforeQuestTest())
+                return;
+
+            try
+            {
+                btnAbandomQuest.Enabled = false;
+                QuestHelper.AbandonQuest((Quest)cbQuestList.SelectedItem,
+                    "quest_test");
+            }
+            catch (QuestProcessingException qe)
+            {
+                ShowErrorMessage("Quest processing error - " + qe.Message);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("Exception: " + ex.Message);
+            }
+            finally
+            {
+                btnAbandomQuest.Enabled = true;
             }
         }
 
@@ -1711,5 +1771,9 @@ namespace BabBot.Forms
 
         #endregion
 
+        private void btnReloadXmlData_Click(object sender, EventArgs e)
+        {
+            ProcessManager.InitXmlData();
+        }
     }
 }

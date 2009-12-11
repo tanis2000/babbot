@@ -541,33 +541,7 @@ namespace BabBot.Manager
             ConfigFileChanged += OnConfigFileChanged;
             ShowErrorMessage += OnShowErrorMessage;
 
-            // data first
-            wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
-            ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
-
-            // Auto Merge data from earlier version with latest one
-            WoWVersion wprev = (WoWVersion)wdata.SList.GetByIndex(0);
-            for (int i = 1; i < wdata.SList.Count; i++ )
-            {
-                WoWVersion wnew = (WoWVersion)wdata.SList.GetByIndex(i);
-
-                // Merge WoW data
-                wnew.MergeWith(wprev);
-
-                // Merge NPCData. Ordering is not an issues since it defined in WoWData already
-                ndata.FindVersion(wnew.Name).MergeWith(ndata.FindVersion(wprev.Name));
-
-                wprev = wnew;
-            }
-
-            // Check if NPC data version the same
-            if (ndata.Version != NPCDataVersion)
-            {
-                // TODO Migrate data from old format to new and save
-                // Show message for now
-                ShowErrorMessage("NPCData.xml is in old format. It has version " + 
-                    ndata.Version + " that different from supported " + NPCDataVersion);
-            }
+            InitXmlData();
 
             //\\ TEST
             // SaveNpcData();
@@ -596,7 +570,38 @@ namespace BabBot.Manager
 
             SaveNpcData(); */
         }
-    
+
+        internal static void InitXmlData()
+        {
+            // data first
+            wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
+            ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
+
+            // Auto Merge data from earlier version with latest one
+            WoWVersion wprev = (WoWVersion)wdata.SList.GetByIndex(0);
+            for (int i = 1; i < wdata.SList.Count; i++)
+            {
+                WoWVersion wnew = (WoWVersion)wdata.SList.GetByIndex(i);
+
+                // Merge WoW data
+                wnew.MergeWith(wprev);
+
+                // Merge NPCData. Ordering is not an issues since it defined in WoWData already
+                ndata.FindVersion(wnew.Name).MergeWith(ndata.FindVersion(wprev.Name));
+
+                wprev = wnew;
+            }
+
+            // Check if NPC data version the same
+            if (ndata.Version != NPCDataVersion)
+            {
+                // TODO Migrate data from old format to new and save
+                // Show message for now
+                ShowErrorMessage("NPCData.xml is in old format. It has version " +
+                    ndata.Version + " that different from supported " + NPCDataVersion);
+            }
+        }
+
         /// <summary>
         /// Redirect error message to ShowErrorMessage handler
         /// </summary>
