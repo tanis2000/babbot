@@ -260,6 +260,10 @@ end)()",
                 //get remote object from channel name
                 RemoteObject = RemoteHooking.IpcConnectClient<DanteInterface>(
                                                 remoteLog.InjectedDLLChannelName);
+                
+                // Register Lua Delegate
+                RemoteObject.RegisterLuaDelegate(
+                        ProcessManager.CurWoWVersion.Globals.LuaDelegates);
 
                 // Set our codecave offset
                 SetPatchOffset(Convert.ToUInt32(

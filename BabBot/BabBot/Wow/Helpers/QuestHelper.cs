@@ -116,7 +116,7 @@ namespace BabBot.Wow.Helpers
             do
             {
                 Thread.Sleep(2000);
-                string[] ret = NpcHelper.GetTargetNpcDialogInfo(q.SrcNpc.Name, 0);
+                string[] ret = NpcHelper.GetTargetNpcDialogInfo(q.SrcNpc.Name, false);
                 dinfo = ret[0];
             } while (string.IsNullOrEmpty(dinfo));
 

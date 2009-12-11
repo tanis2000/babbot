@@ -42,13 +42,14 @@ namespace BabBot.Wow.Helpers
         /// <returns></returns>
         private static string[] DoGetNpcDialogInfo()
         {
-            return DoGetNpcDialogInfo(1);
+            return DoGetNpcDialogInfo(true);
         }
 
-        private static string[] DoGetNpcDialogInfo(int auto_close)
+        private static string[] DoGetNpcDialogInfo(bool auto_close)
         {
             return ProcessManager.Injector.Lua_ExecByName(
-                    "GetNpcDialogInfo", new string[] { Convert.ToString(auto_close)});
+                    "GetNpcDialogInfo", new string[] { 
+                        Convert.ToString(auto_close).ToLower()});
         }
 
 
@@ -62,10 +63,10 @@ namespace BabBot.Wow.Helpers
         /// <returns>See description for "GetNpcFrameInfo" lua call</returns>
         public static string[] GetTargetNpcDialogInfo(string npc_name)
         {
-            return GetTargetNpcDialogInfo(npc_name, 1);
+            return GetTargetNpcDialogInfo(npc_name, true);
         }
 
-        public static string[] GetTargetNpcDialogInfo(string npc_name, int auto_close)
+        public static string[] GetTargetNpcDialogInfo(string npc_name, bool auto_close)
         {
             string[] fparams = DoGetNpcDialogInfo(auto_close);
             string cur_service = fparams[0];

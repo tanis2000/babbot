@@ -174,5 +174,10 @@ namespace Dante
         {
             LuaInterface.PatchOffset = poffset;
         }
+
+        public void RegisterLuaDelegate(Dictionary<string, uint> lua_config)
+        {
+            LuaInterface.RegisterLuaDelegate(lua_config);
+        }
     }
 }

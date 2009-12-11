@@ -184,8 +184,10 @@ namespace BabBot.Manager
                                     AutoLogin();
                                 }
                                 else
-                                    // Just wait but don't reset status
-                                    Thread.Sleep(idle_sleep_time);
+                                    // Everything OK till now. Try reinitialize bot
+                                    ProcessManager.GameStatus =
+                                        ProcessManager.GameStatuses.ENTERING_WORLD;
+                                    // Thread.Sleep(idle_sleep_time);
                             }
                             else
                                 // go idle

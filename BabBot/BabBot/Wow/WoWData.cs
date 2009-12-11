@@ -23,6 +23,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using BabBot.Common;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace BabBot.Wow
 {
@@ -692,6 +693,76 @@ namespace BabBot.Wow
             }
         }
         internal uint ClickToMoveDestZ;
+
+        [XmlAttribute("lua_dostring")]
+        public string StrLuaDoString
+        {
+            get { return Convert.ToString(LuaDelegates["lua_dostring"]); }
+            set
+            {
+                LuaDelegates.Add("lua_dostring", 
+                            Convert.ToUInt32(value, 16));
+            }
+        }
+
+        [XmlAttribute("lua_getstate")]
+        public string StrLuaGetState
+        {
+            get { return Convert.ToString(LuaDelegates["lua_getstate"]); }
+            set
+            {
+                LuaDelegates.Add("lua_getstate", 
+                            Convert.ToUInt32(value, 16));
+            }
+        }
+
+        [XmlAttribute("lua_gettop")]
+        public string StrLuaGetTop
+        {
+            get { return Convert.ToString(LuaDelegates["lua_gettop"]); }
+            set
+            {
+                LuaDelegates.Add("lua_gettop", 
+                            Convert.ToUInt32(value, 16));
+            }
+        }
+
+        [XmlAttribute("lua_register")]
+        public string StrLuaRegister
+        {
+            get { return Convert.ToString(LuaDelegates["lua_register"]); }
+            set
+            {
+                LuaDelegates.Add("lua_register", 
+                            Convert.ToUInt32(value, 16));
+            }
+        }
+
+        [XmlAttribute("lua_tostring")]
+        public string StrLuaToString
+        {
+            get { return Convert.ToString(LuaDelegates["lua_tostring"]); }
+            set
+            {
+                LuaDelegates.Add("lua_tostring", 
+                            Convert.ToUInt32(value, 16));
+            }
+        }
+
+        [XmlAttribute("lua_getcurrentmapzone")]
+        public string StrLuaGetCurrentMapZone
+        {
+            get { return Convert.ToString(LuaDelegates["lua_getcurrentmapzone"]); }
+            set
+            {
+                LuaDelegates.Add("lua_getcurrentmapzone", 
+                            Convert.ToUInt32(value, 16));
+            }
+        }
+
+        internal Dictionary<string, uint> LuaDelegates =
+                                new Dictionary<string, uint>();
+
     }
 
     #endregion

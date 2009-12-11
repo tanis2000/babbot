@@ -493,8 +493,8 @@ end)()]]></text>
       <!-- IsGossipFrameOpen -->
       <function name="GetNpcDialogInfo">
         <parameters size="1">
-          0 - If 1 (default) than Auto Close current dialog frame closing after 
-            bot retrieve parameters. If 0 it stays.
+          0 - If true (default) than Auto Close current frame is closing 
+            after toon retrieve parameters. If false it stays.
         </parameters>
         <return size="4">
           0 - type of chosen gossip service as:
@@ -871,6 +871,13 @@ end)()]]></text>
         click_to_move_dest_x="0x8c"
         click_to_move_dest_y="0x90"
         click_to_move_dest_z="0x94"
+        
+        lua_dostring="0x007CF6B0"
+        lua_getstate="0x007CE280"
+        lua_gettop = "0x00803340"
+        lua_register = "0x007CE460"
+        lua_tostring = "0x00803850"
+        lua_getcurrentmapzone = "0x004CDA20"
      />
   </version>
   <version name="3.3.0.10958" max_lvl="80">
@@ -909,6 +916,13 @@ end)()]]></text>
         click_to_move_dest_x="0"
         click_to_move_dest_y="0"
         click_to_move_dest_z="0"
+        
+        lua_dostring="0"
+        lua_getstate="0"
+        lua_gettop = "0"
+        lua_register = "0"
+        lua_tostring = "0"
+        lua_getcurrentmapzone = "0"
      />
   </version>
   <app_config 

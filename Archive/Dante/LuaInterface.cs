@@ -218,8 +218,7 @@ namespace Dante
 
         internal static void Patch()
         {
-            Log(string.Format("Patch() - Patching CommandHandler: {0:X} ...", 
-                                                (uint)LuaInterface.CommandHandlerPtr));
+            Log(string.Format("Patch() - Patching CommandHandler: {0:X} ...", (uint)LuaInterface.CommandHandlerPtr));
             int bw = LuaInterface.SetFunctionPtr(LuaInterface.CommandHandlerPtr);
             Log(string.Format("Patch() - Patched CommandHandler. Bytes written: {0}", bw));
         }
@@ -329,8 +328,7 @@ namespace Dante
 
             Log(string.Format("SetFunctionPtr() - hProcess = {0:X}", (uint) hProcess));
 
-            ReturnVal = Kernel32.WriteProcessMemory(hProcess, 
-                        (IntPtr)PatchOffset, buf2, 1, out BytesWritten);
+            ReturnVal = Kernel32.WriteProcessMemory(hProcess, (IntPtr)PatchOffset, buf2, 1, out BytesWritten);
             if (!ReturnVal)
             {
                 Log(string.Format("SetFunctionPtr() - Error during first WriteProcessMemory"));
@@ -371,22 +369,22 @@ namespace Dante
             return BytesWritten;
         }
 
-        public static void RegisterLuaDelegate(Dictionary<string, uint> lua_config)
+        private static void RegisterLUADelegate()
         {
             Log("RegisterLUADelegate:  Lua_Register");
-            Lua_Register = Tools.GetRegisterDelegate<Lua_RegisterDelegate>(lua_config["lua_register"]);
+            Lua_Register = Tools.GetRegisterDelegate<Lua_RegisterDelegate>(Functions.Lua_Register);
 
             Log("RegisterLUADelegate:  Lua_GetTop");
-            Lua_GetTop = Tools.GetRegisterDelegate<Lua_GetTopDelegate>(lua_config["lua_gettop"]);
+            Lua_GetTop = Tools.GetRegisterDelegate<Lua_GetTopDelegate>(Functions.Lua_GetTop);
 
             Log("RegisterLUADelegate:  Lua_ToString");
-            Lua_ToString = Tools.GetRegisterDelegate<Lua_ToStringDelegate>(lua_config["lua_tostring"]);
+            Lua_ToString = Tools.GetRegisterDelegate<Lua_ToStringDelegate>(Functions.Lua_ToString);
 
             Log("RegisterLUADelegate:  Lua_GetState");
-            Lua_GetState = Tools.GetRegisterDelegate<Lua_GetStateDelegate>(lua_config["lua_getstate"]);
+            Lua_GetState = Tools.GetRegisterDelegate<Lua_GetStateDelegate>(Functions.Lua_GetState);
 
             Log("RegisterLUADelegate:  Lua_DoString");
-            Lua_DoString = Tools.GetRegisterDelegate<Lua_DoStringDelegate>(lua_config["lua_dostring"]);
+            Lua_DoString = Tools.GetRegisterDelegate<Lua_DoStringDelegate>(Functions.Lua_DoString);
         }
 
         private static void InitLUAState()
@@ -434,12 +432,19 @@ namespace Dante
             {
                 LoggingInterface.Log("Setting up IPC channel :)");
                 string outChannelName = null;
-                IpcServerChannel ipcLogChannel = RemoteHooking.
-                    IpcCreateServer<DanteInterface>(ref outChannelName, 
-                                            WellKnownObjectMode.Singleton);
+                IpcServerChannel ipcLogChannel = RemoteHooking.IpcCreateServer<DanteInterface>(ref outChannelName,
+                                                                                               WellKnownObjectMode.
+                                                                                                   Singleton);
 
                 //notify client of channel creation via logger
                 LoggingInterface.InjectedDLLChannelName = outChannelName;
+
+                // Register our LUA delegates
+                RegisterLUADelegate();
+
+                // Init LUA state
+                // NOTE: AAAARGH!! No LUA function calls when not in wow's main thread please! ;)
+                //InitLUAState();
 
                 // Install the first hook...
                 try
@@ -448,9 +453,9 @@ namespace Dante
                     LoggingInterface.Log("Creating LoadLibraryHook...");
 
                     // Create the hook on the LoadLibraryA call 
-                    LoadLibraryHook = LocalHook.Create(
-                        LocalHook.GetProcAddress("kernel32.dll", "LoadLibraryA"),
-                                        new LoadLibraryDelegate(MyLoadLibrary), this);
+                    LoadLibraryHook = LocalHook.Create(LocalHook.GetProcAddress("kernel32.dll", "LoadLibraryA"),
+                                                       new LoadLibraryDelegate(MyLoadLibrary),
+                                                       this);
 
                     LoggingInterface.Log("SetExclusiveACL on LoadLibraryHook...");
                     LoadLibraryHook.ThreadACL.SetExclusiveACL(new Int32[] {0});
@@ -471,5 +476,103 @@ namespace Dante
                 LoggingInterface.Log(string.Format("Exception in Run(): {0}", e));
             }
         }
+
+        #region garbage
+
+        /*
+                
+
+                LoggingInterface.Log("Setting up process stuff");
+                // Start the server stuff
+                LoggingInterface.Log(string.Format("Waking up process.."));
+                //RemoteHooking.WakeUpProcess();
+
+
+                LoggingInterface.Log(string.Format("Registering LUA functions.."));
+                Lua_Register =
+                    (Lua_RegisterDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_Register, typeof (Lua_RegisterDelegate));
+                Lua_GetTop =
+                    (Lua_GetTopDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_GetTop, typeof (Lua_GetTopDelegate));
+                Lua_ToString =
+                    (Lua_ToStringDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_ToString, typeof (Lua_ToStringDelegate));
+                Lua_GetState =
+                    (Lua_GetStateDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_GetState, typeof (Lua_GetStateDelegate));
+                Lua_DoString =
+                    (Lua_DoStringDelegate)
+                    Marshal.GetDelegateForFunctionPointer((IntPtr) Functions.Lua_DoString, typeof (Lua_DoStringDelegate));
+
+                // Init the lua_State
+                L = Lua_GetState();
+                LoggingInterface.Log(string.Format("GetState returned {0:X}", L));
+
+
+                //Interface.Log(string.Format("Patching WoW.. CommandHandler: {0:X}", (uint)CommandHandlerPtr));
+                //int bw = SetFunctionPtr(CommandHandlerPtr);
+                //Interface.Log(string.Format("Bytes written: {0}", bw));
+        public static T GetReturnVal<T>(string lua, uint retVal)
+        {
+            Lua_DoString(string.Format("InputHandler({0})", lua), "BabBot.lua", 0);
+            object tmp;
+
+            if (Values[(int) retVal] == "nil")
+            {
+                return default(T);
+            }
+
+            if (typeof (T) == typeof (bool))
+            {
+                tmp = Values[(int) retVal] == "1" || Values[(int) retVal].ToLower() == "true";
+            }
+            else
+            {
+                tmp = (T) Convert.ChangeType(Values[(int) retVal], typeof (T));
+            }
+            return (T) tmp;
+            
+        }
+        */
+
+        #endregion
+
+        #region Nested type: Functions
+
+        private static class Functions
+        {
+            public const uint
+                // 3.2.2a
+                Lua_DoString = 0x7CF6B0; // 3.1.3: 0x0049AAB0;
+
+            public const uint
+                // 3.2.2a
+                Lua_GetState = 0x007CE280; // 3.1.3: 0x00499700;
+
+            public const uint
+                // 3.2.2a
+                Lua_GetTop = 0x00803340; // 3.1.3: 0x0091A8B0;
+
+            public const uint
+                // 3.2.2a
+                Lua_Register = 0x007CE460; // 3.1.3: 0x004998E0;
+
+            public const uint
+                // 3.2.2a
+                Lua_ToString = 0x803850; // 3.1.3: 0x0091ADC0;
+
+            public const uint
+                // 3.2.2 but looks wrong
+                Lua_GetCurrentMapZone = 0x004CDA20;
+                
+            // Also need check if offset correct
+            // ZoneText = 0x113D784
+            // SubZoneText = 0x113D780
+            // InGame = 0x010508A0 (return 1 or 0)
+            // CONTINENT_NAME 0x12dc8e8 //0x12C67F8 //0x10A51F8
+        }
+
+        #endregion
     }
 }
