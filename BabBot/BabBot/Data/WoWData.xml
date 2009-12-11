@@ -493,7 +493,8 @@ end)()]]></text>
       <!-- IsGossipFrameOpen -->
       <function name="GetNpcDialogInfo">
         <parameters size="1">
-          0 - If 1 (default) Auto Close current dialog frame
+          0 - If 1 (default) than Auto Close current dialog frame closing after 
+            bot retrieve parameters. If 0 it stays.
         </parameters>
         <return size="4">
           0 - type of chosen gossip service as:
@@ -579,10 +580,10 @@ end)()]]></text>
     d1 = UnitLevel("player") .. "::" .. title .. 
        "::" .. GetQuestText() .. "::" .. GetObjectiveText()
 
-    q = {"required", "reward", "choice"}
+    q = {{"required", "reward", "choice"}}
 
     -- Get quest details
-    qr = {}
+    qr = {{}}
     qr[1] = GetNumQuestItems()
     qr[2] = GetNumQuestRewards()
     qr[3] = GetNumQuestChoices()

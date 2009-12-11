@@ -582,6 +582,10 @@ namespace BabBot.Manager
             wversion.NPCData.IndexData();
 
             //\\ Test
+            LuaFunction lf = CurWoWVersion.FindLuaFunction("GetNpcDialogInfo");
+            string c = lf.Code;
+            // string c = "{0} {{}} {{'dd','xx'}}";
+            string s = string.Format(c, 1);
             /*
             NPC npc = new NPC();
 
