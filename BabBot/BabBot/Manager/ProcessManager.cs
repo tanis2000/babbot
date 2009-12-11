@@ -1109,7 +1109,8 @@ namespace BabBot.Manager
             {
                 // Remember current config version
                 config.Version = ConfigVersion;
-                serializer.Save(ConfigFileName, config);
+                SaveXmlData(ConfigFileName, typeof(Config), config);
+                // serializer.Save(ConfigFileName, config);
                 OnConfigurationChanged();
 
             }

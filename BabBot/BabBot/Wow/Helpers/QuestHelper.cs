@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using BabBot.Manager;
 using BabBot.Common;
+using System.Threading;
 
 namespace BabBot.Wow.Helpers
 {
@@ -75,8 +76,8 @@ namespace BabBot.Wow.Helpers
             // Get quest giver npc
             NPC npc = q.SrcNpc;
             if (npc == null)
-                throw new QuestSkipException("Quest giver NPC not found for quest '" +
-                    q.Name + "'.");
+                throw new QuestSkipException(
+                    "Quest giver NPC not found for quest '" + q.Name);
 
             Output.Instance.Log(log_facility, "Located NPC '" + npc.Name +
                 "' as quest giver for quest '" + q.Name + "'");
@@ -103,13 +104,26 @@ namespace BabBot.Wow.Helpers
 
             // Check if quest available
             if (!CheckQuestAvail(q))
-                throw new QuestSkipException("NPC doesn't have quest.");
+                throw new QuestSkipException("NPC doesn't have a quest");
 
             // Accept quest
             Output.Instance.Debug(log_facility, "Accepting quest ...");
             ProcessManager.Injector.Lua_ExecByName("AcceptQuest");
+            // Wait 2 sec and check that QuestFrame is open
+            Thread.Sleep(2000);
 
             // Check quest in toon log
+            if (FindLogQuest(q.Title) < 1)
+                 throw new QuestSkipException(
+                     "Unable accept quest '" + q.Name);
+            
+            // Check if quest has objectives
+            if (q.Objectives == null)
+            {
+                // TODO Update quest with objectives
+                
+                // TODO Generate export file
+            }
             Output.Instance.Log(log_facility, "Quest '" + q.Name + "' successfully accepted'");
         }
 
@@ -163,9 +177,17 @@ namespace BabBot.Wow.Helpers
                 return false;
         }
 
-        public static int FindQuestInLog(string title)
+        /// <summary>
+        /// Check if quest in toon log
+        /// </summary>
+        /// <param name="q">Quest Title</param>
+        /// <returns>
+        /// Quest index in toon log (starting from 1) 
+        /// or -1 if quest not found
+        /// </returns>
+        public static int FindLogQuest(string title)
         {
-            string[] ret = ProcessManager.Injector.Lua_ExecByName("FindQuestInLog", 
+            string[] ret = ProcessManager.Injector.Lua_ExecByName("FindLogQuest", 
                 new string[] {title});
  
             // Trying convert result
@@ -177,6 +199,14 @@ namespace BabBot.Wow.Helpers
             catch {}
 
             return idx;
+        }
+        
+        public static string[] GetQuestObjectives(Quest q)
+        {
+            string[] ret = ProcessManager.Injector.Lua_ExecByName("GetQuestObjectives", 
+                new string[] {q.Title});
+
+            return ret;
         }
     }
 }

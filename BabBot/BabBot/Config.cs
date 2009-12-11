@@ -50,6 +50,9 @@ namespace BabBot
         // Default directory with talents template
         [XmlAttribute("profiles")]
         public string ProfilesDir = "Profiles";
+
+        [XmlAttribute("lua_exe_path")]
+        public string LuaExePath;
         
         [XmlElement("account")]
         public LoginInfo Account = new LoginInfo();

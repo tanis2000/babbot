@@ -78,110 +78,127 @@ Lots of credits to http://wowprogramming.com/
         </return>
         <text>
           <![CDATA[(function()
-    local d1, d2, d3
-    local found = false
+  local d1, d2, d3
+  local found = false
 
-    if (GlueDialog:IsShown()) then
-        d1 = GlueDialog.which
-        d2 = GlueDialogText:GetText()
-        if (GlueDialogHTML:IsShown()) then
-            d3 = 'html'
+  if (GlueDialog:IsShown()) then
+
+    -----------------
+    -- Glue Dialog --
+    -----------------
+
+    d1 = GlueDialog.which
+    d2 = GlueDialogText:GetText()
+    if (GlueDialogHTML:IsShown()) then
+      d3 = 'html'
+    end
+    
+  elseif (TOSFrame:IsShown()) then
+  
+    --------------
+    -- TOS/EULA --
+    --------------
+
+    d1 = string.lower(TOSFrame.noticeType)
+    local scrollbar = _G[TOSFrame.noticeType .. 'ScrollFrameScrollBar'];
+    if (scrollbar:IsShown()) then
+      local min, max = scrollbar:GetMinMaxValues()
+      scrollbar:SetValue(max)
+    end
+    
+  elseif (RealmList:IsShown()) then
+
+    ---------------------
+    -- Realm Selection --
+    ---------------------
+
+    d1 = 'realmselect'
+    d3 = 'not_found'
+    for i=1, MAX_REALMS_DISPLAYED, 1 do
+      realmIndex = RealmList.offset + i
+      name, numCharacters, invalidRealm, realmDown = GetRealmInfo(1, realmIndex);
+
+      if (name == '{0}') then
+        if (realmDown) then
+          d3 = 'down'
+        elseif (RealmList.currentRealm ~= realmIndex) then
+          RealmList.refreshTime = {3}
+
+          prealm = _G['RealmListRealmButton'..RealmList.currentRealm]
+          prealm:UnlockHighlight();
+
+          realm = _G['RealmListRealmButton'..realmIndex]
+          RealmList.currentRealm = realm:GetID()
+          RealmList.selectedName = realm.name
+
+          realm:LockHighlight()
+          RealmListHighlight:SetPoint('TOPLEFT', realm, 'TOPLEFT', 0, 0)
+          RealmListHighlight:Show()
+
+          d3 = 'ok'
         end
-    else
-        -- TOS/EULA
-        if (TOSFrame:IsShown()) then
-            d1 = string.lower(TOSFrame.noticeType)
-            local scrollbar = _G[TOSFrame.noticeType .. 'ScrollFrameScrollBar'];
-            if (scrollbar:IsShown()) then
-                local min, max = scrollbar:GetMinMaxValues()
-                scrollbar:SetValue(max)
-            end
-        else
-            -- Realm Selection
-            if (RealmList:IsShown()) then
-                d1 = 'realmselect'
-                d3 = 'not_found'
-                for i=1, MAX_REALMS_DISPLAYED, 1 do
-                    realmIndex = RealmList.offset + i
-                    name, numCharacters, invalidRealm, realmDown = GetRealmInfo(1, realmIndex);
-                
-                    if (name == '{0}') then
-                        if (realmDown) then
-                            d3 = 'down'
-                        else 
-                            if (RealmList.currentRealm ~= realmIndex) then
-                                RealmList.refreshTime = {3}
+        
+        break;
 
-                                prealm = _G['RealmListRealmButton'..RealmList.currentRealm]
-                                prealm:UnlockHighlight();
+      end
+    end
+    
+  elseif (RealmWizard:IsShown()) then
 
-                                realm = _G['RealmListRealmButton'..realmIndex]
-                                RealmList.currentRealm = realm:GetID()
-                                RealmList.selectedName = realm.name
+    ------------------
+    -- Realm Wizard --
+    ------------------
+  
+    found = false
+    for i = 1, 8 do
+      chkLocationBox = _G['RealmWizardLocationButton' .. i]
+      chkLocationLabel = _G['RealmWizardLocationButton' .. i .. 'Text']
+      chkLocationText = chkLocationLabel:GetText()
+      if (chkLocationText == '{1}') then
+        chkLocationBox:SetChecked(1)
+      
+        RealmWizardLocationButton_OnClick(chkLocationBox.categoryIndex)
 
-                                realm:LockHighlight()
-                                RealmListHighlight:SetPoint('TOPLEFT', realm, 'TOPLEFT', 0, 0)
-                                RealmListHighlight:Show()
-                            end
-                        
-                            d3 = 'ok'
-                        end
-
-                        break;
-                    end
-                end
-            else
-                -- Realm Wizard
-                if (RealmWizard:IsShown()) then
-                    found = false
-                    for i = 1, 8 do
-                        chkLocationBox = _G['RealmWizardLocationButton' .. i]
-                        chkLocationLabel = _G['RealmWizardLocationButton' .. i .. 'Text']
-                        chkLocationText = chkLocationLabel:GetText()
-                        if (chkLocationText == '{1}') then
-                            chkLocationBox:SetChecked(1)
-                            RealmWizardLocationButton_OnClick(chkLocationBox.categoryIndex)
-            
-                            found = true
-                        end
-                    end
-
-                    if (found) then
-                        found = false
-                            
-                        for i = 1, 4 do
-                            checkBox = _G['RealmWizardGameTypeButton'..i]
-                            checkLabel = _G['RealmWizardGameTypeButton' .. i .. 'Text']
-                            checkText = checkLabel:GetText()
-                            if (checkText ~= {2}) then
-                                checkBox:SetChecked(0);
-                            else
-                                checkBox:SetChecked(1);
-                                RealmWizardGametypeLabel:SetText(checkText);
-                                d3 = 'ok'
-                                found = true
-                                    
-                                break
-                            end
-                        end
-
-                        if (not found) then
-                            d3 = 'type_not_found'
-                        end
-                    else
-                        d3 = 'location_not_found'
-                    end
-                else
-                    -- Patch download
-                    if (PatchDownloadUI:IsShown()) then
-                        d3 = PatchProgressText:GetText()
-                    end
-                end
-            end
-        end
+        found = true
+        break
+      end
     end
 
-    return CURRENT_GLUE_SCREEN, CURRENT_GLUE_PENDING, d1, d2, d3, IsConnectedToServer()
+    if (found) then
+      found = false
+
+      for i = 1, 4 do
+        checkBox = _G['RealmWizardGameTypeButton'..i]
+        checkLabel = _G['RealmWizardGameTypeButton' .. i .. 'Text']
+        checkText = checkLabel:GetText()
+
+        if (checkText ~= {2}) then
+          checkBox:SetChecked(0);
+        else
+          checkBox:SetChecked(1);
+          RealmWizardGametypeLabel:SetText(checkText);
+          d3 = 'ok'
+
+          found = true
+          break
+        end
+      end
+    end
+
+    if (not found) then
+      d3 = 'type_not_found'
+    else
+      d3 = 'location_not_found'
+    end
+  elseif (PatchDownloadUI:IsShown()) then
+    --------------------
+    -- Patch download --
+    --------------------
+    
+    d3 = PatchProgressText:GetText()
+  end
+
+  return CURRENT_GLUE_SCREEN, CURRENT_GLUE_PENDING, d1, d2, d3, IsConnectedToServer()
 end)()]]>
         </text>
       </function>
@@ -511,126 +528,107 @@ end)()]]></text>
   local service, d1, d2, d3
   if (GossipFrame:IsShown()) then
     service = "gossip"
-  else 
-    if (MerchantFrame:IsShown()) then
-      service = "vendor"
-      -- check for repair
-      d1 = CanMerchantRepair()
-      -- check for water/food
-      max_num = GetMerchantNumItems()
-      for i = 1, max_num do
-        name, link, quality, iLevel, reqLevel, class, subclass, 
-          maxStack, equipSlot, texture, vendorPrice = GetItemInfo(GetMerchantItemLink(i));
-        if (subclass == "Food & Drink") then
-          d2 = 1
-          d3 = 1
-            
-          break
-        end
-      end
+  elseif (MerchantFrame:IsShown()) then
+    service = "vendor"
+    -- check for repair
+    d1 = CanMerchantRepair()
+    -- check for water/food
+    max_num = GetMerchantNumItems()
+    for i = 1, max_num do
+      name, link, quality, iLevel, reqLevel, class, subclass, 
+        maxStack, equipSlot, texture, vendorPrice = GetItemInfo(GetMerchantItemLink(i));
+      if (subclass == "Food & Drink") then
+        d2 = 1
+        d3 = 1
 
-      -- done with merchant
-      CloseMerchant()
-      
-    else 
-      if (QuestFrame:IsShown()) then
-        service = "quest"
-        
-        title = GetTitleText()
-        if (GetQuestText() ~= "") then
-          qt = "_start"
-        else
-          if (GetRewardText() ~= "") then
-            d1 = title
-            qt = "_end"
-          else
-            if (GetProgressText() ~= "") then
-              qt = "_progress"
-            else
-              return null
-            end
-          end
-        end
-        
-        service = service .. qt
-        if (service ~= "quest_start") then
-          return service, d1
-        end
-        
-        -- Returning quest level as char level
-        d1 = UnitLevel("player") .. "::" .. title .. 
-               "::" .. GetQuestText() .. "::" .. GetObjectiveText()
-                    
-        q = {"required", "reward", "choice"}
-                    
-        -- Get quest details
-        qr = {}
-        qr[1] = GetNumQuestItems()
-        qr[2] = GetNumQuestRewards()
-        qr[3] = GetNumQuestChoices()
-                    
-        texture, name, isTradeskillSpell, isSpellLearned = GetRewardSpell()
-        if (name) then
-          d2 = name .. "," .. isTradeskillSpell .. "," .. isSpellLearned
-        else
-          d2 = ",,";
-        end
-                    
-        d3 = ""
-        for i = 1, 3 do
-          d2 = d2 .. "," .. qr[i]
-          if (i > 1) then
-            d3 = d3 .. "||"
-          end
-                    
-          s = ""
-          for j = 1, qr[i] do
-            if (s ~= "") then
-              s = s.."::"
-            end
-                      
-            name, texture, qty = GetQuestItemInfo(q[i], j)
-            s = s .. qty .. "," .. name
-          end
-                    
-          d3 = d3 .. s
-        end
-        
-        -- Done with quest
-        CloseQuest()
-      else
-              if (BankFrame:IsShown()) then
-                service = "banker"
-			    CloseBankFrame()
-			  else
-				  if (SkillFrame:IsShown()) then
-				    service = "wep_skill_trainer"
-				  else
-					  if (ClassTrainerFrame:IsShown()) then
-					    service = "class_trainer"
-					    CloseTrainer()
-					  else
-						  if (TradeSkillFrame:IsShown()) then
-						    service = "trade_skill_trainer"
-						    CloseTradeSkill()
-						  else
-							  if (BattlefieldFrame:IsShown()) then
-							    service = "battlemaster"
-							    CloseBattlefield()
-							  else
-								  if (TaxiFrame:IsShown()) then
-								    service = "taxi"
-								    CloseTaxiMap();
-								  end
-							  end
-						  end
-					  end
-				  end
-			  end
+        break
       end
     end
+
+    -- done with merchant
+    CloseMerchant()
+      
+  elseif (QuestFrame:IsShown()) then
+    service = "quest"
+
+    title = GetTitleText()
+    if (GetQuestText() ~= "") then
+      qt = "_start"
+    elseif (GetRewardText() ~= "") then
+      d1 = title
+      qt = "_end"
+    elseif (GetProgressText() ~= "") then
+      qt = "_progress"
+    else
+      return null
+    end
+
+        
+    service = service .. qt
+    if (service ~= "quest_start") then
+      return service, d1
+    end
+
+    -- Returning quest level as char level
+    d1 = UnitLevel("player") .. "::" .. title .. 
+       "::" .. GetQuestText() .. "::" .. GetObjectiveText()
+
+    q = {"required", "reward", "choice"}
+
+    -- Get quest details
+    qr = {}
+    qr[1] = GetNumQuestItems()
+    qr[2] = GetNumQuestRewards()
+    qr[3] = GetNumQuestChoices()
+                    
+    texture, name, isTradeskillSpell, isSpellLearned = GetRewardSpell()
+    if (name) then
+      d2 = name .. "," .. isTradeskillSpell .. "," .. isSpellLearned
+    else
+      d2 = ",,";
+    end
+                    
+    d3 = ""
+    for i = 1, 3 do
+      d2 = d2 .. "," .. qr[i]
+      if (i > 1) then
+        d3 = d3 .. "||"
+      end
+                    
+      s = ""
+      for j = 1, qr[i] do
+        if (s ~= "") then
+          s = s.."::"
+       end
+                      
+        name, texture, qty = GetQuestItemInfo(q[i], j)
+        s = s .. qty .. "," .. name
+      end
+                    
+      d3 = d3 .. s
+     end
+        
+    -- Done with quest
+    CloseQuest()
+  elseif (BankFrame:IsShown()) then
+    service = "banker"
+    CloseBankFrame()
+  elseif (SkillFrame:IsShown()) then
+    service = "wep_skill_trainer"
+  elseif (ClassTrainerFrame:IsShown()) then
+    service = "class_trainer"
+    CloseTrainer()
+  elseif (TradeSkillFrame:IsShown()) then
+    service = "trade_skill_trainer"
+    CloseTradeSkill()
+  elseif (BattlefieldFrame:IsShown()) then
+    service = "battlemaster"
+    CloseBattlefield()
+  elseif (TaxiFrame:IsShown()) then
+    service = "taxi"
+    CloseTaxiMap();
   end
-  
+
   return service, d1, d2, d3
 end)()]]></text>
       </function>
@@ -722,20 +720,21 @@ end)()]]>
         </text>
       </function>
 
-      <!-- name -->
-      <function name="FindQuestInLog">
+      <!-- FindLogQuest -->
+      <function name="FindLogQuest">
         <parameters size="1">
           0 - Quest Title
         </parameters>
         <return size="1">
           0 - Index of the quest in Quest Log or null if quest not found
         </return>
-        <text><![CDATA[(function()
+        <text>
+    <![CDATA[(function()
   local idx
-  numEntries, numQuests = GetNumQuestLogEntries()
-  for i = 1, numQuests
-    title = GetQuestLogTitle(questIndex)
-    if (title == "{0}") then
+  num_entries = GetNumQuestLogEntries()
+  for i = 1, num_entries do
+    title, _, _, _, header = GetQuestLogTitle(i)
+    if ((header == nil) and (title == "{0}")) then
       idx = i
       break
     end
@@ -745,6 +744,54 @@ end)()]]></text>
       </function>
       -->
 
+      <!-- GetQuestObjectives -->
+        <function name="GetQuestObjectives">
+        <parameters size="2">
+          0 - Quest index in toon log
+        </parameters>
+        <return size="1">
+        </return>
+          0 - Line in format objective::objective ...
+            where each objective represent by comma delimited line constists of
+            0 - text - Text of the objective (e.g. "Gingerbread Cookie: 0/5") (string)
+            1 - type - Type of objective (string)
+                * event - Requires completion of a scripted event
+                * item - Requires collecting a number of items
+                * monster - Requires slaying a number of NPCs
+                * object - Requires interacting with a world object
+                * reputation - Requires attaining a certain level of reputation with a faction
+            2 - finished - 1 if the objective is complete; otherwise nil
+        <text><![CDATA[(function()
+  local res = ""
+  num_entries, num_quests = GetNumQuestLogEntries()
+  for i = 1, num_quests do
+    if (i > 1) then
+      res = res
+    end
+    
+    res = res .. "::"
+    s = ""
+    num_obj = GetNumQuestLeaderBoards(i)
+    for j = 1, num_obj do
+      text, type, finished = GetQuestLogLeaderBoard(j, i)
+      if (j > 1) then
+        s = s .. ","
+      end
+      
+      fres = 0
+      if (finished) then
+       fres = 1
+      
+      s = s .. text .. "," .. type .. "," .. fres
+    end
+    
+    res = res .. s
+  end
+  
+  return res
+end)()]]></text>
+      </function>
+      
       <!-- Template for new function
       <!- - name - ->
       <function name="">

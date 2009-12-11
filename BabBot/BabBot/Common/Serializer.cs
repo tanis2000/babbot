@@ -30,6 +30,51 @@ using System.Collections.Generic;
 
 namespace BabBot.Common
 {
+    public class Serializer<T> where T : new()
+    {
+        public T Load(string FileName)
+        {
+            using (var fs = new FileStream(FileName, FileMode.Open))
+            {
+                var s = new XmlSerializer(typeof(T));
+                try
+                {
+                    fs.Seek(0, SeekOrigin.Begin);
+                    return (T)s.Deserialize(fs);
+                }
+                catch
+                {
+                    return new T();
+                }
+                finally
+                {
+                    fs.Close();
+                }
+            }
+        }
+
+        public void Save(string FileName, T obj)
+        {
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add("", ""); // Remove  xmlns: parameters
+
+            var s = new XmlSerializer(typeof(T));
+            using (TextWriter writer = new StreamWriter(FileName))
+            {
+                try
+                {
+                    s.Serialize(writer, obj);
+                }
+                finally
+                {
+                    writer.Close();
+                }
+            }
+        }
+    }
+
+    #region IMergeable interface
+
     public interface IMergeable
     {
         void MergeWith(object obj);
@@ -49,48 +94,7 @@ namespace BabBot.Common
         }
     }
 
-    public class Serializer<T> where T : new()
-    {
-        public T Load(string FileName)
-        {
-            using (var fs = new FileStream(FileName, FileMode.Open))
-            {
-                var s = new XmlSerializer(typeof (T));
-                try
-                {
-                    fs.Seek(0, SeekOrigin.Begin);
-                    return (T) s.Deserialize(fs);
-                }
-                catch
-                {
-                    return new T();
-                }
-                finally
-                {
-                    fs.Close();
-                }
-            }
-        }
-
-        public void Save(string FileName, T obj)
-        {
-            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            ns.Add("", ""); // Remove  xmlns: parameters
-
-            var s = new XmlSerializer(typeof (T));
-            using (TextWriter writer = new StreamWriter(FileName))
-            {
-                try
-                {
-                    s.Serialize(writer, obj, ns);
-                }
-                finally
-                {
-                    writer.Close();
-                }
-            }
-        }
-    }
+    #endregion
 
     #region Common Serialization Classes
 

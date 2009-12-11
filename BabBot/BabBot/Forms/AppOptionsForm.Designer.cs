@@ -65,6 +65,9 @@
             this.label8 = new System.Windows.Forms.Label();
             this.tbProfilesPath = new System.Windows.Forms.TextBox();
             this.btnProfilesPath = new System.Windows.Forms.Button();
+            this.labelLuaPath = new System.Windows.Forms.Label();
+            this.tbLuaExePath = new System.Windows.Forms.TextBox();
+            this.btnLuaPath = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIdleSleep)).BeginInit();
@@ -84,7 +87,7 @@
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(335, 363);
-            this.btnSave.Click += new System.EventHandler(this.btnOk_Click);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // groupBox1
             // 
@@ -431,10 +434,13 @@
             this.cbDebugMode.TabIndex = 12;
             this.cbDebugMode.Text = "Debug Mode";
             this.cbDebugMode.UseVisualStyleBackColor = true;
-            this.cbDebugMode.CheckedChanged += new System.EventHandler(this.RegisterChange);
+            this.cbDebugMode.CheckedChanged += new System.EventHandler(this.cbDebugMode_CheckedChanged);
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.btnLuaPath);
+            this.groupBox4.Controls.Add(this.tbLuaExePath);
+            this.groupBox4.Controls.Add(this.labelLuaPath);
             this.groupBox4.Controls.Add(this.label8);
             this.groupBox4.Controls.Add(this.tbProfilesPath);
             this.groupBox4.Controls.Add(this.btnProfilesPath);
@@ -472,6 +478,33 @@
             this.btnProfilesPath.Text = "Browse..";
             this.btnProfilesPath.UseVisualStyleBackColor = true;
             this.btnProfilesPath.Click += new System.EventHandler(this.btnProfilesPath_Click);
+            // 
+            // labelLuaPath
+            // 
+            this.labelLuaPath.AutoSize = true;
+            this.labelLuaPath.Location = new System.Drawing.Point(111, 51);
+            this.labelLuaPath.Name = "labelLuaPath";
+            this.labelLuaPath.Size = new System.Drawing.Size(50, 13);
+            this.labelLuaPath.TabIndex = 272;
+            this.labelLuaPath.Text = "Lua Path";
+            // 
+            // tbLuaExePath
+            // 
+            this.tbLuaExePath.Location = new System.Drawing.Point(167, 48);
+            this.tbLuaExePath.Name = "tbLuaExePath";
+            this.tbLuaExePath.Size = new System.Drawing.Size(229, 20);
+            this.tbLuaExePath.TabIndex = 273;
+            this.tbLuaExePath.TextChanged += new System.EventHandler(this.RegisterChange);
+            // 
+            // btnLuaPath
+            // 
+            this.btnLuaPath.Location = new System.Drawing.Point(402, 46);
+            this.btnLuaPath.Name = "btnLuaPath";
+            this.btnLuaPath.Size = new System.Drawing.Size(75, 23);
+            this.btnLuaPath.TabIndex = 274;
+            this.btnLuaPath.Text = "Browse..";
+            this.btnLuaPath.UseVisualStyleBackColor = true;
+            this.btnLuaPath.Click += new System.EventHandler(this.btnLuaPath_Click);
             // 
             // AppOptionsForm
             // 
@@ -547,5 +580,8 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.NumericUpDown numIdleSleep;
+        private System.Windows.Forms.Button btnLuaPath;
+        private System.Windows.Forms.TextBox tbLuaExePath;
+        private System.Windows.Forms.Label labelLuaPath;
     }
 }

@@ -40,7 +40,7 @@ namespace BabBot.Forms
             cbWoWVersion.DataSource = ProcessManager.WoWVersions;
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             if (tbLuaCallback.Text.Equals(""))
                 MessageBox.Show(this, "Lua Callback Address is empty");
@@ -49,24 +49,27 @@ namespace BabBot.Forms
             else {
                 try
                 {
-                    ProcessManager.Config.WoWInfo.ExePath = tbWowExePath.Text;
-                    ProcessManager.Config.WoWInfo.GuestUsername = tbGuestUsername.Text;
-                    ProcessManager.Config.WoWInfo.GuestPassword = tbGuestPassword.Text;
-                    ProcessManager.Config.WoWInfo.NoSound = cbNoSound.Checked;
-                    ProcessManager.Config.WoWInfo.Windowed = cbWindowed.Checked;
-                    ProcessManager.Config.WoWInfo.Resize = cbResize.Checked;
-                    ProcessManager.Config.WoWInfo.Version = cbWoWVersion.Text;
-                    ProcessManager.Config.WoWInfo.RefreshTime = (int)numRefresh.Value;
-                    ProcessManager.Config.WoWInfo.IdleSleepTime = (int)numIdleSleep.Value * 1000;
+                    Config config = ProcessManager.Config;
 
-                    ProcessManager.Config.LogParams.Dir = tbLogsPath.Text;
-                    ProcessManager.Config.LogParams.DisplayLogs = chkLogOutput.Checked;
+                    config.WoWInfo.ExePath = tbWowExePath.Text;
+                    config.WoWInfo.GuestUsername = tbGuestUsername.Text;
+                    config.WoWInfo.GuestPassword = tbGuestPassword.Text;
+                    config.WoWInfo.NoSound = cbNoSound.Checked;
+                    config.WoWInfo.Windowed = cbWindowed.Checked;
+                    config.WoWInfo.Resize = cbResize.Checked;
+                    config.WoWInfo.Version = cbWoWVersion.Text;
+                    config.WoWInfo.RefreshTime = (int)numRefresh.Value;
+                    config.WoWInfo.IdleSleepTime = (int)numIdleSleep.Value * 1000;
+
+                    config.LogParams.Dir = tbLogsPath.Text;
+                    config.LogParams.DisplayLogs = chkLogOutput.Checked;
                     
-                    ProcessManager.Config.DebugMode = cbDebugMode.Checked;
-                    ProcessManager.Config.ProfilesDir = tbProfilesPath.Text;
+                    config.DebugMode = cbDebugMode.Checked;
+                    config.LuaExePath = tbLuaExePath.Text;
+                    config.ProfilesDir = tbProfilesPath.Text;
 
-                    ProcessManager.Config.CustomParams.LuaCallback = tbLuaCallback.Text;
-                    ProcessManager.Config.CustomParams.WinTitle = tbWinTitle.Text;
+                    config.CustomParams.LuaCallback = tbLuaCallback.Text;
+                    config.CustomParams.WinTitle = tbWinTitle.Text;
 
                     IsChanged = false;
                     this.DialogResult = DialogResult.OK;
@@ -95,6 +98,7 @@ namespace BabBot.Forms
                 cbWoWVersion.SelectedIndex = 0;
 
             cbDebugMode.Checked = config.DebugMode;
+            tbLuaExePath.Text = config.LuaExePath;
             tbProfilesPath.Text = config.ProfilesDir;
 
             tbLogsPath.Text = config.LogParams.Dir;
@@ -108,6 +112,9 @@ namespace BabBot.Forms
             numRefresh.Value = config.WoWInfo.RefreshTime;
             numIdleSleep.Value = (int)(config.WoWInfo.IdleSleepTime/1000);
 
+            // Check debug view
+            cbDebugMode_CheckedChanged(sender, e);
+            
             IsChanged = false;
 
             if (Msg != null)
@@ -150,6 +157,23 @@ namespace BabBot.Forms
         protected override void RegisterChange(object sender, EventArgs e)
         {
             base.RegisterChange(sender, e);
+        }
+
+        private void btnLuaPath_Click(object sender, EventArgs e)
+        {
+            var dlg = new OpenFileDialog { Multiselect = false, Filter = "Lua Executable (lua.exe)|lua.exe" };
+            if (dlg.ShowDialog() == DialogResult.OK)
+                tbLuaExePath.Text = dlg.FileName;
+        }
+
+        private void cbDebugMode_CheckedChanged(object sender, EventArgs e)
+        {
+            labelLuaPath.Visible = cbDebugMode.Checked;
+            tbLuaExePath.Visible = cbDebugMode.Checked;
+            btnLuaPath.Visible = cbDebugMode.Checked;
+
+            RegisterChange(sender, e);
+
         }
     }
 }

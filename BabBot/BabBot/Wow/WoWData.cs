@@ -176,6 +176,9 @@ namespace BabBot.Wow
         [XmlElement("parameters")]
         public LuaFunctionHelper FParams;
 
+        [XmlElement("description")]
+        public string Description;
+
         [XmlIgnore]
         public int RetSize
         {

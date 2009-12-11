@@ -533,8 +533,9 @@ end)()",
                     if (values.Count != res_list.Length)
                         ProcessManager.TerminateOnInternalBug(
                             ProcessManager.Bugs.WRONG_LUA_RETURN_LIST,
-                            "Number of returning parameters from lua function '" + 
-                            lf.Name + "' different from expected " + res_list.Length);
+                            "Number of returning parameters " + values.Count + 
+                            " from lua function '" + lf.Name + 
+                            "' is different from expected " + res_list.Length);
                       
                     res = new string[res_list.Length];
                     

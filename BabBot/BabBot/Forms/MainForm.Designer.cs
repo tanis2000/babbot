@@ -181,6 +181,7 @@
             this.cbTalentTemplates = new System.Windows.Forms.ComboBox();
             this.lblTalentTemplates = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.cbUseState = new System.Windows.Forms.CheckBox();
             this.btnReturnQuest = new System.Windows.Forms.Button();
             this.label39 = new System.Windows.Forms.Label();
             this.label40 = new System.Windows.Forms.Label();
@@ -194,6 +195,7 @@
             this.tbOrientation = new System.Windows.Forms.TextBox();
             this.tbLocation = new System.Windows.Forms.TextBox();
             this.tabPageScript = new System.Windows.Forms.TabPage();
+            this.btnLuaTest = new System.Windows.Forms.Button();
             this.btnDeleteCurrent = new System.Windows.Forms.Button();
             this.btnDeleteAll = new System.Windows.Forms.Button();
             this.btnCopyToClipboard = new System.Windows.Forms.Button();
@@ -214,7 +216,6 @@
             this.slGameStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.cbUseState = new System.Windows.Forms.CheckBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -1764,6 +1765,16 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Quest Test";
             // 
+            // cbUseState
+            // 
+            this.cbUseState.AutoSize = true;
+            this.cbUseState.Location = new System.Drawing.Point(312, 50);
+            this.cbUseState.Name = "cbUseState";
+            this.cbUseState.Size = new System.Drawing.Size(116, 17);
+            this.cbUseState.TabIndex = 70;
+            this.cbUseState.Text = "Use MoveTo State";
+            this.cbUseState.UseVisualStyleBackColor = true;
+            // 
             // btnReturnQuest
             // 
             this.btnReturnQuest.Enabled = false;
@@ -1879,6 +1890,7 @@
             // 
             // tabPageScript
             // 
+            this.tabPageScript.Controls.Add(this.btnLuaTest);
             this.tabPageScript.Controls.Add(this.btnDeleteCurrent);
             this.tabPageScript.Controls.Add(this.btnDeleteAll);
             this.tabPageScript.Controls.Add(this.btnCopyToClipboard);
@@ -1898,10 +1910,20 @@
             this.tabPageScript.Text = "Lua";
             this.tabPageScript.UseVisualStyleBackColor = true;
             // 
+            // btnLuaTest
+            // 
+            this.btnLuaTest.Location = new System.Drawing.Point(481, 102);
+            this.btnLuaTest.Name = "btnLuaTest";
+            this.btnLuaTest.Size = new System.Drawing.Size(75, 23);
+            this.btnLuaTest.TabIndex = 33;
+            this.btnLuaTest.Text = "Test";
+            this.btnLuaTest.UseVisualStyleBackColor = true;
+            this.btnLuaTest.Click += new System.EventHandler(this.btnLuaTest_Click);
+            // 
             // btnDeleteCurrent
             // 
             this.btnDeleteCurrent.Enabled = false;
-            this.btnDeleteCurrent.Location = new System.Drawing.Point(481, 125);
+            this.btnDeleteCurrent.Location = new System.Drawing.Point(481, 140);
             this.btnDeleteCurrent.Name = "btnDeleteCurrent";
             this.btnDeleteCurrent.Size = new System.Drawing.Size(75, 36);
             this.btnDeleteCurrent.TabIndex = 32;
@@ -1912,7 +1934,7 @@
             // btnDeleteAll
             // 
             this.btnDeleteAll.Enabled = false;
-            this.btnDeleteAll.Location = new System.Drawing.Point(481, 167);
+            this.btnDeleteAll.Location = new System.Drawing.Point(481, 182);
             this.btnDeleteAll.Name = "btnDeleteAll";
             this.btnDeleteAll.Size = new System.Drawing.Size(75, 23);
             this.btnDeleteAll.TabIndex = 31;
@@ -1949,7 +1971,7 @@
             this.tabLua.Location = new System.Drawing.Point(0, 3);
             this.tabLua.Name = "tabLua";
             this.tabLua.SelectedIndex = 0;
-            this.tabLua.Size = new System.Drawing.Size(475, 191);
+            this.tabLua.Size = new System.Drawing.Size(475, 206);
             this.tabLua.TabIndex = 28;
             this.tabLua.SelectedIndexChanged += new System.EventHandler(this.tabLua_SelectedIndexChanged);
             // 
@@ -1959,7 +1981,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(467, 165);
+            this.tabPage3.Size = new System.Drawing.Size(467, 180);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "f1";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1974,13 +1996,13 @@
             this.tbLuaScript.Multiline = true;
             this.tbLuaScript.Name = "tbLuaScript";
             this.tbLuaScript.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbLuaScript.Size = new System.Drawing.Size(467, 165);
+            this.tbLuaScript.Size = new System.Drawing.Size(467, 180);
             this.tbLuaScript.TabIndex = 21;
             // 
             // btnUnregisterInputHandler
             // 
             this.btnUnregisterInputHandler.Enabled = false;
-            this.btnUnregisterInputHandler.Location = new System.Drawing.Point(401, 200);
+            this.btnUnregisterInputHandler.Location = new System.Drawing.Point(401, 215);
             this.btnUnregisterInputHandler.Name = "btnUnregisterInputHandler";
             this.btnUnregisterInputHandler.Size = new System.Drawing.Size(70, 23);
             this.btnUnregisterInputHandler.TabIndex = 27;
@@ -1991,7 +2013,7 @@
             // btnRegisterInputHandler
             // 
             this.btnRegisterInputHandler.Enabled = false;
-            this.btnRegisterInputHandler.Location = new System.Drawing.Point(340, 200);
+            this.btnRegisterInputHandler.Location = new System.Drawing.Point(340, 215);
             this.btnRegisterInputHandler.Name = "btnRegisterInputHandler";
             this.btnRegisterInputHandler.Size = new System.Drawing.Size(55, 23);
             this.btnRegisterInputHandler.TabIndex = 26;
@@ -2002,7 +2024,7 @@
             // btnInputHandler
             // 
             this.btnInputHandler.Enabled = false;
-            this.btnInputHandler.Location = new System.Drawing.Point(68, 200);
+            this.btnInputHandler.Location = new System.Drawing.Point(68, 215);
             this.btnInputHandler.Name = "btnInputHandler";
             this.btnInputHandler.Size = new System.Drawing.Size(77, 23);
             this.btnInputHandler.TabIndex = 25;
@@ -2013,7 +2035,7 @@
             // btnGetLuaText
             // 
             this.btnGetLuaText.Enabled = false;
-            this.btnGetLuaText.Location = new System.Drawing.Point(151, 200);
+            this.btnGetLuaText.Location = new System.Drawing.Point(151, 215);
             this.btnGetLuaText.Name = "btnGetLuaText";
             this.btnGetLuaText.Size = new System.Drawing.Size(67, 23);
             this.btnGetLuaText.TabIndex = 24;
@@ -2023,18 +2045,18 @@
             // 
             // tbLuaResult
             // 
-            this.tbLuaResult.Location = new System.Drawing.Point(0, 229);
+            this.tbLuaResult.Location = new System.Drawing.Point(0, 244);
             this.tbLuaResult.Multiline = true;
             this.tbLuaResult.Name = "tbLuaResult";
             this.tbLuaResult.ReadOnly = true;
             this.tbLuaResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbLuaResult.Size = new System.Drawing.Size(564, 141);
+            this.tbLuaResult.Size = new System.Drawing.Size(564, 126);
             this.tbLuaResult.TabIndex = 23;
             // 
             // btnDoString
             // 
             this.btnDoString.Enabled = false;
-            this.btnDoString.Location = new System.Drawing.Point(0, 200);
+            this.btnDoString.Location = new System.Drawing.Point(0, 215);
             this.btnDoString.Name = "btnDoString";
             this.btnDoString.Size = new System.Drawing.Size(62, 23);
             this.btnDoString.TabIndex = 22;
@@ -2061,8 +2083,8 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(64, 17);
-            this.toolStripStatusLabel1.Text = "AppStatus: ";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(30, 17);
+            this.toolStripStatusLabel1.Text = "App:";
             // 
             // slAppStatus
             // 
@@ -2074,8 +2096,8 @@
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(72, 17);
-            this.toolStripStatusLabel2.Text = "GameStatus: ";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(38, 17);
+            this.toolStripStatusLabel2.Text = "Game:";
             // 
             // slGameStatus
             // 
@@ -2088,8 +2110,8 @@
             // 
             this.slBotStatus.ForeColor = System.Drawing.SystemColors.ControlText;
             this.slBotStatus.Name = "slBotStatus";
-            this.slBotStatus.Size = new System.Drawing.Size(58, 17);
-            this.slBotStatus.Text = "BotStatus:";
+            this.slBotStatus.Size = new System.Drawing.Size(27, 17);
+            this.slBotStatus.Text = "Bot:";
             // 
             // toolStripStatusLabel3
             // 
@@ -2097,16 +2119,6 @@
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
             this.toolStripStatusLabel3.Size = new System.Drawing.Size(59, 17);
             this.toolStripStatusLabel3.Text = "UNKNOWN";
-            // 
-            // cbUseState
-            // 
-            this.cbUseState.AutoSize = true;
-            this.cbUseState.Location = new System.Drawing.Point(312, 50);
-            this.cbUseState.Name = "cbUseState";
-            this.cbUseState.Size = new System.Drawing.Size(116, 17);
-            this.cbUseState.TabIndex = 70;
-            this.cbUseState.Text = "Use MoveTo State";
-            this.cbUseState.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -2366,6 +2378,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.CheckBox cbUseState;
+        private System.Windows.Forms.Button btnLuaTest;
     }
 }
 

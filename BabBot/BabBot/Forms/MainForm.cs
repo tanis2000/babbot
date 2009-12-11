@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using BabBot.Scripts.Common;
 using BabBot.Wow.Helpers;
+using System.IO;
 
 namespace BabBot.Forms
 {
@@ -338,7 +339,7 @@ namespace BabBot.Forms
             {
                 btnLogin.Enabled = false;
 
-                SetLuaDebugBtns(false);
+                SetLuaDebugBtns(true);
             }
         }
 
@@ -1541,6 +1542,37 @@ namespace BabBot.Forms
         private void tabLua_SelectedIndexChanged(object sender, EventArgs e)
         {
             checkDeleteBtn();
+        }
+
+        private void btnLuaTest_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(ProcessManager.Config.LuaExePath))
+            {
+                ShowErrorMessage("Lua Exe Path not configurable in App Configuration Dialog");
+                return;
+            }
+
+            Process p = new Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardInput = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.FileName = (ProcessManager.Config.LuaExePath);
+            p.StartInfo.Arguments = " -";
+
+            try
+            {
+                p.Start();
+                StreamWriter w = p.StandardInput;
+                w.Write(GetActiveLuaScript() + "\001F");
+                string output = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+
+                MessageBox.Show(this, output);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex.Message + Environment.NewLine);
+            }
         }
 
         #endregion
