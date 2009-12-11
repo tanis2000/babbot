@@ -34,6 +34,7 @@ using System.Text.RegularExpressions;
 using BabBot.Scripts.Common;
 using BabBot.Wow.Helpers;
 using System.IO;
+using SyntaxHighlighter;
 
 namespace BabBot.Forms
 {
@@ -933,7 +934,9 @@ namespace BabBot.Forms
             else
                 DeactivateDebugMode();
 
-            tbLuaScript.Text = GetFNewLuaPattern();
+
+            // Initialize Synax Highlighter
+            InitializeSyntaxHighlighter(tbLuaScript);
 
             // Always last
             if (ProcessManager.AutoRun)
@@ -1435,14 +1438,13 @@ namespace BabBot.Forms
             TabPage tab = new TabPage(tname);
             tab.Name = tname;
 
-            TextBox rt = new TextBox();
-            
-            // Add template
-            rt.Text = GetFNewLuaPattern();
+            SyntaxRichTextBox rt = new SyntaxRichTextBox();
 
-            rt.Multiline = true;
-            rt.Size = tbLuaScript.Size;
             rt.Font = tbLuaScript.Font;
+            rt.Size = tbLuaScript.Size;
+
+            InitializeSyntaxHighlighter(rt);
+
 
             tab.Controls.Add(rt);
             tabLua.TabPages.Add(tab);
@@ -1461,7 +1463,7 @@ namespace BabBot.Forms
 
         private string GetActiveLuaScript()
         {
-            TextBox rt = (TextBox)tabLua.SelectedTab.Controls[0];
+            SyntaxRichTextBox rt = (SyntaxRichTextBox)tabLua.SelectedTab.Controls[0];
             return rt.Text;
         }
 
@@ -1556,23 +1558,82 @@ namespace BabBot.Forms
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardInput = true;
             p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             p.StartInfo.FileName = (ProcessManager.Config.LuaExePath);
+            // p.StartInfo.FileName = ("cmd.exe");
             p.StartInfo.Arguments = " -";
 
             try
             {
                 p.Start();
                 StreamWriter w = p.StandardInput;
-                w.Write(GetActiveLuaScript() + "\001F");
+                w.Write(GetActiveLuaScript());
+                w.Close();
+
                 string output = p.StandardOutput.ReadToEnd();
+                string err = p.StandardError.ReadToEnd();
                 p.WaitForExit();
 
-                MessageBox.Show(this, output);
+                tbLuaResult.Text = output;
+
+                if (!string.IsNullOrEmpty(err))
+                    MessageBox.Show(this, output, "ERROR",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                else
+                    btnLuaTest.Image = BabBot.Properties.Resources.ok;
             }
             catch (Exception ex)
             {
                 ShowErrorMessage(ex.Message + Environment.NewLine);
             }
+        }
+
+        private void tbLuaScript_TextChanged(object sender, EventArgs e)
+        {
+            btnLuaTest.Image = null;
+        }
+
+        private void InitializeSyntaxHighlighter(SyntaxRichTextBox srt)
+        {
+            // Add the keywords to the list.
+
+            srt.Settings.Keywords.Add("function");
+            srt.Settings.Keywords.Add("if");
+            srt.Settings.Keywords.Add("then");
+            srt.Settings.Keywords.Add("else");
+            srt.Settings.Keywords.Add("elseif");
+            srt.Settings.Keywords.Add("end");
+
+            // Set the comment identifier. 
+
+            // For Lua this is two minus-signs after each other (--).
+
+            // For C++ code we would set this property to "//".
+
+            srt.Settings.Comment = "--";
+
+            // Set the colors that will be used.
+
+            srt.Settings.KeywordColor = Color.Blue;
+            srt.Settings.CommentColor = Color.Green;
+            srt.Settings.StringColor = Color.Gray;
+            srt.Settings.IntegerColor = Color.Red;
+
+            // Let's not process strings and integers.
+
+            srt.Settings.EnableStrings = false;
+            srt.Settings.EnableIntegers = false;
+
+            // Let's make the settings we just set valid by compiling
+
+            // the keywords to a regular expression.
+
+            srt.CompileKeywords();
+
+            // Assign default pattern
+            srt.Text = GetFNewLuaPattern();
+            srt.ProcessAllLines();
         }
 
         #endregion

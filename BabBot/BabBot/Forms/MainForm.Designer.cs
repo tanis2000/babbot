@@ -202,7 +202,6 @@
             this.btnNewLua = new System.Windows.Forms.Button();
             this.tabLua = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.tbLuaScript = new System.Windows.Forms.TextBox();
             this.btnUnregisterInputHandler = new System.Windows.Forms.Button();
             this.btnRegisterInputHandler = new System.Windows.Forms.Button();
             this.btnInputHandler = new System.Windows.Forms.Button();
@@ -216,6 +215,7 @@
             this.slGameStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tbLuaScript = new SyntaxHighlighter.SyntaxRichTextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -1912,6 +1912,7 @@
             // 
             // btnLuaTest
             // 
+            this.btnLuaTest.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnLuaTest.Location = new System.Drawing.Point(481, 102);
             this.btnLuaTest.Name = "btnLuaTest";
             this.btnLuaTest.Size = new System.Drawing.Size(75, 23);
@@ -1985,19 +1986,6 @@
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "f1";
             this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // tbLuaScript
-            // 
-            this.tbLuaScript.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbLuaScript.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbLuaScript.Location = new System.Drawing.Point(0, 0);
-            this.tbLuaScript.Multiline = true;
-            this.tbLuaScript.Name = "tbLuaScript";
-            this.tbLuaScript.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbLuaScript.Size = new System.Drawing.Size(467, 180);
-            this.tbLuaScript.TabIndex = 21;
             // 
             // btnUnregisterInputHandler
             // 
@@ -2120,6 +2108,19 @@
             this.toolStripStatusLabel3.Size = new System.Drawing.Size(59, 17);
             this.toolStripStatusLabel3.Text = "UNKNOWN";
             // 
+            // tbLuaScript
+            // 
+            this.tbLuaScript.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbLuaScript.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbLuaScript.Location = new System.Drawing.Point(0, 0);
+            this.tbLuaScript.Name = "tbLuaScript";
+            this.tbLuaScript.Size = new System.Drawing.Size(467, 180);
+            this.tbLuaScript.TabIndex = 0;
+            this.tbLuaScript.Text = "";
+            this.tbLuaScript.TextChanged += new System.EventHandler(this.tbLuaScript_TextChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2182,7 +2183,6 @@
             this.tabPageScript.PerformLayout();
             this.tabLua.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -2348,7 +2348,6 @@
         private System.Windows.Forms.Button btnGetLuaText;
         private System.Windows.Forms.TextBox tbLuaResult;
         private System.Windows.Forms.Button btnDoString;
-        private System.Windows.Forms.TextBox tbLuaScript;
         private System.Windows.Forms.Button btnAddNPC;
         private System.Windows.Forms.ToolStripMenuItem npcListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addCurrentTargetToolStripMenuItem;
@@ -2379,6 +2378,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.CheckBox cbUseState;
         private System.Windows.Forms.Button btnLuaTest;
+        private SyntaxHighlighter.SyntaxRichTextBox tbLuaScript;
     }
 }
 

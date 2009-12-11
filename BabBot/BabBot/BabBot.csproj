@@ -338,6 +338,7 @@
     <Content Include="Doc\README.TXT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Img\ok.gif" />
     <Content Include="Profiles\Talents\hunter-bm.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -365,6 +366,10 @@
       <Project>{57ADA462-12C3-4788-BFE1-498A9F41C30C}</Project>
       <Name>Dante</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\SyntaxHighlighter\SyntaxHighlighter.csproj">
+      <Project>{2FB0F42E-F9B6-44C0-8443-FC051A44A64E}</Project>
+      <Name>SyntaxHighlighter</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
@@ -389,6 +394,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
