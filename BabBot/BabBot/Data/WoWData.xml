@@ -492,6 +492,9 @@ end)()]]></text>
 
       <!-- IsGossipFrameOpen -->
       <function name="GetNpcDialogInfo">
+        <parameters size="1">
+          0 - If 1 (default) Auto Close current dialog frame
+        </parameters>
         <return size="4">
           0 - type of chosen gossip service as:
             * "wep_skill_trainer" - SkillFrame (weapon skills)
@@ -525,6 +528,7 @@ end)()]]></text>
         </return>
         <text>
               <![CDATA[(function()
+  local auto_close = {0}
   local service, d1, d2, d3
   if (GossipFrame:IsShown()) then
     service = "gossip"
@@ -546,8 +550,10 @@ end)()]]></text>
     end
 
     -- done with merchant
-    CloseMerchant()
-      
+    if (auto_close) then
+      CloseMerchant()
+    end
+    
   elseif (QuestFrame:IsShown()) then
     service = "quest"
 
@@ -609,24 +615,36 @@ end)()]]></text>
      end
         
     -- Done with quest
-    CloseQuest()
+    if (auto_close) then
+      CloseQuest()
+    end
   elseif (BankFrame:IsShown()) then
     service = "banker"
-    CloseBankFrame()
+    if (auto_close) then
+      CloseBankFrame()
+    end
   elseif (SkillFrame:IsShown()) then
     service = "wep_skill_trainer"
   elseif (ClassTrainerFrame:IsShown()) then
     service = "class_trainer"
-    CloseTrainer()
+    if (auto_close) then
+      CloseTrainer()
+    end
   elseif (TradeSkillFrame:IsShown()) then
     service = "trade_skill_trainer"
-    CloseTradeSkill()
+    if (auto_close) then
+      CloseTradeSkill()
+    end
   elseif (BattlefieldFrame:IsShown()) then
     service = "battlemaster"
-    CloseBattlefield()
+    if (auto_close) then
+      CloseBattlefield()
+    end
   elseif (TaxiFrame:IsShown()) then
     service = "taxi"
-    CloseTaxiMap();
+    if (auto_close) then
+      CloseTaxiMap()
+    end
   end
 
   return service, d1, d2, d3

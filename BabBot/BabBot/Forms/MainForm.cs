@@ -1578,7 +1578,7 @@ namespace BabBot.Forms
                 tbLuaResult.Text = output;
 
                 if (!string.IsNullOrEmpty(err))
-                    MessageBox.Show(this, output, "ERROR",
+                    MessageBox.Show(this, err, "ERROR",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 else
                     btnLuaTest.Image = BabBot.Properties.Resources.ok;

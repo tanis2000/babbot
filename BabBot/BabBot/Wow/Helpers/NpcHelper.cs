@@ -42,11 +42,15 @@ namespace BabBot.Wow.Helpers
         /// <returns></returns>
         private static string[] DoGetNpcDialogInfo()
         {
-            string[] res = ProcessManager.Injector.Lua_ExecByName("GetNpcDialogInfo");
-            if (res == null)
-                throw new Exception("Failed execute 'GetNpcDialogInfo' lua function.");
-            return res;
+            return DoGetNpcDialogInfo(1);
         }
+
+        private static string[] DoGetNpcDialogInfo(int auto_close)
+        {
+            return ProcessManager.Injector.Lua_ExecByName(
+                    "GetNpcDialogInfo", new string[] { Convert.ToString(auto_close)});
+        }
+
 
         /// <summary>
         /// Interact with NPC if no Gossip frame open.
@@ -58,7 +62,12 @@ namespace BabBot.Wow.Helpers
         /// <returns>See description for "GetNpcFrameInfo" lua call</returns>
         public static string[] GetTargetNpcDialogInfo(string npc_name)
         {
-            string[] fparams = DoGetNpcDialogInfo();
+            return GetTargetNpcDialogInfo(npc_name, 1);
+        }
+
+        public static string[] GetTargetNpcDialogInfo(string npc_name, int auto_close)
+        {
+            string[] fparams = DoGetNpcDialogInfo(auto_close);
             string cur_service = fparams[0];
 
             if (cur_service == null)

@@ -48,8 +48,6 @@ namespace BabBot.Wow.Helpers
         public static int FindGossipQuestIdByTitle(string title)
         {
             string[] qinfo = GetAvailGossipQuests();
-            if (qinfo == null || (qinfo.Length == 0))
-                return -1;
 
             int max_num = (int)(qinfo.Length / 3);
             for (int i = 0; i < max_num; i++)
@@ -98,24 +96,45 @@ namespace BabBot.Wow.Helpers
 
             Output.Instance.Debug(log_facility, "Reached the quest giver");
             if (!LuaHelper.TargetUnitByName(npc.Name))
-                    throw new QuestProcessingException("Unable target NPC");
+                    throw new QuestSkipException("Unable target NPC");
 
-            NpcHelper.InteractNpc(npc.Name);
+            try
+            {
+                NpcHelper.InteractNpc(npc.Name);
+            }
+            catch (NpcInteractException ne)
+            {
+                throw new QuestSkipException(ne.Message);
+            }
 
             // Check if quest available
             if (!CheckQuestAvail(q))
                 throw new QuestSkipException("NPC doesn't have a quest");
 
+            // After this something must come out but might be slow
+            string dinfo;
+            do
+            {
+                Thread.Sleep(2000);
+                string[] ret = NpcHelper.GetTargetNpcDialogInfo(q.SrcNpc.Name, 0);
+                dinfo = ret[0];
+            } while (string.IsNullOrEmpty(dinfo));
+
+            if (!dinfo.Equals("quest_start"))
+                throw new QuestSkipException(
+                     "NPC doesn't show quest start dialog bug '" + dinfo + "'");
+
+
             // Accept quest
             Output.Instance.Debug(log_facility, "Accepting quest ...");
             ProcessManager.Injector.Lua_ExecByName("AcceptQuest");
-            // Wait 2 sec and check that QuestFrame is open
-            Thread.Sleep(2000);
+            // Wait a bit to add it into the log
+            Thread.Sleep(1000);
 
-            // Check quest in toon log
+            // Check that quest is in toon log
             if (FindLogQuest(q.Title) < 1)
                  throw new QuestSkipException(
-                     "Unable accept quest '" + q.Name);
+                     "Unable find quest in toon log after it been accepted '");
             
             // Check if quest has objectives
             if (q.Objectives == null)

@@ -30,9 +30,9 @@ namespace BabBot.Wow.Helpers
             WowUnit target = player.CurTarget;
 
             while (((target == null) || !target.Name.Equals(name)) 
-                    && ((DateTime.Now - dt).TotalMilliseconds <= 1000))
+                    && ((DateTime.Now - dt).TotalMilliseconds <= 5000))
             {
-                Thread.Sleep(50);
+                Thread.Sleep(100);
                 target = player.CurTarget;
             }
 
