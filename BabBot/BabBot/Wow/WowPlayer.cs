@@ -839,6 +839,17 @@ end)()");
 
         public void ClickToMoveAttack(ulong guid)
         {
+            ClickToMoveUnit(guid, Descriptor.eClickToMoveActionType.AttackGuid);
+        }
+
+        public void ClickToMoveInteractNpc(ulong guid)
+        {
+            ClickToMoveUnit(guid, Descriptor.eClickToMoveActionType.InteractNpc);
+        }
+
+        private void ClickToMoveUnit(ulong guid, 
+                Descriptor.eClickToMoveActionType action_type)
+        {
             ProcessManager.WowProcess.SuspendThread();
             ProcessManager.WowProcess.WriteFloat(
                     ProcessManager.CurWoWVersion.Globals.ClickToMoveUnknown, 9.0f);
@@ -851,12 +862,11 @@ end)()");
             ProcessManager.WowProcess.WriteUInt64(
                 ProcessManager.CurWoWVersion.Globals.ClickToMoveTarget, guid);
             ProcessManager.WowProcess.WriteUInt(
-                    ProcessManager.CurWoWVersion.Globals.ClickToMoveActionType, 
-                                (uint)Descriptor.eClickToMoveActionType.AttackGuid);
+                    ProcessManager.CurWoWVersion.Globals.ClickToMoveActionType,
+                                (uint)action_type);
             ProcessManager.WowProcess.ResumeThread();
         }
 
-        
         /// <summary>
         /// Makes the player walk from the current location to the location of "dest" with 
         /// a default tolerance of 1 yard.
