@@ -101,7 +101,7 @@ namespace BabBot.Common
     /// <summary>
     /// Common class for collection item that has a unique name 
     /// </summary>
-    public abstract class CommonItem : IComparable, IMergeable
+    public abstract class CommonItem : IComparable
     {
         [XmlAttribute("name")]
         public string Name { get; set; }
@@ -127,14 +127,37 @@ namespace BabBot.Common
         {
             return (obj != null) && ToString().Equals(obj.ToString());
         }
-
-        // By default do nothing
-        public virtual void MergeWith(object obj) {}
     }
 
-    public abstract class CommonMergeListItem : CommonItem
+    /// <summary>
+    /// Common class for collection item that has a 
+    /// unique label and can be merged with another item 
+    /// for ex each item in CommonMergeList below
+    /// </summary>
+    public abstract class CommonMergeItem : CommonItem, IMergeable
+    {
+        public CommonMergeItem()
+            : base() { }
+
+        public CommonMergeItem(string name)
+            : base(name) { }
+
+        // By default do nothing
+        public virtual void MergeWith(object obj) { }
+    }
+
+    /// <summary>
+    /// Class with collection item that includes a mergeable list, for ex WoWVersion
+    /// </summary>
+    public abstract class CommonMergeListItem : CommonMergeItem
     {
         protected IMergeable[] MergeList;
+
+        public CommonMergeListItem()
+            : base() { }
+
+        public CommonMergeListItem(string name)
+            : base(name) { }
 
         public override void MergeWith(object obj)
         {
@@ -265,11 +288,15 @@ namespace BabBot.Common
     /// Class with internal hashtable that needs to be serialized
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonTable<T> : IMergeable where T : IMergeable
+    public abstract class CommonTable<T> : IMergeable
     {
-        private readonly Hashtable _htable;
+        private readonly Dictionary <string, T> _htable;
 
-        [XmlIgnore]
+        internal Dictionary<string, T> Table
+        {
+            get { return _htable; }
+        }
+
         internal T[] Items
         {
             get
@@ -290,13 +317,7 @@ namespace BabBot.Common
 
         public CommonTable()
         {
-            _htable = new Hashtable();
-        }
-
-        [XmlIgnore]
-        public Hashtable Table
-        {
-            get { return _htable; }
+            _htable = new Dictionary<string, T> ();
         }
 
         public override bool Equals(object obj)
@@ -311,9 +332,9 @@ namespace BabBot.Common
                 return false;
 
             // Check values
-            foreach (DictionaryEntry item1 in _htable)
+            foreach (KeyValuePair<string, T> item1 in _htable)
             {
-                T item2 = (T)t.Table[item1.Key];
+                T item2 = t.Table[item1.Key];
                 if ((item2 == null) || !item1.Value.Equals(item2))
                     return false;
             }
@@ -324,7 +345,7 @@ namespace BabBot.Common
 
         protected T FindItemByName(string name)
         {
-            return (T)_htable[name];
+            return _htable[name];
         }
 
         public void Add(T item)
@@ -345,13 +366,28 @@ namespace BabBot.Common
             CommonTable<T> t = (CommonTable<T>)obj;
 
             // Check values
-            foreach (DictionaryEntry item in t.Table)
-            {
+            foreach (KeyValuePair<string, T> item in t.Table)
                 if (!_htable.ContainsKey(item.Key))
                     _htable.Add(item.Key, item.Value);
                 else 
-                    ((T)_htable[item.Key]).MergeWith(item.Value);
-            }
+                    MergeItems(item);
+        }
+
+        public virtual void MergeItems(KeyValuePair<string, T> item)
+        {
+            
+        }
+    }
+
+    /// <summary>
+    /// Class for mergeable table that include mergeable elements as well
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public abstract class CommonMergeTable<T> : CommonTable<T> where T : IMergeable
+    {
+        public override void MergeItems(KeyValuePair<string, T> item)
+        {
+            (Table[item.Key]).MergeWith(item.Value);
         }
     }
 
@@ -359,11 +395,10 @@ namespace BabBot.Common
     /// Class with internal sorted table that needs to be serialized
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonSortedList<T> where T : CommonItem
+    public abstract class CommonSortedList<T> where T : CommonMergeItem
     {
-        private readonly SortedList _slist;
+        private readonly SortedList <string, T> _slist;
 
-        [XmlIgnore]
         internal T[] Items
         {
             get
@@ -382,15 +417,14 @@ namespace BabBot.Common
             }
         }
 
-        public CommonSortedList()
-        {
-            _slist = new SortedList();
-        }
-
-        [XmlIgnore]
-        public SortedList SList
+        internal SortedList<string, T> SList
         {
             get { return _slist; }
+        }
+
+        public CommonSortedList()
+        {
+            _slist = new SortedList<string, T>();
         }
 
         public override bool Equals(object obj)
@@ -408,9 +442,9 @@ namespace BabBot.Common
             // Check keys and values. List is sorted
             for ( int i = 0; i < cnt; i++)
             {
-                T item2 = (T) t.SList.GetByIndex(i);
+                T item2 = t.SList.Values[i];
 
-                if ((item2 == null) || !_slist.GetByIndex(i).Equals(item2))
+                if ((item2 == null) || !_slist.Values[i].Equals(item2))
                     return false;
             }
 
@@ -420,13 +454,13 @@ namespace BabBot.Common
 
         public T FindItemByName(string name)
         {
-            return (T)_slist[name];
+            return _slist[name];
         }
 
         public T FindItemByIndex(int idx)
         {
             return ((idx < 0) || (idx >= _slist.Count)) ? 
-                    default(T) :  (T) _slist.GetByIndex(idx);
+                    default(T) : _slist.Values[idx];
         }
 
         public void Add(T item)
@@ -438,14 +472,14 @@ namespace BabBot.Common
         {
             return _slist.Count;
         }
-
+        /*
         public void Merge(CommonTable<T> t)
         {
             if (t == null)
                 return;
 
             // Check values
-            foreach (DictionaryEntry de in t.Table)
+            foreach (KeyValuePair<string, T> de in t.Table)
             {
                 T item1 = (T) _slist[de.Key];
                 T item2 = (T) de.Value;
@@ -455,7 +489,7 @@ namespace BabBot.Common
                 else if (!item1.Equals(item2))
                     item1.MergeWith(item2);
             }
-        }
+        } */
     }
 
     /// <summary>

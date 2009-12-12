@@ -549,11 +549,7 @@ namespace BabBot.Manager
             // Everything else after
             LoadConfig();
 
-            // Attach NPC data to selected WoW version
-            wversion.NPCData = ndata.FindVersion(wversion.Build);
-
-            // Index NPC data for future use
-            wversion.NPCData.IndexData();
+            AfterXmlInit();
 
             //\\ Test
             LuaFunction lf = CurWoWVersion.FindLuaFunction("GetNpcDialogInfo");
@@ -578,10 +574,10 @@ namespace BabBot.Manager
             ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
 
             // Auto Merge data from earlier version with latest one
-            WoWVersion wprev = (WoWVersion)wdata.SList.GetByIndex(0);
+            WoWVersion wprev = (WoWVersion)wdata.SList.Values[0];
             for (int i = 1; i < wdata.SList.Count; i++)
             {
-                WoWVersion wnew = (WoWVersion)wdata.SList.GetByIndex(i);
+                WoWVersion wnew = (WoWVersion)wdata.SList.Values[i];
 
                 // Merge WoW data
                 wnew.MergeWith(wprev);
@@ -600,6 +596,15 @@ namespace BabBot.Manager
                 ShowErrorMessage("NPCData.xml is in old format. It has version " +
                     ndata.Version + " that different from supported " + NPCDataVersion);
             }
+        }
+
+        internal static void AfterXmlInit()
+        {
+            // Attach NPC data to selected WoW version
+            wversion.NPCData = ndata.FindVersion(wversion.Build);
+
+            // Index NPC data for future use
+            wversion.NPCData.IndexData();
         }
 
         /// <summary>

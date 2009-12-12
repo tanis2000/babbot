@@ -23,6 +23,9 @@ using System.Xml;
 using System.Xml.Serialization;
 using BabBot.Common;
 using BabBot.Manager;
+using BabBot.Wow.Helpers;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace BabBot.Wow
 {
@@ -58,7 +61,8 @@ namespace BabBot.Wow
         }
 
         [XmlIgnore]
-        public Quest[] QuestList;
+        public SortedDictionary<string, Quest> QuestList = 
+                        new SortedDictionary<string, Quest>();
 
         public NPC FindNpcByName(string name)
         {
@@ -67,16 +71,17 @@ namespace BabBot.Wow
 
         public Quest FindQuestByTitle(string title)
         {
-            Quest q = null;
+            return (Quest)QuestList[title];
+        }
+
+        public int FindQuestQtyByTitle(string title)
+        {
+            int qty = 0;
 
             foreach (NPC npc in Items)
-            {
-                q = npc.FindQuestByTitle(title);
-                if (q != null)
-                    break;
-            }
+                qty += npc.FindQuestQtyByTitle(title);
 
-            return q;
+            return qty;
         }
 
         public void IndexData()
@@ -89,7 +94,7 @@ namespace BabBot.Wow
         /// </summary>
         private void IndexQuestList()
         {
-            SortedList l = new SortedList();
+            QuestList.Clear();
 
             foreach (NPC npc in Table.Values)
             {
@@ -100,12 +105,9 @@ namespace BabBot.Wow
                         q.SrcNpc = npc;
                         if (!string.IsNullOrEmpty(q.DestNpcName))
                             q.DestNpc = (NPC) Table[q.DestNpcName];
-                        l.Add(q.Name, q);
+                        QuestList.Add(q.ToString(), q);
                     }
             }
-
-            QuestList = new Quest[l.Count];
-            l.Values.CopyTo(QuestList, 0);
         }
     }
 
@@ -163,6 +165,10 @@ namespace BabBot.Wow
             Race = race;
             Sex = sex;
 
+            Continents = new ContinentListId();
+            Services = new NPCServices();
+            QuestList = new Quests();
+
             Continents.Add(new ContinentId(continent_id, new Zone(zone_text, waypoint)));
         }
 
@@ -197,9 +203,9 @@ namespace BabBot.Wow
             return base.GetHashCode();
         }
 
-        public Quest FindQuestByTitle(string title)
+        public int FindQuestQtyByTitle(string title)
         {
-            return QuestList.FindQuestByTitle(title);
+            return QuestList.FindQuestQtyByTitle(title);
         }
     }
 
@@ -216,22 +222,37 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
-        public Quest FindQuestByTitle(string title)
+        public int FindQuestQtyByTitle(string title)
         {
-            return FindItemByName(title);
+            int qty = 0;
+            foreach (KeyValuePair<string, Quest> item in Table)
+                if (item.Value.Title.Equals(title))
+                    qty++;
+            return qty;
         }
     }
 
     public class Quest : CommonText
     {
-        [XmlIgnore]
-        public string Title
+        internal string Title
         {
             get { return Name; }
         }
 
+        [XmlAttribute("link")]
+        public string Link;
+
         [XmlAttribute("level")]
         public int Level;
+
+        internal int QIdx = 0;
+
+        [XmlAttribute("idx")]
+        public string Idx
+        {
+            get { return (QIdx > 0) ? "" : Convert.ToString(QIdx); }
+            set { QIdx = Convert.ToInt32(value); }
+        }
 
         [XmlAttribute("bonus_spell")]
         public string BonusSpell;
@@ -242,7 +263,6 @@ namespace BabBot.Wow
         [XmlAttribute("depends_of")]
         public string DependsOf = null;
 
-        [XmlIgnore]
         internal QuestItem[] QuestItems = new QuestItem[3];
 
         internal NPC SrcNpc
@@ -280,16 +300,32 @@ namespace BabBot.Wow
             set { QuestItems[2] = value; }
         }
 
-        [XmlElement("objectives", typeof(XmlCDataSection))]
-        public XmlCDataSection Objectives { get; set; }
-
-        [XmlIgnore]
-        public string TextObjectives
+        internal string GreetingText
         {
-            get { return ((Objectives != null) ? Objectives.InnerText : null); }
+            get { return TextData;  }
         }
 
-        public Quest() {}
+        [XmlElement("objectives_text", typeof(XmlCDataSection))]
+        public XmlCDataSection TextObjectives { get; set; }
+
+        internal string ObjectivesText
+        {
+            get { return ((TextObjectives != null) ? TextObjectives.InnerText : null); }
+        }
+
+        [XmlElement("reward_text", typeof(XmlCDataSection))]
+        public XmlCDataSection TextRewards { get; set; }
+
+        internal string RewardsText
+        {
+            get { return ((TextRewards != null) ? TextRewards.InnerText : null); }
+        }
+
+        [XmlElement("objectives")]
+        QuestObjectives ObjList;
+
+        public Quest()
+            :base() { }
 
         public Quest(string title, string text, string objectives, int level, 
                 int[] iqty, string[] det_list, string bonus_spell) :
@@ -298,7 +334,7 @@ namespace BabBot.Wow
             Level = level;
 
             XmlDocument doc = new XmlDocument();
-            Objectives = doc.CreateCDataSection(objectives);
+            TextObjectives = doc.CreateCDataSection(objectives);
 
             for (int i = 0; i < iqty.Length; i++)
                 if (iqty[i] > 0)
@@ -327,8 +363,8 @@ namespace BabBot.Wow
 
         public bool Equals(Quest q)
         {
-            bool f = q.Name.Equals(Name) &&
-                q.TextData.Equals(TextData) &&
+            bool f = q.Title.Equals(Title) &&
+                q.Text.Equals(Text) &&
                 (q.Level == Level) &&
                 q.TextObjectives.Equals(TextObjectives) &&
                 q.BonusSpell.Equals(BonusSpell);
@@ -376,6 +412,16 @@ namespace BabBot.Wow
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            string ret = base.ToString();
+
+            if (QIdx > 0)
+                ret += " " + QIdx;
+
+            return ret;
         }
     }
 
@@ -532,6 +578,206 @@ namespace BabBot.Wow
         {
             List.Add(v);
         }
+    }
+
+    #endregion
+
+    #region Quest Objectives
+
+    public class QuestObjectives : CommonTable<AbstractQuestObjective>
+    {
+        [XmlElement("objective")]
+        public AbstractQuestObjective[] ObjList
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="objs">List of objectives in format obj::obj 
+        /// where each obj is comma delited list of item, qty, is_finished</param>
+        public QuestObjectives(string objs)
+        {
+            string[] obj = objs.Split(new string[] { "::" }, StringSplitOptions.None);
+            foreach (string s in obj)
+            {
+                string[] items = s.Split(',');
+                string text = items[0];
+                string stype = items[1];
+                bool is_finished = (!string.IsNullOrEmpty(items[2]) &&
+                                                        items[2].Equals("1"));
+
+                AbstractQuestObjective qobj = null;
+
+                // TODO Add reflection here
+                switch (stype)
+                {
+                    case "event":
+                        qobj = new EventQuestObjective(text, is_finished);
+                        break;
+
+                    case "item":
+                        qobj = new ItemQuestObjective(text, is_finished);
+                        break;
+
+                    case "object":
+                        qobj = new ObjectQuestObjective(text, is_finished);
+                        break;
+
+                    case "monster":
+                        qobj = new MonsterQuestObjective(text, is_finished);
+                        break;
+
+                    case "reputation":
+                        qobj = new ReputationQuestObjective(text, is_finished);
+                        break;
+
+                    default:
+                        throw new QuestSkipException(
+                            "Unknown type of quest objectives '" + stype + "'");
+                }
+
+                Table.Add(stype, qobj);
+            }
+        }
+    }
+        
+    /// <summary>
+    /// Abstract class for all quest objective typed
+    /// </summary>
+    [XmlInclude(typeof(EventQuestObjective))]
+    [XmlInclude(typeof(ItemQuestObjective))]
+    [XmlInclude(typeof(MonsterQuestObjective))]
+    [XmlInclude(typeof(ObjectQuestObjective))]
+    [XmlInclude(typeof(ReputationQuestObjective))]
+    public abstract class AbstractQuestObjective
+    {
+        [XmlElement("type")]
+        string SType;
+
+        [XmlElement("text")]
+        string Text;
+
+        internal bool Finished = false;
+
+        public AbstractQuestObjective(string type)
+        {
+            SType = type;
+        }
+
+        public AbstractQuestObjective(string type, string text, bool is_finished)
+            : this(type)
+        {
+            Text = text;
+            Finished = is_finished;
+        }
+    }
+
+    /// <summary>
+    /// Abstract class for quest objective that have item -> qty assignment
+    /// </summary>
+    public abstract class AbstractQuestObjectiveWithQty : AbstractQuestObjective
+    {
+        internal readonly int ReqQty;
+
+        [XmlAttribute("item")]
+        public readonly string ItemName;
+
+        [XmlAttribute("qty")]
+        public int BagQty = 0;
+
+        public AbstractQuestObjectiveWithQty(string stype)
+            : base(stype) { }
+
+        public AbstractQuestObjectiveWithQty(string type, string item_str, bool is_finished)
+            : base(type)
+        {
+            Match m = QuestHelper.ItemPattern.Match(item_str);
+
+            if ((!m.Success) || (m.Groups.Count != 3))
+                throw new QuestSkipException(
+                    "Unable parse quest item string '" + item_str +
+                    "' according pattern " + QuestHelper.ItemPattern.ToString());
+
+            for (int i = 0; i < 3; i++)
+            {
+                ItemName = m.Groups[0].ToString();
+
+                try
+                {
+                    BagQty = Convert.ToInt32(m.Groups[1].ToString());
+                    ReqQty = Convert.ToInt32(m.Groups[2].ToString());
+                }
+                catch (Exception e)
+                {
+                    throw new QuestSkipException("Invalid objective " + i + 
+                        " in objective string '" + item_str + "'");
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Class for quest objectives that requires completion of a scripted event
+    /// </summary>
+    public class EventQuestObjective : AbstractQuestObjective
+    {   
+        public EventQuestObjective()
+            : base("event") {}
+
+        public EventQuestObjective(string text, bool is_finished)
+            : base("event", text, is_finished) { }
+    }
+
+    /// <summary>
+    /// Class for quest objectives that requires collecting a number of items
+    /// </summary>
+    public class ItemQuestObjective : AbstractQuestObjectiveWithQty
+    {
+        public ItemQuestObjective()
+            : base("item") {}
+
+        public ItemQuestObjective(string text, bool is_finished)
+            : base("item", text, is_finished) { }
+    }
+    
+    /// <summary>
+    /// Class for quest objectives that requires slaying a number of NPCs
+    /// </summary>
+    public class MonsterQuestObjective : AbstractQuestObjectiveWithQty
+    {
+        public MonsterQuestObjective()
+            : base("monster") {}
+
+        public MonsterQuestObjective(string text, bool is_finished)
+            : base("monster", text, is_finished) { }
+    }
+
+    /// <summary>
+    /// Class for quest objectives that requires interacting with a world object
+    /// </summary>
+    public class ObjectQuestObjective : AbstractQuestObjective
+    {
+        public ObjectQuestObjective()
+            : base("object") {}
+
+        public ObjectQuestObjective(string text, bool is_finished)
+            : base("object", text, is_finished) { }
+    }
+
+    /// <summary>
+    /// Class for quest objectives that requires attaining a 
+    /// certain level of reputation with a faction
+    /// </summary>
+    public class ReputationQuestObjective : AbstractQuestObjective
+    {
+        public ReputationQuestObjective()
+            : base("reputation") {}
+
+        public ReputationQuestObjective(string text, bool is_finished)
+            : base("reputation", text, is_finished) { }
     }
 
     #endregion

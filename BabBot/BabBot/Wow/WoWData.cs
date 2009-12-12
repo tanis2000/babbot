@@ -133,8 +133,8 @@ namespace BabBot.Wow
             if (obj == null)
                 return -1;
 
-            string[] v1 = Name.Split('.');
-            string[] v2 = ((WoWVersion)obj).Name.Split('.');
+            string[] v1 = Build.Split('.');
+            string[] v2 = ((WoWVersion)obj).Build.Split('.');
 
             int num = Math.Min(v1.Length, v2.Length);
             for (int i = 0; i < num; i++)
@@ -244,6 +244,9 @@ namespace BabBot.Wow
         }
     }
     
+    /// <summary>
+    /// Class with Class Description
+    /// </summary>
     public class CharClass : CommonItem
     {
         [XmlAttribute("armory_id")]
@@ -363,6 +366,9 @@ namespace BabBot.Wow
         public QuestConfig() { }
     }
 
+    /// <summary>
+    /// Class for Global App Configuration that not included into Config
+    /// </summary>
     public class AppConfig
     {
         [XmlAttribute("min_refresh_time")]
@@ -387,6 +393,9 @@ namespace BabBot.Wow
 
     #region Continets
 
+    /// <summary>
+    /// Class with list of continents
+    /// </summary>
     public class ContinentList : CommonTable<Continent>
     {
         [XmlElement("continent")]
@@ -408,6 +417,9 @@ namespace BabBot.Wow
         }
     }
 
+    /// <summary>
+    /// Class with Continent Description
+    /// </summary>
     public class Continent : CommonItemEx
     {
         public Continent() { }

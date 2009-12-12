@@ -1696,6 +1696,7 @@
             this.btnReloadXmlData.TabIndex = 75;
             this.btnReloadXmlData.Text = "Reload Xml Data";
             this.btnReloadXmlData.UseVisualStyleBackColor = true;
+            this.btnReloadXmlData.Click += new System.EventHandler(this.btnReloadXmlData_Click);
             // 
             // gbClickToMove
             // 
@@ -1828,7 +1829,7 @@
             // 
             // btnAbandomQuest
             // 
-            this.btnAbandomQuest.Location = new System.Drawing.Point(436, 46);
+            this.btnAbandomQuest.Location = new System.Drawing.Point(436, 44);
             this.btnAbandomQuest.Name = "btnAbandomQuest";
             this.btnAbandomQuest.Size = new System.Drawing.Size(99, 23);
             this.btnAbandomQuest.TabIndex = 71;

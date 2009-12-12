@@ -1,5 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <npc_data version="0">
+  <wow_version name="3.3.0.10958">
+    <npc name="Dellylah" race="NIGHTELF" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10450.2" y="779.858" z="1322.75" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services>
+        <service d5p1:type="VendorService" name="vendor" can_repair="false" has_water="true" has_food="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+      </services>
+      <quests />
+    </npc>
+    <npc name="Keina" race="NIGHTELF" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10436.7" y="794.837" z="1322.79" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services>
+        <service d5p1:type="VendorService" name="vendor" can_repair="true" has_water="false" has_food="false" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+      </services>
+      <quests />
+    </npc>
+    <npc name="Conservator Ilthalaine" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10328.9" y="826.052" z="1326.38" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services />
+      <quests>
+        <quest name="The Balance of Nature" level="2" bonus_spell="">
+          <text><![CDATA[Greetings, Flinar.  I am Conservator Ilthalaine.  My purpose in Shadowglen is to ensure that the balance of nature is maintained.
+
+The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
+
+Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young hunter, and thin the boar and saber populations so that nature's harmony will be preserved.]]>
+          </text>
+          <choice_items>
+            <item name="Stemleaf Bracers" qty="1" />
+            <item name="Archery Training Gloves" qty="1" />
+          </choice_items>
+          <objectives><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives>
+        </quest>
+      </quests>
+    </npc>
+    <npc name="Tarindrella" sex="1">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10296.9" y="870.227" z="1335.89465" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services />
+      <quests>
+        <quest name="The Woodland Protector" level="1" bonus_spell="">
+          <text><![CDATA[Something evil is brewing in the forests of Teldrassil.  Look long the hills to where the peaceful furbolgs used to dwell.  They have deserted their homes and are amassing under the name of the Gnarlpine tribe.
+
+Only the corruption of wicked Fel Moss could cause such a transformation.  The grells and grellkin have infested the area and are threatening the residents of Shadowglen.  
+
+Engage these grells and grellkin, Flinar, and see if they are indeed caught under the enchantment of the wicked Fel Moss.]]>
+          </text>
+          <reward_items>
+            <item name="Healing Herb" qty="3" />
+          </reward_items>
+          <choice_items>
+            <item name="Canopy Leggings" qty="1" />
+            <item name="Tracking Boots" qty="1" />
+            <item name="Viny Gloves" qty="1" />
+          </choice_items>
+          <objectives_text><![CDATA[Collect 8 Fel Moss and bring them to Tarindrella.]]></objectives_text>
+        </quest>
+      </quests>
+    </npc>
+    <npc name="Melithar Staghelm" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10389.8" y="763.477" z="1320.33" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services />
+      <quests>
+        <quest name="The Woodland Protector" level="1" bonus_spell="" dest_npc="Tarindrella">
+          <text><![CDATA[Thank goodness you are here, hunter. Strange news has traveled to me through the whisperings of the forest spirits.
+
+The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
+
+Seek out Tarindrella and see what business she tends to in our grove. One of the Sentinels reported seeing her to the southwest of Aldrassil.]]>
+          </text>
+          <objectives_text><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives_text>
+        </quest>
+      </quests>
+    </npc>
+  </wow_version>
   <wow_version name="3.2.2.10505">
     <npc name="Dellylah" race="NIGHTELF" sex="2">
       <wp_list>
@@ -42,12 +145,13 @@
 
 The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
 
-Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young hunter, and thin the boar and saber populations so that nature's harmony will be preserved.]]></text>
+Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young hunter, and thin the boar and saber populations so that nature's harmony will be preserved.]]>
+          </text>
           <choice_items>
             <item name="Stemleaf Bracers" qty="1" />
             <item name="Archery Training Gloves" qty="1" />
           </choice_items>
-          <objectives><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives>
+          <objectives_text><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives_text>
         </quest>
       </quests>
     </npc>
@@ -60,7 +164,25 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
         </continent>
       </wp_list>
       <services />
-      <quests />
+      <quests>
+        <quest name="The Woodland Protector" level="1" bonus_spell="">
+          <text><![CDATA[Something evil is brewing in the forests of Teldrassil.  Look long the hills to where the peaceful furbolgs used to dwell.  They have deserted their homes and are amassing under the name of the Gnarlpine tribe.
+
+Only the corruption of wicked Fel Moss could cause such a transformation.  The grells and grellkin have infested the area and are threatening the residents of Shadowglen.  
+
+Engage these grells and grellkin, Flinar, and see if they are indeed caught under the enchantment of the wicked Fel Moss.]]>
+          </text>
+          <reward_items>
+            <item name="Healing Herb" qty="3" />
+          </reward_items>
+          <choice_items>
+            <item name="Canopy Leggings" qty="1" />
+            <item name="Tracking Boots" qty="1" />
+            <item name="Viny Gloves" qty="1" />
+          </choice_items>
+          <objectives_text><![CDATA[Collect 8 Fel Moss and bring them to Tarindrella.]]></objectives_text>
+        </quest>
+      </quests>
     </npc>
     <npc name="Melithar Staghelm" sex="2">
       <wp_list>
@@ -72,17 +194,16 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
       </wp_list>
       <services />
       <quests>
-        <quest name="The Woodland Protector" level="1" bonus_spell="" dest_npc="Tarindrella">
+        <quest name="The Woodland Protector" level="1" idx="2" bonus_spell="" dest_npc="Tarindrella">
           <text><![CDATA[Thank goodness you are here, hunter. Strange news has traveled to me through the whisperings of the forest spirits.
 
 The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
 
-Seek out Tarindrella and see what business she tends to in our grove. One of the Sentinels reported seeing her to the southwest of Aldrassil.]]></text>
+Seek out Tarindrella and see what business she tends to in our grove. One of the Sentinels reported seeing her to the southwest of Aldrassil.]]>
+          </text>
           <objectives><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives>
         </quest>
       </quests>
     </npc>
-  </wow_version>
-  <wow_version name="3.3.0.10958">
   </wow_version>
 </npc_data>

@@ -1799,6 +1799,7 @@ namespace BabBot.Forms
         private void btnReloadXmlData_Click(object sender, EventArgs e)
         {
             ProcessManager.InitXmlData();
+            ProcessManager.AfterXmlInit();
         }
     }
 }

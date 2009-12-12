@@ -5,9 +5,12 @@ using System.Text;
 using BabBot.Manager;
 using BabBot.Common;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace BabBot.Wow.Helpers
 {
+    #region Quest Reguest
+
     public abstract class AbstractQuestReq
     {
         public int NpcId;
@@ -100,6 +103,10 @@ namespace BabBot.Wow.Helpers
         }
     }
 
+    #endregion Quest Request
+
+    #region Quest Processing Exceptions
+
     /// <summary>
     /// Define exception happened during quest processing
     /// </summary>
@@ -118,8 +125,12 @@ namespace BabBot.Wow.Helpers
             base(msg + ". Skipping the quest") { }
     }
 
+    #endregion
+
     public static class QuestHelper
     {
+        public static Regex ItemPattern = new Regex("^(.*): (/d+)/(d+)$");
+
         /// <summary>
         /// Get quest list from opened Gossip dialog
         /// </summary>
