@@ -612,7 +612,7 @@ namespace BabBot.Wow.Helpers
                 Output.Instance.Log("Assign current NPC as end for quest '" +
                                                                 qtitle + "'");
 
-                q.DestNpc = npc.Name;
+                q.DestNpcName = npc.Name;
             }
         }
 

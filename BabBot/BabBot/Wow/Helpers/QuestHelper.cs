@@ -8,6 +8,98 @@ using System.Threading;
 
 namespace BabBot.Wow.Helpers
 {
+    public abstract class AbstractQuestReq
+    {
+        public int NpcId;
+        public string ActionName = null;
+        public string QuestStatus = null;
+        public Quest Quest;
+        public string LogFs = null;
+        public string NpcDestText = null;
+
+        internal abstract bool DoBeforeStart();
+
+        public AbstractQuestReq(Quest q, string lfs)
+        {
+            Quest = q;
+            LogFs = lfs;
+        }
+
+        internal abstract void DoAfterAction();
+    }
+
+    internal class AcceptQuestReq : AbstractQuestReq
+    {
+        public AcceptQuestReq(Quest q, string lfs)
+            :base (q, lfs)
+        {
+            NpcId = 0;
+            ActionName = "Accept";
+            NpcDestText = "giver";
+            QuestStatus = "quest_start";
+        }
+
+        internal override bool DoBeforeStart()
+        {
+            // Check if quest already in quest log
+            if (QuestHelper.FindLogQuest(Quest.Title, LogFs) > 0)
+            {
+                Output.Instance.Log(LogFs, "Quest already accepted");
+                return false;
+            }
+
+            return true;
+        }
+
+        internal override void DoAfterAction()
+        {
+            // Check that quest is in toon log
+            if (QuestHelper.FindLogQuest(Quest.Title, LogFs) == 0)
+                throw new QuestSkipException(
+                    "Unable find quest in toon log after it been accepted '");
+        }
+    }
+
+    internal class DeliverQuestReq : AbstractQuestReq
+    {
+        public DeliverQuestReq(Quest q, string lfs)
+            :base (q, lfs)
+        {
+            NpcId = 1;
+            ActionName = "Deliver";
+            NpcDestText = "receiver";
+            QuestStatus = "quest_end";
+        }
+
+        internal override bool DoBeforeStart()
+        {
+            // Check if quest already in quest log
+            int idx = QuestHelper.FindLogQuest(Quest.Title, LogFs);
+            if (idx == 0)
+            {
+                Output.Instance.Log(LogFs, "Quest not in a log list");
+                return false;
+            }
+
+            // Check if quest completed
+            if (!QuestHelper.IsQuestLogCompleted(idx))
+            {
+                Output.Instance.Log(LogFs, "Quest not is not completed");
+                return false;
+            }
+
+            return true;
+        }
+
+        internal override void DoAfterAction()
+        {
+            // Check that quest is in toon log
+            if (QuestHelper.FindLogQuest(Quest.Title, LogFs) > 0)
+                throw new QuestSkipException(
+                    "Quest still in toon's quest log after it been delivered");
+        }
+    }
+
     /// <summary>
     /// Define exception happened during quest processing
     /// </summary>
@@ -59,37 +151,33 @@ namespace BabBot.Wow.Helpers
             return -1;
         }
 
-        /// <summary>
-        /// Accept currently opened quest
-        /// </summary>
-        /// <param name="q">Quest</param>
-        /// <param name="use_state">Test flag for movement</param>
-        public static void AcceptQuest(Quest q, bool use_state, string lfs)
+        private static void ProcessQuestRequest(AbstractQuestReq req, 
+                                                        bool use_state)
         {
+            if (!req.DoBeforeStart())
+                return;
+
             // Set player current zone
             WowPlayer player = ProcessManager.Player;
 
             player.setCurrentMapInfo();
 
-            // Get quest giver npc
-            NPC npc = q.SrcNpc;
+            string lfs = req.LogFs;
+            string qt = req.Quest.Title;
+
+            // Get quest npc
+            NPC npc = req.Quest.NpcList[req.NpcId];
             if (npc == null)
                 throw new QuestSkipException(
-                    "Quest giver NPC not found for quest '" + q.Name);
+                    "Quest " + req.NpcDestText + " NPC not found for quest '" + qt);
 
             Output.Instance.Log(lfs, "Located NPC '" + npc.Name +
-                "' as quest giver for quest '" + q.Name + "'");
-
-            // Check if quest already in quest log
-            if (FindLogQuest(q.Name, lfs) > 0)
-            {
-                Output.Instance.Log(lfs, "Quest already accepted");
-                return;
-            }
+                "' as quest " + req.NpcDestText + " for quest '" + qt + "'");
 
             try
             {
-                Output.Instance.Log(lfs, "Moving to quest giver ... ");
+                Output.Instance.Log(lfs, "Moving to quest " + 
+                                    req.NpcDestText + " ... ");
                 NpcHelper.MoveToNPC(npc, use_state, lfs);
             }
             catch (CantReachNpcException e1)
@@ -101,7 +189,8 @@ namespace BabBot.Wow.Helpers
                 throw new QuestSkipException("Unable reach NPC. " + e.Message);
             }
 
-            Output.Instance.Debug(lfs, "Reached the quest giver");
+            Output.Instance.Debug(lfs, "Reached the quest " + 
+                                            req.NpcDestText + ".");
             if (!LuaHelper.TargetUnitByName(npc.Name))
                     throw new QuestSkipException("Unable target NPC");
 
@@ -122,12 +211,12 @@ namespace BabBot.Wow.Helpers
 
             // If NPC has a single quest it can be opened already
             // null dinfo[0] cause NpcInteractException
-            if (!dinfo[0].Equals("quest_start"))
+            if (!dinfo[0].Equals(req.QuestStatus))
             {
                 // Check if quest available
                 try
                 {
-                    if (!CheckQuestAvail(q, dinfo, lfs))
+                    if (!CheckQuestAvail(req.Quest, dinfo, lfs))
                         throw new QuestSkipException("NPC doesn't have a quest");
                 }
                 catch (Exception e)
@@ -136,25 +225,27 @@ namespace BabBot.Wow.Helpers
                 }
             }
 
-            // Accept quest
-            Output.Instance.Debug(lfs, "Accepting quest ...");
-            ProcessManager.Injector.Lua_ExecByName("AcceptQuest");
-            // Wait a bit to add it into the log
-            Thread.Sleep(1000);
+            // Do QuestAction quest
+            Output.Instance.Debug(lfs, req.ActionName + "ing quest ...");
+            ProcessManager.Injector.Lua_ExecByName(req.ActionName + "Quest");
+            // Wait a bit to update log
+            Thread.Sleep(2000);
 
-            // Check that quest is in toon log
-            if (FindLogQuest(q.Title, lfs) == 0)
-                 throw new QuestSkipException(
-                     "Unable find quest in toon log after it been accepted '");
-            
-            // Check if quest has objectives
-            if (q.Objectives == null)
-            {
-                // TODO Update quest with objectives
-                
-                // TODO Generate export file
-            }
-            Output.Instance.Log(lfs, "Quest '" + q.Name + "' successfully accepted'");
+            req.DoAfterAction();
+
+            Output.Instance.Log(lfs, "Quest '" + qt + 
+                "' successfully " + req.ActionName.ToLower() + "ed'");
+
+        }
+
+        /// <summary>
+        /// Accept currently opened quest
+        /// </summary>
+        /// <param name="q">Quest</param>
+        /// <param name="use_state">Test flag for movement</param>
+        public static void AcceptQuest(Quest q, bool use_state, string lfs)
+        {
+            ProcessQuestRequest(new AcceptQuestReq(q, lfs), use_state);
         }
 
         /// <summary>
@@ -304,5 +395,50 @@ namespace BabBot.Wow.Helpers
                         q.Title + "' is still in toon quest log after abandon action.");
             }
         }
+
+        public static void DeliverQuest(Quest q, string lfs, bool use_state)
+        {
+            ProcessQuestRequest(new DeliverQuestReq(q, lfs), use_state);
+        }
+
+        private static string[] GetQuestObjectives(int quest_idx)
+        {
+            Output.Instance.Debug("xxx", "Checking Quest Objectives ... ");
+
+            string[] ret = ProcessManager.Injector.Lua_ExecByName(
+                "GetQuestObjectives", 
+                new string[] { Convert.ToString(quest_idx) });
+
+            string[] obj = new string[0];
+
+            if (!string.IsNullOrEmpty(ret[0]))
+                obj = ret[0].Split(new string[] { "::" },
+                                        StringSplitOptions.None);
+
+            if (obj.Length > 0) 
+                Output.Instance.Debug("xxx", "Quest has " + obj.Length + " objectives");
+            else
+                Output.Instance.Debug("xxx", "Quest has no objectives");
+
+            return obj;
+        }
+
+        public static bool IsQuestLogCompleted(int idx)
+        {
+            
+            // Check if quest completed
+            string[] obj = QuestHelper.GetQuestObjectives(idx);
+
+            bool f = true;
+            for (int i = 0; i < obj.Length; i++)
+            {
+                string[] items = obj[i].Split(',');
+                if (string.IsNullOrEmpty(items[2]) || !items[2].Equals("1"))
+                    return false;
+            }
+
+            return true;
+        }
+
     }
 }

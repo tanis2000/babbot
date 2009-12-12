@@ -1848,12 +1848,11 @@
             // 
             // btnReturnQuest
             // 
-            this.btnReturnQuest.Enabled = false;
             this.btnReturnQuest.Location = new System.Drawing.Point(331, 44);
             this.btnReturnQuest.Name = "btnReturnQuest";
             this.btnReturnQuest.Size = new System.Drawing.Size(99, 23);
             this.btnReturnQuest.TabIndex = 69;
-            this.btnReturnQuest.Text = "Move && Turn in";
+            this.btnReturnQuest.Text = "Move && Deliver";
             this.btnReturnQuest.UseVisualStyleBackColor = true;
             this.btnReturnQuest.Click += new System.EventHandler(this.btnReturnQuest_Click);
             // 

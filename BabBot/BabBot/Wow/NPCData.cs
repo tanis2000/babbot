@@ -98,6 +98,8 @@ namespace BabBot.Wow
                     foreach (Quest q in ql.Table.Values)
                     {
                         q.SrcNpc = npc;
+                        if (!string.IsNullOrEmpty(q.DestNpcName))
+                            q.DestNpc = (NPC) Table[q.DestNpcName];
                         l.Add(q.Name, q);
                     }
             }
@@ -235,7 +237,7 @@ namespace BabBot.Wow
         public string BonusSpell;
 
         [XmlAttribute("dest_npc")]
-        public string DestNpc = null;
+        public string DestNpcName = null;
 
         [XmlAttribute("depends_of")]
         public string DependsOf = null;
@@ -243,8 +245,19 @@ namespace BabBot.Wow
         [XmlIgnore]
         internal QuestItem[] QuestItems = new QuestItem[3];
 
-        [XmlIgnore]
-        public NPC SrcNpc = null;
+        internal NPC SrcNpc
+        {
+            get { return NpcList[0]; }
+            set { NpcList[0] = value; }
+        }
+
+        internal NPC DestNpc
+        {
+            get { return NpcList[1]; }
+            set { NpcList[1] = value; }
+        }
+
+        internal NPC[] NpcList = new NPC[2];
         
         [XmlElement("req_items")]
         public QuestItem ReqItems

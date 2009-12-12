@@ -550,7 +550,7 @@ namespace BabBot.Manager
             LoadConfig();
 
             // Attach NPC data to selected WoW version
-            wversion.NPCData = ndata.FindVersion(wversion.Name);
+            wversion.NPCData = ndata.FindVersion(wversion.Build);
 
             // Index NPC data for future use
             wversion.NPCData.IndexData();
@@ -587,7 +587,7 @@ namespace BabBot.Manager
                 wnew.MergeWith(wprev);
 
                 // Merge NPCData. Ordering is not an issues since it defined in WoWData already
-                ndata.FindVersion(wnew.Name).MergeWith(ndata.FindVersion(wprev.Name));
+                ndata.FindVersion(wnew.Build).MergeWith(ndata.FindVersion(wprev.Build));
 
                 wprev = wnew;
             }

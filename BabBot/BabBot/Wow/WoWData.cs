@@ -88,6 +88,10 @@ namespace BabBot.Wow
             set { MergeList[3] = value; }
         }
 
+        internal string Build
+        {
+            get { return Name; }
+        }
         // Mergeable elements end
 
         // Globals unique for each version and not include into merge

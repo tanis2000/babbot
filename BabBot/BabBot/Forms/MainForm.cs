@@ -1722,6 +1722,10 @@ namespace BabBot.Forms
             {
                 ShowErrorMessage("Quest processing error - " + qe.Message);
             }
+            catch (QuestSkipException qe)
+            {
+                ShowErrorMessage("Quest processing error - " + qe.Message);
+            }
             catch (Exception ex)
             {
                 ShowErrorMessage("Exception: " + ex.Message);
@@ -1734,10 +1738,31 @@ namespace BabBot.Forms
 
         private void btnReturnQuest_Click(object sender, EventArgs e)
         {
-            if (!CheckInGame())
+            if (!CheckBeforeQuestTest())
                 return;
 
-            ShowErrorMessage("Coming soon ...");
+            try
+            {
+                btnReturnQuest.Enabled = false;
+                QuestHelper.DeliverQuest((Quest)cbQuestList.SelectedItem,
+                    "quest_test", cbUseState.Checked);
+            }
+            catch (QuestProcessingException qe)
+            {
+                ShowErrorMessage("Quest processing error - " + qe.Message);
+            }
+            catch (QuestSkipException qe)
+            {
+                ShowErrorMessage("Quest processing error - " + qe.Message);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("Exception: " + ex.Message);
+            }
+            finally
+            {
+                btnReturnQuest.Enabled = true;
+            }
         }
 
         private void cbQuestChoiceReward_SelectedIndexChanged(object sender, EventArgs e)
