@@ -173,6 +173,11 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
+            this.gbServices = new System.Windows.Forms.GroupBox();
+            this.btnLearnSkill = new System.Windows.Forms.Button();
+            this.label41 = new System.Windows.Forms.Label();
+            this.cbServiceList = new System.Windows.Forms.ComboBox();
+            this.btnMoveInteractService = new System.Windows.Forms.Button();
             this.btnReloadXmlData = new System.Windows.Forms.Button();
             this.gbClickToMove = new System.Windows.Forms.GroupBox();
             this.btnFollow = new System.Windows.Forms.Button();
@@ -222,7 +227,7 @@
             this.slGameStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.btnLearnClass = new System.Windows.Forms.Button();
+            this.labelNPC = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -245,6 +250,7 @@
             this.tabPageEnemies.SuspendLayout();
             this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
+            this.gbServices.SuspendLayout();
             this.gbClickToMove.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
@@ -1670,6 +1676,7 @@
             // 
             // tabPageDebug2
             // 
+            this.tabPageDebug2.Controls.Add(this.gbServices);
             this.tabPageDebug2.Controls.Add(this.btnReloadXmlData);
             this.tabPageDebug2.Controls.Add(this.gbClickToMove);
             this.tabPageDebug2.Controls.Add(this.groupBox9);
@@ -1689,6 +1696,69 @@
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
             // 
+            // gbServices
+            // 
+            this.gbServices.Controls.Add(this.labelNPC);
+            this.gbServices.Controls.Add(this.btnLearnSkill);
+            this.gbServices.Controls.Add(this.label41);
+            this.gbServices.Controls.Add(this.cbServiceList);
+            this.gbServices.Controls.Add(this.btnMoveInteractService);
+            this.gbServices.Location = new System.Drawing.Point(182, 202);
+            this.gbServices.Name = "gbServices";
+            this.gbServices.Size = new System.Drawing.Size(274, 81);
+            this.gbServices.TabIndex = 76;
+            this.gbServices.TabStop = false;
+            this.gbServices.Text = "NPC Services";
+            // 
+            // btnLearnSkill
+            // 
+            this.btnLearnSkill.Enabled = false;
+            this.btnLearnSkill.Location = new System.Drawing.Point(193, 21);
+            this.btnLearnSkill.Name = "btnLearnSkill";
+            this.btnLearnSkill.Size = new System.Drawing.Size(75, 23);
+            this.btnLearnSkill.TabIndex = 79;
+            this.btnLearnSkill.Text = "Learn Skills";
+            this.btnLearnSkill.UseVisualStyleBackColor = true;
+            this.btnLearnSkill.Click += new System.EventHandler(this.btnLearnSkill_Click);
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(6, 24);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(43, 13);
+            this.label41.TabIndex = 78;
+            this.label41.Text = "Service";
+            // 
+            // cbServiceList
+            // 
+            this.cbServiceList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbServiceList.FormattingEnabled = true;
+            this.cbServiceList.Items.AddRange(new object[] {
+            "class_trainer",
+            "taxi",
+            "banker",
+            "wep_skill_trainer",
+            "trade_skill_trainer",
+            "vendor",
+            "battlemaster"});
+            this.cbServiceList.Location = new System.Drawing.Point(55, 21);
+            this.cbServiceList.Name = "cbServiceList";
+            this.cbServiceList.Size = new System.Drawing.Size(132, 21);
+            this.cbServiceList.TabIndex = 77;
+            this.cbServiceList.SelectedIndexChanged += new System.EventHandler(this.cbServiceList_SelectedIndexChanged);
+            // 
+            // btnMoveInteractService
+            // 
+            this.btnMoveInteractService.Enabled = false;
+            this.btnMoveInteractService.Location = new System.Drawing.Point(6, 48);
+            this.btnMoveInteractService.Name = "btnMoveInteractService";
+            this.btnMoveInteractService.Size = new System.Drawing.Size(100, 23);
+            this.btnMoveInteractService.TabIndex = 76;
+            this.btnMoveInteractService.Text = "Move && Interact";
+            this.btnMoveInteractService.UseVisualStyleBackColor = true;
+            this.btnMoveInteractService.Click += new System.EventHandler(this.btnMoveInteractService_Click);
+            // 
             // btnReloadXmlData
             // 
             this.btnReloadXmlData.Location = new System.Drawing.Point(444, 341);
@@ -1706,7 +1776,7 @@
             this.gbClickToMove.Controls.Add(this.btnMoveAttack);
             this.gbClickToMove.Location = new System.Drawing.Point(15, 202);
             this.gbClickToMove.Name = "gbClickToMove";
-            this.gbClickToMove.Size = new System.Drawing.Size(225, 81);
+            this.gbClickToMove.Size = new System.Drawing.Size(161, 81);
             this.gbClickToMove.TabIndex = 74;
             this.gbClickToMove.TabStop = false;
             this.gbClickToMove.Text = "ClickToMove";
@@ -1725,7 +1795,7 @@
             // 
             this.btnMoveInteractNpc.Location = new System.Drawing.Point(6, 19);
             this.btnMoveInteractNpc.Name = "btnMoveInteractNpc";
-            this.btnMoveInteractNpc.Size = new System.Drawing.Size(117, 23);
+            this.btnMoveInteractNpc.Size = new System.Drawing.Size(143, 23);
             this.btnMoveInteractNpc.TabIndex = 75;
             this.btnMoveInteractNpc.Text = "Move && Interact NPC";
             this.btnMoveInteractNpc.UseVisualStyleBackColor = true;
@@ -1733,7 +1803,7 @@
             // 
             // btnMoveAttack
             // 
-            this.btnMoveAttack.Location = new System.Drawing.Point(129, 19);
+            this.btnMoveAttack.Location = new System.Drawing.Point(64, 48);
             this.btnMoveAttack.Name = "btnMoveAttack";
             this.btnMoveAttack.Size = new System.Drawing.Size(85, 23);
             this.btnMoveAttack.TabIndex = 73;
@@ -1743,8 +1813,8 @@
             // 
             // groupBox9
             // 
-            this.groupBox9.Controls.Add(this.btnLearnClass);
             this.groupBox9.Controls.Add(this.btnAddNPC);
+            this.groupBox9.Controls.Add(this.cbUseState);
             this.groupBox9.Controls.Add(this.btnLogin);
             this.groupBox9.Location = new System.Drawing.Point(350, 31);
             this.groupBox9.Name = "groupBox9";
@@ -1815,7 +1885,6 @@
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.btnAbandomQuest);
-            this.groupBox7.Controls.Add(this.cbUseState);
             this.groupBox7.Controls.Add(this.btnReturnQuest);
             this.groupBox7.Controls.Add(this.label39);
             this.groupBox7.Controls.Add(this.label40);
@@ -1842,12 +1911,13 @@
             // cbUseState
             // 
             this.cbUseState.AutoSize = true;
-            this.cbUseState.Location = new System.Drawing.Point(210, 48);
+            this.cbUseState.Location = new System.Drawing.Point(20, 59);
             this.cbUseState.Name = "cbUseState";
             this.cbUseState.Size = new System.Drawing.Size(116, 17);
             this.cbUseState.TabIndex = 70;
             this.cbUseState.Text = "Use MoveTo State";
             this.cbUseState.UseVisualStyleBackColor = true;
+            this.cbUseState.CheckedChanged += new System.EventHandler(this.cbUseState_CheckedChanged);
             // 
             // btnReturnQuest
             // 
@@ -2194,15 +2264,14 @@
             this.toolStripStatusLabel3.Size = new System.Drawing.Size(59, 17);
             this.toolStripStatusLabel3.Text = "UNKNOWN";
             // 
-            // btnLearnClass
+            // labelNPC
             // 
-            this.btnLearnClass.Location = new System.Drawing.Point(20, 50);
-            this.btnLearnClass.Name = "btnLearnClass";
-            this.btnLearnClass.Size = new System.Drawing.Size(132, 23);
-            this.btnLearnClass.TabIndex = 76;
-            this.btnLearnClass.Text = "Move && Learn Class Skill";
-            this.btnLearnClass.UseVisualStyleBackColor = true;
-            this.btnLearnClass.Click += new System.EventHandler(this.btnLearnClass_Click);
+            this.labelNPC.AutoSize = true;
+            this.labelNPC.Location = new System.Drawing.Point(118, 53);
+            this.labelNPC.Name = "labelNPC";
+            this.labelNPC.Size = new System.Drawing.Size(32, 13);
+            this.labelNPC.TabIndex = 80;
+            this.labelNPC.Text = "NPC:";
             // 
             // MainForm
             // 
@@ -2257,8 +2326,11 @@
             this.tabPageDebug.PerformLayout();
             this.tabPageDebug2.ResumeLayout(false);
             this.tabPageDebug2.PerformLayout();
+            this.gbServices.ResumeLayout(false);
+            this.gbServices.PerformLayout();
             this.gbClickToMove.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
@@ -2469,7 +2541,12 @@
         private System.Windows.Forms.Button btnFollow;
         private System.Windows.Forms.Button btnAbandomQuest;
         private System.Windows.Forms.Button btnReloadXmlData;
-        private System.Windows.Forms.Button btnLearnClass;
+        private System.Windows.Forms.Button btnMoveInteractService;
+        private System.Windows.Forms.GroupBox gbServices;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.ComboBox cbServiceList;
+        private System.Windows.Forms.Button btnLearnSkill;
+        private System.Windows.Forms.Label labelNPC;
     }
 }
 

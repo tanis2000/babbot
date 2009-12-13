@@ -60,6 +60,13 @@ Lots of credits to http://wowprogramming.com/
 
     <!-- Lua Functions -->
     <lua fnew_pattern="(function()\r\n  \r\nend)()">
+      
+      <!-- 
+           *****************************
+           **       Auto Login        **
+           *****************************
+       -->
+      
       <!-- SetGlueState -->
       <function name="SetGlueState">
         <parameters size="4">
@@ -252,6 +259,14 @@ end)()]]>
 end)()]]></text>
       </function>
 
+      <!-- endregion Auto Login -->
+
+      <!-- 
+           **************************
+           **       Talents        **
+           **************************
+       -->
+      
       <!-- GetAvailTalentPoints -->
       <function name="GetAvailTalentPoints">
         <return size="2">
@@ -307,35 +322,14 @@ end)()]]></text>
 end)()]]></text>
       </function>
 
-      <!-- SetTrainerAvailableFilter -->
-      <function name="SetTrainerAvailableFilter">
-        <text><![CDATA[SetTrainerServiceTypeFilter("available" , 1, 1)]]></text>
-      </function>
-
-      <!-- GetNumTrainerServices -->
-        <function name="GetNumTrainerServices">
-        <return size="1">
-          0 - the number of entries in the trainer service listing. 
-			Entries include both group headers and individual trainer services 
-			(i.e spells or recipes to be purchased). Reflects the list as it should 
-			currently be displayed, not necessarily the complete list -- if headers 
-			are collapsed or a filter is enabled, a smaller number will be returned
-        </return>
-        <text><![CDATA[(function()
-  return GetNumTrainerServices()
-end)()]]></text>
-      </function>
-
-      <!-- BuyTrainerService -->
-        <function name="BuyTrainerService">
-        <parameters size="1">
-            0 - Index of the trainer service
-        </parameters>
-        <text><![CDATA[(function()
-  BuyTrainerService({0})
-end)()]]></text>
-      </function>
-
+      <!-- endregion Talents -->
+      
+      <!-- 
+           ***********************
+           **       Gossip      **
+           ***********************
+       -->
+      
       <!-- GetGossipOptions -->
       <function name="GetGossipOptions">
         <return size="-1">
@@ -399,67 +393,6 @@ end)()]]>
     end
     return idx, txt
 end)()]]></text>
-      </function>
-      
-      <!-- InteractUnit-->
-      <function name="InteractWithTarget">
-        <text>
-          <!-- Unit should be targeted before call this function -->
-          <![CDATA[InteractUnit("target")]]>
-        </text>
-      </function>
-      
-      <!-- GetVendorInfo -->
-      <function name="GetVendorInfo">
-      <!-- Player should be interacting with vendor before call this function -->
-        <return size="3">
-        0 - Is Vendor can repear
-        1 - Does Vendor has water
-        2 - Does Vendor has food
-        </return>
-        <text><![CDATA[(function()
-  local hasWater, hasFood
-  local canRepair = CanMerchantRepair()
-  
-  ; TODO Check for water & food
-  return canRepair, hasWater, hasFood
-end)()]]></text>
-      </function>
-
-      <!-- UnitClass -->
-      <function name="GetUnitInfo">
-        <parameters size="1">
-          0 - unit String - the unitId to query, e.g. "player"
-        </parameters>
-        <return size="5">
-        </return>
-          0 - localized class
-            The localized class of the specified unit as a string. e.g. "Mage", "Warrior", "Guerrier", etc.
-
-          1 - english class
-            The fully capitalized english class name with no spaces, e.g. "MAGE", "WARRIOR", "DEATHKNIGHT", etc.
-
-          2 - localized race
-        
-          3 - english race (TROLL, HUMAN)
-        
-          4 - gender - The unit's gender (number)
-            * 1 - Neuter / Unknown
-            * 2 - Male
-            * 3 - Female
-
-        <text>
-          <![CDATA[(function()
-  class1, class2 = UnitClass("{0}")
-  race1, race2 = UnitRace("{0}")
-  
-  if (race2) then
-    race2 = string.upper(race2)
-  end
-  
-  return class1, class2, race1, race2,  UnitSex("{0}")
-end)()]]>
-        </text>
       </function>
       
       <!-- IsGossipFrameOpen -->
@@ -575,14 +508,14 @@ end)()]]></text>
 
     d1 = GetTitleText()
 
-    if (GetRewardText() ~= "") then
+    if (QuestFrameRewardPanel:IsShown()) then
       qt = "_end"
-    elseif (GetProgressText() ~= "") then
+    elseif (QuestFrameProgressPanel:IsShown()) then
       qt = "_progress"
-    elseif (GetQuestText() ~= "") then
+    elseif (QuestFrameGreetingPanel:IsShown()) then
       qt = "_start"
     else
-      return null
+      return null, null, null, null
     end
 
         
@@ -634,9 +567,6 @@ end)()]]></text>
      end
         
     -- Done with quest
-    if (auto_close) then
-      CloseQuest()
-    end
   elseif (BankFrame and BankFrame:IsShown()) then
     service = "banker"
     if (auto_close) then
@@ -693,18 +623,6 @@ end)()]]></text>
       </function>
 
       <!-- name -->
-      <function name="TargetUnit">
-        <parameters size="1">
-          0 - Exact Unit Name
-        </parameters>
-        <text>
-          <![CDATA[(function()
-  TargetUnit("{0}" , true)   
-end)()]]>
-        </text>
-      </function>
-
-      <!-- name -->
       <function name="SelectGossipAvailableQuest">
         <parameters size="1">
           0 - index 
@@ -716,7 +634,7 @@ end)()]]>
         </text>
       </function>
 
-      <!-- name -->
+      <!-- SelectGossipActiveQuest -->
       <function name="SelectGossipActiveQuest">
         <parameters size="1">
           0 - index
@@ -727,7 +645,32 @@ end)()]]>
           <![CDATA[SelectGossipActiveQuest({0})]]>
         </text>
       </function>
-      
+
+      <!-- IsNpcFrameOpen -->
+      <function name="IsNpcFrameOpen">
+        <parameters size="1">
+          0 - Frame Name as "Quest" of "Gossip"
+        </parameters>
+        <return size="1">
+          0 - 1 if open and 0 if not
+        </return>
+        <text>
+          <![CDATA[(function()
+  if ({0}Frame and {0}Frame:IsShown()) then
+    return 1
+  else
+    return 0
+  end
+end)()]]>
+        </text>
+      </function>
+
+      <!-- 
+           ***********************
+           **       Quest       **
+           ***********************
+       -->
+
       <!-- AcceptQuest -->
         <function name="AcceptQuest">
         <text>
@@ -743,24 +686,6 @@ end)()]]>
         <text>
           <![CDATA[(function()
    GetQuestReward({0})
-end)()]]>
-        </text>
-      </function>
-
-      <!-- GetCurrentMapInfo -->
-      <function name="GetCurrentMapInfo">
-        <parameters />
-        <return size="2">
-          0 - Continent ID
-          1 - zoneName
-            String - zone name (localized).
-        </return>
-        <text>
-          <![CDATA[(function()
-	SetMapToCurrentZone()
-	local continent = GetCurrentMapContinent()
-  local zone = GetZoneText()
-	return continent, zone
 end)()]]>
         </text>
       </function>
@@ -847,24 +772,6 @@ end)()]]>
 end)()]]></text>
       </function>
 
-      <!-- IsNpcFrameOpen -->
-      <function name="IsNpcFrameOpen">
-        <parameters size="1">
-          0 - Frame Name as "Quest" of "Gossip"
-        </parameters>
-        <return size="1">
-          0 - 1 if open and 0 if not
-        </return>
-        <text>
-          <![CDATA[(function()
-  if ({0}Frame and {0}Frame:IsShown()) then
-    return 1
-  else
-    return 0
-  end
-end)()]]></text>
-      </function>
-
       <!-- AbandonQuest -->
       <function name="AbandonQuest">
         <text>
@@ -894,16 +801,6 @@ end)()]]>
   
   return name, items
 end)()]]>
-        </text>
-      </function>
-
-      <!-- OpenFrame -->
-      <function name="ToggleFrame">
-        <parameters size="1">
-          0 - Toon frame name as "QuestLog" etc
-        </parameters>
-        <text>
-          <![CDATA[ToggleFrame({0}Frame)]]>
         </text>
       </function>
 
@@ -967,6 +864,195 @@ end)()]]>
 end)()]]>
         </text>
       </function>
+
+      <!-- CompleteQuest -->
+      <function name="CompleteQuest">
+        <text>
+          <![CDATA[CompleteQuest()]]>
+        </text>
+      </function>
+
+      <!-- 
+           *********************
+           **       Misc      **
+           *********************
+       -->
+      
+      <!-- InteractUnit-->
+      <function name="InteractWithTarget">
+        <text>
+          <!-- Unit should be targeted before call this function -->
+          <![CDATA[InteractUnit("target")]]>
+        </text>
+      </function>
+
+      <!-- GetVendorInfo -->
+      <function name="GetVendorInfo">
+        <!-- Player should be interacting with vendor before call this function -->
+        <return size="3">
+          0 - Is Vendor can repear
+          1 - Does Vendor has water
+          2 - Does Vendor has food
+        </return>
+        <text>
+          <![CDATA[(function()
+  local hasWater, hasFood
+  local canRepair = CanMerchantRepair()
+  
+  ; TODO Check for water & food
+  return canRepair, hasWater, hasFood
+end)()]]>
+        </text>
+      </function>
+
+      <!-- UnitClass -->
+      <function name="GetUnitInfo">
+        <parameters size="1">
+          0 - unit String - the unitId to query, e.g. "player"
+        </parameters>
+        <return size="5">
+        </return>
+        0 - localized class
+        The localized class of the specified unit as a string. e.g. "Mage", "Warrior", "Guerrier", etc.
+
+        1 - english class
+        The fully capitalized english class name with no spaces, e.g. "MAGE", "WARRIOR", "DEATHKNIGHT", etc.
+
+        2 - localized race
+
+        3 - english race (TROLL, HUMAN)
+
+        4 - gender - The unit's gender (number)
+        * 1 - Neuter / Unknown
+        * 2 - Male
+        * 3 - Female
+
+        <text>
+          <![CDATA[(function()
+  class1, class2 = UnitClass("{0}")
+  race1, race2 = UnitRace("{0}")
+  
+  if (race2) then
+    race2 = string.upper(race2)
+  end
+  
+  return class1, class2, race1, race2,  UnitSex("{0}")
+end)()]]>
+        </text>
+      </function>
+
+      <!-- Open Toon Local Frame -->
+      <function name="ToggleFrame">
+        <parameters size="1">
+          0 - Toon frame name as "QuestLog", "Achivements" etc
+        </parameters>
+        <text>
+          <![CDATA[ToggleFrame({0}Frame)]]>
+        </text>
+      </function>
+
+      <!-- GetCurrentMapInfo -->
+      <function name="GetCurrentMapInfo">
+        <parameters />
+        <return size="2">
+          0 - Continent ID
+          1 - zoneName
+          String - zone name (localized).
+        </return>
+        <text>
+          <![CDATA[(function()
+	SetMapToCurrentZone()
+	local continent = GetCurrentMapContinent()
+  local zone = GetZoneText()
+	return continent, zone
+end)()]]>
+        </text>
+      </function>
+
+      <!-- TargetUnit -->
+      <function name="TargetUnit">
+        <parameters size="1">
+          0 - Exact Unit Name
+        </parameters>
+        <text>
+          <![CDATA[(function()
+  TargetUnit("{0}" , true)   
+end)()]]>
+        </text>
+      </function>
+
+      
+      <!-- EquipItemByName -->
+        <function name="EquipItemByName">
+        <parameters size="1">
+          0 - Item Name
+        </parameters>
+        <text>
+          <![CDATA[EquipItemByName("{0}")]]>
+        </text>
+      </function>
+      
+      <!-- 
+           **************************
+           **       Trainer        **
+           **************************
+       -->
+      
+      <!-- SetTrainerAvailableFilter -->
+      <function name="SetTrainerAvailableFilter">
+        <text><![CDATA[SetTrainerServiceTypeFilter("available" , 1, 1)]]></text>
+      </function>
+
+      <!-- BuyTrainerService -->
+      <function name="BuyTrainerService">
+        <parameters size="1">
+          0 - Index of the trainer service
+        </parameters>
+        <text>
+          <![CDATA[(function()
+  BuyTrainerService({0})
+end)()]]>
+        </text>
+      </function>
+
+      <!-- name -->
+      <function name="GetServiceIdxList">
+        <return size="1">
+          0 - line in format idx,service::idx,service:: ... of 
+          of each available skill player can afford to buy
+          
+          for ex 2:Charge,5:100:Thunder Strike and so on
+        </return>
+        <text>
+          <![CDATA[(function()
+  local list = ""
+  
+  num = GetNumTrainerServices()
+  total_money = GetMoney()
+  
+  for i = 1, num do
+    name, rank, type = GetTrainerServiceInfo(index)
+    if (type == "available") then
+      if (list ~= "") then
+        list = list .. "::"
+      end
+      
+      -- Check if we can afford it
+      money = GetTrainerServiceCost(i)
+      if (money > total_money) then
+        break;
+      else
+        total_money = total_money - money
+      
+      -- Yes, you can :)
+      list = list .. i .. "," .. name .. "," .. rank
+    end
+  end
+  
+  return list
+end)()]]>
+        </text>
+      </function>
         
       <!-- Template for new function
       <!- - name - ->
@@ -980,7 +1066,7 @@ end)()]]>
 end)()]]></text>
       </function>
       -->
-      
+
     </lua>
     
     <!-- Set of configuration for talent processing

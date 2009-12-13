@@ -1693,8 +1693,7 @@ namespace BabBot.Forms
             try
             {
                 btnGetQuest.Enabled = false;
-                QuestHelper.AcceptQuest((Quest)cbQuestList.SelectedItem, 
-                    cbUseState.Checked, "quest_test");
+                QuestHelper.AcceptQuest((Quest)cbQuestList.SelectedItem, "quest_test");
             }
             catch (QuestProcessingException qe)
             {
@@ -1748,7 +1747,8 @@ namespace BabBot.Forms
             {
                 btnReturnQuest.Enabled = false;
                 QuestHelper.DeliverQuest((Quest)cbQuestList.SelectedItem,
-                    "quest_test", cbUseState.Checked, cbQuestChoiceReward.SelectedIndex + 1);
+                    "quest_test", cbQuestChoiceReward.SelectedIndex + 1,
+                    cbQuestChoiceReward.SelectedItem);
             }
             catch (QuestProcessingException qe)
             {
@@ -1811,9 +1811,44 @@ namespace BabBot.Forms
             ProcessManager.AfterXmlInit();
         }
 
-        private void btnLearnClass_Click(object sender, EventArgs e)
+        private void btnMoveInteractService_Click(object sender, EventArgs e)
         {
             // Find nearest class trainer
+            try
+            {
+                btnMoveInteractService.Enabled = false;
+                NPC npc = NpcHelper.MoveInteractService(cbServiceList.SelectedItem.ToString(), "npc");
+                labelNPC.Tag = npc;
+                labelNPC.Text = "NPC: " + npc.Name;
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("Service Move Error: " + ex.Message);
+            }
+            finally
+            {
+                btnMoveInteractService.Enabled = true;
+            }
+
+        }
+
+        private void btnLearnSkill_Click(object sender, EventArgs e)
+        {
+            // Learn all skills
+            string skill = cbServiceList.SelectedItem.ToString();
+            NpcHelper.LearnSkills(((NPC)labelNPC.Tag), skill, "npc");
+        }
+
+        private void cbServiceList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string skill = cbServiceList.SelectedItem.ToString();
+            btnLearnSkill.Enabled = (skill.Equals("class_trainer") || skill.Equals("wep_skill_trainer"));
+            btnMoveInteractService.Enabled = cbServiceList.SelectedItem != null;
+        }
+
+        private void cbUseState_CheckedChanged(object sender, EventArgs e)
+        {
+            NpcHelper.UseState = cbUseState.Checked;
         }
     }
 }

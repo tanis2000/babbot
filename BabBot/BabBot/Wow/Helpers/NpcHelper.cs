@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 
 namespace BabBot.Wow.Helpers
 {
+    #region Exceptions
+
     public class NpcInteractException : Exception
     {
         public NpcInteractException()
@@ -20,6 +22,12 @@ namespace BabBot.Wow.Helpers
         public NpcInteractException(string err)
             : base(err) { }
 
+    }
+
+    public class NPCNotFountException : Exception
+    {
+        public NPCNotFountException(string service)
+            : base("In toon's area no NPC found for service: " + service) {}
     }
 
     public class CantReachNpcException : Exception
@@ -33,12 +41,68 @@ namespace BabBot.Wow.Helpers
         public NpcProcessingException(string msg)
             : base(msg) { }
     }
+
+    public class MultiZoneNotSupportedException : Exception
+    {
+        public MultiZoneNotSupportedException()
+            : base("Multi-zone traveling not supported (yet)") { }
+    }
+
+    public class UnknownServiceException : Exception
+    {
+        public UnknownServiceException(string srv)
+            : base("Unknown service :" + srv) { }
+    }
+
+    public class ServiceNotFound : Exception
+    {
+        public ServiceNotFound(string srv)
+            : base("Service " + srv + " not found at target NPC") { }
+    }
+
+
+    #endregion
+
+    #region Supported Classes
+
+    public class NpcDest
+    {
+        public NPC Npc { get; private set; }
+        public Vector3D Waypoint { get; private set; }
+
+        public void Init(NPC npc, Vector3D vector)
+        {
+            Npc = npc;
+            Waypoint = vector;
+        }
+    }
+
+    #endregion
+
     /// <summary>
     /// Helper Class for generic NPC operations
     /// </summary>
     public static class NpcHelper
     {
+        // For test use
+        public static bool UseState;
+
         static List<NPC> SaveList = new List<NPC>();
+
+        static Dictionary<string, string> 
+            ServiceFrameTable = new Dictionary<string, string>();
+        
+        static NpcHelper()
+        {
+            ServiceFrameTable.Add("gossip", "Gossip");
+            ServiceFrameTable.Add("class_trainer", "ClassTrainer");
+            ServiceFrameTable.Add("vendor", "Merchant");
+            ServiceFrameTable.Add("banker", "Bank");
+            ServiceFrameTable.Add("wep_skill_trainer", "Skill");
+            ServiceFrameTable.Add("trade_skill_trainer", "TradeSkill");
+            ServiceFrameTable.Add("battlemaster", "Battlefield");
+            ServiceFrameTable.Add("taxi", "Taxi");
+        }
 
         /// <summary>
         /// Execute lua call and return parameters
@@ -52,8 +116,7 @@ namespace BabBot.Wow.Helpers
 
         private static string[] DoGetNpcDialogInfo(bool auto_close)
         {
-            return ProcessManager.Injector.Lua_ExecByName(
-                    "GetNpcDialogInfo", new string[] { 
+            return LuaHelper.Exec("GetNpcDialogInfo", new string[] { 
                         Convert.ToString(auto_close).ToLower()});
         }
 
@@ -97,7 +160,7 @@ namespace BabBot.Wow.Helpers
                             bool auto_close, string lfs)
         {
             Output.Instance.Log(lfs, "Interacting with NPC '" + npc_name + "' ...");
-            ProcessManager.Injector.Lua_ExecByName("InteractWithTarget");
+            LuaHelper.Exec("InteractWithTarget");
             // ProcessManager.Player.ClickToMoveInteract(ProcessManager.Player.CurTargetGuid);
 
             // IF NPC doesn't have any quests and just on gossip option the WoW
@@ -125,7 +188,7 @@ namespace BabBot.Wow.Helpers
             return fparams;
         }
 
-        public static void MoveToNPC(NPC npc, bool use_state, string lfs)
+        public static void MoveToNPC(NPC npc, string lfs)
         {
             WowPlayer player = ProcessManager.Player;
 
@@ -142,9 +205,7 @@ namespace BabBot.Wow.Helpers
             Zone z = c.FindZoneByName(player.ZoneText);
 
             if (z == null)
-                throw new CantReachNpcException(npc.Name, 
-                    "NPC located on different zone. " +
-                    "Multi-zone traveling not implemented yet.");
+                new MultiZoneNotSupportedException();
 
             // Check if NPC has any waypoints assigned
             if (z.Items.Length == 0)
@@ -156,7 +217,7 @@ namespace BabBot.Wow.Helpers
             Vector3D npc_loc = z.Items[0];
             Output.Instance.Debug(lfs, "Usning NPC waypoint: " + npc_loc);
 
-            if (!MoveToDest(npc_loc, use_state, lfs))
+            if (!MoveToDest(npc_loc, lfs))
                 throw new CantReachNpcException(npc.Name, "NPC still away after " +
                     (ProcessManager.AppConfig.MaxTargetGetRetries + 1) + " tries");
         }
@@ -165,8 +226,7 @@ namespace BabBot.Wow.Helpers
         /// Move character to destination
         /// </summary>
         /// <param name="dest"></param>
-        /// <param name="use_state">Test flag</param>
-        private static bool MoveToDest(Vector3D dest, bool use_state, string lfs)
+        private static bool MoveToDest(Vector3D dest, string lfs)
         {
             WowPlayer player = ProcessManager.Player;
 
@@ -182,52 +242,52 @@ namespace BabBot.Wow.Helpers
                 if (retry > 0)
                     Output.Instance.Log("Retrying " + retry + " of " + 
                                 max_retry + " to reach the destination");
-                if (use_state)
-            {
-                // Use MoveToState
-                MoveToState mt = new MoveToState(dest, 5F);
-                ProcessManager.Player.StateMachine.SetGlobalState(mt);
-                Output.Instance.Debug(lfs, "State: " +
-                    ProcessManager.Player.StateMachine.CurrentState);
-
-                Output.Instance.Log(lfs, "NPC coordinates located. Moving to NPC ...");
-                ProcessManager.Player.StateMachine.IsRunning = true;
-
-                Output.Instance.Debug(lfs, "State: " +
-                    ProcessManager.Player.StateMachine.CurrentState);
-                while (ProcessManager.Player.StateMachine.IsInState(typeof(MoveToState)))
+                if (UseState)
                 {
-                    Thread.Sleep(1000);
+                    // Use MoveToState
+                    MoveToState mt = new MoveToState(dest, 5F);
+                    ProcessManager.Player.StateMachine.SetGlobalState(mt);
                     Output.Instance.Debug(lfs, "State: " +
                         ProcessManager.Player.StateMachine.CurrentState);
+
+                    Output.Instance.Log(lfs, "NPC coordinates located. Moving to NPC ...");
+                    ProcessManager.Player.StateMachine.IsRunning = true;
+
+                    Output.Instance.Debug(lfs, "State: " +
+                        ProcessManager.Player.StateMachine.CurrentState);
+                    while (ProcessManager.Player.StateMachine.IsInState(typeof(MoveToState)))
+                    {
+                        Thread.Sleep(1000);
+                        Output.Instance.Debug(lfs, "State: " +
+                            ProcessManager.Player.StateMachine.CurrentState);
+                    }
                 }
-            }
-            else
-            {
-                // Click to move on each waypoint
-                // dynamically calculate time between each click 
-                // based on distance to the next waypoint
-
-                // Lets calculate path from character to NPC and move
-                Path p = ProcessManager.Caronte.CalculatePath(
-                    WaypointVector3DHelper.Vector3DToLocation(ProcessManager.Player.Location),
-                    WaypointVector3DHelper.Vector3DToLocation(dest));
-
-                // Travel path
-                int max = p.Count();
-                Vector3D vprev = dest;
-                Vector3D vnext;
-                for (int i = 0; i < max; i++)
+                else
                 {
-                    vnext = WaypointVector3DHelper.LocationToVector3D(p.Get(i));
+                    // Click to move on each waypoint
+                    // dynamically calculate time between each click 
+                    // based on distance to the next waypoint
 
-                    // Calculate travel time
-                    distance = vprev.GetDistanceTo(vnext);
-                    int t = (int)((distance / 7F) * 1000);
+                    // Lets calculate path from character to NPC and move
+                    Path p = ProcessManager.Caronte.CalculatePath(
+                        WaypointVector3DHelper.Vector3DToLocation(ProcessManager.Player.Location),
+                        WaypointVector3DHelper.Vector3DToLocation(dest));
 
-                    ProcessManager.Player.ClickToMove(vnext);
-                    Thread.Sleep(t);
-                    vprev = vnext;
+                    // Travel path
+                    int max = p.Count();
+                    Vector3D vprev = dest;
+                    Vector3D vnext;
+                    for (int i = 0; i < max; i++)
+                    {
+                        vnext = WaypointVector3DHelper.LocationToVector3D(p.Get(i));
+
+                        // Calculate travel time
+                        distance = vprev.GetDistanceTo(vnext);
+                        int t = (int)((distance / 7F) * 1000);
+
+                        ProcessManager.Player.ClickToMove(vnext);
+                        Thread.Sleep(t);
+                        vprev = vnext;
                     }
                 }
 
@@ -240,6 +300,28 @@ namespace BabBot.Wow.Helpers
             return (dest.GetDistanceTo(player.Location) < 5F);
         }
 
+        public static string[] GetGossipList(string lfs)
+        {
+            // Get list of options
+            string[] res = null;
+            Output.Instance.Debug(lfs, "Getting list of gossip options ...");
+
+            string[] opts = ProcessManager.
+                Injector.Lua_ExecByName("GetGossipOptions");
+            if (opts == null || (opts.Length == 0))
+                Output.Instance.Debug("No service detected.");
+            else
+            {
+                int max = (int)(opts.Length / 2);
+                Output.Instance.Debug(max + " service(s) detected.");
+                res = new string[max];
+                // Parse list of services
+                for (int i = 0; i < max; i++)
+                    res[i] = opts[i * 2 + 1];
+            }
+            return res;
+        }
+
         /// <summary>
         /// Check list of available NPC gossip options and click on each
         /// </summary>
@@ -248,23 +330,17 @@ namespace BabBot.Wow.Helpers
         private static bool FindAvailGossips(NPC npc, string lfs)
         {
             // Get list of options
-            string[] opts = ProcessManager.
-                Injector.Lua_ExecByName("GetGossipOptions");
-            if (opts == null || (opts.Length == 0))
-                Output.Instance.Debug("No service detected.");
-            else
+            string[] opts = GetGossipList(lfs);
+
+            if (opts == null || (opts.Length > 0))
             {
-                Output.Instance.Debug((int)(opts.Length / 2) + " service(s) detected.");
+                Output.Instance.Log("Checking each available option");
+                // TODO We only need test standard service but not talking one, especially teleporting one
 
-                // Parse list of services
-                int max_opts = (int)(opts.Length / 2);
-                for (int i = 0; i < max_opts; i++)
+                for (int i = 0; i < opts.Length; i++)
                 {
-                    string gossip = opts[i * 2];
-                    string service = opts[i * 2 + 1];
-
-                    SelectNpcOption(npc, "SelectGossipOption", 
-                                    i + 1, max_opts, lfs);
+                    Output.Instance.Debug("Selecting gossip option: " + i + "; " + opts[i]);
+                    SelectNpcOption(npc, "SelectGossipOption", i + 1, opts.Length, lfs);
                 }
             }
 
@@ -275,8 +351,8 @@ namespace BabBot.Wow.Helpers
                 string lua_fname, int idx, int max, string lfs)
         {
             // Choose gossip option and check npc again
-            ProcessManager.Injector.Lua_ExecByName(
-                lua_fname, new string[] { Convert.ToString(idx) });
+            Output.Instance.Debug("Execute: " + lua_fname + "; idx: " + idx);
+            LuaHelper.Exec(lua_fname, idx);
 
             if (!AddTargetNpcInfo(npc, lfs))
                 return false;
@@ -298,8 +374,7 @@ namespace BabBot.Wow.Helpers
             do
             {
                 Thread.Sleep(1000);
-                is_open = ProcessManager.Injector.Lua_ExecByName(
-                    "IsNpcFrameOpen", new string[] { fname })[0].Equals("1");
+                is_open = LuaHelper.Exec("IsNpcFrameOpen", fname)[0].Equals("1");
             } while (!is_open &&
                 ((DateTime.Now - dt).TotalMilliseconds <=
                     ProcessManager.AppConfig.MaxNpcInteractTime));
@@ -488,10 +563,6 @@ namespace BabBot.Wow.Helpers
                         return false;
                 }
 
-                /* if (opti[1] > 0)
-                    if (!AddNpcQuestEnd(npc, fparams, lfs))
-                        return false; */
-
                 if (opti[2] > 0)
                     if (!FindAvailGossips(npc, lfs))
                         return false;
@@ -658,9 +729,29 @@ namespace BabBot.Wow.Helpers
             return false;
         }
 
-        public static NPC FindNearestService(string service)
+        public static NPC MoveInteractService(string service, string lfs)
+        {
+            NpcDest dest = FindNearestService(service);
+            if (dest == null)
+                throw new NPCNotFountException(service);
+
+            // Move to NPC
+            // If it failed it throw exception. I know :)
+            MoveToDest(dest.Waypoint, lfs);
+
+            // Interact with NPC and select given service
+            InteractNpc(dest.Npc.Name, false, lfs);
+
+            return dest.Npc;
+        }
+
+
+        private static NpcDest FindNearestService(string service)
         {
             List<NPC> list = new List<NPC>();
+            int cid = ProcessManager.Player.ContinentID;
+            string zone = (string) ProcessManager.Player.ZoneText.Clone();
+            Vector3D loc = (Vector3D) ProcessManager.Player.Location.Clone();
 
             foreach (NPC npc in ProcessManager.CurWoWVersion.NPCData.Table.Values)
                 if (npc.Services.Table.ContainsKey(service))
@@ -670,14 +761,138 @@ namespace BabBot.Wow.Helpers
                 return null;
 
             // Find closest
-            float dist;
+            float dist = -1;
             foreach (NPC npc in list)
             {
                 // Check if NPC on the same continent/zone
+                bool f = npc.Continents.Table.ContainsKey(Convert.ToString(cid));
+                if (!f)
+                    throw new MultiZoneNotSupportedException();
+
+                ContinentId c = npc.Continents.Table[Convert.ToString(cid)];
+                f = c.Table.ContainsKey(zone);
+                if (!f)
+                    throw new MultiZoneNotSupportedException();
+
+                Zone z = c.Table[zone];
+                NpcDest res = new NpcDest();
+
+                foreach (Vector3D v in z.List)
+                {
+                    // Calculate straight distance to each NPC waypoints
+                    if (dist < 0)
+                    {
+                        res.Init(npc, v);
+                        dist = loc.GetDistanceTo(v);
+                    }
+                    else
+                    {
+                        float dist1 = loc.GetDistanceTo(v);
+                        if (dist1 < dist)
+                        {
+                            dist = dist1;
+                            res.Init(npc, v);
+                        }
+                    }
+                }
             }
 
             return null;
         }
+
+        #endregion
+
+        #region Skills
+
+        private static void SelectService(string npc_name, string service, string lfs)
+        {
+            string dialog = null;
+
+            try
+            {
+                dialog = ServiceFrameTable[service];
+            }
+            catch
+            {
+                throw new UnknownServiceException(service);
+            }
+
+
+            // Get open Frame and make sure it's the correct one
+            string[] dinfo = InteractNpc(npc_name, false, lfs);
+            if (!dinfo[0].Equals(service))
+            {
+                // Get available services
+                string[] srv = GetGossipList(lfs);
+
+                if (string.IsNullOrEmpty(service) || (srv.Length == 0))
+                    throw new ServiceNotFound(service);
+
+                bool f = false;
+                for(int i = 0; i < srv.Length; i++)
+                {
+                    if (srv[i].Equals(service))
+                    {
+                        Output.Instance.Debug("Selecting service: " + service + " at index: " + i);
+                        
+                        LuaHelper.Exec("SelectGossipOption", i + 1);
+                        Output.Instance.Debug("Waiting " + service + " dialog to open");
+
+                        WaitDialogOpen(dialog, lfs);
+                        f = true;
+                    }
+                }
+
+                if (!f)
+                    throw new ServiceNotFound(service);
+
+            }
+
+        }
+
+        public static void LearnSkills(NPC npc, string skill, string lfs)
+        {
+            SelectService(npc.Name, skill, lfs);
+            // Filter by available only
+            LuaHelper.Exec("SetTrainerAvailableFilter");
+            // Wait few sec to apply filter
+            Thread.Sleep(2000);
+
+            // Do until all we can afford is learned
+            bool done;
+            do
+            {
+                // Get # of avail services
+                string[] dinfo = LuaHelper.Exec("GetServiceIdxList");
+                string cur_set = dinfo[0];
+                done = string.IsNullOrEmpty(cur_set);
+                if (!done)
+                {
+                    string[] set1 = cur_set.Split(new string[] { "::" },
+                                    StringSplitOptions.RemoveEmptyEntries);
+                    string[] set2 = set1[0].Split(',');
+
+                    int idx;
+                    try
+                    {
+                        idx = Convert.ToInt32(set2[0]);
+                    }
+                    catch
+                    {
+                        throw new Exception("Unable recognize skill index: " + set2[0] + 
+                            " from class training service list");
+                    }
+
+
+                    Output.Instance.Log("Learning: " + 
+                                        set2[1] + " at idx: " + idx);
+                    LuaHelper.Exec("BuyTrainerService", idx);
+                    // Wait few sec to apply
+                    Thread.Sleep(2000);
+                }
+            } while (!done);
+        }
+
         #endregion
     }
 }

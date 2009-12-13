@@ -96,8 +96,7 @@ namespace BabBot.Wow.Helpers
             return -1;
         }
 
-        private static void ProcessQuestRequest(QuestReq req,
-                                        Quest q, string lfs, bool use_state)
+        private static void ProcessQuestRequest(QuestReq req, Quest q, string lfs)
         {
             if (!DoBeforeStart(req, q, lfs))
                 return;
@@ -122,7 +121,7 @@ namespace BabBot.Wow.Helpers
             {
                 Output.Instance.Log(lfs, "Moving to quest " +
                                     req.NpcDestText + " ... ");
-                NpcHelper.MoveToNPC(npc, use_state, lfs);
+                NpcHelper.MoveToNPC(npc, lfs);
             }
             catch (CantReachNpcException e1)
             {
@@ -183,10 +182,9 @@ namespace BabBot.Wow.Helpers
         /// Accept currently opened quest
         /// </summary>
         /// <param name="q">Quest</param>
-        /// <param name="use_state">Test flag for movement</param>
-        public static void AcceptQuest(Quest q, bool use_state, string lfs)
+        public static void AcceptQuest(Quest q, string lfs)
         {
-            ProcessQuestRequest(MakeAcceptQuestReq(), q, lfs, use_state);
+            ProcessQuestRequest(MakeAcceptQuestReq(), q, lfs);
         }
 
         /// <summary>
@@ -221,9 +219,7 @@ namespace BabBot.Wow.Helpers
 
                 // Selecting quest
                 Output.Instance.Debug(lfs, "Selecting quest by Id: " + idx);
-                ProcessManager.Injector.Lua_ExecByName(
-                    "SelectGossip" + req.ProcName + "Quest",
-                    new string[] { Convert.ToString(idx) });
+                LuaHelper.Exec("SelectGossip" + req.ProcName + "Quest", idx);
 
                 // Wait for quest frame pop up
                 try
@@ -254,10 +250,14 @@ namespace BabBot.Wow.Helpers
                 return (!string.IsNullOrEmpty(title) && title.Equals(q.Title));
             }
             else if (cur_service.Equals("quest_progress"))
-                // TODO Quest progress
+            {
+                // Quest progress
                 // Click continue and check next screen
-                // return CheckQuest(q, null, req, lfs);
-                return false;
+                LuaHelper.Exec("CompleteQuest");
+                // Wait to change quest frame
+                Thread.Sleep(2000);
+                return CheckQuest(q, null, req, lfs);
+            }
             else if (cur_service.Equals("quest_end"))
                 return true;
             else
@@ -277,8 +277,7 @@ namespace BabBot.Wow.Helpers
         public static int FindLogQuest(string title, string lfs)
         {
             Output.Instance.Debug(lfs, "Looking for quest index in toon quest log ...");
-            string[] ret = ProcessManager.Injector.Lua_ExecByName("FindLogQuest",
-                new string[] { title });
+            string[] ret = LuaHelper.Exec("FindLogQuest", title);
 
             // Trying convert result
             int idx = 0;
@@ -297,8 +296,7 @@ namespace BabBot.Wow.Helpers
 
         public static string[] GetQuestObjectives(Quest q)
         {
-            string[] ret = ProcessManager.Injector.Lua_ExecByName("GetQuestObjectives",
-                new string[] { q.Title });
+            string[] ret = LuaHelper.Exec("GetQuestObjectives", q.Title);
 
             return ret;
         }
@@ -315,8 +313,7 @@ namespace BabBot.Wow.Helpers
             }
 
             // Open QuestLogFrame
-            ProcessManager.Injector.Lua_ExecByName(
-                        "ToggleFrame", new string[] { "QuestLog" });
+            LuaHelper.Exec("ToggleFrame", "QuestLog");
             NpcHelper.WaitDialogOpen("QuestLog", lfs);
 
             string[] ret = ProcessManager.
@@ -334,7 +331,7 @@ namespace BabBot.Wow.Helpers
             {
                 // Wait to get selection activated
                 Thread.Sleep(2000);
-                ProcessManager.Injector.Lua_ExecByName("AbandonQuest");
+                LuaHelper.Exec("AbandonQuest");
                 // Wait to get abandon action activated
                 Thread.Sleep(2000);
 
@@ -347,18 +344,19 @@ namespace BabBot.Wow.Helpers
             }
         }
 
-        public static void DeliverQuest(Quest q, string lfs, bool use_state, int choice)
+        public static void DeliverQuest(Quest q, string lfs, int choice, object item)
         {
-            ProcessQuestRequest(MakeDeliveryQuestReq(choice), q, lfs, use_state);
+            ProcessQuestRequest(MakeDeliveryQuestReq(choice), q, lfs);
+
+            if (item != null)
+                LuaHelper.Exec("EquipItemByName", item.ToString());
         }
 
         private static string[] GetQuestObjectives(int quest_idx)
         {
             Output.Instance.Debug("xxx", "Checking Quest Objectives ... ");
 
-            string[] ret = ProcessManager.Injector.Lua_ExecByName(
-                "GetQuestObjectives",
-                new string[] { Convert.ToString(quest_idx) });
+            string[] ret = LuaHelper.Exec("GetQuestObjectives", quest_idx);
 
             string[] obj = new string[0];
 
@@ -440,10 +438,9 @@ namespace BabBot.Wow.Helpers
             Output.Instance.Debug(lfs, req.ActionName + "ing quest ...");
 
             if (req.ActionName.Equals("Accept"))
-                ProcessManager.Injector.Lua_ExecByName("AcceptQuest");
+                LuaHelper.Exec("AcceptQuest");
             else if (req.ActionName.Equals("Deliver"))
-                ProcessManager.Injector.Lua_ExecByName("DeliverQuest", 
-                    new string[] { Convert.ToString(req.Choice) } );
+                LuaHelper.Exec("DeliverQuest", req.Choice);
 
             // Wait a bit to update log
             Thread.Sleep(2000);
