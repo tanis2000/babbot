@@ -435,7 +435,18 @@ end)()",
         public string[] Lua_ExecByName(string fname, object[] param_list)
         {
             // Find Function
-            LuaFunction lf = FindLuaFunction(fname);
+            // Possible exception
+            LuaFunction lf = null;
+            try
+            {
+                lf = FindLuaFunction(fname);
+            }
+            catch
+            {
+                ProcessManager.TerminateOnInternalBug(ProcessManager.Bugs.LUA_NOT_FOUND,
+                                "Lua Function '" + fname + " not found");
+            }
+
             int ret_size = lf.RetSize;
             
             int[] ret_list = null;

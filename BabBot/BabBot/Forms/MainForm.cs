@@ -1318,7 +1318,9 @@ namespace BabBot.Forms
 
         private void btnAddNPC_Click(object sender, EventArgs e)
         {
-            /// TEST
+            // TEST
+            // QuestHelper.GetAvailGossipQuests();
+
             /*
             NPC npc = new NPC();
             npc.Init("Test XXX", 0, "xxx", new Vector3D());
@@ -1353,6 +1355,7 @@ namespace BabBot.Forms
             }
 
             // Switch to npc output tab
+            tabControlMain.SelectedIndex = 0;
             Output.Instance.Log("npc", 
                 "Checking NPC '" + ProcessManager.Player.CurTarget.Name + "'");
             TabPage npc_tab = tabLogs.TabPages["Npc"];
@@ -1715,8 +1718,8 @@ namespace BabBot.Forms
             try
             {
                 btnAbandomQuest.Enabled = false;
-                QuestHelper.AbandonQuest((Quest)cbQuestList.SelectedItem,
-                    "quest_test");
+                QuestHelper.AbandonQuest(((Quest)cbQuestList.
+                                SelectedItem).Title, "quest_test");
             }
             catch (QuestProcessingException qe)
             {
@@ -1745,7 +1748,7 @@ namespace BabBot.Forms
             {
                 btnReturnQuest.Enabled = false;
                 QuestHelper.DeliverQuest((Quest)cbQuestList.SelectedItem,
-                    "quest_test", cbUseState.Checked);
+                    "quest_test", cbUseState.Checked, cbQuestChoiceReward.SelectedIndex + 1);
             }
             catch (QuestProcessingException qe)
             {
@@ -1790,16 +1793,27 @@ namespace BabBot.Forms
         {
             // Bind quest list
             if (cbQuestList.DataSource == null)
-                cbQuestList.DataSource = ProcessManager.CurWoWVersion.NPCData.QuestList;
-
+            {
+                cbQuestList.DataSource =
+                    ProcessManager.CurWoWVersion.NPCData.QuestDataSource;
+                cbQuestList.DisplayMember = "Name";
+                // cbQuestList.ValueMember = "Id";
+            }
         }
 
         #endregion
 
         private void btnReloadXmlData_Click(object sender, EventArgs e)
         {
+            ProcessManager.ClearXml();
+
             ProcessManager.InitXmlData();
             ProcessManager.AfterXmlInit();
+        }
+
+        private void btnLearnClass_Click(object sender, EventArgs e)
+        {
+            // Find nearest class trainer
         }
     }
 }

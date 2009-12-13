@@ -222,6 +222,7 @@
             this.slGameStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnLearnClass = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -1742,11 +1743,12 @@
             // 
             // groupBox9
             // 
+            this.groupBox9.Controls.Add(this.btnLearnClass);
             this.groupBox9.Controls.Add(this.btnAddNPC);
             this.groupBox9.Controls.Add(this.btnLogin);
-            this.groupBox9.Location = new System.Drawing.Point(350, 61);
+            this.groupBox9.Location = new System.Drawing.Point(350, 31);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(206, 52);
+            this.groupBox9.Size = new System.Drawing.Size(206, 82);
             this.groupBox9.TabIndex = 72;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Test Buttons";
@@ -2192,6 +2194,16 @@
             this.toolStripStatusLabel3.Size = new System.Drawing.Size(59, 17);
             this.toolStripStatusLabel3.Text = "UNKNOWN";
             // 
+            // btnLearnClass
+            // 
+            this.btnLearnClass.Location = new System.Drawing.Point(20, 50);
+            this.btnLearnClass.Name = "btnLearnClass";
+            this.btnLearnClass.Size = new System.Drawing.Size(132, 23);
+            this.btnLearnClass.TabIndex = 76;
+            this.btnLearnClass.Text = "Move && Learn Class Skill";
+            this.btnLearnClass.UseVisualStyleBackColor = true;
+            this.btnLearnClass.Click += new System.EventHandler(this.btnLearnClass_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2457,6 +2469,7 @@
         private System.Windows.Forms.Button btnFollow;
         private System.Windows.Forms.Button btnAbandomQuest;
         private System.Windows.Forms.Button btnReloadXmlData;
+        private System.Windows.Forms.Button btnLearnClass;
     }
 }
 

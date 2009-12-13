@@ -75,6 +75,12 @@ namespace BabBot.Common
 
     #region IMergeable interface
 
+    public class MergeException : Exception {
+        public MergeException(string type, string value1, string value2) :
+            base(string.Format("Error merge {0} instances. Values '{1}'" +
+               " == '{2}' are identical", type, value1, value2)) { }
+    }
+
     public interface IMergeable
     {
         void MergeWith(object obj);
@@ -334,9 +340,15 @@ namespace BabBot.Common
             // Check values
             foreach (KeyValuePair<string, T> item1 in _htable)
             {
-                T item2 = t.Table[item1.Key];
-                if ((item2 == null) || !item1.Value.Equals(item2))
+                // Stupid exception if not found
+                try { 
+                    T item2 = t.Table[item1.Key];
+                    if (!item1.Value.Equals(item2))
+                        return false;
+
+                } catch {
                     return false;
+                }
             }
 
             // No differences found
@@ -369,13 +381,12 @@ namespace BabBot.Common
             foreach (KeyValuePair<string, T> item in t.Table)
                 if (!_htable.ContainsKey(item.Key))
                     _htable.Add(item.Key, item.Value);
-                else 
+                else
                     MergeItems(item);
         }
 
         public virtual void MergeItems(KeyValuePair<string, T> item)
         {
-            
         }
     }
 
@@ -517,14 +528,15 @@ namespace BabBot.Common
     /// Class with internal hashtable that needs to be serialized and have a unique id
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonIdTable<T> : CommonTable<T> where T : IMergeable
+    public abstract class CommonIdMergeTable<T> : CommonMergeTable<T> where T : IMergeable
     {
         [XmlAttribute("id")]
         public int Id;
 
-        public CommonIdTable() { }
+        public CommonIdMergeTable() { }
 
-        public CommonIdTable(int id) : base()
+        public CommonIdMergeTable(int id)
+            : base()
         {
             Id = id;
         }
@@ -536,7 +548,7 @@ namespace BabBot.Common
 
         public override bool Equals(object obj)
         {
-            return base.Equals(obj) && (((CommonIdTable<T>)obj).Id == Id);
+            return base.Equals(obj) && (((CommonIdMergeTable<T>)obj).Id == Id);
         }
     }
 
@@ -547,7 +559,7 @@ namespace BabBot.Common
     /// <typeparam name="T">Type of elements in the list</typeparam>
     public abstract class CommonList<T> : IMergeable
     {
-        internal readonly ArrayList _list;
+        internal readonly List<T> _list;
 
         [XmlIgnore]
         internal T[] Items
@@ -568,15 +580,14 @@ namespace BabBot.Common
             }
         }
 
-        [XmlIgnore]
-        public ArrayList List
+        internal List<T> List
         {
             get { return _list; }
         }
 
         public CommonList()
         {
-            _list = new ArrayList();
+            _list = new List<T>();
         }
 
         public override bool Equals(object obj)

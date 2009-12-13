@@ -329,14 +329,10 @@ namespace BabBot.Wow
 
     public class QuestConfig
     {
-        [XmlIgnore]
-        public Regex HeaderRx;
-
-        [XmlIgnore]
-        public Regex InfoRx;
-
-        [XmlIgnore]
-        public Regex DetailRx;
+        internal Regex HeaderRx;
+        internal Regex InfoRx;
+        internal Regex DetailRx;
+        internal Regex ObjectiveRx;
 
         [XmlIgnore]
         public Regex[] Patterns {
@@ -361,6 +357,13 @@ namespace BabBot.Wow
         {
             get { return DetailRx.ToString(); }
             set { DetailRx = new Regex(value); }
+        }
+
+        [XmlAttribute("objective_pattern")]
+        public string ObjectivePattern
+        {
+            get { return ObjectiveRx.ToString(); }
+            set { ObjectiveRx = new Regex(value); }
         }
 
         public QuestConfig() { }

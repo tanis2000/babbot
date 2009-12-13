@@ -309,9 +309,7 @@ end)()]]></text>
 
       <!-- SetTrainerAvailableFilter -->
       <function name="SetTrainerAvailableFilter">
-        <text><![CDATA[(function()
-  SetTrainerServiceTypeFilter("available" , 1, 1)
-end)()]]></text>
+        <text><![CDATA[SetTrainerServiceTypeFilter("available" , 1, 1)]]></text>
       </function>
 
       <!-- GetNumTrainerServices -->
@@ -362,14 +360,12 @@ end)()]]>
         </text>
     </function>
 
-    <!-- ChooseGossipOption -->
+    <!-- SelectGossipOption -->
     <function name="SelectGossipOption">
         <parameters size="1">
           0 - "gossip" index (see FindGossipIndex)
         </parameters>
-        <text><![CDATA[(function()
-  SelectGossipOption({0})
-end)()]]></text>
+        <text><![CDATA[SelectGossipOption({0})]]></text>
       </function>
 
       <!-- FindGossipIndex -->
@@ -476,7 +472,25 @@ end)()]]>
 end)()]]></text>
       </function>
 
-      <function name="GetAvailGossipQuests">
+      <function name="GetGossipQuests">
+        <parameters size="1">
+          0 - type of quests i.e "Active" or "Available"
+        </parameters>
+        <return size="-1">
+          *  name - Name of the quest (string)
+          * level - Suggested character level for attempting the quest (number)
+          * isTrivial - 1 if the quest is considered "trivial" at the player's level (rewards no XP); otherwise nil (1nil)
+          * ... - Additional name, level, isTrivial values if more than one quest is active (list)
+
+        </return>
+        <text>
+          <![CDATA[(function()
+      return GetGossip{0}Quests()
+      end)()]]>
+        </text>
+      </function>
+
+      <function name="GetActiveGossipQuests">
         <return size="-1">
           *  name - Name of the quest (string)
           * level - Suggested character level for attempting the quest (number)
@@ -519,7 +533,7 @@ end)()]]></text>
               
             * quest -
               1 - quest header in format according "quests.header_pattern" below:
-                quest level::quest title::quest text::quest objectives
+                quest title::quest text::quest objectives
               2 - general quest info in format according "quests.info_pattern" below:
                 Learned Spell,isTradeskillSpell,isSpellLearned,
                   NumQuestItems,NumQuestRewards,NumQuestChoices
@@ -559,14 +573,14 @@ end)()]]></text>
   elseif (QuestFrame and QuestFrame:IsShown()) then
     service = "quest"
 
-    title = GetTitleText()
+    d1 = GetTitleText()
+
     if (GetRewardText() ~= "") then
-      d1 = title
       qt = "_end"
-    elseif (GetQuestText() ~= "") then
-      qt = "_start"
     elseif (GetProgressText() ~= "") then
       qt = "_progress"
+    elseif (GetQuestText() ~= "") then
+      qt = "_start"
     else
       return null
     end
@@ -574,12 +588,15 @@ end)()]]></text>
         
     service = service .. qt
     if (service ~= "quest_start") then
+      if (auto_close) then
+        CloseQuest()
+      end
+      
       return service, d1, d2, d3
     end
 
     -- Returning quest level as char level
-    d1 = UnitLevel("player") .. "::" .. title .. 
-       "::" .. GetQuestText() .. "::" .. GetObjectiveText()
+    d1 = d1 .. "::" .. GetQuestText() .. "::" .. GetObjectiveText()
 
     q = {{"required", "reward", "choice"}}
 
@@ -659,9 +676,19 @@ end)()]]></text>
         0 - number of available quests
         1 - number of active quests
         2 - number of services
+        
+        If no gossip/service available NPC window closed
         </return>
-        <text><![CDATA[(function()
-  return GetNumGossipAvailableQuests(), GetNumGossipActiveQuests(), GetNumGossipOptions()
+        <text>
+          <![CDATA[(function()
+  avail_quest = GetNumGossipAvailableQuests()
+  active_quest = GetNumGossipActiveQuests()
+  options = GetNumGossipOptions()
+  
+  if ((avail_quest == 0) and (active_quest == 0) and (options == 0)) then
+    CloseGossip()
+  end
+  return avail_quest, active_quest, options
 end)()]]></text>
       </function>
 
@@ -685,9 +712,19 @@ end)()]]>
             Gossip NPC (between 1 and GetNumGossipAvailableQuests()) (number)
         </parameters>
         <text>
-          <![CDATA[(function()
-  SelectGossipAvailableQuest({0})
-end)()]]>
+          <![CDATA[SelectGossipAvailableQuest({0})]]>
+        </text>
+      </function>
+
+      <!-- name -->
+      <function name="SelectGossipActiveQuest">
+        <parameters size="1">
+          0 - index
+          Index of a quest available from the current
+          Gossip NPC (between 1 and GetNumGossipAvailableQuests()) (number)
+        </parameters>
+        <text>
+          <![CDATA[SelectGossipActiveQuest({0})]]>
         </text>
       </function>
       
@@ -733,24 +770,42 @@ end)()]]>
         <parameters size="1">
           0 - Quest Title
         </parameters>
-        <return size="1">
+        <return size="3">
           0 - Index of the quest in Quest Log or null if quest not found
+          1 - Quest Id
+          2 - Is quest completed
         </return>
         <text>
     <![CDATA[(function()
   local idx = 0
+  local id, completed
   num_entries = GetNumQuestLogEntries()
   for i = 1, num_entries do
-    title, _, _, _, header = GetQuestLogTitle(i)
+    title, _, _, _, _, _, completed, _, id = GetQuestLogTitle(i)
     if ((header == nil) and (title == "{0}")) then
       idx = i
       break
     end
   end
-  return idx
+  return idx, id, completed
 end)()]]></text>
       </function>
-      -->
+
+      <!-- FindLogQuest -->
+      <function name="IsLogQuestCompleted">
+        <parameters size="1">
+          0 - Quest Idx
+        </parameters>
+        <return size="1">
+          0 - 1 if quest completed and null if not
+        </return>
+        <text>
+          <![CDATA[(function()
+  _, _, _, _, _, _, completed = GetQuestLogTitle({0})
+  return completed
+end)()]]>
+        </text>
+      </function>
 
       <!-- GetQuestObjectives -->
         <function name="GetQuestObjectives">
@@ -786,7 +841,7 @@ end)()]]></text>
     end
       
      res = res .. text .. "," .. type .. "," .. fres
- end
+   end
   
   return res
 end)()]]></text>
@@ -831,7 +886,9 @@ end)()]]>
         </return>
         <text>
           <![CDATA[(function()
+  SelectQuestLogEntry({0})
   SetAbandonQuest({0})
+  
   name = GetAbandonQuestName()
   items = GetAbandonQuestItems()
   
@@ -852,11 +909,65 @@ end)()]]>
 
       <!-- DeliverQuest -->
         <function name="DeliverQuest">
+          <parameters size="1">
+            1 - Reward index (0 by default)
+          </parameters>
         <text>
-          <![CDATA[GetQuestReward()]]>
+          <![CDATA[GetQuestReward({0})]]>
         </text>
       </function>
+
+      <!-- GetLogQuestInfo -->
+      <function name="GetLogQuestInfo">
+        <parameters size="1">
+          0 - Quest Title
+        </parameters>
+        <return size="5">
+           0 - quest index in toon's log
+           1 - quest id
+           2 - quest recomended level
+           3 - quest link
+           4 - list of objectives
+           
+        </return>
+        <text>
+          <![CDATA[(function()
+  -- Search for the quest
+  local idx = 0
+  local quest_id = 0
+  local level, link, objs
+  
+  num_entries = GetNumQuestLogEntries()
+  for i = 1, num_entries do
+    title, level, _, _, is_header, _, _, _, quest_id  = GetQuestLogTitle(i)
+    if ((is_header == nil) and (title == "{0}")) then
+      idx = i
+      objs = ""
+      link = GetQuestLink(idx)
+      num_obj = GetNumQuestLeaderBoards(idx)
+  
+      for i = 1, num_obj do
+        text, type, finished = GetQuestLogLeaderBoard(i, idx)
+        if (i > 1) then
+          objs = objs .. "::"
+        end
       
+        fres = 0
+        if (finished) then
+          fres = 1
+        end
+      
+        objs = objs .. text .. "," .. type .. "," .. fres
+      end
+      
+      break
+    end
+  end
+  return idx, quest_id, level, link, objs
+end)()]]>
+        </text>
+      </function>
+        
       <!-- Template for new function
       <!- - name - ->
       <function name="">
@@ -879,8 +990,8 @@ end)()]]></text>
     <talent_config lvl_start="10" delay="1000" retry="5"
       armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
     <!-- Set of configuration for quest processing -->
-    <quest_config header_pattern="^\d+::.*::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
-            detail_pattern="^.*||.*||.*$" />
+    <quest_config header_pattern="^.*::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
+            detail_pattern="^.*||.*||.*$" objective_pattern="^(.*): (\d+)/(\d+)$"/>
     <!-- global WoW version related offset and variables -->
     <globals 
         game_offset="0x12D4EA8"

@@ -60,18 +60,36 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
-        [XmlIgnore]
-        public SortedDictionary<string, Quest> QuestList = 
-                        new SortedDictionary<string, Quest>();
+        internal SortedDictionary<int, Quest> QuestList = 
+                        new SortedDictionary<int, Quest>();
+
+        // This variable is for binding
+        internal Quest[] QuestDataSource
+        {
+            get
+            {
+                Quest[] ret = new Quest[QuestList.Count];
+                QuestList.Values.CopyTo(ret, 0);
+                return ret;
+            }
+        }
 
         public NPC FindNpcByName(string name)
         {
             return FindItemByName(name);
         }
 
-        public Quest FindQuestByTitle(string title)
+        public Quest FindQuestById(int id)
         {
-            return (Quest)QuestList[title];
+            // Possible exception
+            try
+            {
+                return QuestList[id];
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public int FindQuestQtyByTitle(string title)
@@ -105,7 +123,7 @@ namespace BabBot.Wow
                         q.SrcNpc = npc;
                         if (!string.IsNullOrEmpty(q.DestNpcName))
                             q.DestNpc = (NPC) Table[q.DestNpcName];
-                        QuestList.Add(q.ToString(), q);
+                        QuestList.Add(q.Id, q);
                     }
             }
         }
@@ -239,6 +257,9 @@ namespace BabBot.Wow
             get { return Name; }
         }
 
+        [XmlAttribute("id")]
+        public int Id;
+
         [XmlAttribute("link")]
         public string Link;
 
@@ -250,8 +271,8 @@ namespace BabBot.Wow
         [XmlAttribute("idx")]
         public string Idx
         {
-            get { return (QIdx > 0) ? "" : Convert.ToString(QIdx); }
-            set { QIdx = Convert.ToInt32(value); }
+            get { return (QIdx > 0) ? null : Convert.ToString(QIdx); }
+            set {QIdx = (value == null) ? 0 : Convert.ToInt32(value); }
         }
 
         [XmlAttribute("bonus_spell")]
@@ -322,40 +343,48 @@ namespace BabBot.Wow
         }
 
         [XmlElement("objectives")]
-        QuestObjectives ObjList;
+        public QuestObjectives ObjList;
 
         public Quest()
             :base() { }
 
-        public Quest(string title, string text, string objectives, int level, 
-                int[] iqty, string[] det_list, string bonus_spell) :
+        public Quest(int id, string title, string text, string objectives, int level, 
+                        int[] det_qty, string[] det_list, string objs, 
+                                string bonus_spell, string link) :
             base(title, text)
         {
+            Id = id;
+            Link = link;
             Level = level;
 
             XmlDocument doc = new XmlDocument();
             TextObjectives = doc.CreateCDataSection(objectives);
 
-            for (int i = 0; i < iqty.Length; i++)
-                if (iqty[i] > 0)
+            for (int i = 0; i < det_qty.Length; i++)
+            {
+                if (det_qty[i] > 0)
                 {
                     QuestItem qi = new QuestItem();
                     QuestItems[i] = qi;
-                    string[] det_item = det_list[i].Split(new string[] { "::" }, 
+                    string[] det_item = det_list[i].Split(new string[] { "::" },
                                                     StringSplitOptions.None);
-                    for (int j = 0; j < iqty[i]; j++)
+                    for (int j = 0; j < det_qty[i]; j++)
                     {
                         string[] d = det_item[j].Split(',');
                         qi.Add(new CommonQty(d[1], Convert.ToInt32(d[0])));
                     }
                 }
-                    
+            }
+
+            if (!string.IsNullOrEmpty(objs))
+                ObjList = new QuestObjectives(objs);
+
             BonusSpell = bonus_spell;
         }
 
         public override bool Equals(object obj)
         {
-            if ((obj == null) || (typeof(object) != typeof(Quest)))
+            if ((obj == null) || (obj.GetType() != typeof(Quest)))
                 return false;
 
             return Equals((Quest)obj);
@@ -364,10 +393,13 @@ namespace BabBot.Wow
         public bool Equals(Quest q)
         {
             bool f = q.Title.Equals(Title) &&
-                q.Text.Equals(Text) &&
+                q.GreetingText.Equals(GreetingText) &&
                 (q.Level == Level) &&
-                q.TextObjectives.Equals(TextObjectives) &&
-                q.BonusSpell.Equals(BonusSpell);
+                q.ObjectivesText.Equals(ObjectivesText) &&
+                q.BonusSpell.Equals(BonusSpell) &&
+                q.Id == Id && 
+                (((q.Link == null) && (Link == null)) || 
+                 ((q.Link != null) && (q.Link.Equals(Link))));
 
             if (!f)
                 return false;
@@ -416,12 +448,7 @@ namespace BabBot.Wow
 
         public override string ToString()
         {
-            string ret = base.ToString();
-
-            if (QIdx > 0)
-                ret += " " + QIdx;
-
-            return ret;
+            return Convert.ToString(Id);
         }
     }
 
@@ -522,7 +549,7 @@ namespace BabBot.Wow
 
     #region Waypoints
 
-    public class ContinentListId : CommonTable<ContinentId>
+    public class ContinentListId : CommonMergeTable<ContinentId>
     {
         [XmlElement("continent")]
         public ContinentId[] Continents
@@ -537,7 +564,7 @@ namespace BabBot.Wow
         }
     }
 
-    public class ContinentId : CommonIdTable<Zone>
+    public class ContinentId : CommonIdMergeTable<Zone>
     {
         [XmlElement("zone")]
         public Zone[] ZList
@@ -578,20 +605,74 @@ namespace BabBot.Wow
         {
             List.Add(v);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            Zone z = (Zone) obj;
+            if (!z.Name.Equals(Name))
+                return false;
+
+            // Compare vector list. If they are the same of stays in 5 yard distance 
+            //    from zone waypoints than we ok
+
+            Vector3D first = List[0];
+
+            for (int i = 0; i < z.List.Count; i++)
+            {
+                Vector3D cur_wp = z.List[i];
+
+                // First check if vectors identicall
+                if (cur_wp.Equals(first))
+                    return true;
+
+                // Now check that distance no more than 5F. NPC can rotate
+                if (cur_wp.GetDistanceTo(first) > 5F)
+                {
+                    // Compare this item with others
+                    for (int j = 1; j < List.Count; j++)
+                    {
+                        if (cur_wp.Equals(first))
+                            break;
+
+                        bool found = false;
+                        if (cur_wp.GetDistanceTo(List[j]) < 5F)
+                        {
+                            found = true;
+                            break;
+                        }
+
+                        if (!found)
+                            return false;
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 
     #endregion
 
     #region Quest Objectives
 
-    public class QuestObjectives : CommonTable<AbstractQuestObjective>
+    public class QuestObjectives : CommonList<AbstractQuestObjective>
     {
+
         [XmlElement("objective")]
         public AbstractQuestObjective[] ObjList
         {
             get { return Items; }
             set { Items = value; }
         }
+
+        /// <summary>
+        /// Paremetless class constructor
+        /// </summary>
+        public QuestObjectives()
+            : base() { }
 
         /// <summary>
         /// Class constructor
@@ -639,7 +720,7 @@ namespace BabBot.Wow
                             "Unknown type of quest objectives '" + stype + "'");
                 }
 
-                Table.Add(stype, qobj);
+                List.Add(qobj);
             }
         }
     }
@@ -694,27 +775,27 @@ namespace BabBot.Wow
         public AbstractQuestObjectiveWithQty(string type, string item_str, bool is_finished)
             : base(type)
         {
-            Match m = QuestHelper.ItemPattern.Match(item_str);
+            Regex r = ProcessManager.CurWoWVersion.
+                QuestConfig.ObjectiveRx;
+            Match m = r.Match(item_str);
 
-            if ((!m.Success) || (m.Groups.Count != 3))
-                throw new QuestSkipException(
+            if ((!m.Success) || (m.Groups.Count != 4))
+                throw new QuestProcessingException(
                     "Unable parse quest item string '" + item_str +
-                    "' according pattern " + QuestHelper.ItemPattern.ToString());
+                    "' according pattern " + ProcessManager.CurWoWVersion.
+                                        QuestConfig.ObjectiveRx.ToString());
 
-            for (int i = 0; i < 3; i++)
+            ItemName = m.Groups[1].ToString();
+
+            try
             {
-                ItemName = m.Groups[0].ToString();
-
-                try
-                {
-                    BagQty = Convert.ToInt32(m.Groups[1].ToString());
-                    ReqQty = Convert.ToInt32(m.Groups[2].ToString());
-                }
-                catch (Exception e)
-                {
-                    throw new QuestSkipException("Invalid objective " + i + 
-                        " in objective string '" + item_str + "'");
-                }
+                BagQty = Convert.ToInt32(m.Groups[2].ToString());
+                ReqQty = Convert.ToInt32(m.Groups[3].ToString());
+            }
+            catch (Exception e)
+            {
+                throw new QuestSkipException("Invalid objective in objective string '" + 
+                    item_str + "'. " + e.Message);
             }
         }
     }

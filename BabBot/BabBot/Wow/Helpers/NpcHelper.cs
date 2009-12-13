@@ -38,6 +38,7 @@ namespace BabBot.Wow.Helpers
     /// </summary>
     public static class NpcHelper
     {
+        static List<NPC> SaveList = new List<NPC>();
 
         /// <summary>
         /// Execute lua call and return parameters
@@ -276,6 +277,7 @@ namespace BabBot.Wow.Helpers
             // Choose gossip option and check npc again
             ProcessManager.Injector.Lua_ExecByName(
                 lua_fname, new string[] { Convert.ToString(idx) });
+
             if (!AddTargetNpcInfo(npc, lfs))
                 return false;
 
@@ -309,26 +311,13 @@ namespace BabBot.Wow.Helpers
                         " of waiting");
             Output.Instance.Debug(lfs,fname + "Frame ready");
         }
+
         #region Add NPC
-
-        private class QuestHeader
-        {
-            internal string Name;
-            internal int Level;
-
-            public QuestHeader(string name, int level)
-            {
-                Name = name;
-                Level = level;
-            }
-        }
-
-        private static QuestHeader qh;
 
         public static bool AddNpc(string lfs)
         {
             // Initialize parameters
-            qh = null;
+            SaveList.Clear();
 
             string npc_name = ProcessManager.Player.CurTarget.Name;
             ProcessManager.Player.setCurrentMapInfo();
@@ -342,30 +331,57 @@ namespace BabBot.Wow.Helpers
             if (!AddTargetNpcInfo(npc, lfs))
                 return false;
 
-            // Check if NPC already exists
-            NPC check = ProcessManager.
-                CurWoWVersion.NPCData.FindNpcByName(npc.Name);
-            if ((check != null))
+            SaveList.Add(npc);
+
+            bool f = false;
+            foreach (NPC x in SaveList)
             {
-                if (npc.Equals(check))
+                // Check if NPC already exists
+                NPC check = null;
+
+                try
                 {
-                    throw new NpcProcessingException("NPC '" + npc.Name +
-                        "' already added with identicall parameters");
-                    return false;
+                    // If null it produces exception
+                    check = ProcessManager.
+                        CurWoWVersion.NPCData.FindNpcByName(x.Name);
+                } 
+                catch { }
+
+                if ((check != null))
+                {
+                    if (x.Equals(check))
+                    {
+                        Output.Instance.LogError(lfs, "NPC '" + x.Name +
+                            "' already added with identicall parameters");
+                        continue;
+                    }
+                    else
+                    {
+                        // NPC in database but with different parameters
+                        Output.Instance.Debug(lfs, "NPC '" + x.Name +
+                            "' data merged with currently configured");
+                        check.MergeWith(npc);
+
+                        f = true;
+                    }
                 }
                 else
                 {
-                    // NPC in database but with different parameters
-                    check.MergeWith(npc);
-                }
-            }
-            else
-                ProcessManager.CurWoWVersion.NPCData.Add(npc);
+                    Output.Instance.Debug(lfs, "Adding new NPC '" + x.Name +
+                            "' into NPCData.xml");
+                    ProcessManager.CurWoWVersion.NPCData.Add(x);
 
-            if (ProcessManager.SaveNpcData())
+                    f = true;
+                }
+
+            }
+
+            if (f && (ProcessManager.SaveNpcData()))
                 Output.Instance.Log(lfs, "NPC '" + npc_name +
-                        "' successfully added to NPCData.xml");
-            return true;
+                    "' successfully added to NPCData.xml");
+
+            return f;
+
         }
 
         /// <summary>
@@ -374,42 +390,47 @@ namespace BabBot.Wow.Helpers
         /// </summary>
         /// <param name="npc"></param>
         /// <returns></returns>
-        private static bool AddAvailQuests(NPC npc, string lfs)
+        private static bool AddQuests(NPC npc, string lfs, string type)
         {
-            Output.Instance.Debug(lfs, "Checking available quests ...");
+            Output.Instance.Debug(lfs, "Checking " + type.ToLower() + " quests ...");
 
             // Get list of quests
-            string[] quests = QuestHelper.GetAvailGossipQuests();
+            string[] quests = QuestHelper.GetGossipQuests(type);
 
             if (quests == null || (quests.Length == 0))
-                Output.Instance.Debug(lfs, "No quests detected.");
+                Output.Instance.Debug(lfs, "No " + type.ToLower() + " quests detected.");
             else
             {
-                Output.Instance.Debug(lfs, 
-                    (int)(quests.Length / 3) + " quests(s) detected.");
+                int cnt = (int)(quests.Length / 3);
+                Output.Instance.Debug(lfs, cnt + " quests(s) detected.");
+
 
                 // Parse list of quests
-                int max_num = (int)(quests.Length / 3);
-                for (int i = 0; i < max_num; i++)
+                for (int i = 0; i < cnt; i++)
                 {
-                    string sqlevel = quests[i * 3 + 1];
+                    string qtitle = quests[i * 3];
 
-                    try
+                    // for active quests lookup local log 
+                    // and mark quest destination as current NPC
+                    if (type.Equals("Active"))
+                        AddNpcQuestEnd(npc.Name, qtitle, lfs);
+                    else
                     {
-                        qh = new QuestHeader(quests[i * 3], Convert.ToInt32(sqlevel));
+                        // For available quests we need the whole story
+                        try
+                        {
+                            // Last parameter we not interested in
+                            Output.Instance.Debug(lfs, "Adding quest '" +
+                                                            qtitle + "'");
 
-                        // Last parameter we not interested in
-                        Output.Instance.Debug(lfs, "Adding quest '" +
-                                                    qh.Name + "'; Level: " + qh.Level);
-
-                        SelectNpcOption(npc,
-                            "SelectAvailableQuest", i + 1, max_num, lfs);
-                    }
-                    catch (Exception e)
-                    {
-                        Output.Instance.LogError(lfs, "Failed convert quests level '" +
-                        sqlevel + "' to integer. " + e.Message);
-                        return false;
+                            SelectNpcOption(npc,
+                                "SelectGossip" + type + "Quest", i + 1, cnt, lfs);
+                        }
+                        catch (Exception e)
+                        {
+                            Output.Instance.LogError(lfs, "Error selecting quest. " + e.Message);
+                            return false;
+                        }
                     }
 
                 }
@@ -458,18 +479,18 @@ namespace BabBot.Wow.Helpers
                     {
                         throw new NpcProcessingException("Unable convert " + i + " parameter '" +
                             opts[i] + "' from  'GetNpcGossipInfo' result to integer. " + e);
-                        return false;
                     }
                 }
 
-                if (opti[0] > 0)
-                    if (!AddAvailQuests(npc, lfs))
+                if ((opti[0] > 0) || (opti[1] > 0))
+                { 
+                    if (!AddQuests(npc, lfs, ((opti[0] > 0) ? "Available" : "Active")))
                         return false;
+                }
 
-                // TODO CheckActiveQuests
-                // if (opti[1] > 0)
-                //      if (!FindActiveQuests(npc))
-                //            return false;
+                /* if (opti[1] > 0)
+                    if (!AddNpcQuestEnd(npc, fparams, lfs))
+                        return false; */
 
                 if (opti[2] > 0)
                     if (!FindAvailGossips(npc, lfs))
@@ -478,11 +499,9 @@ namespace BabBot.Wow.Helpers
             }
             else if (cur_service.Equals("quest_start"))
                 AddNpcQuestStart(npc, fparams, lfs);
-            else if (cur_service.Equals("quest_progress"))
-                Output.Instance.Log("Ignoring quest progress. If you need add initial quest " +
-                    "than drop it and talk to NPC again");
-            else if (cur_service.Equals("quest_end"))
-                AddNpcQuestEnd(npc, fparams, lfs);
+            else if ((cur_service.Equals("quest_progress")) ||
+                     (cur_service.Equals("quest_end")))
+                AddNpcQuestEnd(npc.Name, fparams[1], lfs);
             else
                 AddNpcService(npc, cur_service, fparams, lfs);
 
@@ -493,14 +512,6 @@ namespace BabBot.Wow.Helpers
         private static void AddNpcQuestStart(NPC npc, string[] opts, string lfs)
         {
             Quest q = null;
-
-            // Checking parameters first
-            if (opts.Length < 4)
-            {
-                Output.Instance.LogError(lfs, "Not enough " +
-                        opts.Length + " parameters to add quest start");
-                return;
-            }
 
             // Check parsing result
             for (int i = 1; i < 4; i++)
@@ -527,27 +538,42 @@ namespace BabBot.Wow.Helpers
 
             // Read header
             string[] headers = opts[1].Split(new string[] { "::" }, StringSplitOptions.None);
-            string[] info = opts[2].Split(',');
-            string[] details = opts[3].Split(new string[] { "||" }, StringSplitOptions.None);
+            string qtitle = headers[0];
 
+            // At this point we staying in front of NPC and quest opened
+            // Accepting quest and reading it info from toon's quest log
             try
             {
-                int qlevel = Convert.ToInt32(headers[0]);
-                if (qh != null)
-                    qlevel = qh.Level;
+                QuestHelper.DoAction(QuestHelper.MakeAcceptQuestReq(), lfs);
 
-                Output.Instance.Log("Assign current NPC as start for quest '" +
-                                                                        headers[1] + "'");
+                // Look on quest log for all details
+                string[] ret = ProcessManager.Injector.
+                    Lua_ExecByName("GetLogQuestInfo", new string[] { qtitle });
 
-                q = new Quest(headers[1], headers[2], headers[3], qlevel,
+            
+                // Parse result
+                string[] info = opts[2].Split(',');
+                string[] details = opts[3].Split(new string[] { "||" }, StringSplitOptions.None);
+
+            
+                Output.Instance.Log("Assign current NPC as start for quest '" + qtitle + "'");
+
+                q = new Quest(Convert.ToInt32(ret[1]), qtitle,
+                    headers[1], headers[2], Convert.ToInt32(ret[2]),
                     new int[] { Convert.ToInt32(info[3]), Convert.ToInt32(info[4]), 
-                        Convert.ToInt32(info[5]) }, details, info[0]);
+                    Convert.ToInt32(info[5]) }, details, ret[4], info[0], ret[3]);
             }
-            catch
+            catch (Exception e)
             {
                 Output.Instance.LogError(lfs, "Error creating quest with parameters " +
-                    "Header: " + headers[1] + "; Text: " + headers[2] + "; Level: " + headers[3]);
-                return;
+                    "Header: " + headers[1] + "; Text: " + headers[2] +
+                    "; Level: " + headers[3], e);
+                throw new QuestProcessingException("Failed add quest" + e.Message);
+            }
+            finally
+            {
+                // Whatever happened need abandon quest
+                QuestHelper.AbandonQuest(qtitle, lfs);
             }
 
             if (q != null)
@@ -592,30 +618,66 @@ namespace BabBot.Wow.Helpers
                 npc.AddService(npc_service);
         }
 
-        private static void AddNpcQuestEnd(NPC npc, string[] opts, string lfs)
+        private static bool AddNpcQuestEnd(string npc_name, string qtitle, string lfs)
         {
-            if ((opts.Length < 2) || (opts[1] == null))
-            {
-                Output.Instance.LogError(lfs, "Not enough " +
-                        opts.Length + " parameters to add quest end");
-                return;
-            }
+            // Lookup local log for quest details
+            string[] ret = ProcessManager.Injector.
+                Lua_ExecByName("FindLogQuest", new string[] {qtitle});
 
-            string qtitle = opts[1];
+            int id = 0;
+            int idx = 0;
+            try
+            {
+                idx = Convert.ToInt32(ret[0]);
+                id = Convert.ToInt32(ret[1]);
+            }
+            catch {}
+
+            if (idx == 0)
+                throw new QuestProcessingException("Unable retrieve information from " + 
+                    "toon's log for quest '" + qtitle + "'");
+            else if (id == 0)
+                throw new QuestProcessingException("Unable retrieve quest id for " + 
+                    " quest '" + qtitle + "'");
 
             // Now find NPC who has an original quest
-
-            Quest q = ProcessManager.CurWoWVersion.NPCData.FindQuestByTitle(qtitle);
+            Quest q = ProcessManager.CurWoWVersion.NPCData.FindQuestById(id);
 
             if (q != null)
             {
                 Output.Instance.Log("Assign current NPC as end for quest '" +
                                                                 qtitle + "'");
 
-                q.DestNpcName = npc.Name;
-            }
+                q.DestNpcName = npc_name;
+
+                SaveList.Add(q.SrcNpc);
+            } else
+                Output.Instance.Log("Unable locate quest giver for quest '" +
+                                                                qtitle + "'");
+
+            return false;
         }
 
-        #endregion Add NPC end 
+        public static NPC FindNearestService(string service)
+        {
+            List<NPC> list = new List<NPC>();
+
+            foreach (NPC npc in ProcessManager.CurWoWVersion.NPCData.Table.Values)
+                if (npc.Services.Table.ContainsKey(service))
+                    list.Add(npc);
+
+            if (list.Count == 0)
+                return null;
+
+            // Find closest
+            float dist;
+            foreach (NPC npc in list)
+            {
+                // Check if NPC on the same continent/zone
+            }
+
+            return null;
+        }
+        #endregion
     }
 }

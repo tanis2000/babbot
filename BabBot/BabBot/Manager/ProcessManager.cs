@@ -548,14 +548,24 @@ namespace BabBot.Manager
 
             // Everything else after
             LoadConfig();
-
+            MergeXml();
             AfterXmlInit();
 
             //\\ Test
+
+            /*
+            NPC npc1 = ndata.Items[0].Items[2];
+            NPC npc2 = ndata.Items[0].Items[2];
+
+            if (!npc1.Equals(npc2))
+                Environment.Exit(1);
+            */
+            /*
             LuaFunction lf = CurWoWVersion.FindLuaFunction("GetNpcDialogInfo");
             string c = lf.Code;
             // string c = "{0} {{}} {{'dd','xx'}}";
             string s = string.Format(c, 1);
+            */
             /*
             NPC npc = new NPC();
 
@@ -567,26 +577,17 @@ namespace BabBot.Manager
             SaveNpcData(); */
         }
 
+        internal static void ClearXml()
+        {
+            ndata = null;
+            wdata = null;
+        }
+
         internal static void InitXmlData()
         {
             // data first
             wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
             ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
-
-            // Auto Merge data from earlier version with latest one
-            WoWVersion wprev = (WoWVersion)wdata.SList.Values[0];
-            for (int i = 1; i < wdata.SList.Count; i++)
-            {
-                WoWVersion wnew = (WoWVersion)wdata.SList.Values[i];
-
-                // Merge WoW data
-                wnew.MergeWith(wprev);
-
-                // Merge NPCData. Ordering is not an issues since it defined in WoWData already
-                ndata.FindVersion(wnew.Build).MergeWith(ndata.FindVersion(wprev.Build));
-
-                wprev = wnew;
-            }
 
             // Check if NPC data version the same
             if (ndata.Version != NPCDataVersion)
@@ -595,6 +596,32 @@ namespace BabBot.Manager
                 // Show message for now
                 ShowErrorMessage("NPCData.xml is in old format. It has version " +
                     ndata.Version + " that different from supported " + NPCDataVersion);
+            }
+        }
+
+        internal static void MergeXml()
+        {
+            // Auto Merge data from earlier version with latest one
+            WoWVersion wprev = (WoWVersion)wdata.SList.Values[0];
+            int i = 1;
+            while ((i < wdata.SList.Count) &&
+                !wprev.Build.Equals(config.WoWInfo.Version))
+            {
+                WoWVersion wnew = (WoWVersion)wdata.SList.Values[i];
+
+                // Merge WoW data
+                wnew.MergeWith(wprev);
+
+                // Merge NPCData. Ordering is not an issues since it defined in WoWData already
+                // Ignore all exceptions
+                try
+                {
+                    ndata.FindVersion(wnew.Build).MergeWith(ndata.FindVersion(wprev.Build));
+                }
+                catch { }
+                
+                wprev = wnew;
+                i++;
             }
         }
 
@@ -1028,7 +1055,9 @@ namespace BabBot.Manager
         {
             ShowError("Internal bug " + Enum.GetName(typeof(Bugs), bug_id) + 
                 ". " + err + ". Terminating application");
+#if !DEBUG
             Environment.Exit((int) bug_id);
+#endif
         }
         
         #region XML

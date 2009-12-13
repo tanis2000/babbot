@@ -1,110 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <npc_data version="0">
-  <wow_version name="3.3.0.10958">
-    <npc name="Dellylah" race="NIGHTELF" sex="2">
-      <wp_list>
-        <continent id="1">
-          <zone name="Teldrassil">
-            <waypoint x="10450.2" y="779.858" z="1322.75" />
-          </zone>
-        </continent>
-      </wp_list>
-      <services>
-        <service d5p1:type="VendorService" name="vendor" can_repair="false" has_water="true" has_food="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
-      </services>
-      <quests />
-    </npc>
-    <npc name="Keina" race="NIGHTELF" sex="2">
-      <wp_list>
-        <continent id="1">
-          <zone name="Teldrassil">
-            <waypoint x="10436.7" y="794.837" z="1322.79" />
-          </zone>
-        </continent>
-      </wp_list>
-      <services>
-        <service d5p1:type="VendorService" name="vendor" can_repair="true" has_water="false" has_food="false" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
-      </services>
-      <quests />
-    </npc>
-    <npc name="Conservator Ilthalaine" sex="2">
-      <wp_list>
-        <continent id="1">
-          <zone name="Teldrassil">
-            <waypoint x="10328.9" y="826.052" z="1326.38" />
-          </zone>
-        </continent>
-      </wp_list>
-      <services />
-      <quests>
-        <quest name="The Balance of Nature" level="2" bonus_spell="">
-          <text><![CDATA[Greetings, Flinar.  I am Conservator Ilthalaine.  My purpose in Shadowglen is to ensure that the balance of nature is maintained.
-
-The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
-
-Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young hunter, and thin the boar and saber populations so that nature's harmony will be preserved.]]>
-          </text>
-          <choice_items>
-            <item name="Stemleaf Bracers" qty="1" />
-            <item name="Archery Training Gloves" qty="1" />
-          </choice_items>
-          <objectives><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives>
-        </quest>
-      </quests>
-    </npc>
-    <npc name="Tarindrella" sex="1">
-      <wp_list>
-        <continent id="1">
-          <zone name="Teldrassil">
-            <waypoint x="10296.9" y="870.227" z="1335.89465" />
-          </zone>
-        </continent>
-      </wp_list>
-      <services />
-      <quests>
-        <quest name="The Woodland Protector" level="1" bonus_spell="">
-          <text><![CDATA[Something evil is brewing in the forests of Teldrassil.  Look long the hills to where the peaceful furbolgs used to dwell.  They have deserted their homes and are amassing under the name of the Gnarlpine tribe.
-
-Only the corruption of wicked Fel Moss could cause such a transformation.  The grells and grellkin have infested the area and are threatening the residents of Shadowglen.  
-
-Engage these grells and grellkin, Flinar, and see if they are indeed caught under the enchantment of the wicked Fel Moss.]]>
-          </text>
-          <reward_items>
-            <item name="Healing Herb" qty="3" />
-          </reward_items>
-          <choice_items>
-            <item name="Canopy Leggings" qty="1" />
-            <item name="Tracking Boots" qty="1" />
-            <item name="Viny Gloves" qty="1" />
-          </choice_items>
-          <objectives_text><![CDATA[Collect 8 Fel Moss and bring them to Tarindrella.]]></objectives_text>
-        </quest>
-      </quests>
-    </npc>
-    <npc name="Melithar Staghelm" sex="2">
-      <wp_list>
-        <continent id="1">
-          <zone name="Teldrassil">
-            <waypoint x="10389.8" y="763.477" z="1320.33" />
-          </zone>
-        </continent>
-      </wp_list>
-      <services />
-      <quests>
-        <quest name="The Woodland Protector" level="1" bonus_spell="" dest_npc="Tarindrella">
-          <text><![CDATA[Thank goodness you are here, hunter. Strange news has traveled to me through the whisperings of the forest spirits.
-
-The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
-
-Seek out Tarindrella and see what business she tends to in our grove. One of the Sentinels reported seeing her to the southwest of Aldrassil.]]>
-          </text>
-          <objectives_text><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives_text>
-        </quest>
-      </quests>
-    </npc>
-  </wow_version>
   <wow_version name="3.2.2.10505">
-    <npc name="Dellylah" race="NIGHTELF" sex="2">
+    <npc name="Dellylah" sex="2">
       <wp_list>
         <continent id="1">
           <zone name="Teldrassil">
@@ -117,7 +14,7 @@ Seek out Tarindrella and see what business she tends to in our grove. One of the
       </services>
       <quests />
     </npc>
-    <npc name="Keina" race="NIGHTELF" sex="2">
+    <npc name="Keina" sex="2">
       <wp_list>
         <continent id="1">
           <zone name="Teldrassil">
@@ -135,43 +32,67 @@ Seek out Tarindrella and see what business she tends to in our grove. One of the
         <continent id="1">
           <zone name="Teldrassil">
             <waypoint x="10328.9" y="826.052" z="1326.38" />
+            <waypoint x="10328.9" y="826.052" z="1326.46" />
+            <waypoint x="10328.9" y="826.052" z="1326.46" />
+            <waypoint x="10328.9" y="826.052" z="1326.38" />
+            <waypoint x="10328.9" y="826.052" z="1326.46" />
           </zone>
         </continent>
       </wp_list>
       <services />
       <quests>
-        <quest name="The Balance of Nature" level="2" bonus_spell="">
+        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" dest_npc="Conservator Ilthalaine" idx="0">
           <text><![CDATA[Greetings, Flinar.  I am Conservator Ilthalaine.  My purpose in Shadowglen is to ensure that the balance of nature is maintained.
 
 The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
 
-Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young hunter, and thin the boar and saber populations so that nature's harmony will be preserved.]]>
-          </text>
+Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young hunter, and thin the boar and saber populations so that nature's harmony will be preserved.]]></text>
+          <objectives>
+            <objective d7p1:type="MonsterQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+            <objective d7p1:type="MonsterQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+          </objectives>
           <choice_items>
-            <item name="Stemleaf Bracers" qty="1" />
             <item name="Archery Training Gloves" qty="1" />
+            <item name="Stemleaf Bracers" qty="1" />
           </choice_items>
           <objectives_text><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives_text>
         </quest>
+        <quest name="The Balance of Nature" id="457" link="|cffffff00|Hquest:457:3|h[The Balance of Nature]|h|r" level="3" bonus_spell="" dest_npc="Conservator Ilthalaine" idx="0">
+          <text><![CDATA[Thinning the younger population of creatures here in Shadowglen was a good start, Flinar, but there is still work to be done.
+
+The resources of the forest will be depleted too quickly if the problem is not addressed.  Killing nature's beasts is a necessary evil for the good of all who share the land.  Venture into the forest and slay mangy nightsabers and thistle boars in the name of balance.]]></text>
+          <objectives>
+            <objective d7p1:type="MonsterQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+            <objective d7p1:type="MonsterQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+          </objectives>
+          <choice_items>
+            <item name="Draped Cloak" qty="1" />
+            <item name="Blackened Leather Belt" qty="1" />
+          </choice_items>
+          <objectives_text><![CDATA[Conservator Ilthalaine needs you to kill 7 Mangy Nightsabers and 7 Thistle Boars.]]></objectives_text>
+        </quest>
       </quests>
     </npc>
     <npc name="Tarindrella" sex="1">
       <wp_list>
         <continent id="1">
           <zone name="Teldrassil">
+            <waypoint x="10296.9" y="870.227" z="1335.91" />
             <waypoint x="10296.9" y="870.227" z="1335.89465" />
           </zone>
         </continent>
       </wp_list>
       <services />
       <quests>
-        <quest name="The Woodland Protector" level="1" bonus_spell="">
+        <quest name="The Woodland Protector" id="459" link="|cffffff00|Hquest:459:3|h[The Woodland Protector]|h|r" level="3" bonus_spell="" dest_npc="Tarindrella" idx="0">
           <text><![CDATA[Something evil is brewing in the forests of Teldrassil.  Look long the hills to where the peaceful furbolgs used to dwell.  They have deserted their homes and are amassing under the name of the Gnarlpine tribe.
 
 Only the corruption of wicked Fel Moss could cause such a transformation.  The grells and grellkin have infested the area and are threatening the residents of Shadowglen.  
 
-Engage these grells and grellkin, Flinar, and see if they are indeed caught under the enchantment of the wicked Fel Moss.]]>
-          </text>
+Engage these grells and grellkin, Flinar, and see if they are indeed caught under the enchantment of the wicked Fel Moss.]]></text>
+          <objectives>
+            <objective d7p1:type="ItemQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+          </objectives>
           <reward_items>
             <item name="Healing Herb" qty="3" />
           </reward_items>
@@ -184,24 +105,47 @@ Engage these grells and grellkin, Flinar, and see if they are indeed caught unde
         </quest>
       </quests>
     </npc>
-    <npc name="Melithar Staghelm" sex="2">
+    <npc name="Mardant Strongoak" sex="2">
       <wp_list>
         <continent id="1">
           <zone name="Teldrassil">
-            <waypoint x="10389.8" y="763.477" z="1320.33" />
+            <waypoint x="10464" y="829.538" z="1381.02" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services />
+      <quests />
+    </npc>
+    <npc name="Ayanna Everstride" sex="3">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10458.5" y="827.868" z="1380.93945" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services>
+        <service d5p1:type="ClassTrainingService" name="class_trainer" class="HUNTER" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+      </services>
+      <quests />
+    </npc>
+    <npc name="Dirania Silvershine" sex="3">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10407.2" y="713.794" z="1321.61768" />
           </zone>
         </continent>
       </wp_list>
       <services />
       <quests>
-        <quest name="The Woodland Protector" level="1" idx="2" bonus_spell="" dest_npc="Tarindrella">
-          <text><![CDATA[Thank goodness you are here, hunter. Strange news has traveled to me through the whisperings of the forest spirits.
+        <quest name="A Good Friend" id="4495" link="|cffffff00|Hquest:4495:4|h[A Good Friend]|h|r" level="4" bonus_spell="" idx="0">
+          <text><![CDATA[A friend of mine named Iverron usually visits me at the same time every day. The strange thing is that he hasn't been by today at all -- he's several hours late, in fact.
 
-The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
+I admit, I am a little worried, Flinar. Iverron spends a lot of time over by the cave to the north, and I'm sure you know how dangerous it is there -- spiders, everywhere!
 
-Seek out Tarindrella and see what business she tends to in our grove. One of the Sentinels reported seeing her to the southwest of Aldrassil.]]>
-          </text>
-          <objectives><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives>
+If you happen to be going that way, though, will you keep an eye out for him?]]></text>
+          <objectives_text><![CDATA[Find Iverron by the cave to the north.]]></objectives_text>
         </quest>
       </quests>
     </npc>
