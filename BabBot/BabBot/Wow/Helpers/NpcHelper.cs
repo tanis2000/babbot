@@ -832,7 +832,7 @@ namespace BabBot.Wow.Helpers
 
 
             // Get open Frame and make sure it's the correct one
-            string[] dinfo = DoGetNpcDialogInfo();
+            string[] dinfo = DoGetNpcDialogInfo(false);
             if (!dinfo[0].Equals(service))
             {
                 // Get available services
@@ -897,13 +897,15 @@ namespace BabBot.Wow.Helpers
                     }
 
 
-                    Output.Instance.Log("Learning: " + 
+                    Output.Instance.Log(lfs, "Learning: " + 
                                         set2[1] + " at idx: " + idx);
                     LuaHelper.Exec("BuyTrainerService", idx);
                     // Wait few sec to apply
                     Thread.Sleep(2000);
                 }
-            } while (!done);
+            } while (!done); 
+
+            // todo close class frame
         }
 
         #endregion

@@ -556,7 +556,13 @@ end)()",
                     
                     // Initialize returning result
                     for (int i = 0; i < res_list.Length; i++)
+                    {
+                        if (i == values.Count)
+                            break;
                         res[i] = values[i];
+                        
+                    }
+
                 }
             }
 

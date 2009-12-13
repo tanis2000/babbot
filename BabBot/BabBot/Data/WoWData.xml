@@ -191,13 +191,13 @@ Lots of credits to http://wowprogramming.com/
           break
         end
       end
-    end
-
-    if (not found) then
-      d3 = 'type_not_found'
+      
+      if (not found) then
+        d3 = 'type_not_found'
+      end
     else
       d3 = 'location_not_found'
-    end
+    end 
   elseif (PatchDownloadUI:IsShown()) then
     --------------------
     -- Patch download --
@@ -1031,7 +1031,7 @@ end)()]]>
   total_money = GetMoney()
   
   for i = 1, num do
-    name, rank, type = GetTrainerServiceInfo(index)
+    name, rank, type = GetTrainerServiceInfo(i)
     if (type == "available") then
       if (list ~= "") then
         list = list .. "::"
@@ -1043,6 +1043,7 @@ end)()]]>
         break;
       else
         total_money = total_money - money
+      end
       
       -- Yes, you can :)
       list = list .. i .. "," .. name .. "," .. rank
