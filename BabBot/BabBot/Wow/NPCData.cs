@@ -92,14 +92,20 @@ namespace BabBot.Wow
             }
         }
 
-        public int FindQuestQtyByTitle(string title)
+        public Quest FindMaxQuestByTitle(string title)
         {
-            int qty = 0;
+            int max = -1;
+            Quest res = null;
 
             foreach (NPC npc in Items)
-                qty += npc.FindQuestQtyByTitle(title);
+            {
+                if (npc.FindQuestQtyByTitle(title) > 0)
+                    foreach (Quest q in npc.QuestList.Table.Values)
+                        if ((q.Title.Equals(title)) && (q.QIdx > max))
+                            res = q;
+            }
 
-            return qty;
+            return res;
         }
 
         public void IndexData()
@@ -283,6 +289,36 @@ namespace BabBot.Wow
 
         [XmlAttribute("depends_of")]
         public string DependsOf = null;
+
+        [XmlAttribute("related_to")]
+        public string RelatedTo
+        {
+            get
+            {
+                if ((Relations == null) || (Relations.Count == 0))
+                    return null;
+
+                string[] res = new string[Relations.Count];
+                for(int i = 0; i < Relations.Count; i++)
+                    res[i] = Relations[i];
+
+                return string.Join(",", res);
+            }
+
+            set
+            {
+                if (value == null)
+                    return;
+
+                string[] s = value.Split(',');
+                Relations = new List<string>(s);
+            }
+        }
+
+        /// <summary>
+        /// Actual array with dependency links of other quests
+        /// </summary>
+        internal List<string> Relations;
 
         internal QuestItem[] QuestItems = new QuestItem[3];
 

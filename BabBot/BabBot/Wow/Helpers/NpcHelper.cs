@@ -648,7 +648,17 @@ namespace BabBot.Wow.Helpers
             }
 
             if (q != null)
+            {
+                // Screen in npcdata how many quests with same title exists
+                Quest mq = ProcessManager.CurWoWVersion.NPCData.FindMaxQuestByTitle(q.Title);
+                if (mq != null)
+                {
+                    q.QIdx = mq.QIdx + 1;
+                    // Probably I need link to high lvl quest with same title
+                    q.Relations.Add(Convert.ToString(q.Id));
+                }
                 npc.AddQuest(q);
+            }
         }
 
         private static void AddNpcService(NPC npc,
@@ -740,6 +750,7 @@ namespace BabBot.Wow.Helpers
             MoveToDest(dest.Waypoint, lfs);
 
             // Interact with NPC and select given service
+            LuaHelper.TargetUnitByName(dest.Npc.Name);
             InteractNpc(dest.Npc.Name, false, lfs);
 
             return dest.Npc;
@@ -762,6 +773,8 @@ namespace BabBot.Wow.Helpers
 
             // Find closest
             float dist = -1;
+            NpcDest res = null;
+
             foreach (NPC npc in list)
             {
                 // Check if NPC on the same continent/zone
@@ -775,7 +788,7 @@ namespace BabBot.Wow.Helpers
                     throw new MultiZoneNotSupportedException();
 
                 Zone z = c.Table[zone];
-                NpcDest res = new NpcDest();
+                res = new NpcDest();
 
                 foreach (Vector3D v in z.List)
                 {
@@ -797,7 +810,7 @@ namespace BabBot.Wow.Helpers
                 }
             }
 
-            return null;
+            return res;
         }
 
         #endregion
@@ -819,7 +832,7 @@ namespace BabBot.Wow.Helpers
 
 
             // Get open Frame and make sure it's the correct one
-            string[] dinfo = InteractNpc(npc_name, false, lfs);
+            string[] dinfo = DoGetNpcDialogInfo();
             if (!dinfo[0].Equals(service))
             {
                 // Get available services

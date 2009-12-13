@@ -41,7 +41,7 @@
       </wp_list>
       <services />
       <quests>
-        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" dest_npc="Conservator Ilthalaine" idx="0">
+        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" dest_npc="Conservator Ilthalaine">
           <text><![CDATA[Greetings, Flinar.  I am Conservator Ilthalaine.  My purpose in Shadowglen is to ensure that the balance of nature is maintained.
 
 The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
@@ -57,7 +57,7 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
           </choice_items>
           <objectives_text><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives_text>
         </quest>
-        <quest name="The Balance of Nature" id="457" link="|cffffff00|Hquest:457:3|h[The Balance of Nature]|h|r" level="3" bonus_spell="" dest_npc="Conservator Ilthalaine" idx="0">
+        <quest name="The Balance of Nature" id="457" link="|cffffff00|Hquest:457:3|h[The Balance of Nature]|h|r" level="3" bonus_spell="" dest_npc="Conservator Ilthalaine" idx="1" related_to="456">
           <text><![CDATA[Thinning the younger population of creatures here in Shadowglen was a good start, Flinar, but there is still work to be done.
 
 The resources of the forest will be depleted too quickly if the problem is not addressed.  Killing nature's beasts is a necessary evil for the good of all who share the land.  Venture into the forest and slay mangy nightsabers and thistle boars in the name of balance.]]></text>
