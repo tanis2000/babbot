@@ -213,6 +213,7 @@
             this.Controls.Add(this.label2);
             this.Name = "NPCListForm";
             this.Text = "NPC List";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NPCListForm_FormClosing);
             this.Controls.SetChildIndex(this.btnHelp, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);

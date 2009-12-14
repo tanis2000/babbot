@@ -184,13 +184,16 @@ namespace BabBot.Common
 
                 return false;
             }
-
             set
             {
+                base.Changed = value;
+
                 // On reset do reset all subcomponents as well
-                if (!value)
-                    foreach (IMergeable m in MergeList)
-                        m.Changed = false;
+                if (value)
+                    return;
+                
+                foreach (IMergeable m in MergeList)
+                    m.Changed = false;
             }
         }
 
@@ -343,8 +346,33 @@ namespace BabBot.Common
         [XmlIgnore]
         public bool Changed
         {
-            get { return _changed; }
-            set { _changed = value; }
+            get { 
+                if (_changed)
+                    return true;
+
+                if (typeof(IMergeable).IsAssignableFrom(typeof(T)))
+                {
+                    // Scan list for changes
+
+                    foreach(T item in _htable.Values)
+                        if (((IMergeable)item).Changed)
+                            return true;
+                }
+
+                return false;
+            }
+            set
+            {
+                _changed = value;
+
+                if (value)
+                    return;
+
+                // Reset list as well
+                if (typeof(IMergeable).IsAssignableFrom(typeof(T)))
+                    foreach (T item in _htable.Values)
+                        ((IMergeable)item).Changed = false;
+            }
         }
 
         internal T[] Items
@@ -430,7 +458,7 @@ namespace BabBot.Common
                 else
                 {
                     T value = _htable[item.Key];
-                    if (typeof(IMergeable).Equals(value.GetType()))
+                    if (typeof(IMergeable).IsAssignableFrom(value.GetType()))
                         ((IMergeable)value).MergeWith(item.Value);
                 }
             }
@@ -547,7 +575,7 @@ namespace BabBot.Common
                 else
                 {
                     T value = _stable[item.Key];
-                    if (typeof(IMergeable).Equals(value.GetType()))
+                    if (typeof(IMergeable).IsAssignableFrom(value.GetType()))
                         ((IMergeable)value).MergeWith(item.Value);
                 }
             }
@@ -722,7 +750,7 @@ namespace BabBot.Common
                 {
                     if (item1.Equals(item2))
                     {
-                        if (typeof(IMergeable).Equals(item1))
+                        if (typeof(IMergeable).IsAssignableFrom(item1.GetType()))
                             ((IMergeable)item1).MergeWith(item2);
 
                         f = true;

@@ -266,7 +266,7 @@ namespace BabBot.Wow
         [XmlIgnore]
         public bool Changed
         {
-            get { return _changed && Relations.Changed; }
+            get { return _changed || Relations.Changed; }
             set { _changed = value; }
         }
 

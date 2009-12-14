@@ -64,5 +64,11 @@ namespace BabBot.Forms
                 // ProcessManager.CurWoWVersion.NPCData.Add(npc);
             }
         }
+
+        private void NPCListForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Hide();
+            e.Cancel = true; // this cancels the close event.
+        }
     }
 }

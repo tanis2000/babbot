@@ -519,7 +519,7 @@ namespace BabBot.Wow.Helpers
         // This method is recursive
         private static bool AddTargetNpcInfo(NPC npc, string lfs)
         {
-            string[] fparams = NpcHelper.GetTargetNpcDialogInfo(npc.Name, false, lfs);
+            string[] fparams = NpcHelper.GetTargetNpcDialogInfo(npc.Name, lfs);
             if (fparams == null)
             {
                 Output.Instance.Log("Unable retrieve NPC gossip information. " +

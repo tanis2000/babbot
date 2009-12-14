@@ -1,29 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <npc_data version="0">
   <wow_version name="3.2.2.10505">
-    <npc name="Dellylah" sex="2">
+    <npc name="Ayanna Everstride" sex="3">
       <wp_list>
         <continent id="1">
           <zone name="Teldrassil">
-            <waypoint x="10450.2" y="779.858" z="1322.75" />
+            <waypoint x="10458.5" y="827.868" z="1380.93945" />
           </zone>
         </continent>
       </wp_list>
       <services>
-        <service d5p1:type="VendorService" name="vendor" can_repair="false" has_water="true" has_food="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
-      </services>
-      <quests />
-    </npc>
-    <npc name="Keina" sex="2">
-      <wp_list>
-        <continent id="1">
-          <zone name="Teldrassil">
-            <waypoint x="10436.7" y="794.837" z="1322.79" />
-          </zone>
-        </continent>
-      </wp_list>
-      <services>
-        <service d5p1:type="VendorService" name="vendor" can_repair="true" has_water="false" has_food="false" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+        <service d5p1:type="ClassTrainingService" name="class_trainer" class="HUNTER" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
       </services>
       <quests />
     </npc>
@@ -73,59 +60,16 @@ The resources of the forest will be depleted too quickly if the problem is not a
         </quest>
       </quests>
     </npc>
-    <npc name="Tarindrella" sex="1">
+    <npc name="Dellylah" sex="2">
       <wp_list>
         <continent id="1">
           <zone name="Teldrassil">
-            <waypoint x="10296.9" y="870.227" z="1335.91" />
-            <waypoint x="10296.9" y="870.227" z="1335.89465" />
-          </zone>
-        </continent>
-      </wp_list>
-      <services />
-      <quests>
-        <quest name="The Woodland Protector" id="459" link="|cffffff00|Hquest:459:3|h[The Woodland Protector]|h|r" level="3" bonus_spell="" idx="0" dest_npc="Tarindrella">
-          <text><![CDATA[Something evil is brewing in the forests of Teldrassil.  Look long the hills to where the peaceful furbolgs used to dwell.  They have deserted their homes and are amassing under the name of the Gnarlpine tribe.
-
-Only the corruption of wicked Fel Moss could cause such a transformation.  The grells and grellkin have infested the area and are threatening the residents of Shadowglen.  
-
-Engage these grells and grellkin, Flinar, and see if they are indeed caught under the enchantment of the wicked Fel Moss.]]></text>
-          <objectives>
-            <objective d7p1:type="ItemQuestObjective" type="item" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
-          </objectives>
-          <reward_items>
-            <item name="Healing Herb" qty="3" />
-          </reward_items>
-          <choice_items>
-            <item name="Canopy Leggings" qty="1" />
-            <item name="Tracking Boots" qty="1" />
-            <item name="Viny Gloves" qty="1" />
-          </choice_items>
-          <objectives_text><![CDATA[Collect 8 Fel Moss and bring them to Tarindrella.]]></objectives_text>
-        </quest>
-      </quests>
-    </npc>
-    <npc name="Mardant Strongoak" sex="2">
-      <wp_list>
-        <continent id="1">
-          <zone name="Teldrassil">
-            <waypoint x="10464" y="829.538" z="1381.02" />
-          </zone>
-        </continent>
-      </wp_list>
-      <services />
-      <quests />
-    </npc>
-    <npc name="Ayanna Everstride" sex="3">
-      <wp_list>
-        <continent id="1">
-          <zone name="Teldrassil">
-            <waypoint x="10458.5" y="827.868" z="1380.93945" />
+            <waypoint x="10450.2" y="779.858" z="1322.75" />
           </zone>
         </continent>
       </wp_list>
       <services>
-        <service d5p1:type="ClassTrainingService" name="class_trainer" class="HUNTER" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+        <service d5p1:type="VendorService" name="vendor" can_repair="false" has_water="true" has_food="true" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
       </services>
       <quests />
     </npc>
@@ -159,7 +103,7 @@ If you happen to be going that way, though, will you keep an eye out for him?]]>
       </wp_list>
       <services />
       <quests>
-        <quest name="Webwood Venom" id="916" link="|cffffff00|Hquest:916:4|h[Webwood Venom]|h|r" level="4" bonus_spell="" idx="0" dest_npc="">
+        <quest name="Webwood Venom" id="916" link="|cffffff00|Hquest:916:4|h[Webwood Venom]|h|r" level="4" bonus_spell="" idx="0" dest_npc="Gilshalan Windwalker">
           <text><![CDATA[I came to Shadowglen to observe the webwood spiders that dwell in the Shadowthread Cave.  They are cousin to a much smaller variety of spider; I believe the world tree has had a profound effect on them, and I would like specimens to study to confirm this.
 
 First, I would like some of their venom.  Gather Webwood venom sacs from the spiders in and around the Shadowthread Cave, to the north.  I can then examine them for similarities with their smaller cousin's venom.]]></text>
@@ -173,6 +117,62 @@ First, I would like some of their venom.  Gather Webwood venom sacs from the spi
             <item name="Thistlewood Blade" qty="1" />
           </choice_items>
           <objectives_text><![CDATA[Bring 10 Webwood Venom Sacs to Gilshalan Windwalker at Aldrassil.]]></objectives_text>
+        </quest>
+      </quests>
+    </npc>
+    <npc name="Keina" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10436.7" y="794.837" z="1322.79" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services>
+        <service d5p1:type="VendorService" name="vendor" can_repair="true" has_water="false" has_food="false" xmlns:d5p1="http://www.w3.org/2001/XMLSchema-instance" />
+      </services>
+      <quests />
+    </npc>
+    <npc name="Mardant Strongoak" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10464" y="829.538" z="1381.02" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services />
+      <quests />
+    </npc>
+    <npc name="Tarindrella" sex="1">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10296.9" y="870.227" z="1335.91" />
+            <waypoint x="10296.9" y="870.227" z="1335.89465" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services />
+      <quests>
+        <quest name="The Woodland Protector" id="459" link="|cffffff00|Hquest:459:3|h[The Woodland Protector]|h|r" level="3" bonus_spell="" idx="0" dest_npc="Tarindrella">
+          <text><![CDATA[Something evil is brewing in the forests of Teldrassil.  Look long the hills to where the peaceful furbolgs used to dwell.  They have deserted their homes and are amassing under the name of the Gnarlpine tribe.
+
+Only the corruption of wicked Fel Moss could cause such a transformation.  The grells and grellkin have infested the area and are threatening the residents of Shadowglen.  
+
+Engage these grells and grellkin, Flinar, and see if they are indeed caught under the enchantment of the wicked Fel Moss.]]></text>
+          <objectives>
+            <objective d7p1:type="ItemQuestObjective" type="item" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+          </objectives>
+          <reward_items>
+            <item name="Healing Herb" qty="3" />
+          </reward_items>
+          <choice_items>
+            <item name="Canopy Leggings" qty="1" />
+            <item name="Tracking Boots" qty="1" />
+            <item name="Viny Gloves" qty="1" />
+          </choice_items>
+          <objectives_text><![CDATA[Collect 8 Fel Moss and bring them to Tarindrella.]]></objectives_text>
         </quest>
       </quests>
     </npc>

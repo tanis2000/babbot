@@ -580,6 +580,8 @@ namespace BabBot.Manager
             if (!q1.RelatedTo.Equals("10,11"))
                 throw new Exception("Quest Test 4 failed");
 
+            if (!typeof(IMergeable).IsAssignableFrom(typeof(Quest)))
+                throw new Exception("Quest Test 5 failed");
             /*
             NPC npc1 = ndata.Items[0].Items[2];
             NPC npc2 = ndata.Items[0].Items[2];
@@ -1253,9 +1255,13 @@ namespace BabBot.Manager
         {
             try
             {
+                Output.Instance.Log("npc", "Exporting NPC: " + npc.Name + 
+                                                " to Data\\Export subdirectory");
                 SaveXmlData("Data" + System.IO.Path.DirectorySeparatorChar +
                     "Export" + System.IO.Path.DirectorySeparatorChar + npc.Name + ".npc",
                     typeof(NPC), npc);
+                Output.Instance.Log("npc", "Export successfull!!! Don't forget upload updated data to " + 
+                                        "BabBot forum https://sourceforge.net/apps/phpbb/babbot/");
             }
             catch (Exception e)
             {
