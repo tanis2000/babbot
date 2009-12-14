@@ -512,7 +512,7 @@ end)()]]></text>
       qt = "_end"
     elseif (QuestFrameProgressPanel:IsShown()) then
       qt = "_progress"
-    elseif (QuestFrameGreetingPanel:IsShown()) then
+    elseif (QuestFrameDetailPanel:IsShown()) then
       qt = "_start"
     else
       return null, null, null, null
@@ -1009,9 +1009,7 @@ end)()]]>
           0 - Index of the trainer service
         </parameters>
         <text>
-          <![CDATA[(function()
-  BuyTrainerService({0})
-end)()]]>
+          <![CDATA[BuyTrainerService({0})]]>
         </text>
       </function>
 

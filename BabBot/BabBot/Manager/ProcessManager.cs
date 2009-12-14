@@ -551,7 +551,34 @@ namespace BabBot.Manager
             MergeXml();
             AfterXmlInit();
 
+#if DEBUG
             //\\ Test
+            // Quest merge test
+            Quest q1 = new Quest(1, "Test 1", "Test", "", 1, new int[6], new string[3], "", "", "");
+            Quest q2 = new Quest(1, "Test 1", "Test", "", 1, new int[6], new string[3], "", "", "");
+
+            if (!q1.Equals(q2))
+                 throw new Exception("Quest Test 1 failed");
+
+            // Add link  and dest 
+            q2.Relations.Add(11);
+            q2.DestNpcName = "npc";
+
+            // Merge
+            q1.MergeWith(q2);
+
+            // check
+            if (!q1.DestNpcName.Equals("npc"))
+                throw new Exception("Quest Test 2 failed");
+
+            if (!q1.RelatedTo.Equals("11"))
+                throw new Exception("Quest Test 3 failed");
+
+            // Add extra relation
+            q2.Relations.Add("10");
+            q1.MergeWith(q2);
+            if (!q1.RelatedTo.Equals("10,11"))
+                throw new Exception("Quest Test 4 failed");
 
             /*
             NPC npc1 = ndata.Items[0].Items[2];
@@ -575,6 +602,7 @@ namespace BabBot.Manager
             npc.AddQuest(new QuestHeader("Catch if u can", 1));
 
             SaveNpcData(); */
+#endif
         }
 
         internal static void ClearXml()

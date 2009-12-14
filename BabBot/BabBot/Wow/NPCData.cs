@@ -237,7 +237,7 @@ namespace BabBot.Wow
     
     #region Quests
 
-    public class Quests : CommonTable<Quest>
+    public class Quests : CommonMergeTable<Quest>
     {
         [XmlElement("quest")]
         public Quest[] QuestList
@@ -256,7 +256,7 @@ namespace BabBot.Wow
         }
     }
 
-    public class Quest : CommonText
+    public class Quest : CommonText, IMergeable
     {
         internal string Title
         {
@@ -267,7 +267,7 @@ namespace BabBot.Wow
         public int Id;
 
         [XmlAttribute("link")]
-        public string Link;
+        public string Link = "";
 
         [XmlAttribute("level")]
         public int Level;
@@ -282,25 +282,22 @@ namespace BabBot.Wow
         }
 
         [XmlAttribute("bonus_spell")]
-        public string BonusSpell;
+        public string BonusSpell = "";
 
         [XmlAttribute("dest_npc")]
-        public string DestNpcName = null;
-
-        [XmlAttribute("depends_of")]
-        public string DependsOf = null;
+        public string DestNpcName = "";
 
         [XmlAttribute("related_to")]
         public string RelatedTo
         {
             get
             {
-                if ((Relations == null) || (Relations.Count == 0))
+                if ((Relations == null) || (Relations.List.Count == 0))
                     return null;
 
-                string[] res = new string[Relations.Count];
-                for(int i = 0; i < Relations.Count; i++)
-                    res[i] = Relations[i];
+                string[] res = new string[Relations.List.Count];
+                for (int i = 0; i < Relations.List.Count; i++)
+                    res[i] = Relations.List[i];
 
                 return string.Join(",", res);
             }
@@ -311,14 +308,14 @@ namespace BabBot.Wow
                     return;
 
                 string[] s = value.Split(',');
-                Relations = new List<string>(s);
+                Relations = new QuestRelations(s);
             }
         }
 
         /// <summary>
         /// Actual array with dependency links of other quests
         /// </summary>
-        internal List<string> Relations;
+        internal QuestRelations Relations = new QuestRelations();
 
         internal QuestItem[] QuestItems = new QuestItem[3];
 
@@ -381,8 +378,7 @@ namespace BabBot.Wow
         [XmlElement("objectives")]
         public QuestObjectives ObjList;
 
-        public Quest()
-            :base() { }
+        public Quest() :base() {}
 
         public Quest(int id, string title, string text, string objectives, int level, 
                         int[] det_qty, string[] det_list, string objs, 
@@ -433,9 +429,10 @@ namespace BabBot.Wow
                 (q.Level == Level) &&
                 q.ObjectivesText.Equals(ObjectivesText) &&
                 q.BonusSpell.Equals(BonusSpell) &&
-                q.Id == Id && 
-                (((q.Link == null) && (Link == null)) || 
-                 ((q.Link != null) && (q.Link.Equals(Link))));
+                q.Id == Id &&
+                q.DestNpcName.Equals(DestNpcName) &&
+                q.Link.Equals(Link);
+                
 
             if (!f)
                 return false;
@@ -485,6 +482,33 @@ namespace BabBot.Wow
         public override string ToString()
         {
             return Convert.ToString(Id);
+        }
+
+        public void MergeWith(object obj)
+        {
+            if (!MergeHelper.IsMergeable(this, obj))
+                return;
+
+            Quest q2 = (Quest) obj;
+
+            // Update dest npc name
+            if (string.IsNullOrEmpty(DestNpcName)) 
+                DestNpcName = q2.DestNpcName;
+                    
+            // and merge dependencies
+            Relations.MergeWith(q2.Relations);
+        }
+    }
+
+    public class QuestRelations : CommonList<string>
+    {
+
+        public QuestRelations() : base(true) {}
+        public QuestRelations(string[] list) : base(list, true) {}
+
+        public void Add(int quest_id)
+        {
+            base.Add(Convert.ToString(quest_id));
         }
     }
 
@@ -771,11 +795,14 @@ namespace BabBot.Wow
     [XmlInclude(typeof(ReputationQuestObjective))]
     public abstract class AbstractQuestObjective
     {
-        [XmlElement("type")]
-        string SType;
+        [XmlAttribute("type")]
+        public string SType;
 
-        [XmlElement("text")]
-        string Text;
+        [XmlAttribute("text")]
+        public string Text;
+
+        [XmlElement("waypoints")]
+        public ContinentListId Waypoints;
 
         internal bool Finished = false;
 

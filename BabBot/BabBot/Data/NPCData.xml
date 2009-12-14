@@ -41,7 +41,7 @@
       </wp_list>
       <services />
       <quests>
-        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" dest_npc="Conservator Ilthalaine">
+        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" dest_npc="Conservator Ilthalaine" idx="0">
           <text><![CDATA[Greetings, Flinar.  I am Conservator Ilthalaine.  My purpose in Shadowglen is to ensure that the balance of nature is maintained.
 
 The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
@@ -57,7 +57,7 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
           </choice_items>
           <objectives_text><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives_text>
         </quest>
-        <quest name="The Balance of Nature" id="457" link="|cffffff00|Hquest:457:3|h[The Balance of Nature]|h|r" level="3" bonus_spell="" dest_npc="Conservator Ilthalaine" idx="1" related_to="456">
+        <quest name="The Balance of Nature" id="457" link="|cffffff00|Hquest:457:3|h[The Balance of Nature]|h|r" level="3" bonus_spell="" dest_npc="Conservator Ilthalaine" related_to="456">
           <text><![CDATA[Thinning the younger population of creatures here in Shadowglen was a good start, Flinar, but there is still work to be done.
 
 The resources of the forest will be depleted too quickly if the problem is not addressed.  Killing nature's beasts is a necessary evil for the good of all who share the land.  Venture into the forest and slay mangy nightsabers and thistle boars in the name of balance.]]></text>
@@ -146,6 +146,34 @@ I admit, I am a little worried, Flinar. Iverron spends a lot of time over by the
 
 If you happen to be going that way, though, will you keep an eye out for him?]]></text>
           <objectives_text><![CDATA[Find Iverron by the cave to the north.]]></objectives_text>
+        </quest>
+      </quests>
+    </npc>
+    <npc name="Gilshalan Windwalker" sex="2">
+      <wp_list>
+        <continent id="1">
+          <zone name="Teldrassil">
+            <waypoint x="10417.7" y="871.194" z="1319.40784" />
+            <waypoint x="10417.7" y="871.194" z="1319.49" />
+          </zone>
+        </continent>
+      </wp_list>
+      <services />
+      <quests>
+        <quest name="Webwood Venom" id="916" link="|cffffff00|Hquest:916:4|h[Webwood Venom]|h|r" level="4" bonus_spell="" dest_npc="Gilshalan Windwalker" idx="0">
+          <text><![CDATA[I came to Shadowglen to observe the webwood spiders that dwell in the Shadowthread Cave.  They are cousin to a much smaller variety of spider; I believe the world tree has had a profound effect on them, and I would like specimens to study to confirm this.
+
+First, I would like some of their venom.  Gather Webwood venom sacs from the spiders in and around the Shadowthread Cave, to the north.  I can then examine them for similarities with their smaller cousin's venom.]]></text>
+          <objectives>
+            <objective d7p1:type="ItemQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+          </objectives>
+          <choice_items>
+            <item name="Thistlewood Maul" qty="1" />
+            <item name="Thistlewood Dagger" qty="1" />
+            <item name="Thistlewood Staff" qty="1" />
+            <item name="Thistlewood Blade" qty="1" />
+          </choice_items>
+          <objectives_text><![CDATA[Bring 10 Webwood Venom Sacs to Gilshalan Windwalker at Aldrassil.]]></objectives_text>
         </quest>
       </quests>
     </npc>

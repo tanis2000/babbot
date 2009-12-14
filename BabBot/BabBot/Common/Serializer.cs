@@ -115,6 +115,7 @@ namespace BabBot.Common
         public CommonItem() { }
 
         public CommonItem(string name)
+            : this()
         {
             Name = name;
         }
@@ -379,14 +380,16 @@ namespace BabBot.Common
 
             // Check values
             foreach (KeyValuePair<string, T> item in t.Table)
+            {
                 if (!_htable.ContainsKey(item.Key))
                     _htable.Add(item.Key, item.Value);
                 else
-                    MergeItems(item);
-        }
-
-        public virtual void MergeItems(KeyValuePair<string, T> item)
-        {
+                {
+                    T value = _htable[item.Key];
+                    if (typeof(IMergeable).Equals(value.GetType()))
+                        ((IMergeable)value).MergeWith(item.Value);
+                }
+            }
         }
     }
 
@@ -394,48 +397,42 @@ namespace BabBot.Common
     /// Class for mergeable table that include mergeable elements as well
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class CommonMergeTable<T> : CommonTable<T> where T : IMergeable
-    {
-        public override void MergeItems(KeyValuePair<string, T> item)
-        {
-            (Table[item.Key]).MergeWith(item.Value);
-        }
-    }
+    public abstract class CommonMergeTable<T> : CommonTable<T> where T : IMergeable { }
 
     /// <summary>
     /// Class with internal sorted table that needs to be serialized
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonSortedList<T> where T : CommonMergeItem
+    public abstract class CommonSortedTable<T> : IMergeable
     {
-        private readonly SortedList <string, T> _slist;
+        private readonly SortedList <string, T> _stable;
 
         internal T[] Items
         {
             get
             {
-                T[] res = new T[_slist.Count];
-                _slist.Values.CopyTo(res, 0);
+                T[] res = new T[_stable.Count];
+                _stable.Values.CopyTo(res, 0);
                 return res;
             }
             set
             {
                 if (value == null) return;
                 T[] items = (T[])value;
-                _slist.Clear();
+                _stable.Clear();
                 foreach (T item in items)
-                    _slist.Add(item.ToString(), item);
+                    _stable.Add(item.ToString(), item);
             }
         }
 
         internal SortedList<string, T> SList
         {
-            get { return _slist; }
+            get { return _stable; }
         }
 
-        public CommonSortedList()
+        public CommonSortedTable()
         {
-            _slist = new SortedList<string, T>();
+            _stable = new SortedList<string, T>();
         }
 
         public override bool Equals(object obj)
@@ -443,10 +440,10 @@ namespace BabBot.Common
             if (obj == null)
                 return false;
 
-            CommonSortedList<T> t = (CommonSortedList<T>)obj;
+            CommonSortedTable<T> t = (CommonSortedTable<T>)obj;
 
             // Check size first
-            int cnt = _slist.Count;
+            int cnt = _stable.Count;
             if (cnt != t.SList.Count)
                 return false;
 
@@ -455,7 +452,7 @@ namespace BabBot.Common
             {
                 T item2 = t.SList.Values[i];
 
-                if ((item2 == null) || !_slist.Values[i].Equals(item2))
+                if ((item2 == null) || !_stable.Values[i].Equals(item2))
                     return false;
             }
 
@@ -465,42 +462,47 @@ namespace BabBot.Common
 
         public T FindItemByName(string name)
         {
-            return _slist[name];
+            return _stable[name];
         }
 
-        public T FindItemByIndex(int idx)
+        public T GetItemByIndex(int idx)
         {
-            return ((idx < 0) || (idx >= _slist.Count)) ? 
-                    default(T) : _slist.Values[idx];
+            return ((idx < 0) || (idx >= _stable.Count)) ?
+                    default(T) : _stable.Values[idx];
         }
 
         public void Add(T item)
         {
-            _slist.Add(item.ToString(), item);
+            _stable.Add(item.ToString(), item);
         }
 
         public int ItemCount()
         {
-            return _slist.Count;
+            return _stable.Count;
         }
-        /*
-        public void Merge(CommonTable<T> t)
+        
+        public void MergeWith(object obj)
         {
-            if (t == null)
+            // Same as CommonTable.MergeWith
+
+            if (!MergeHelper.IsMergeable(this, obj))
                 return;
 
-            // Check values
-            foreach (KeyValuePair<string, T> de in t.Table)
-            {
-                T item1 = (T) _slist[de.Key];
-                T item2 = (T) de.Value;
+            CommonTable<T> t = (CommonTable<T>)obj;
 
-                if (item1 == null)
-                    _slist[de.Key] = item2;
-                else if (!item1.Equals(item2))
-                    item1.MergeWith(item2);
+            // Check values
+            foreach (KeyValuePair<string, T> item in t.Table)
+            {
+                if (!_stable.ContainsKey(item.Key))
+                    _stable.Add(item.Key, item.Value);
+                else
+                {
+                    T value = _stable[item.Key];
+                    if (typeof(IMergeable).Equals(value.GetType()))
+                        ((IMergeable)value).MergeWith(item.Value);
+                }
             }
-        } */
+        }
     }
 
     /// <summary>
@@ -561,7 +563,6 @@ namespace BabBot.Common
     {
         internal readonly List<T> _list;
 
-        [XmlIgnore]
         internal T[] Items
         {
             get
@@ -585,9 +586,34 @@ namespace BabBot.Common
             get { return _list; }
         }
 
+        internal bool IsSorted = false;
+
         public CommonList()
         {
             _list = new List<T>();
+
+            // By default not sorted
+            IsSorted = false;
+        }
+
+        public CommonList(bool sorted)
+            : this()
+        {
+            IsSorted = sorted;
+        }
+
+        public CommonList(T[] list)
+        {
+            _list = new List<T>(list);
+            IsSorted = false;
+        }
+
+        public CommonList(T[] list, bool sorted)
+            : this(list)
+        {
+            IsSorted = sorted;
+            if (IsSorted)
+                _list.Sort();
         }
 
         public override bool Equals(object obj)
@@ -618,6 +644,8 @@ namespace BabBot.Common
         public void Add(T item)
         {
             _list.Add(item);
+            if (IsSorted)
+                _list.Sort();
         }
 
         public void MergeWith(object obj)
@@ -629,12 +657,20 @@ namespace BabBot.Common
 
             foreach (T item1 in l.List)
             {
+                bool f = false;
                 foreach (T item2 in _list)
-                    if (!item1.Equals(item2))
+                {
+                    if (item1.Equals(item2))
                     {
-                        _list.Add(item1);
+                        if (typeof(IMergeable).Equals(item1))
+                            ((IMergeable)item1).MergeWith(item2);
+
+                        f = true;
                         break;
                     }
+                }
+                if (!f)
+                    Add(item1);
             }
         }
     }

@@ -28,7 +28,7 @@ using System.Collections.Generic;
 namespace BabBot.Wow
 {
     [XmlRoot("wow_data")]
-    public class WoWData : CommonSortedList<WoWVersion>
+    public class WoWData : CommonSortedTable<WoWVersion>
     {
         [XmlElement("version")]
         public WoWVersion[] Versions
