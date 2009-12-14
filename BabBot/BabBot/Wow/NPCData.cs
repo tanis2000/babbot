@@ -120,7 +120,7 @@ namespace BabBot.Wow
         {
             QuestList.Clear();
 
-            foreach (NPC npc in Table.Values)
+            foreach (NPC npc in STable.Values)
             {
                 Quests ql = npc.QuestList;
                 if (ql != null)
@@ -128,7 +128,7 @@ namespace BabBot.Wow
                     {
                         q.SrcNpc = npc;
                         if (!string.IsNullOrEmpty(q.DestNpcName))
-                            q.DestNpc = (NPC) Table[q.DestNpcName];
+                            q.DestNpc = (NPC)STable[q.DestNpcName];
                         QuestList.Add(q.Id, q);
                     }
             }
@@ -208,6 +208,9 @@ namespace BabBot.Wow
         
         public override bool Equals(object obj)
         {
+            if ((obj == null) || (obj.GetType() != typeof(NPC)))
+                return false;
+
             NPC npc = (NPC)obj;
 
             return (
@@ -237,7 +240,7 @@ namespace BabBot.Wow
     
     #region Quests
 
-    public class Quests : CommonMergeTable<Quest>
+    public class Quests : CommonTable<Quest>
     {
         [XmlElement("quest")]
         public Quest[] QuestList
@@ -258,6 +261,15 @@ namespace BabBot.Wow
 
     public class Quest : CommonText, IMergeable
     {
+        private bool _changed = false;
+
+        [XmlIgnore]
+        public bool Changed
+        {
+            get { return _changed && Relations.Changed; }
+            set { _changed = value; }
+        }
+
         internal string Title
         {
             get { return Name; }
@@ -284,8 +296,18 @@ namespace BabBot.Wow
         [XmlAttribute("bonus_spell")]
         public string BonusSpell = "";
 
+        private string _dest_npc_name = "";
+
         [XmlAttribute("dest_npc")]
-        public string DestNpcName = "";
+        public string DestNpcName
+        {
+            get { return _dest_npc_name; }
+            set
+            {
+                _changed = true;
+                _dest_npc_name = value;
+            }
+        }
 
         [XmlAttribute("related_to")]
         public string RelatedTo
@@ -307,6 +329,7 @@ namespace BabBot.Wow
                 if (value == null)
                     return;
 
+                _changed = true;
                 string[] s = value.Split(',');
                 Relations = new QuestRelations(s);
             }
@@ -609,7 +632,7 @@ namespace BabBot.Wow
 
     #region Waypoints
 
-    public class ContinentListId : CommonMergeTable<ContinentId>
+    public class ContinentListId : CommonTable<ContinentId>
     {
         [XmlElement("continent")]
         public ContinentId[] Continents
@@ -798,8 +821,8 @@ namespace BabBot.Wow
         [XmlAttribute("type")]
         public string SType;
 
-        [XmlAttribute("text")]
-        public string Text;
+        [XmlAttribute("name")]
+        public string Name;
 
         [XmlElement("waypoints")]
         public ContinentListId Waypoints;
@@ -811,10 +834,10 @@ namespace BabBot.Wow
             SType = type;
         }
 
-        public AbstractQuestObjective(string type, string text, bool is_finished)
+        public AbstractQuestObjective(string type, string name, bool is_finished)
             : this(type)
         {
-            Text = text;
+            Name = name;
             Finished = is_finished;
         }
     }
@@ -824,13 +847,16 @@ namespace BabBot.Wow
     /// </summary>
     public abstract class AbstractQuestObjectiveWithQty : AbstractQuestObjective
     {
-        internal readonly int ReqQty;
+        internal readonly int BagQty = 0;
 
-        [XmlAttribute("item")]
-        public readonly string ItemName;
+        internal string ItemName
+        {
+            get { return Name; }
+            set { Name = value; }
+        }
 
         [XmlAttribute("qty")]
-        public int BagQty = 0;
+        public int ReqQty;
 
         public AbstractQuestObjectiveWithQty(string stype)
             : base(stype) { }

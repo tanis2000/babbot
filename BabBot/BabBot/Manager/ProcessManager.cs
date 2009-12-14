@@ -630,12 +630,12 @@ namespace BabBot.Manager
         internal static void MergeXml()
         {
             // Auto Merge data from earlier version with latest one
-            WoWVersion wprev = (WoWVersion)wdata.SList.Values[0];
+            WoWVersion wprev = (WoWVersion)wdata.STable.Values[0];
             int i = 1;
-            while ((i < wdata.SList.Count) &&
+            while ((i < wdata.STable.Count) &&
                 !wprev.Build.Equals(config.WoWInfo.Version))
             {
-                WoWVersion wnew = (WoWVersion)wdata.SList.Values[i];
+                WoWVersion wnew = (WoWVersion)wdata.STable.Values[i];
 
                 // Merge WoW data
                 wnew.MergeWith(wprev);
@@ -660,6 +660,9 @@ namespace BabBot.Manager
 
             // Index NPC data for future use
             wversion.NPCData.IndexData();
+
+            // Reset changed flag
+            ResetChanged();
         }
 
         /// <summary>
@@ -1230,7 +1233,43 @@ namespace BabBot.Manager
             // Index NPC Data
             wversion.NPCData.IndexData();
 
+            // Check all list and generate chanded data for export
+
+            foreach (NPC npc in CurWoWVersion.NPCData.STable.Values)
+                if (npc.Changed)
+                    ExportNPC(npc);
+
+            // Reset Changed flag
+            ResetChanged();
+
             return true;
+        }
+
+        /// <summary>
+        /// Serialize the given NPC in Export directory
+        /// </summary>
+        /// <param name="npc"></param>
+        private static void ExportNPC(NPC npc)
+        {
+            try
+            {
+                SaveXmlData("Data" + System.IO.Path.DirectorySeparatorChar +
+                    "Export" + System.IO.Path.DirectorySeparatorChar + npc.Name + ".npc",
+                    typeof(NPC), npc);
+            }
+            catch (Exception e)
+            {
+                ShowErrorMessage("Unable generate export data. " + e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Reset Changed flag on the whole NPC database
+        /// </summary>
+        private static void ResetChanged()
+        {
+            foreach (NPC npc in CurWoWVersion.NPCData.STable.Values)
+                npc.Changed = false;
         }
 
         /// <summary>

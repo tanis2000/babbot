@@ -51,6 +51,20 @@ namespace BabBot.Common
         public static event OutputEventHandler OutputEvent;
 
         /// <summary>
+        /// Convert system facility name into something human readable
+        /// Replace undescore with space and capitailze each word
+        /// </summary>
+        /// <param name="lfs">System Logging Facility</param>
+        /// <returns>String used to create logging file name</returns>
+        public static string GetLogNameByLfs(string lfs)
+        {
+            string[] ss = lfs.Replace('_', ' ').Split(' ');
+            for (int i = 0; i < ss.Length; i++)
+                ss[i] = char.ToUpper(ss[i][0]) + ss[i].Substring(1);
+            return string.Join(" ", ss);
+        }
+
+        /// <summary>
         /// A simple logging method. Will output to DebugLog.txt.
         /// </summary>
         /// <param name="message">The message to be logged.</param>
@@ -70,21 +84,17 @@ namespace BabBot.Common
         /// </summary>
         /// <param name="message">The message to be logged.</param>
         /// <returns>Nothing.</returns>
-        internal void Log(string fs, string message, Color color)
+        internal void Log(string lfs, string message, Color color)
         {
             lock (Obj)
             {
-                object cf = (string)FacilityList[fs];
+                object cf = (string)FacilityList[lfs];
                 string cur_facility = null;
 
                 if (cf == null)
                 {
-                    // Replace undescore with space and capitailze words
-                    string[] ss = fs.Replace('_', ' ').Split(' ');
-                    for (int i = 0; i < ss.Length; i++)
-                        ss[i] = char.ToUpper(ss[i][0]) + ss[i].Substring(1);
-                    cur_facility = string.Join(" ", ss);
-                    FacilityList.Add(fs, cur_facility);
+                    cur_facility = GetLogNameByLfs(lfs);
+                    FacilityList.Add(lfs, cur_facility);
                 }
                 else
                     cur_facility = cf.ToString();

@@ -444,6 +444,8 @@ namespace BabBot.Wow.Helpers
                 {
                     Output.Instance.Debug(lfs, "Adding new NPC '" + x.Name +
                             "' into NPCData.xml");
+
+                    x.Changed = true;
                     ProcessManager.CurWoWVersion.NPCData.Add(x);
 
                     f = true;
@@ -655,7 +657,7 @@ namespace BabBot.Wow.Helpers
                 {
                     q.QIdx = mq.QIdx + 1;
                     // Probably I need link to high lvl quest with same title
-                    q.Relations.Add(Convert.ToString(q.Id));
+                    q.Relations.Add(q.Id);
                 }
                 npc.AddQuest(q);
             }
@@ -729,9 +731,8 @@ namespace BabBot.Wow.Helpers
                 Output.Instance.Log("Assign current NPC as end for quest '" +
                                                                 qtitle + "'");
 
+                // After this quest should be marked as Changed and go on export
                 q.DestNpcName = npc_name;
-
-                SaveList.Add(q.SrcNpc);
             } else
                 Output.Instance.Log("Unable locate quest giver for quest '" +
                                                                 qtitle + "'");
@@ -764,7 +765,7 @@ namespace BabBot.Wow.Helpers
             string zone = (string) ProcessManager.Player.ZoneText.Clone();
             Vector3D loc = (Vector3D) ProcessManager.Player.Location.Clone();
 
-            foreach (NPC npc in ProcessManager.CurWoWVersion.NPCData.Table.Values)
+            foreach (NPC npc in ProcessManager.CurWoWVersion.NPCData.STable.Values)
                 if (npc.Services.Table.ContainsKey(service))
                     list.Add(npc);
 

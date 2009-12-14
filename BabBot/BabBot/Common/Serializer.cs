@@ -83,6 +83,7 @@ namespace BabBot.Common
 
     public interface IMergeable
     {
+        bool Changed { get; set; }
         void MergeWith(object obj);
     }
 
@@ -149,6 +150,15 @@ namespace BabBot.Common
         public CommonMergeItem(string name)
             : base(name) { }
 
+        private bool _changed = false;
+
+        [XmlIgnore]
+        public virtual bool Changed
+        {
+            get { return _changed; }
+            set { _changed = value; }
+        }
+
         // By default do nothing
         public virtual void MergeWith(object obj) { }
     }
@@ -159,6 +169,30 @@ namespace BabBot.Common
     public abstract class CommonMergeListItem : CommonMergeItem
     {
         protected IMergeable[] MergeList;
+
+        [XmlIgnore]
+        public override bool Changed
+        {
+            get 
+            {
+                if (base.Changed)
+                    return true;
+
+                foreach (IMergeable m in MergeList)
+                    if (m.Changed)
+                        return true;
+
+                return false;
+            }
+
+            set
+            {
+                // On reset do reset all subcomponents as well
+                if (!value)
+                    foreach (IMergeable m in MergeList)
+                        m.Changed = false;
+            }
+        }
 
         public CommonMergeListItem()
             : base() { }
@@ -304,6 +338,15 @@ namespace BabBot.Common
             get { return _htable; }
         }
 
+        private bool _changed = false;
+
+        [XmlIgnore]
+        public bool Changed
+        {
+            get { return _changed; }
+            set { _changed = value; }
+        }
+
         internal T[] Items
         {
             get
@@ -318,7 +361,7 @@ namespace BabBot.Common
                 T[] items = (T[])value;
                 _htable.Clear();
                 foreach (T item in items)
-                    _htable.Add(item.ToString(), item);
+                    Add(item);
             }
         }
 
@@ -363,6 +406,7 @@ namespace BabBot.Common
 
         public void Add(T item)
         {
+            _changed = true;
             _htable.Add(item.ToString(), item);
         }
 
@@ -382,7 +426,7 @@ namespace BabBot.Common
             foreach (KeyValuePair<string, T> item in t.Table)
             {
                 if (!_htable.ContainsKey(item.Key))
-                    _htable.Add(item.Key, item.Value);
+                    Add(item.Value);
                 else
                 {
                     T value = _htable[item.Key];
@@ -394,18 +438,22 @@ namespace BabBot.Common
     }
 
     /// <summary>
-    /// Class for mergeable table that include mergeable elements as well
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class CommonMergeTable<T> : CommonTable<T> where T : IMergeable { }
-
-    /// <summary>
     /// Class with internal sorted table that needs to be serialized
+    /// Used by: WoWData
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
     public abstract class CommonSortedTable<T> : IMergeable
     {
         private readonly SortedList <string, T> _stable;
+
+        private bool _changed = false;
+
+        [XmlIgnore]
+        public bool Changed
+        {
+            get { return _changed; }
+            set { _changed = value; }
+        }
 
         internal T[] Items
         {
@@ -421,11 +469,11 @@ namespace BabBot.Common
                 T[] items = (T[])value;
                 _stable.Clear();
                 foreach (T item in items)
-                    _stable.Add(item.ToString(), item);
+                    Add(item);
             }
         }
 
-        internal SortedList<string, T> SList
+        internal SortedList<string, T> STable
         {
             get { return _stable; }
         }
@@ -444,13 +492,13 @@ namespace BabBot.Common
 
             // Check size first
             int cnt = _stable.Count;
-            if (cnt != t.SList.Count)
+            if (cnt != t.STable.Count)
                 return false;
 
             // Check keys and values. List is sorted
             for ( int i = 0; i < cnt; i++)
             {
-                T item2 = t.SList.Values[i];
+                T item2 = t.STable.Values[i];
 
                 if ((item2 == null) || !_stable.Values[i].Equals(item2))
                     return false;
@@ -473,6 +521,7 @@ namespace BabBot.Common
 
         public void Add(T item)
         {
+            _changed = true;
             _stable.Add(item.ToString(), item);
         }
 
@@ -494,7 +543,7 @@ namespace BabBot.Common
             foreach (KeyValuePair<string, T> item in t.Table)
             {
                 if (!_stable.ContainsKey(item.Key))
-                    _stable.Add(item.Key, item.Value);
+                    Add(item.Value);
                 else
                 {
                     T value = _stable[item.Key];
@@ -506,10 +555,11 @@ namespace BabBot.Common
     }
 
     /// <summary>
-    /// Class with internal hashtable that needs to be serialized and have a unique name
+    /// Class with internal sorted table that needs to be serialized and have a unique name
+    /// Used by: NPCVersion
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonNameTable<T> : CommonTable<T> where T : IMergeable
+    public abstract class CommonNameTable<T> : CommonSortedTable<T>
     {
         [XmlAttribute("name")]
         public string Name;
@@ -530,7 +580,7 @@ namespace BabBot.Common
     /// Class with internal hashtable that needs to be serialized and have a unique id
     /// </summary>
     /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonIdMergeTable<T> : CommonMergeTable<T> where T : IMergeable
+    public abstract class CommonIdMergeTable<T> : CommonTable<T> where T : IMergeable
     {
         [XmlAttribute("id")]
         public int Id;
@@ -577,13 +627,22 @@ namespace BabBot.Common
                 T[] items = (T[])value;
                 _list.Clear();
                 foreach (T item in items)
-                    _list.Add(item);
+                    Add(item);
             }
         }
 
         internal List<T> List
         {
             get { return _list; }
+        }
+
+        private bool _changed = false;
+
+        [XmlIgnore]
+        public bool Changed
+        {
+            get { return _changed; }
+            set { _changed = value; }
         }
 
         internal bool IsSorted = false;
@@ -643,6 +702,7 @@ namespace BabBot.Common
 
         public void Add(T item)
         {
+            _changed = true;
             _list.Add(item);
             if (IsSorted)
                 _list.Sort();

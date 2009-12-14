@@ -372,6 +372,10 @@ namespace BabBot.Forms
         {
             MessageBox.Show(this, error, "Error", 
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
+            // Leave the last error message in error log
+            RichTextBox rb = (RichTextBox) tabControlMain.SelectedTab.Controls[0];
+
+            AppendText(rb, "Last Error: " + error, Color.Red);
         }
 
         private void wow_ProcessStarted(int process)
@@ -788,6 +792,9 @@ namespace BabBot.Forms
 
         private void btnMoveInteractNpc_Click(object sender, EventArgs e)
         {
+            if (!CheckBeforeNpcTest())
+                return;
+
             ulong guid = ProcessManager.Player.CurTargetGuid;
             if (guid != 0)
                 ProcessManager.Player.ClickToMoveInteractNpc(guid);
@@ -1330,7 +1337,7 @@ namespace BabBot.Forms
             ProcessManager.SaveNpcData();
             */
 
-            if (!CheckInGame())
+            if (!CheckBeforeNpcTest())
                 return;
 
 #if DEBUG
@@ -1342,7 +1349,7 @@ namespace BabBot.Forms
                     // Target NPC
                     // string name = "Melithar Staghelm";
                     // string name = "Conservator Ilthalaine";
-                    string name = "Tarindrella";
+                    string name = "Gilshalan Windwalker";
                     LuaHelper.TargetUnitByName(name);
                 }
 #endif
@@ -1353,13 +1360,6 @@ namespace BabBot.Forms
                 ShowErrorMessage("NPC is not selected");
                 return;
             }
-
-            // Switch to npc output tab
-            tabControlMain.SelectedIndex = 0;
-            Output.Instance.Log("npc", 
-                "Checking NPC '" + ProcessManager.Player.CurTarget.Name + "'");
-            TabPage npc_tab = tabLogs.TabPages["Npc"];
-            tabLogs.SelectedTab = npc_tab;
 
             try
             {
@@ -1391,7 +1391,9 @@ namespace BabBot.Forms
             if (NPCListForm == null)
                 NPCListForm = new NPCListForm();
             NPCListForm.TopMost = this.TopMost;
-            NPCListForm.ShowDialog();
+
+            if (!NPCListForm.Visible)
+                NPCListForm.Open();
         }
 
         private void addCurrentTargetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1678,11 +1680,31 @@ namespace BabBot.Forms
 
             // Start NPC channel and switch to main form
             Output.Instance.Log("quest_test", "Starting quest test ...");
-            tabControlMain.SelectedIndex = 0;
-            TabPage npc_tab = tabLogs.TabPages["Quest Test"];
-            tabLogs.SelectedTab = npc_tab;
+            SelectTab("quest_test");
 
             return true;
+        }
+
+        private bool CheckBeforeNpcTest()
+        {
+            if (!CheckInGame())
+                return false;
+
+            // Start NPC channel and switch to main form
+            Output.Instance.Log("npc", "Starting npc test ...");
+            SelectTab("npc");
+
+            return true;
+        }
+
+        private void SelectTab(string lfs)
+        {
+            string tab_name = Output.GetLogNameByLfs(lfs);
+            tabControlMain.SelectedIndex = 0;
+            TabPage npc_tab = tabLogs.TabPages[tab_name];
+            tabLogs.SelectedTab = npc_tab;
+
+            this.Refresh();
         }
 
         private void btnGetQuest_Click(object sender, EventArgs e)
@@ -1813,6 +1835,9 @@ namespace BabBot.Forms
 
         private void btnMoveInteractService_Click(object sender, EventArgs e)
         {
+            if (!CheckBeforeNpcTest())
+                return;
+
             // Find nearest class trainer
             try
             {
@@ -1834,6 +1859,9 @@ namespace BabBot.Forms
 
         private void btnLearnSkill_Click(object sender, EventArgs e)
         {
+            if (!CheckBeforeNpcTest())
+                return;
+
             // Learn all skills
             string skill = cbServiceList.SelectedItem.ToString();
             NpcHelper.LearnSkills(((NPC)labelNPC.Tag), skill, "npc");

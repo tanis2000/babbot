@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using BabBot.Manager;
+using System.IO;
 
 namespace BabBot.Forms
 {
@@ -34,12 +35,34 @@ namespace BabBot.Forms
             InitializeComponent();
         }
 
-        private void NPCListForm_Load(object sender, EventArgs e)
+        public void Open()
         {
-            cbWoWVersion.DataSource = ProcessManager.WoWVersions;
-            cbWoWVersion.SelectedItem = ProcessManager.CurWoWVersion;
+            labelWoWVersion.Text = ProcessManager.CurWoWVersion.Build;
+
+            // Bind property
+            lbNpcList.DataSource = ProcessManager.CurWoWVersion.NPCData.Items;
 
             IsChanged = false;
+            Show();
+        }
+
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            // TODO load file from Data\Import directory
+            var dlg = new OpenFileDialog { RestoreDirectory = true, Multiselect = true, 
+                Filter = "NPC data files (*.npc)|*.npc" };
+            dlg.InitialDirectory = "Data" + Path.DirectorySeparatorChar + "Import";
+
+            if (dlg.ShowDialog() != DialogResult.OK)
+                return;
+
+            MessageBox.Show("TEST: " + string.Join(",", dlg.FileNames));
+            foreach (string fname in dlg.FileNames)
+            {
+                // Load file
+                // NPC npc;
+                // ProcessManager.CurWoWVersion.NPCData.Add(npc);
+            }
         }
     }
 }

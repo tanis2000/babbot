@@ -41,15 +41,15 @@
       </wp_list>
       <services />
       <quests>
-        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" dest_npc="Conservator Ilthalaine" idx="0">
+        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" idx="0" dest_npc="Conservator Ilthalaine">
           <text><![CDATA[Greetings, Flinar.  I am Conservator Ilthalaine.  My purpose in Shadowglen is to ensure that the balance of nature is maintained.
 
 The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
 
 Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young hunter, and thin the boar and saber populations so that nature's harmony will be preserved.]]></text>
           <objectives>
-            <objective d7p1:type="MonsterQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
-            <objective d7p1:type="MonsterQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+            <objective d7p1:type="MonsterQuestObjective" type="monster" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+            <objective d7p1:type="MonsterQuestObjective" type="monster" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
           </objectives>
           <choice_items>
             <item name="Archery Training Gloves" qty="1" />
@@ -57,13 +57,13 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
           </choice_items>
           <objectives_text><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives_text>
         </quest>
-        <quest name="The Balance of Nature" id="457" link="|cffffff00|Hquest:457:3|h[The Balance of Nature]|h|r" level="3" bonus_spell="" dest_npc="Conservator Ilthalaine" related_to="456">
+        <quest name="The Balance of Nature" id="457" link="|cffffff00|Hquest:457:3|h[The Balance of Nature]|h|r" level="3" bonus_spell="" idx="0" dest_npc="Conservator Ilthalaine" related_to="456">
           <text><![CDATA[Thinning the younger population of creatures here in Shadowglen was a good start, Flinar, but there is still work to be done.
 
 The resources of the forest will be depleted too quickly if the problem is not addressed.  Killing nature's beasts is a necessary evil for the good of all who share the land.  Venture into the forest and slay mangy nightsabers and thistle boars in the name of balance.]]></text>
           <objectives>
-            <objective d7p1:type="MonsterQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
-            <objective d7p1:type="MonsterQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+            <objective d7p1:type="MonsterQuestObjective" type="monster" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+            <objective d7p1:type="MonsterQuestObjective" type="monster" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
           </objectives>
           <choice_items>
             <item name="Draped Cloak" qty="1" />
@@ -84,14 +84,14 @@ The resources of the forest will be depleted too quickly if the problem is not a
       </wp_list>
       <services />
       <quests>
-        <quest name="The Woodland Protector" id="459" link="|cffffff00|Hquest:459:3|h[The Woodland Protector]|h|r" level="3" bonus_spell="" dest_npc="Tarindrella" idx="0">
+        <quest name="The Woodland Protector" id="459" link="|cffffff00|Hquest:459:3|h[The Woodland Protector]|h|r" level="3" bonus_spell="" idx="0" dest_npc="Tarindrella">
           <text><![CDATA[Something evil is brewing in the forests of Teldrassil.  Look long the hills to where the peaceful furbolgs used to dwell.  They have deserted their homes and are amassing under the name of the Gnarlpine tribe.
 
 Only the corruption of wicked Fel Moss could cause such a transformation.  The grells and grellkin have infested the area and are threatening the residents of Shadowglen.  
 
 Engage these grells and grellkin, Flinar, and see if they are indeed caught under the enchantment of the wicked Fel Moss.]]></text>
           <objectives>
-            <objective d7p1:type="ItemQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+            <objective d7p1:type="ItemQuestObjective" type="item" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
           </objectives>
           <reward_items>
             <item name="Healing Herb" qty="3" />
@@ -139,7 +139,7 @@ Engage these grells and grellkin, Flinar, and see if they are indeed caught unde
       </wp_list>
       <services />
       <quests>
-        <quest name="A Good Friend" id="4495" link="|cffffff00|Hquest:4495:4|h[A Good Friend]|h|r" level="4" bonus_spell="" idx="0">
+        <quest name="A Good Friend" id="4495" link="|cffffff00|Hquest:4495:4|h[A Good Friend]|h|r" level="4" bonus_spell="" idx="0" dest_npc="">
           <text><![CDATA[A friend of mine named Iverron usually visits me at the same time every day. The strange thing is that he hasn't been by today at all -- he's several hours late, in fact.
 
 I admit, I am a little worried, Flinar. Iverron spends a lot of time over by the cave to the north, and I'm sure you know how dangerous it is there -- spiders, everywhere!
@@ -154,18 +154,17 @@ If you happen to be going that way, though, will you keep an eye out for him?]]>
         <continent id="1">
           <zone name="Teldrassil">
             <waypoint x="10417.7" y="871.194" z="1319.40784" />
-            <waypoint x="10417.7" y="871.194" z="1319.49" />
           </zone>
         </continent>
       </wp_list>
       <services />
       <quests>
-        <quest name="Webwood Venom" id="916" link="|cffffff00|Hquest:916:4|h[Webwood Venom]|h|r" level="4" bonus_spell="" dest_npc="Gilshalan Windwalker" idx="0">
+        <quest name="Webwood Venom" id="916" link="|cffffff00|Hquest:916:4|h[Webwood Venom]|h|r" level="4" bonus_spell="" idx="0" dest_npc="">
           <text><![CDATA[I came to Shadowglen to observe the webwood spiders that dwell in the Shadowthread Cave.  They are cousin to a much smaller variety of spider; I believe the world tree has had a profound effect on them, and I would like specimens to study to confirm this.
 
 First, I would like some of their venom.  Gather Webwood venom sacs from the spiders in and around the Shadowthread Cave, to the north.  I can then examine them for similarities with their smaller cousin's venom.]]></text>
           <objectives>
-            <objective d7p1:type="ItemQuestObjective" qty="0" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
+            <objective d7p1:type="ItemQuestObjective" type="item" name="Webwood Venom Sac" qty="10" xmlns:d7p1="http://www.w3.org/2001/XMLSchema-instance" />
           </objectives>
           <choice_items>
             <item name="Thistlewood Maul" qty="1" />
