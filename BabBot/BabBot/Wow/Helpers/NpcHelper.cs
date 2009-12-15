@@ -89,7 +89,7 @@ namespace BabBot.Wow.Helpers
 
         static List<NPC> SaveList = new List<NPC>();
 
-        static Dictionary<string, string> 
+        internal static Dictionary<string, string> 
             ServiceFrameTable = new Dictionary<string, string>();
         
         static NpcHelper()
@@ -389,7 +389,7 @@ namespace BabBot.Wow.Helpers
 
         #region Add NPC
 
-        public static bool AddNpc(string lfs)
+        public static NPC AddNpc(string lfs)
         {
             // Initialize parameters
             SaveList.Clear();
@@ -404,15 +404,14 @@ namespace BabBot.Wow.Helpers
             NPC npc = new NPC(ProcessManager.Player, npc_info[3], npc_info[4]);
 
             if (!AddTargetNpcInfo(npc, lfs))
-                return false;
+                return null;
 
             SaveList.Add(npc);
 
-            bool f = false;
+            NPC check = null;
             foreach (NPC x in SaveList)
             {
                 // Check if NPC already exists
-                NPC check = null;
 
                 try
                 {
@@ -436,8 +435,6 @@ namespace BabBot.Wow.Helpers
                         Output.Instance.Debug(lfs, "NPC '" + x.Name +
                             "' data merged with currently configured");
                         check.MergeWith(npc);
-
-                        f = true;
                     }
                 }
                 else
@@ -447,17 +444,15 @@ namespace BabBot.Wow.Helpers
 
                     x.Changed = true;
                     ProcessManager.CurWoWVersion.NPCData.Add(x);
-
-                    f = true;
                 }
 
             }
 
-            if (f && (ProcessManager.SaveNpcData()))
+            if ((npc != null) && (ProcessManager.SaveNpcData()))
                 Output.Instance.Log(lfs, "NPC '" + npc_name +
                     "' successfully added to NPCData.xml");
 
-            return f;
+            return check;
 
         }
 

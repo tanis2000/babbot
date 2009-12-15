@@ -63,6 +63,10 @@ namespace BabBot.Wow
         internal SortedDictionary<int, Quest> QuestList = 
                         new SortedDictionary<int, Quest>();
 
+        internal List<string> ZoneList = new List<string>();
+
+
+
         // This variable is for binding
         internal Quest[] QuestDataSource
         {
@@ -103,6 +107,7 @@ namespace BabBot.Wow
                     foreach (Quest q in npc.QuestList.Table.Values)
                         if ((q.Title.Equals(title)) && (q.QIdx > max))
                             res = q;
+
             }
 
             return res;
@@ -124,6 +129,7 @@ namespace BabBot.Wow
             {
                 Quests ql = npc.QuestList;
                 if (ql != null)
+                {
                     foreach (Quest q in ql.Table.Values)
                     {
                         q.SrcNpc = npc;
@@ -131,6 +137,10 @@ namespace BabBot.Wow
                             q.DestNpc = (NPC)STable[q.DestNpcName];
                         QuestList.Add(q.Id, q);
                     }
+                }
+
+                // Update zone list as well
+
             }
         }
     }

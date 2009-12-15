@@ -27,6 +27,11 @@ namespace BabBot
 {
     internal static class Program
     {
+        /// <summary>
+        /// Pointer on Main Form
+        /// </summary>
+        internal static MainForm mainForm;
+
         // List of required subdirectories under installation directory that
         // doesn't depend of config parameters
         private static string[] dirs = new string[] { "Data\\Export", "Data\\Import" };
@@ -93,7 +98,7 @@ namespace BabBot
                 if (!Directory.Exists(s))
                     Directory.CreateDirectory(s);
 
-            var mainForm = new MainForm();
+            mainForm = new MainForm();
             Application.ThreadException += mainForm.UnhandledThreadExceptionHandler;
             try
             {

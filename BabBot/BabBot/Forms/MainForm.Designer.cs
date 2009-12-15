@@ -38,9 +38,10 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.botOptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.npcListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addCurrentTargetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.talentTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.realmListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.actionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addTargetNPCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -173,18 +174,12 @@
             this.tbTLS = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDebug2 = new System.Windows.Forms.TabPage();
-            this.gbServices = new System.Windows.Forms.GroupBox();
-            this.btnLearnSkill = new System.Windows.Forms.Button();
-            this.label41 = new System.Windows.Forms.Label();
-            this.cbServiceList = new System.Windows.Forms.ComboBox();
-            this.btnMoveInteractService = new System.Windows.Forms.Button();
             this.btnReloadXmlData = new System.Windows.Forms.Button();
             this.gbClickToMove = new System.Windows.Forms.GroupBox();
             this.btnFollow = new System.Windows.Forms.Button();
             this.btnMoveInteractNpc = new System.Windows.Forms.Button();
             this.btnMoveAttack = new System.Windows.Forms.Button();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.btnAddNPC = new System.Windows.Forms.Button();
             this.btnLogin = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.btnLearnTalents = new System.Windows.Forms.Button();
@@ -192,7 +187,6 @@
             this.lblTalentTemplates = new System.Windows.Forms.Label();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.btnAbandomQuest = new System.Windows.Forms.Button();
-            this.cbUseState = new System.Windows.Forms.CheckBox();
             this.btnReturnQuest = new System.Windows.Forms.Button();
             this.label39 = new System.Windows.Forms.Label();
             this.label40 = new System.Windows.Forms.Label();
@@ -227,7 +221,6 @@
             this.slGameStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.labelNPC = new System.Windows.Forms.Label();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -250,7 +243,6 @@
             this.tabPageEnemies.SuspendLayout();
             this.tabPageDebug.SuspendLayout();
             this.tabPageDebug2.SuspendLayout();
-            this.gbServices.SuspendLayout();
             this.gbClickToMove.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.groupBox8.SuspendLayout();
@@ -266,6 +258,7 @@
             this.msMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
+            this.actionsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.msMain.Location = new System.Drawing.Point(0, 0);
             this.msMain.Name = "msMain";
@@ -331,21 +324,11 @@
             // 
             // npcListToolStripMenuItem
             // 
-            this.npcListToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addCurrentTargetToolStripMenuItem});
             this.npcListToolStripMenuItem.Name = "npcListToolStripMenuItem";
             this.npcListToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
             this.npcListToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.npcListToolStripMenuItem.Text = "NPC List";
             this.npcListToolStripMenuItem.Click += new System.EventHandler(this.npcListToolStripMenuItem_Click);
-            // 
-            // addCurrentTargetToolStripMenuItem
-            // 
-            this.addCurrentTargetToolStripMenuItem.Name = "addCurrentTargetToolStripMenuItem";
-            this.addCurrentTargetToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.addCurrentTargetToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.addCurrentTargetToolStripMenuItem.Text = "Add Current Target";
-            this.addCurrentTargetToolStripMenuItem.Click += new System.EventHandler(this.addCurrentTargetToolStripMenuItem_Click);
             // 
             // talentTemplatesToolStripMenuItem
             // 
@@ -358,9 +341,26 @@
             // realmListToolStripMenuItem
             // 
             this.realmListToolStripMenuItem.Name = "realmListToolStripMenuItem";
-            this.realmListToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.realmListToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
             this.realmListToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.realmListToolStripMenuItem.Text = "Realm List";
+            // 
+            // actionsToolStripMenuItem
+            // 
+            this.actionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addTargetNPCToolStripMenuItem});
+            this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
+            this.actionsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.actionsToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+            this.actionsToolStripMenuItem.Text = "&Actions";
+            // 
+            // addTargetNPCToolStripMenuItem
+            // 
+            this.addTargetNPCToolStripMenuItem.Name = "addTargetNPCToolStripMenuItem";
+            this.addTargetNPCToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.addTargetNPCToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.addTargetNPCToolStripMenuItem.Text = "Add Target NPC";
+            this.addTargetNPCToolStripMenuItem.Click += new System.EventHandler(this.addCurrentTargetToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -1676,7 +1676,6 @@
             // 
             // tabPageDebug2
             // 
-            this.tabPageDebug2.Controls.Add(this.gbServices);
             this.tabPageDebug2.Controls.Add(this.btnReloadXmlData);
             this.tabPageDebug2.Controls.Add(this.gbClickToMove);
             this.tabPageDebug2.Controls.Add(this.groupBox9);
@@ -1695,69 +1694,6 @@
             this.tabPageDebug2.TabIndex = 4;
             this.tabPageDebug2.Text = "More Debug";
             this.tabPageDebug2.UseVisualStyleBackColor = true;
-            // 
-            // gbServices
-            // 
-            this.gbServices.Controls.Add(this.labelNPC);
-            this.gbServices.Controls.Add(this.btnLearnSkill);
-            this.gbServices.Controls.Add(this.label41);
-            this.gbServices.Controls.Add(this.cbServiceList);
-            this.gbServices.Controls.Add(this.btnMoveInteractService);
-            this.gbServices.Location = new System.Drawing.Point(182, 202);
-            this.gbServices.Name = "gbServices";
-            this.gbServices.Size = new System.Drawing.Size(274, 81);
-            this.gbServices.TabIndex = 76;
-            this.gbServices.TabStop = false;
-            this.gbServices.Text = "NPC Services";
-            // 
-            // btnLearnSkill
-            // 
-            this.btnLearnSkill.Enabled = false;
-            this.btnLearnSkill.Location = new System.Drawing.Point(193, 21);
-            this.btnLearnSkill.Name = "btnLearnSkill";
-            this.btnLearnSkill.Size = new System.Drawing.Size(75, 23);
-            this.btnLearnSkill.TabIndex = 79;
-            this.btnLearnSkill.Text = "Learn Skills";
-            this.btnLearnSkill.UseVisualStyleBackColor = true;
-            this.btnLearnSkill.Click += new System.EventHandler(this.btnLearnSkill_Click);
-            // 
-            // label41
-            // 
-            this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(6, 24);
-            this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(43, 13);
-            this.label41.TabIndex = 78;
-            this.label41.Text = "Service";
-            // 
-            // cbServiceList
-            // 
-            this.cbServiceList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbServiceList.FormattingEnabled = true;
-            this.cbServiceList.Items.AddRange(new object[] {
-            "class_trainer",
-            "taxi",
-            "banker",
-            "wep_skill_trainer",
-            "trade_skill_trainer",
-            "vendor",
-            "battlemaster"});
-            this.cbServiceList.Location = new System.Drawing.Point(55, 21);
-            this.cbServiceList.Name = "cbServiceList";
-            this.cbServiceList.Size = new System.Drawing.Size(132, 21);
-            this.cbServiceList.TabIndex = 77;
-            this.cbServiceList.SelectedIndexChanged += new System.EventHandler(this.cbServiceList_SelectedIndexChanged);
-            // 
-            // btnMoveInteractService
-            // 
-            this.btnMoveInteractService.Enabled = false;
-            this.btnMoveInteractService.Location = new System.Drawing.Point(6, 48);
-            this.btnMoveInteractService.Name = "btnMoveInteractService";
-            this.btnMoveInteractService.Size = new System.Drawing.Size(100, 23);
-            this.btnMoveInteractService.TabIndex = 76;
-            this.btnMoveInteractService.Text = "Move && Interact";
-            this.btnMoveInteractService.UseVisualStyleBackColor = true;
-            this.btnMoveInteractService.Click += new System.EventHandler(this.btnMoveInteractService_Click);
             // 
             // btnReloadXmlData
             // 
@@ -1813,8 +1749,6 @@
             // 
             // groupBox9
             // 
-            this.groupBox9.Controls.Add(this.btnAddNPC);
-            this.groupBox9.Controls.Add(this.cbUseState);
             this.groupBox9.Controls.Add(this.btnLogin);
             this.groupBox9.Location = new System.Drawing.Point(350, 31);
             this.groupBox9.Name = "groupBox9";
@@ -1823,20 +1757,10 @@
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Test Buttons";
             // 
-            // btnAddNPC
-            // 
-            this.btnAddNPC.Location = new System.Drawing.Point(20, 19);
-            this.btnAddNPC.Name = "btnAddNPC";
-            this.btnAddNPC.Size = new System.Drawing.Size(75, 23);
-            this.btnAddNPC.TabIndex = 63;
-            this.btnAddNPC.Text = "AddNPC";
-            this.btnAddNPC.UseVisualStyleBackColor = true;
-            this.btnAddNPC.Click += new System.EventHandler(this.btnAddNPC_Click);
-            // 
             // btnLogin
             // 
             this.btnLogin.Enabled = false;
-            this.btnLogin.Location = new System.Drawing.Point(115, 19);
+            this.btnLogin.Location = new System.Drawing.Point(20, 19);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 59;
@@ -1907,17 +1831,6 @@
             this.btnAbandomQuest.Text = "Abandom";
             this.btnAbandomQuest.UseVisualStyleBackColor = true;
             this.btnAbandomQuest.Click += new System.EventHandler(this.btnAbandonQuest_Click);
-            // 
-            // cbUseState
-            // 
-            this.cbUseState.AutoSize = true;
-            this.cbUseState.Location = new System.Drawing.Point(20, 59);
-            this.cbUseState.Name = "cbUseState";
-            this.cbUseState.Size = new System.Drawing.Size(116, 17);
-            this.cbUseState.TabIndex = 70;
-            this.cbUseState.Text = "Use MoveTo State";
-            this.cbUseState.UseVisualStyleBackColor = true;
-            this.cbUseState.CheckedChanged += new System.EventHandler(this.cbUseState_CheckedChanged);
             // 
             // btnReturnQuest
             // 
@@ -2264,15 +2177,6 @@
             this.toolStripStatusLabel3.Size = new System.Drawing.Size(59, 17);
             this.toolStripStatusLabel3.Text = "UNKNOWN";
             // 
-            // labelNPC
-            // 
-            this.labelNPC.AutoSize = true;
-            this.labelNPC.Location = new System.Drawing.Point(118, 53);
-            this.labelNPC.Name = "labelNPC";
-            this.labelNPC.Size = new System.Drawing.Size(32, 13);
-            this.labelNPC.TabIndex = 80;
-            this.labelNPC.Text = "NPC:";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2326,11 +2230,8 @@
             this.tabPageDebug.PerformLayout();
             this.tabPageDebug2.ResumeLayout(false);
             this.tabPageDebug2.PerformLayout();
-            this.gbServices.ResumeLayout(false);
-            this.gbServices.PerformLayout();
             this.gbClickToMove.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
-            this.groupBox9.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
             this.groupBox7.ResumeLayout(false);
@@ -2504,9 +2405,7 @@
         private System.Windows.Forms.Button btnGetLuaText;
         private System.Windows.Forms.TextBox tbLuaResult;
         private System.Windows.Forms.Button btnDoString;
-        private System.Windows.Forms.Button btnAddNPC;
         private System.Windows.Forms.ToolStripMenuItem npcListToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem addCurrentTargetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startWoWToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TabControl tabLua;
@@ -2532,7 +2431,6 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
-        private System.Windows.Forms.CheckBox cbUseState;
         private System.Windows.Forms.Button btnLuaTest;
         private SyntaxHighlighter.SyntaxRichTextBox tbLuaScript;
         private System.Windows.Forms.Button btnMoveAttack;
@@ -2541,12 +2439,8 @@
         private System.Windows.Forms.Button btnFollow;
         private System.Windows.Forms.Button btnAbandomQuest;
         private System.Windows.Forms.Button btnReloadXmlData;
-        private System.Windows.Forms.Button btnMoveInteractService;
-        private System.Windows.Forms.GroupBox gbServices;
-        private System.Windows.Forms.Label label41;
-        private System.Windows.Forms.ComboBox cbServiceList;
-        private System.Windows.Forms.Button btnLearnSkill;
-        private System.Windows.Forms.Label labelNPC;
+        private System.Windows.Forms.ToolStripMenuItem actionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addTargetNPCToolStripMenuItem;
     }
 }
 

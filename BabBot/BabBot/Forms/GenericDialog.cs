@@ -26,6 +26,7 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Diagnostics;
+using BabBot.Manager;
 
 namespace BabBot.Forms
 {
@@ -62,6 +63,23 @@ namespace BabBot.Forms
         #endregion
 
         #region Protected Methods
+
+        protected bool CheckInGame()
+        {
+            // Check if InGame
+            if (!ProcessManager.InGame)
+            {
+                MessageBox.Show("Not in game");
+                return false;
+            }
+
+            return true;
+        }
+
+        protected void ShowLfsTab(string lfs)
+        {
+            Program.mainForm.SelectLogTab(lfs);
+        }
 
         protected void ShowErrorMessage(string err)
         {
