@@ -905,5 +905,21 @@ namespace BabBot.Wow.Helpers
         }
 
         #endregion
+
+        #region Load/Save npc file
+
+        public static NPC LoadXml(string fname)
+        {
+            Serializer<NPC> s = new Serializer<NPC>();
+            return s.Load(fname);
+        }
+
+        public static void SaveXml(string fname, NPC npc)
+        {
+            Serializer<NPC> s = new Serializer<NPC>();
+            s.Save(fname, npc);
+        }
+
+        #endregion
     }
 }

@@ -50,6 +50,28 @@ namespace BabBot.Wow
         }
     }
     
+    public class ZoneServices
+    {
+        List<SimpleNpc> TaxiServices;
+        List<SimpleNpc> InnServices;
+
+        public ZoneServices()
+        {
+            TaxiServices = new List<SimpleNpc>();
+            InnServices = new List<SimpleNpc>();
+        }
+
+        public void AddTaxiService(SimpleNpc npc)
+        {
+            TaxiServices.Add(npc);
+        }
+
+        public void AddInnService(SimpleNpc npc)
+        {
+            InnServices.Add(npc);
+        }
+    }
+
     [Serializable]
     public class NPCVersion : CommonNameTable<NPC>
     {
@@ -60,11 +82,13 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
+        // Quest indexed list
         internal SortedDictionary<int, Quest> QuestList = 
                         new SortedDictionary<int, Quest>();
 
-        internal List<string> ZoneList = new List<string>();
-
+        // Zone sorted list with taxi and bind servcies
+        internal SortedDictionary<string, ZoneServices> ZoneList =
+                new SortedDictionary<string, ZoneServices>();
 
 
         // This variable is for binding
@@ -115,18 +139,26 @@ namespace BabBot.Wow
 
         public void IndexData()
         {
-            IndexQuestList();
-        }
-
-        /// <summary>
-        /// Extract quests from NPC and index into sorted list
-        /// </summary>
-        private void IndexQuestList()
-        {
+            ZoneList.Clear();
             QuestList.Clear();
 
             foreach (NPC npc in STable.Values)
             {
+                // Index zone
+                foreach (string z in npc.Continents.ZoneList)
+                    if (!ZoneList.ContainsKey(z))
+                        ZoneList.Add(z, new ZoneServices());
+
+                // Check if NPC provide taxi/inn
+                // If taxi or inn than npc cannot be in multiple zones
+                if (npc.HasTaxi)
+                    ZoneList[npc.Continents.ContinentList[0].
+                            ZList[0].Name].AddTaxiService(npc.GetSimpleFormat());
+                else if (npc.HasInn)
+                    ZoneList[npc.Continents.ContinentList[0].
+                            ZList[0].Name].AddInnService(npc.GetSimpleFormat());
+
+                // Index quest
                 Quests ql = npc.QuestList;
                 if (ql != null)
                 {
@@ -145,11 +177,68 @@ namespace BabBot.Wow
         }
     }
 
-    public class NPC : CommonMergeListItem
+    /// <summary>
+    /// Abstract NPC base class
+    /// </summary>
+    public abstract class AbstractNpc : CommonMergeListItem
     {
-        [XmlAttribute("type")] 
-        public string Type;
+        public AbstractNpc() : base() { }
 
+        public AbstractNpc(string name) : base(name) { }
+    }
+
+    /// <summary>
+    /// Class to keep NPC that has single service and never move (taxi, bankers, ah)
+    /// in simple format in toon's profile or in indexed list
+    /// </summary>
+    public class SimpleNpc : AbstractNpc
+    {
+        [XmlAttribute("service")]
+        public string Service;
+
+        [XmlAttribute("continent_id")]
+        public int CID;
+
+        [XmlAttribute("zone")]
+        public string ZoneText;
+
+        internal Vector3D BaseWaypoint;
+
+        [XmlAttribute("x")]
+        public float X {
+            get { return BaseWaypoint.X; }
+            set { BaseWaypoint.X = value; }
+        }
+
+        [XmlAttribute("y")]
+        public float Y {
+            get { return BaseWaypoint.Y; }
+            set { BaseWaypoint.Y = value; }
+        }
+        
+        [XmlAttribute("z")]
+        public float Z {
+            get { return BaseWaypoint.Z; }
+            set { BaseWaypoint.Z = value; }
+        }
+
+        public SimpleNpc()
+        {
+            BaseWaypoint = new Vector3D();
+        }
+
+        public SimpleNpc(string name, string service, int cid, string zone, Vector3D wp)
+            : base(name)
+        {
+            Service = service;
+            CID = cid;
+            ZoneText = zone;
+            BaseWaypoint = (Vector3D) wp.Clone();
+        }
+    }
+
+    public class NPC :AbstractNpc
+    {
         [XmlAttribute("race")]
         public string Race;
 
@@ -180,7 +269,19 @@ namespace BabBot.Wow
             set { MergeList[2] = value; }
         }
 
-        public NPC() {
+        internal bool HasTaxi
+        {
+            get { return Services.Table.ContainsKey("taxi"); }
+        }
+
+        internal bool HasInn
+        {
+            get { return Services.Table.ContainsKey("inn"); }
+        }
+
+        public NPC()
+            : base()
+        {
             MergeList = new IMergeable[3];
         }
 
@@ -243,6 +344,13 @@ namespace BabBot.Wow
         public int FindQuestQtyByTitle(string title)
         {
             return QuestList.FindQuestQtyByTitle(title);
+        }
+
+        public SimpleNpc GetSimpleFormat()
+        {
+            ContinentId c = Continents.ContinentList[0];
+            Zone z = c.ZList[0];
+            return new SimpleNpc(Name, Services.ServiceList[0].SType, c.Id, z.Name, z.List[0]);
         }
     }
 
@@ -645,10 +753,25 @@ namespace BabBot.Wow
     public class ContinentListId : CommonTable<ContinentId>
     {
         [XmlElement("continent")]
-        public ContinentId[] Continents
+        public ContinentId[] ContinentList
         {
             get { return Items; }
             set { Items = value; }
+        }
+
+        internal string[] ZoneList
+        {
+            get
+            {
+                List<string> list = new List<string>();
+                foreach (ContinentId c in Table.Values)
+                    foreach (string z in c.Table.Keys)
+                        list.Add(z);
+
+                string[] res = new string[list.Count];
+                list.CopyTo(res);
+                return res;
+            }
         }
 
         public ContinentId FindContinentById(int id)

@@ -243,6 +243,11 @@ namespace BabBot.Manager
             get { return wversion; }
         }
 
+        public static NPCData AllNpcList
+        {
+            get { return ndata; }
+        }
+
         private static GameStatuses _gstatus = GameStatuses.NOT_STARTED;
         private static ProcessStatuses _pstatus = ProcessStatuses.IDLE;
 

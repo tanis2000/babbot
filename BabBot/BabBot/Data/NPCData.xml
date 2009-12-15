@@ -103,7 +103,7 @@ If you happen to be going that way, though, will you keep an eye out for him?]]>
       </wp_list>
       <services />
       <quests>
-        <quest name="Webwood Venom" id="916" link="|cffffff00|Hquest:916:4|h[Webwood Venom]|h|r" level="4" bonus_spell="" idx="0" dest_npc="Gilshalan Windwalker">
+        <quest name="Webwood Venom" id="916" link="|cffffff00|Hquest:916:4|h[Webwood Venom]|h|r" level="4" bonus_spell="" idx="0" dest_npc="">
           <text><![CDATA[I came to Shadowglen to observe the webwood spiders that dwell in the Shadowthread Cave.  They are cousin to a much smaller variety of spider; I believe the world tree has had a profound effect on them, and I would like specimens to study to confirm this.
 
 First, I would like some of their venom.  Gather Webwood venom sacs from the spiders in and around the Shadowthread Cave, to the north.  I can then examine them for similarities with their smaller cousin's venom.]]></text>

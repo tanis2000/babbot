@@ -66,6 +66,7 @@
             // btnClose
             // 
             this.btnClose.Location = new System.Drawing.Point(530, 421);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSave
             // 

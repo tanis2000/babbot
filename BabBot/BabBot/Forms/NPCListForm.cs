@@ -62,12 +62,23 @@ namespace BabBot.Forms
             if (dlg.ShowDialog() != DialogResult.OK)
                 return;
 
-            MessageBox.Show("TEST: " + string.Join(",", dlg.FileNames));
+            bool f = false;
             foreach (string fname in dlg.FileNames)
             {
-                // Load file
-                // NPC npc;
-                // ProcessManager.CurWoWVersion.NPCData.Add(npc);
+                try
+                {
+                    NPC npc = NpcHelper.LoadXml(fname);
+                    npc.Changed = false;
+                    ProcessManager.CurWoWVersion.NPCData.Add(npc);
+
+                    // Save & Index data
+                    ProcessManager.SaveNpcData();
+                }
+                catch
+                {
+                    ShowErrorMessage("Failed import data from " + fname +
+                                            ". Check format and try again");
+                }
             }
         }
 
@@ -146,14 +157,23 @@ namespace BabBot.Forms
 
         private void DeleteSelectedNpc()
         {
-            if (MessageBox.Show(this, "Are you sure ?", "Confirmation",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
-                                                        DialogResult.Yes)
+            // Possible multi selection
+            foreach (object obj in lbNpcList.SelectedItems)
             {
-                // TODO
-                MessageBox.Show("Not implmeted yet");
-                // Remove NPC and save data
+                string npc_name = ((NPC) obj).Name;
+                if (MessageBox.Show(this, "Are you sure to delete " + npc_name + "?",
+                    "Confirmation", MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question) == DialogResult.Yes)
+                    // Delete from all version or it will merge again
+                    foreach (NPCVersion v in ProcessManager.AllNpcList.Table.Values)
+                        v.STable.Remove(npc_name);
             }
+
+            // Now we need save & reindex data
+            ProcessManager.SaveNpcData();
+
+            lbNpcList.DataSource = null;
+            lbNpcList.DataSource = ProcessManager.CurWoWVersion.NPCData.Items;
         }
 
         private void lbNpcList_KeyDown(object sender, KeyEventArgs e)
@@ -210,6 +230,11 @@ namespace BabBot.Forms
         private void cbUseState_CheckedChanged(object sender, EventArgs e)
         {
             NpcHelper.UseState = cbUseState.Checked;
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Hide();
         }
     }
 }

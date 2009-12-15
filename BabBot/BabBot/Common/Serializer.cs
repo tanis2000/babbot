@@ -42,10 +42,6 @@ namespace BabBot.Common
                     fs.Seek(0, SeekOrigin.Begin);
                     return (T)s.Deserialize(fs);
                 }
-                catch
-                {
-                    return new T();
-                }
                 finally
                 {
                     fs.Close();
