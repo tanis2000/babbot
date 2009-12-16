@@ -33,6 +33,12 @@ namespace BabBot.Data {
         
         private ServiceTypesDataTable tableServiceTypes;
         
+        private QuestListDataTable tableQuestList;
+        
+        private QuestItemsDataTable tableQuestItems;
+        
+        private QuestItemTypeDataTable tableQuestItemType;
+        
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -70,6 +76,15 @@ namespace BabBot.Data {
                 }
                 if ((ds.Tables["ServiceTypes"] != null)) {
                     base.Tables.Add(new ServiceTypesDataTable(ds.Tables["ServiceTypes"]));
+                }
+                if ((ds.Tables["QuestList"] != null)) {
+                    base.Tables.Add(new QuestListDataTable(ds.Tables["QuestList"]));
+                }
+                if ((ds.Tables["QuestItems"] != null)) {
+                    base.Tables.Add(new QuestItemsDataTable(ds.Tables["QuestItems"]));
+                }
+                if ((ds.Tables["QuestItemType"] != null)) {
+                    base.Tables.Add(new QuestItemTypeDataTable(ds.Tables["QuestItemType"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -122,6 +137,33 @@ namespace BabBot.Data {
         public ServiceTypesDataTable ServiceTypes {
             get {
                 return this.tableServiceTypes;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public QuestListDataTable QuestList {
+            get {
+                return this.tableQuestList;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public QuestItemsDataTable QuestItems {
+            get {
+                return this.tableQuestItems;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public QuestItemTypeDataTable QuestItemType {
+            get {
+                return this.tableQuestItemType;
             }
         }
         
@@ -196,6 +238,15 @@ namespace BabBot.Data {
                 if ((ds.Tables["ServiceTypes"] != null)) {
                     base.Tables.Add(new ServiceTypesDataTable(ds.Tables["ServiceTypes"]));
                 }
+                if ((ds.Tables["QuestList"] != null)) {
+                    base.Tables.Add(new QuestListDataTable(ds.Tables["QuestList"]));
+                }
+                if ((ds.Tables["QuestItems"] != null)) {
+                    base.Tables.Add(new QuestItemsDataTable(ds.Tables["QuestItems"]));
+                }
+                if ((ds.Tables["QuestItemType"] != null)) {
+                    base.Tables.Add(new QuestItemTypeDataTable(ds.Tables["QuestItemType"]));
+                }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
                 this.Namespace = ds.Namespace;
@@ -250,6 +301,24 @@ namespace BabBot.Data {
                     this.tableServiceTypes.InitVars();
                 }
             }
+            this.tableQuestList = ((QuestListDataTable)(base.Tables["QuestList"]));
+            if ((initTable == true)) {
+                if ((this.tableQuestList != null)) {
+                    this.tableQuestList.InitVars();
+                }
+            }
+            this.tableQuestItems = ((QuestItemsDataTable)(base.Tables["QuestItems"]));
+            if ((initTable == true)) {
+                if ((this.tableQuestItems != null)) {
+                    this.tableQuestItems.InitVars();
+                }
+            }
+            this.tableQuestItemType = ((QuestItemTypeDataTable)(base.Tables["QuestItemType"]));
+            if ((initTable == true)) {
+                if ((this.tableQuestItemType != null)) {
+                    this.tableQuestItemType.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -267,6 +336,12 @@ namespace BabBot.Data {
             base.Tables.Add(this.tableZoneServices);
             this.tableServiceTypes = new ServiceTypesDataTable();
             base.Tables.Add(this.tableServiceTypes);
+            this.tableQuestList = new QuestListDataTable();
+            base.Tables.Add(this.tableQuestList);
+            this.tableQuestItems = new QuestItemsDataTable();
+            base.Tables.Add(this.tableQuestItems);
+            this.tableQuestItemType = new QuestItemTypeDataTable();
+            base.Tables.Add(this.tableQuestItemType);
             global::System.Data.ForeignKeyConstraint fkc;
             fkc = new global::System.Data.ForeignKeyConstraint("FK_ContinentList_ZoneList", new global::System.Data.DataColumn[] {
                         this.tableContinentList.IDColumn}, new global::System.Data.DataColumn[] {
@@ -275,16 +350,16 @@ namespace BabBot.Data {
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneServices_ServiceTypes", new global::System.Data.DataColumn[] {
-                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableZoneServices.TYPE_IDColumn});
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneList_ZoneServices", new global::System.Data.DataColumn[] {
+                        this.tableZoneList.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableZoneServices.ZIDColumn});
             this.tableZoneServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneList_ZoneServices", new global::System.Data.DataColumn[] {
-                        this.tableZoneList.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableZoneServices.ZIDColumn});
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneServices_ServiceTypes", new global::System.Data.DataColumn[] {
+                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableZoneServices.TYPE_IDColumn});
             this.tableZoneServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
@@ -308,6 +383,21 @@ namespace BabBot.Data {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         private bool ShouldSerializeServiceTypes() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        private bool ShouldSerializeQuestList() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        private bool ShouldSerializeQuestItems() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        private bool ShouldSerializeQuestItemType() {
             return false;
         }
         
@@ -371,6 +461,12 @@ namespace BabBot.Data {
         public delegate void ZoneServicesRowChangeEventHandler(object sender, ZoneServicesRowChangeEvent e);
         
         public delegate void ServiceTypesRowChangeEventHandler(object sender, ServiceTypesRowChangeEvent e);
+        
+        public delegate void QuestListRowChangeEventHandler(object sender, QuestListRowChangeEvent e);
+        
+        public delegate void QuestItemsRowChangeEventHandler(object sender, QuestItemsRowChangeEvent e);
+        
+        public delegate void QuestItemTypeRowChangeEventHandler(object sender, QuestItemTypeRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -1393,6 +1489,789 @@ namespace BabBot.Data {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class QuestListDataTable : global::System.Data.TypedTableBase<QuestListRow> {
+            
+            private global::System.Data.DataColumn columnID;
+            
+            private global::System.Data.DataColumn columnNAME;
+            
+            private global::System.Data.DataColumn columnGREETING_TEXT;
+            
+            private global::System.Data.DataColumn columnOBJECTIVES_TEXT;
+            
+            private global::System.Data.DataColumn columnSTART_FROM;
+            
+            private global::System.Data.DataColumn columnDELIVER_TO;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestListDataTable() {
+                this.TableName = "QuestList";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal QuestListDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected QuestListDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn IDColumn {
+                get {
+                    return this.columnID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn NAMEColumn {
+                get {
+                    return this.columnNAME;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn GREETING_TEXTColumn {
+                get {
+                    return this.columnGREETING_TEXT;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn OBJECTIVES_TEXTColumn {
+                get {
+                    return this.columnOBJECTIVES_TEXT;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn START_FROMColumn {
+                get {
+                    return this.columnSTART_FROM;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn DELIVER_TOColumn {
+                get {
+                    return this.columnDELIVER_TO;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestListRow this[int index] {
+                get {
+                    return ((QuestListRow)(this.Rows[index]));
+                }
+            }
+            
+            public event QuestListRowChangeEventHandler QuestListRowChanging;
+            
+            public event QuestListRowChangeEventHandler QuestListRowChanged;
+            
+            public event QuestListRowChangeEventHandler QuestListRowDeleting;
+            
+            public event QuestListRowChangeEventHandler QuestListRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void AddQuestListRow(QuestListRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestListRow AddQuestListRow(int ID, string NAME, string GREETING_TEXT, string OBJECTIVES_TEXT, string START_FROM, string DELIVER_TO) {
+                QuestListRow rowQuestListRow = ((QuestListRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        ID,
+                        NAME,
+                        GREETING_TEXT,
+                        OBJECTIVES_TEXT,
+                        START_FROM,
+                        DELIVER_TO};
+                rowQuestListRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowQuestListRow);
+                return rowQuestListRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestListRow FindByID(int ID) {
+                return ((QuestListRow)(this.Rows.Find(new object[] {
+                            ID})));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public override global::System.Data.DataTable Clone() {
+                QuestListDataTable cln = ((QuestListDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new QuestListDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal void InitVars() {
+                this.columnID = base.Columns["ID"];
+                this.columnNAME = base.Columns["NAME"];
+                this.columnGREETING_TEXT = base.Columns["GREETING_TEXT"];
+                this.columnOBJECTIVES_TEXT = base.Columns["OBJECTIVES_TEXT"];
+                this.columnSTART_FROM = base.Columns["START_FROM"];
+                this.columnDELIVER_TO = base.Columns["DELIVER_TO"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            private void InitClass() {
+                this.columnID = new global::System.Data.DataColumn("ID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnID);
+                this.columnNAME = new global::System.Data.DataColumn("NAME", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnNAME);
+                this.columnGREETING_TEXT = new global::System.Data.DataColumn("GREETING_TEXT", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnGREETING_TEXT);
+                this.columnOBJECTIVES_TEXT = new global::System.Data.DataColumn("OBJECTIVES_TEXT", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnOBJECTIVES_TEXT);
+                this.columnSTART_FROM = new global::System.Data.DataColumn("START_FROM", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSTART_FROM);
+                this.columnDELIVER_TO = new global::System.Data.DataColumn("DELIVER_TO", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDELIVER_TO);
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
+                                this.columnID}, true));
+                this.columnID.AllowDBNull = false;
+                this.columnID.Unique = true;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestListRow NewQuestListRow() {
+                return ((QuestListRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new QuestListRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Type GetRowType() {
+                return typeof(QuestListRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.QuestListRowChanged != null)) {
+                    this.QuestListRowChanged(this, new QuestListRowChangeEvent(((QuestListRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.QuestListRowChanging != null)) {
+                    this.QuestListRowChanging(this, new QuestListRowChangeEvent(((QuestListRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.QuestListRowDeleted != null)) {
+                    this.QuestListRowDeleted(this, new QuestListRowChangeEvent(((QuestListRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.QuestListRowDeleting != null)) {
+                    this.QuestListRowDeleting(this, new QuestListRowChangeEvent(((QuestListRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void RemoveQuestListRow(QuestListRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                BotDataSet ds = new BotDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "QuestListDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class QuestItemsDataTable : global::System.Data.TypedTableBase<QuestItemsRow> {
+            
+            private global::System.Data.DataColumn columnQID;
+            
+            private global::System.Data.DataColumn columnITEM_TYPE_ID;
+            
+            private global::System.Data.DataColumn columnNAME;
+            
+            private global::System.Data.DataColumn columnQTY;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemsDataTable() {
+                this.TableName = "QuestItems";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal QuestItemsDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected QuestItemsDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn QIDColumn {
+                get {
+                    return this.columnQID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn ITEM_TYPE_IDColumn {
+                get {
+                    return this.columnITEM_TYPE_ID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn NAMEColumn {
+                get {
+                    return this.columnNAME;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn QTYColumn {
+                get {
+                    return this.columnQTY;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemsRow this[int index] {
+                get {
+                    return ((QuestItemsRow)(this.Rows[index]));
+                }
+            }
+            
+            public event QuestItemsRowChangeEventHandler QuestItemsRowChanging;
+            
+            public event QuestItemsRowChangeEventHandler QuestItemsRowChanged;
+            
+            public event QuestItemsRowChangeEventHandler QuestItemsRowDeleting;
+            
+            public event QuestItemsRowChangeEventHandler QuestItemsRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void AddQuestItemsRow(QuestItemsRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemsRow AddQuestItemsRow(string QID, string ITEM_TYPE_ID, string NAME, string QTY) {
+                QuestItemsRow rowQuestItemsRow = ((QuestItemsRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        QID,
+                        ITEM_TYPE_ID,
+                        NAME,
+                        QTY};
+                rowQuestItemsRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowQuestItemsRow);
+                return rowQuestItemsRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public override global::System.Data.DataTable Clone() {
+                QuestItemsDataTable cln = ((QuestItemsDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new QuestItemsDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal void InitVars() {
+                this.columnQID = base.Columns["QID"];
+                this.columnITEM_TYPE_ID = base.Columns["ITEM_TYPE_ID"];
+                this.columnNAME = base.Columns["NAME"];
+                this.columnQTY = base.Columns["QTY"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            private void InitClass() {
+                this.columnQID = new global::System.Data.DataColumn("QID", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnQID);
+                this.columnITEM_TYPE_ID = new global::System.Data.DataColumn("ITEM_TYPE_ID", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnITEM_TYPE_ID);
+                this.columnNAME = new global::System.Data.DataColumn("NAME", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnNAME);
+                this.columnQTY = new global::System.Data.DataColumn("QTY", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnQTY);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemsRow NewQuestItemsRow() {
+                return ((QuestItemsRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new QuestItemsRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Type GetRowType() {
+                return typeof(QuestItemsRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.QuestItemsRowChanged != null)) {
+                    this.QuestItemsRowChanged(this, new QuestItemsRowChangeEvent(((QuestItemsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.QuestItemsRowChanging != null)) {
+                    this.QuestItemsRowChanging(this, new QuestItemsRowChangeEvent(((QuestItemsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.QuestItemsRowDeleted != null)) {
+                    this.QuestItemsRowDeleted(this, new QuestItemsRowChangeEvent(((QuestItemsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.QuestItemsRowDeleting != null)) {
+                    this.QuestItemsRowDeleting(this, new QuestItemsRowChangeEvent(((QuestItemsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void RemoveQuestItemsRow(QuestItemsRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                BotDataSet ds = new BotDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "QuestItemsDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class QuestItemTypeDataTable : global::System.Data.TypedTableBase<QuestItemTypeRow> {
+            
+            private global::System.Data.DataColumn columnID;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemTypeDataTable() {
+                this.TableName = "QuestItemType";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal QuestItemTypeDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected QuestItemTypeDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn IDColumn {
+                get {
+                    return this.columnID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemTypeRow this[int index] {
+                get {
+                    return ((QuestItemTypeRow)(this.Rows[index]));
+                }
+            }
+            
+            public event QuestItemTypeRowChangeEventHandler QuestItemTypeRowChanging;
+            
+            public event QuestItemTypeRowChangeEventHandler QuestItemTypeRowChanged;
+            
+            public event QuestItemTypeRowChangeEventHandler QuestItemTypeRowDeleting;
+            
+            public event QuestItemTypeRowChangeEventHandler QuestItemTypeRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void AddQuestItemTypeRow(QuestItemTypeRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemTypeRow AddQuestItemTypeRow(string ID) {
+                QuestItemTypeRow rowQuestItemTypeRow = ((QuestItemTypeRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        ID};
+                rowQuestItemTypeRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowQuestItemTypeRow);
+                return rowQuestItemTypeRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public override global::System.Data.DataTable Clone() {
+                QuestItemTypeDataTable cln = ((QuestItemTypeDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new QuestItemTypeDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal void InitVars() {
+                this.columnID = base.Columns["ID"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            private void InitClass() {
+                this.columnID = new global::System.Data.DataColumn("ID", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnID);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemTypeRow NewQuestItemTypeRow() {
+                return ((QuestItemTypeRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new QuestItemTypeRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Type GetRowType() {
+                return typeof(QuestItemTypeRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.QuestItemTypeRowChanged != null)) {
+                    this.QuestItemTypeRowChanged(this, new QuestItemTypeRowChangeEvent(((QuestItemTypeRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.QuestItemTypeRowChanging != null)) {
+                    this.QuestItemTypeRowChanging(this, new QuestItemTypeRowChangeEvent(((QuestItemTypeRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.QuestItemTypeRowDeleted != null)) {
+                    this.QuestItemTypeRowDeleted(this, new QuestItemTypeRowChangeEvent(((QuestItemTypeRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.QuestItemTypeRowDeleting != null)) {
+                    this.QuestItemTypeRowDeleting(this, new QuestItemTypeRowChangeEvent(((QuestItemTypeRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void RemoveQuestItemTypeRow(QuestItemTypeRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                BotDataSet ds = new BotDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "QuestItemTypeDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
@@ -1643,6 +2522,311 @@ namespace BabBot.Data {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public partial class QuestListRow : global::System.Data.DataRow {
+            
+            private QuestListDataTable tableQuestList;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal QuestListRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableQuestList = ((QuestListDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int ID {
+                get {
+                    return ((int)(this[this.tableQuestList.IDColumn]));
+                }
+                set {
+                    this[this.tableQuestList.IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string NAME {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestList.NAMEColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'NAME\' in table \'QuestList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestList.NAMEColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string GREETING_TEXT {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestList.GREETING_TEXTColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'GREETING_TEXT\' in table \'QuestList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestList.GREETING_TEXTColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string OBJECTIVES_TEXT {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestList.OBJECTIVES_TEXTColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'OBJECTIVES_TEXT\' in table \'QuestList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestList.OBJECTIVES_TEXTColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string START_FROM {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestList.START_FROMColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'START_FROM\' in table \'QuestList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestList.START_FROMColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string DELIVER_TO {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestList.DELIVER_TOColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'DELIVER_TO\' in table \'QuestList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestList.DELIVER_TOColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsNAMENull() {
+                return this.IsNull(this.tableQuestList.NAMEColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetNAMENull() {
+                this[this.tableQuestList.NAMEColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsGREETING_TEXTNull() {
+                return this.IsNull(this.tableQuestList.GREETING_TEXTColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetGREETING_TEXTNull() {
+                this[this.tableQuestList.GREETING_TEXTColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsOBJECTIVES_TEXTNull() {
+                return this.IsNull(this.tableQuestList.OBJECTIVES_TEXTColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetOBJECTIVES_TEXTNull() {
+                this[this.tableQuestList.OBJECTIVES_TEXTColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsSTART_FROMNull() {
+                return this.IsNull(this.tableQuestList.START_FROMColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetSTART_FROMNull() {
+                this[this.tableQuestList.START_FROMColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsDELIVER_TONull() {
+                return this.IsNull(this.tableQuestList.DELIVER_TOColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetDELIVER_TONull() {
+                this[this.tableQuestList.DELIVER_TOColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public partial class QuestItemsRow : global::System.Data.DataRow {
+            
+            private QuestItemsDataTable tableQuestItems;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal QuestItemsRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableQuestItems = ((QuestItemsDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string QID {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestItems.QIDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'QID\' in table \'QuestItems\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestItems.QIDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string ITEM_TYPE_ID {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestItems.ITEM_TYPE_IDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'ITEM_TYPE_ID\' in table \'QuestItems\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestItems.ITEM_TYPE_IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string NAME {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestItems.NAMEColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'NAME\' in table \'QuestItems\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestItems.NAMEColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string QTY {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestItems.QTYColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'QTY\' in table \'QuestItems\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestItems.QTYColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsQIDNull() {
+                return this.IsNull(this.tableQuestItems.QIDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetQIDNull() {
+                this[this.tableQuestItems.QIDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsITEM_TYPE_IDNull() {
+                return this.IsNull(this.tableQuestItems.ITEM_TYPE_IDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetITEM_TYPE_IDNull() {
+                this[this.tableQuestItems.ITEM_TYPE_IDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsNAMENull() {
+                return this.IsNull(this.tableQuestItems.NAMEColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetNAMENull() {
+                this[this.tableQuestItems.NAMEColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsQTYNull() {
+                return this.IsNull(this.tableQuestItems.QTYColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetQTYNull() {
+                this[this.tableQuestItems.QTYColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public partial class QuestItemTypeRow : global::System.Data.DataRow {
+            
+            private QuestItemTypeDataTable tableQuestItemType;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal QuestItemTypeRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableQuestItemType = ((QuestItemTypeDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string ID {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestItemType.IDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'ID\' in table \'QuestItemType\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestItemType.IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsIDNull() {
+                return this.IsNull(this.tableQuestItemType.IDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetIDNull() {
+                this[this.tableQuestItemType.IDColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
@@ -1753,6 +2937,99 @@ namespace BabBot.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public ServiceTypesRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public class QuestListRowChangeEvent : global::System.EventArgs {
+            
+            private QuestListRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestListRowChangeEvent(QuestListRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestListRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public class QuestItemsRowChangeEvent : global::System.EventArgs {
+            
+            private QuestItemsRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemsRowChangeEvent(QuestItemsRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemsRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public class QuestItemTypeRowChangeEvent : global::System.EventArgs {
+            
+            private QuestItemTypeRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemTypeRowChangeEvent(QuestItemTypeRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemTypeRow Row {
                 get {
                     return this.eventRow;
                 }

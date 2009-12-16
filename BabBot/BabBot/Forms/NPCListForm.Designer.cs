@@ -39,6 +39,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
             this.gbNpcDescription = new System.Windows.Forms.GroupBox();
+            this.lvNpcList = new System.Windows.Forms.ListView();
             this.btnAdd = new System.Windows.Forms.Button();
             this.cbAvailServices = new System.Windows.Forms.ComboBox();
             this.serviceTypesNpcAvail = new System.Windows.Forms.BindingSource(this.components);
@@ -57,6 +58,9 @@
             this.gbDebug = new System.Windows.Forms.GroupBox();
             this.cbLearnSkills = new System.Windows.Forms.CheckBox();
             this.cbUseState = new System.Windows.Forms.CheckBox();
+            this.gbNpcQuests = new System.Windows.Forms.GroupBox();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.labelQuestObj = new System.Windows.Forms.Label();
             this.popNpc.SuspendLayout();
             this.gbNpcDescription.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.serviceTypesNpcAvail)).BeginInit();
@@ -65,6 +69,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.serviceTypesAllAvail)).BeginInit();
             this.popQuestActions.SuspendLayout();
             this.gbDebug.SuspendLayout();
+            this.gbNpcQuests.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnHelp
@@ -110,7 +115,7 @@
             this.lbNpcList.MultiColumn = true;
             this.lbNpcList.Name = "lbNpcList";
             this.lbNpcList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbNpcList.Size = new System.Drawing.Size(457, 147);
+            this.lbNpcList.Size = new System.Drawing.Size(487, 147);
             this.lbNpcList.TabIndex = 34;
             this.lbNpcList.SelectedIndexChanged += new System.EventHandler(this.lbNpcList_SelectedIndexChanged);
             this.lbNpcList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbNpcList_KeyDown);
@@ -170,6 +175,7 @@
             // 
             this.gbNpcDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbNpcDescription.Controls.Add(this.gbNpcQuests);
             this.gbNpcDescription.Controls.Add(this.btnAdd);
             this.gbNpcDescription.Controls.Add(this.cbAvailServices);
             this.gbNpcDescription.Controls.Add(this.label4);
@@ -182,6 +188,14 @@
             this.gbNpcDescription.TabIndex = 39;
             this.gbNpcDescription.TabStop = false;
             this.gbNpcDescription.Text = "NPC Description";
+            // 
+            // lvNpcList
+            // 
+            this.lvNpcList.Location = new System.Drawing.Point(10, 19);
+            this.lvNpcList.Name = "lvNpcList";
+            this.lvNpcList.Size = new System.Drawing.Size(121, 145);
+            this.lvNpcList.TabIndex = 43;
+            this.lvNpcList.UseCompatibleStateImageBehavior = false;
             // 
             // btnAdd
             // 
@@ -229,7 +243,7 @@
             this.lbActiveServices.FormattingEnabled = true;
             this.lbActiveServices.Location = new System.Drawing.Point(6, 94);
             this.lbActiveServices.Name = "lbActiveServices";
-            this.lbActiveServices.Size = new System.Drawing.Size(174, 69);
+            this.lbActiveServices.Size = new System.Drawing.Size(174, 95);
             this.lbActiveServices.TabIndex = 39;
             this.lbActiveServices.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbActiveServices_KeyDown);
             // 
@@ -319,9 +333,9 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.gbDebug.Controls.Add(this.cbLearnSkills);
             this.gbDebug.Controls.Add(this.cbUseState);
-            this.gbDebug.Location = new System.Drawing.Point(475, 33);
+            this.gbDebug.Location = new System.Drawing.Point(505, 33);
             this.gbDebug.Name = "gbDebug";
-            this.gbDebug.Size = new System.Drawing.Size(130, 147);
+            this.gbDebug.Size = new System.Drawing.Size(100, 147);
             this.gbDebug.TabIndex = 68;
             this.gbDebug.TabStop = false;
             this.gbDebug.Text = "Debug";
@@ -341,11 +355,40 @@
             this.cbUseState.AutoSize = true;
             this.cbUseState.Location = new System.Drawing.Point(6, 19);
             this.cbUseState.Name = "cbUseState";
-            this.cbUseState.Size = new System.Drawing.Size(116, 17);
+            this.cbUseState.Size = new System.Drawing.Size(96, 17);
             this.cbUseState.TabIndex = 71;
-            this.cbUseState.Text = "Use MoveTo State";
+            this.cbUseState.Text = "Use Nav State";
             this.cbUseState.UseVisualStyleBackColor = true;
             this.cbUseState.CheckedChanged += new System.EventHandler(this.cbUseState_CheckedChanged);
+            // 
+            // gbNpcQuests
+            // 
+            this.gbNpcQuests.Controls.Add(this.labelQuestObj);
+            this.gbNpcQuests.Controls.Add(this.listBox1);
+            this.gbNpcQuests.Controls.Add(this.lvNpcList);
+            this.gbNpcQuests.Location = new System.Drawing.Point(194, 19);
+            this.gbNpcQuests.Name = "gbNpcQuests";
+            this.gbNpcQuests.Size = new System.Drawing.Size(382, 170);
+            this.gbNpcQuests.TabIndex = 45;
+            this.gbNpcQuests.TabStop = false;
+            this.gbNpcQuests.Text = "Quest List";
+            // 
+            // listBox1
+            // 
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(137, 32);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(120, 43);
+            this.listBox1.TabIndex = 44;
+            // 
+            // labelQuestObj
+            // 
+            this.labelQuestObj.AutoSize = true;
+            this.labelQuestObj.Location = new System.Drawing.Point(134, 16);
+            this.labelQuestObj.Name = "labelQuestObj";
+            this.labelQuestObj.Size = new System.Drawing.Size(57, 13);
+            this.labelQuestObj.TabIndex = 45;
+            this.labelQuestObj.Text = "Objectives";
             // 
             // NPCListForm
             // 
@@ -391,6 +434,8 @@
             this.popQuestActions.ResumeLayout(false);
             this.gbDebug.ResumeLayout(false);
             this.gbDebug.PerformLayout();
+            this.gbNpcQuests.ResumeLayout(false);
+            this.gbNpcQuests.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -426,5 +471,9 @@
         private BabBot.Data.BotDataSet botDataSet;
         private System.Windows.Forms.BindingSource serviceTypesNpcAvail;
         private System.Windows.Forms.ToolStripMenuItem deleteServiceToolStripMenuItem;
+        private System.Windows.Forms.ListView lvNpcList;
+        private System.Windows.Forms.GroupBox gbNpcQuests;
+        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Label labelQuestObj;
     }
 }
