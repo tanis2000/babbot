@@ -22,16 +22,16 @@ Lots of credits to http://wowprogramming.com/
   <version name="3.2.2.10505" max_lvl="80">
     <!-- List of unit classes -->
     <classes>
-        <class armory_id="1" long_name="Warrior" name="WARRIOR" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="2" long_name="Paladin" name="PALADIN" tab_1_max="26" tab_2_max="26" tab_3_max="26" />
-        <class armory_id="3" long_name="Hunter" name="HUNTER" tab_1_max="26" tab_2_max="27" tab_3_max="28" />
-        <class armory_id="4" long_name="Rogue" name="ROGUE" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="5" long_name="Priest" name="PRIEST" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="6" long_name="Death Knight" name="DEATHKNIGHT" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="7" long_name="Shaman" name="SHAMAN" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="8" long_name="Mage" name="MAGE" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="9" long_name="Warlock" name="WARLOCK" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
-        <class armory_id="11" long_name="Druid" name="DRUID" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="1" name="WARRIOR" long_name="Warrior" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="2" name="PALADIN" long_name="Paladin" tab_1_max="26" tab_2_max="26" tab_3_max="26" />
+        <class armory_id="3" name="HUNTER" long_name="Hunter" tab_1_max="26" tab_2_max="27" tab_3_max="28" />
+        <class armory_id="4" name="ROGUE" long_name="Rogue" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="5" name="PRIEST" long_name="Priest" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="6" name="DEATHKNIGHT" long_name="Death Knight" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="7" name="SHAMAN" long_name="Shaman" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="8" name="MAGE" long_name="Mage" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="9" name="WARLOCK" long_name="Warlock" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="11" name="DRUID" long_name="Druid" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
     </classes>
     
     <!-- List of characters (not NPC) races -->
@@ -52,7 +52,9 @@ Lots of credits to http://wowprogramming.com/
     <!-- List of World Continents -->
     <continents>
       <continent id="0" name="All" />
-      <continent id="1" name="Kalimdor" />
+      <continent id="1" name="Kalimdor">
+        <zone name="Teldrassil" />  
+      </continent>
       <continent id="2" name="Azeroth" />
       <continent id="3" name="Expansion01" />
       <continent id="4" name="Northrend" />
@@ -1122,7 +1124,7 @@ end)()]]></text>
         lua_getcurrentmapzone = "0x004CDA20"
      />
   </version>
-  <version name="3.3.0.10958" max_lvl="80">
+  <version name="3.3.0.11159" max_lvl="80">
     <globals
         game_offset="0"
         move_mouse_over_guid_offset="0"
