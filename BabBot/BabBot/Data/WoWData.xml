@@ -729,6 +729,15 @@ end)()]]></text>
         <text>
           <![CDATA[(function()
   _, _, _, _, _, _, completed = GetQuestLogTitle({0})
+  
+  if (not completed) then
+    num = GetNumQuestLeaderBoards({0})
+    if (num == 0) then
+        completed = 1
+    end
+  end
+
+  
   return completed
 end)()]]>
         </text>

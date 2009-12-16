@@ -53,7 +53,7 @@ namespace BabBot.Forms
         {
             InitializeComponent();
 
-            trex = new Regex(ProcessManager.CurWoWVersion.TalentConfig.ArmoryPattern);
+            trex = new Regex(DataManager.CurWoWVersion.TalentConfig.ArmoryPattern);
         }
 
         private int LevelLabel
@@ -218,8 +218,8 @@ namespace BabBot.Forms
             wdir = ProcessManager.Config.ProfilesDir +
                         Path.DirectorySeparatorChar + "Talents";
 
-            cbWoWVersion.DataSource = ProcessManager.WoWVersions;
-            cbWoWVersion.SelectedItem = ProcessManager.CurWoWVersion;
+            cbWoWVersion.DataSource = DataManager.WoWVersions;
+            cbWoWVersion.SelectedItem = DataManager.CurWoWVersion;
 
             BindClasses();
 
@@ -273,7 +273,7 @@ namespace BabBot.Forms
 
             if (CurTalents.WoWVersion != null)
                 cbWoWVersion.SelectedItem =
-                    ProcessManager.FindWoWVersionByName(CurTalents.WoWVersion);
+                    DataManager.FindWoWVersionByName(CurTalents.WoWVersion);
             else
                 cbWoWVersion.SelectedItem = null;
 
@@ -315,7 +315,7 @@ namespace BabBot.Forms
 
             btnSave.Enabled = (not_empty && is_header_set && IsChanged);
 
-            btnAdd.Enabled = ((LevelLabel < ProcessManager.
+            btnAdd.Enabled = ((LevelLabel < DataManager.
                         CurWoWVersion.MaxLvl) && is_header_set);
 
             btnUp.Enabled = (lbLevelList.SelectedIndex > 0);
@@ -333,7 +333,7 @@ namespace BabBot.Forms
             {
                 try
                 {
-                    labelLevelNum.Text = Convert.ToString(l.Num);
+                    labelLevelNum.Text = l.Num.ToString();
                     numTab.Value = l.TabId;
                     numTalent.Value = l.TalentId;
                     numRank.Value = l.Rank;

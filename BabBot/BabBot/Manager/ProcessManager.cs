@@ -211,10 +211,8 @@ namespace BabBot.Manager
         public static Caronte.Caronte Caronte;
         public static CommandManager CommandManager;
         public static InjectionManager Injector;
+        public static DataManager DataManager;
         private static Config config;
-        private static WoWData wdata;
-        private static NPCData ndata;
-        private static WoWVersion wversion;
         public static ObjectManager ObjectManager;
         public static WowPlayer Player;
         private static Process process;
@@ -225,35 +223,22 @@ namespace BabBot.Manager
         private static bool arun = false;
         // Config file name
         private static string ConfigFileName = "config.xml";
-        // NPCData file name
-        private static string NPCDataFileName = 
-#if DEBUG
-            "..\\..\\Data\\" + 
-#endif
-            "NPCData.xml";
 
         // Current version of config file
         private static readonly int ConfigVersion = 3;
 
-        // Current version of NPCData
-        private static readonly int NPCDataVersion = 0;
-
-        public static WoWVersion CurWoWVersion
-        {
-            get { return wversion; }
-        }
-
-        public static NPCData AllNpcList
-        {
-            get { return ndata; }
-        }
 
         private static GameStatuses _gstatus = GameStatuses.NOT_STARTED;
         private static ProcessStatuses _pstatus = ProcessStatuses.IDLE;
 
         internal static AppConfig AppConfig
         {
-            get { return (wdata != null) ? wdata.AppConfig : null; }
+            get { return DataManager.AppConfig; }
+        }
+
+        internal static GlobalOffsets GlobalOffsets
+        {
+            get { return DataManager.Globals; }
         }
 
         /// <summary>
@@ -303,10 +288,6 @@ namespace BabBot.Manager
             set { config = value; }
         }
 
-        public static WoWVersion[] WoWVersions
-        {
-            get { return (wdata != null) ? wdata.Versions : null; }
-        }
         
         public static ArrayList TalentTemplateList
         {
@@ -325,7 +306,7 @@ namespace BabBot.Manager
                 catch (System.IO.DirectoryNotFoundException)
                 {
                     if (WoWProcessFailed != null)
-                    ShowErrorMessage("Directory '" + wdir + "' not found");
+                    ShowError("Directory '" + wdir + "' not found");
                     return res;
                 }
 
@@ -546,15 +527,15 @@ namespace BabBot.Manager
             ConfigFileChanged += OnConfigFileChanged;
             ShowErrorMessage += OnShowErrorMessage;
 
-            InitXmlData();
+            DataManager.InitXmlData();
 
             //\\ TEST
             // SaveNpcData();
 
             // Everything else after
             LoadConfig();
-            MergeXml();
-            AfterXmlInit();
+            DataManager.MergeXml(config.WoWInfo.Version);
+            DataManager.AfterXmlInit();
 
 #if DEBUG
             //\\ Test
@@ -612,66 +593,6 @@ namespace BabBot.Manager
 #endif
         }
 
-        internal static void ClearXml()
-        {
-            ndata = null;
-            wdata = null;
-        }
-
-        internal static void InitXmlData()
-        {
-            // data first
-            wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
-            ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
-
-            // Check if NPC data version the same
-            if (ndata.Version != NPCDataVersion)
-            {
-                // TODO Migrate data from old format to new and save
-                // Show message for now
-                ShowErrorMessage("NPCData.xml is in old format. It has version " +
-                    ndata.Version + " that different from supported " + NPCDataVersion);
-            }
-        }
-
-        internal static void MergeXml()
-        {
-            // Auto Merge data from earlier version with latest one
-            WoWVersion wprev = (WoWVersion)wdata.STable.Values[0];
-            int i = 1;
-            while ((i < wdata.STable.Count) &&
-                !wprev.Build.Equals(config.WoWInfo.Version))
-            {
-                WoWVersion wnew = (WoWVersion)wdata.STable.Values[i];
-
-                // Merge WoW data
-                wnew.MergeWith(wprev);
-
-                // Merge NPCData. Ordering is not an issues since it defined in WoWData already
-                // Ignore all exceptions
-                try
-                {
-                    ndata.FindVersion(wnew.Build).MergeWith(ndata.FindVersion(wprev.Build));
-                }
-                catch { }
-                
-                wprev = wnew;
-                i++;
-            }
-        }
-
-        internal static void AfterXmlInit()
-        {
-            // Attach NPC data to selected WoW version
-            wversion.NPCData = ndata.FindVersion(wversion.Build);
-
-            // Index NPC data for future use
-            wversion.NPCData.IndexData();
-
-            // Reset changed flag
-            ResetChanged();
-        }
-
         /// <summary>
         /// Redirect error message to ShowErrorMessage handler
         /// </summary>
@@ -682,31 +603,6 @@ namespace BabBot.Manager
             bool res = (ShowErrorMessage != null);
             if (res)
                 ShowErrorMessage(err);
-            return res;
-        }
-
-        private static object LoadXmlData(string fname, Type t)
-        {
-            object res = null;
-
-            XmlSerializer s = new XmlSerializer(t);
-            TextReader r = new StreamReader(fname);
-
-            try
-            {
-                res = s.Deserialize(r);
-            }
-            catch (Exception e)
-            {
-                TerminateOnInternalBug(Bugs.XML_ERROR, 
-                    "Unable load " + fname + " : " +
-                    e.Message + Environment.NewLine + e.InnerException);
-            }
-            finally
-            {
-                r.Close();
-            }
-
             return res;
         }
 
@@ -747,10 +643,11 @@ namespace BabBot.Manager
                         FileVersionInfo.GetVersionInfo(wowPath).FileVersion.
                             Replace(",", ".").Replace(" ", ""); ;
 
-                    if (!wversion.ToString().Equals(version))
+                    if (!DataManager.CurWoWVersion.ToString().Equals(version))
                         TerminateOnInternalBug(ProcessManager.Bugs.WRONG_WOW_VERSION, 
-                            "Version of loading WoW.exe '" + version + 
-                                "' is not equal version from config.xml '" + wversion + "'");
+                            "Version of loading WoW.exe '" + version +
+                                "' is not equal version from config.xml '" + 
+                                    DataManager.CurWoWVersion + "'");
 
                     else
                         Log("char", "Continuing with WoW.exe version '" + version + "'");
@@ -880,9 +777,9 @@ namespace BabBot.Manager
             try
             {
                 WowProcess.ReadUInt(WowProcess.ReadUInt(WowProcess.ReadUInt(
-                    ProcessManager.CurWoWVersion.Globals.GameOffset) +
-                        ProcessManager.CurWoWVersion.Globals.PlayerBaseOffset1) +
-                            ProcessManager.CurWoWVersion.Globals.PlayerBaseOffset2);
+                    DataManager.CurWoWVersion.Globals.GameOffset) +
+                        DataManager.CurWoWVersion.Globals.PlayerBaseOffset1) +
+                            DataManager.CurWoWVersion.Globals.PlayerBaseOffset2);
                 // Read successful. Check if we need initialize
                 if ((_gstatus != GameStatuses.INITIALIZED) && 
                         (_gstatus != GameStatuses.DISCONNECTED))
@@ -1025,7 +922,7 @@ namespace BabBot.Manager
         {
             //string continent = "Azeroth";  // temporary fix to get things running while debugging LUA
             
-            string continent = ProcessManager.CurWoWVersion.Continents.
+            string continent = DataManager.CurWoWVersion.Continents.
                                             FindContinentNameById(Player.ContinentID);
             if (continent == null)
             {
@@ -1190,132 +1087,16 @@ namespace BabBot.Manager
             {
                 // Remember current config version
                 config.Version = ConfigVersion;
-                SaveXmlData(ConfigFileName, typeof(Config), config);
+                DataManager.SaveXmlData(ConfigFileName, typeof(Config), config);
                 // serializer.Save(ConfigFileName, config);
                 OnConfigurationChanged();
 
             }
             catch (Exception ex)
             {
-                ShowErrorMessage("Failed save configuration file. " + 
+                ShowError("Failed save configuration file. " + 
                     ex.Message + ". " + ex.InnerException);
             }
-        }
-
-        /// <summary>
-        /// Save NPC data in xml format
-        /// </summary>
-        public static bool SaveNpcData()
-        {
-            // Backup old NPC data before save
-            string bf = System.IO.Path.GetDirectoryName(NPCDataFileName) + 
-                System.IO.Path.DirectorySeparatorChar + 
-                System.IO.Path.GetFileNameWithoutExtension(NPCDataFileName) + ".bak";
-            Output.Instance.Log("npc", "Saving " + NPCDataFileName + 
-                " before serializing to " + bf);
-
-            try
-            {
-                File.Copy(NPCDataFileName, bf, true);
-            }
-            catch (Exception e)
-            {
-                ShowError("Failed update NPC Data. Unable copy file " + NPCDataFileName + 
-                            "  to " + bf + ". " + e.Message);
-
-                return false;
-            }
-
-            if (!SaveXmlData(NPCDataFileName, typeof(NPCData), ndata))
-            {
-                Output.Instance.Log("npc", "Recovering " + NPCDataFileName +
-                    " after error from " + bf);
-                File.Copy(bf, NPCDataFileName);
-                return false;
-            }
-            else
-                Output.Instance.Log("npc", "File " + NPCDataFileName + 
-                                                            " successfully saved.");
-
-            // Index NPC Data
-            wversion.NPCData.IndexData();
-
-            // Check all list and generate chanded data for export
-
-            foreach (NPC npc in CurWoWVersion.NPCData.STable.Values)
-                if (npc.Changed)
-                    ExportNPC(npc);
-
-            // Reset Changed flag
-            ResetChanged();
-
-            return true;
-        }
-
-        /// <summary>
-        /// Serialize the given NPC in Export directory
-        /// </summary>
-        /// <param name="npc"></param>
-        private static void ExportNPC(NPC npc)
-        {
-            try
-            {
-                Output.Instance.Log("npc", "Exporting NPC: " + npc.Name + 
-                                                " to Data\\Export subdirectory");
-                SaveXmlData("Data" + System.IO.Path.DirectorySeparatorChar +
-                    "Export" + System.IO.Path.DirectorySeparatorChar + npc.Name + ".npc",
-                    typeof(NPC), npc);
-                Output.Instance.Log("npc", "Export successfull!!! Don't forget upload updated data to " + 
-                                        "BabBot forum https://sourceforge.net/apps/phpbb/babbot/");
-            }
-            catch (Exception e)
-            {
-                ShowErrorMessage("Unable generate export data. " + e.Message);
-            }
-        }
-
-        /// <summary>
-        /// Reset Changed flag on the whole NPC database
-        /// </summary>
-        private static void ResetChanged()
-        {
-            foreach (NPC npc in CurWoWVersion.NPCData.STable.Values)
-                npc.Changed = false;
-        }
-
-        /// <summary>
-        /// Serialize object in xml format
-        /// </summary>
-        /// <param name="fname">Output File Name</param>
-        /// <param name="t">Type of object</param>
-        /// <param name="obj">Object itself</param>
-        public static bool SaveXmlData(string fname, Type t, object obj)
-        {
-            bool res = false;
-            TextWriter w = null;
-            try
-            {
-                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-                ns.Add("", ""); // Remove  xmlns: parameters
-
-                XmlSerializer s = new XmlSerializer(t);
-                w = new StreamWriter(fname);
-
-                s.Serialize(w, obj, ns);
-                res = true;
-            }
-            catch (Exception e)
-            {
-                ShowErrorMessage("Failed save " +  fname + ". " + 
-                            e.Message + ". " + e.InnerException);
-            }
-            finally
-            {
-                if (w != null)
-                    w.Close();
-            }
-
-            return res;
         }
 
         #endregion
@@ -1331,14 +1112,7 @@ namespace BabBot.Manager
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
 
-            wversion = FindWoWVersionByName(config.WoWInfo.Version);
-            if (wversion == null)
-                throw new WoWDataNotFoundException(config.WoWInfo.Version);
-        }
-
-        public static WoWVersion FindWoWVersionByName(string version)
-        {
-            return wdata.FindVersion(version);
+            DataManager.SetWowVersion(config.WoWInfo.Version);
         }
 
         private static void OnUpdateAppStatus(string new_status)

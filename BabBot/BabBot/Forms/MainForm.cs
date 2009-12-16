@@ -35,6 +35,7 @@ using BabBot.Scripts.Common;
 using BabBot.Wow.Helpers;
 using System.IO;
 using SyntaxHighlighter;
+using Microsoft.Win32;
 
 namespace BabBot.Forms
 {
@@ -545,12 +546,17 @@ namespace BabBot.Forms
             ProcessManager.BotManager.Stop();
             Process.LeaveDebugMode();
 
+            SaveWindowsPosition(sender, e);
+        }
+
+        private void SaveWindowsPosition(object sender, EventArgs e)
+        {
             // Save Bot & Wow positions
             ProcessManager.Config.BotPos = new WinPos(Location, Size, TopMost, Opacity);
             if (ProcessManager.WowHWND != 0)
                 ProcessManager.Config.WowPos = new WinPos(BabBot.Common.WindowSize.
                                     GetPositionSize((IntPtr)ProcessManager.WowHWND));
-            
+
             ProcessManager.SaveConfig();
         }
 
@@ -856,6 +862,7 @@ namespace BabBot.Forms
                         rt = new RichTextBox();
                         rt.Size = txtConsole.Size;
                         rt.BackColor = txtConsole.BackColor;
+                        rt.LinkClicked += txtConsole_LinkClicked;
 
                         tab.Controls.Add(rt);
 
@@ -1168,7 +1175,7 @@ namespace BabBot.Forms
             string[] lret = ProcessManager.Injector.Lua_ExecByName("GetAvailTalentPoints");
             
             int points = 0;
-            int delay = ProcessManager.CurWoWVersion.TalentConfig.Delay;
+            int delay = DataManager.CurWoWVersion.TalentConfig.Delay;
 
             try
             {
@@ -1188,7 +1195,7 @@ namespace BabBot.Forms
             int cur_lvl = lvl - points + 1;
             Output.Instance.Log("char", "Looking up talent " + " for lvl " + cur_lvl);
 
-            Level l = t.GetLevel(cur_lvl - ProcessManager.CurWoWVersion.TalentConfig.StartLevel);
+            Level l = t.GetLevel(cur_lvl - DataManager.CurWoWVersion.TalentConfig.StartLevel);
             Output.Instance.Debug("char", "Checking talent " + l.TalentToString());
 
             TalentInfo t1 = GetTalentInfo(l.TabId, l.TalentId);
@@ -1202,7 +1209,7 @@ namespace BabBot.Forms
             else {
                 // Go backwards
                 bool f = false;
-                for (int i = cur_lvl - ProcessManager.CurWoWVersion.TalentConfig.StartLevel - 1;
+                for (int i = cur_lvl - DataManager.CurWoWVersion.TalentConfig.StartLevel - 1;
                     i >= 0 ; i--)
                 {
                     Level l1 = t.GetLevel(i);
@@ -1233,7 +1240,7 @@ namespace BabBot.Forms
             int rank1 = t.Rank + 1;
 
             int retry = 0;
-            int max_retry = ProcessManager.CurWoWVersion.TalentConfig.Retry;
+            int max_retry = DataManager.CurWoWVersion.TalentConfig.Retry;
 
             bool learned = false;
 
@@ -1354,7 +1361,7 @@ namespace BabBot.Forms
                 if (ProcessManager.Config.Test == 1)
                 {
                     // Check each value against pattern
-                    Regex rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[0];
+                    Regex rx = DataManager.CurWoWVersion.QuestConfig.Patterns[0];
                     string s1 = "1::dfdf::dfdd::dd";
                     string s2 = @"1::The Woodland Protector::
                 Thank goodness you are here, 
@@ -1374,7 +1381,7 @@ namespace BabBot.Forms
                         return;
                     }
 
-                    rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[1];
+                    rx = DataManager.CurWoWVersion.QuestConfig.Patterns[1];
                     s1 = "alsd dsf,1,1,1,2,3";
                     s2 = ",,,0,0,0";
 
@@ -1386,7 +1393,7 @@ namespace BabBot.Forms
 
                     s1 = "1,aa::2,bb||1,aa::2,bb||1,aa::2,bb";
                     s2 = "||||";
-                    rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[2];
+                    rx = DataManager.CurWoWVersion.QuestConfig.Patterns[2];
                     if (!(rx.IsMatch(s1) && rx.IsMatch(s2)))
                         if (!(rx.IsMatch(s2) && rx.IsMatch(s2)))
                     {
@@ -1514,7 +1521,7 @@ namespace BabBot.Forms
 
         private string GetFNewLuaPattern()
         {
-            return ProcessManager.CurWoWVersion.LuaList.
+            return DataManager.CurWoWVersion.LuaList.
                     FNewPattern.Replace("\\r\\n", "\r\n");
         }
 
@@ -1764,7 +1771,7 @@ namespace BabBot.Forms
             if (cbQuestList.DataSource == null)
             {
                 cbQuestList.DataSource =
-                    ProcessManager.CurWoWVersion.NPCData.QuestDataSource;
+                    DataManager.QuestDataSource;
                 cbQuestList.DisplayMember = "Name";
                 // cbQuestList.ValueMember = "Id";
             }
@@ -1774,10 +1781,10 @@ namespace BabBot.Forms
 
         private void btnReloadXmlData_Click(object sender, EventArgs e)
         {
-            ProcessManager.ClearXml();
+            DataManager.ClearXml();
 
-            ProcessManager.InitXmlData();
-            ProcessManager.AfterXmlInit();
+            DataManager.InitXmlData();
+            DataManager.AfterXmlInit();
         }
 
         internal void SelectLogTab(string lfs)
@@ -1789,6 +1796,17 @@ namespace BabBot.Forms
             tabLogs.SelectedTab = npc_tab;
             tabLogs.Invalidate();
             // this.Refresh();
+        }
+
+        private void txtConsole_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            // Registry info for default browser
+            string key = @"http\shell\open\command";
+            RegistryKey registryKey = Registry.ClassesRoot.OpenSubKey(key, false);
+            // get default browser path
+            string browser_path = ((string)registryKey.GetValue(null, null)).Split('"')[1];
+
+            Process.Start(browser_path, e.LinkText);
         }
     }
 }

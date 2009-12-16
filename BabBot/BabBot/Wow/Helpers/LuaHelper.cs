@@ -31,7 +31,7 @@ namespace BabBot.Wow.Helpers
         public static string[] Exec(string lfname, int i)
         {
             return ProcessManager.Injector.
-                Lua_ExecByName(lfname, new string[] { Convert.ToString(i) });
+                Lua_ExecByName(lfname, new string[] { i.ToString() });
         }
 
         /// <summary>

@@ -116,8 +116,7 @@ namespace BabBot.Wow.Helpers
 
         private static string[] DoGetNpcDialogInfo(bool auto_close)
         {
-            return LuaHelper.Exec("GetNpcDialogInfo", new string[] { 
-                        Convert.ToString(auto_close).ToLower()});
+            return LuaHelper.Exec("GetNpcDialogInfo", auto_close);
         }
 
 
@@ -408,47 +407,53 @@ namespace BabBot.Wow.Helpers
 
             SaveList.Add(npc);
 
+            bool f = false;
             NPC check = null;
-            foreach (NPC x in SaveList)
+            foreach (NPC cur_npc in SaveList)
             {
                 // Check if NPC already exists
 
                 try
                 {
                     // If null it produces exception
-                    check = ProcessManager.
-                        CurWoWVersion.NPCData.FindNpcByName(x.Name);
+                    check = DataManager.
+                        CurWoWVersion.NPCData.FindNpcByName(cur_npc.Name);
                 } 
                 catch { }
 
                 if ((check != null))
                 {
-                    if (x.Equals(check))
+                    if (cur_npc.Equals(check))
                     {
-                        Output.Instance.LogError(lfs, "NPC '" + x.Name +
+                        Output.Instance.LogError(lfs, "NPC '" + cur_npc.Name +
                             "' already added with identicall parameters");
                         continue;
                     }
                     else
                     {
                         // NPC in database but with different parameters
-                        Output.Instance.Debug(lfs, "NPC '" + x.Name +
+                        Output.Instance.Debug(lfs, "NPC '" + cur_npc.Name +
                             "' data merged with currently configured");
                         check.MergeWith(npc);
+
+                        f = true;
                     }
                 }
                 else
                 {
-                    Output.Instance.Debug(lfs, "Adding new NPC '" + x.Name +
+                    Output.Instance.Debug(lfs, "Adding new NPC '" + cur_npc.Name +
                             "' into NPCData.xml");
 
-                    x.Changed = true;
-                    ProcessManager.CurWoWVersion.NPCData.Add(x);
+                    check = cur_npc;
+                    check.Changed = true;
+                    DataManager.CurWoWVersion.NPCData.Add(cur_npc);
+
+                    f = true;
                 }
 
             }
 
-            if ((npc != null) && (ProcessManager.SaveNpcData()))
+            if (f && (DataManager.SaveNpcData()))
                 Output.Instance.Log(lfs, "NPC '" + npc_name +
                     "' successfully added to NPCData.xml");
 
@@ -594,7 +599,7 @@ namespace BabBot.Wow.Helpers
                 }
 
                 // Check each value against pattern
-                Regex rx = ProcessManager.CurWoWVersion.QuestConfig.Patterns[i - 1];
+                Regex rx = DataManager.CurWoWVersion.QuestConfig.Patterns[i - 1];
                 if (!rx.IsMatch(s))
                 {
                     Output.Instance.LogError(lfs, i +
@@ -647,7 +652,7 @@ namespace BabBot.Wow.Helpers
             if (q != null)
             {
                 // Screen in npcdata how many quests with same title exists
-                Quest mq = ProcessManager.CurWoWVersion.NPCData.FindMaxQuestByTitle(q.Title);
+                Quest mq = DataManager.CurWoWVersion.NPCData.FindMaxQuestByTitle(q.Title);
                 if (mq != null)
                 {
                     q.QIdx = mq.QIdx + 1;
@@ -698,6 +703,8 @@ namespace BabBot.Wow.Helpers
 
         private static bool AddNpcQuestEnd(string npc_name, string qtitle, string lfs)
         {
+            bool res = false;
+
             // Lookup local log for quest details
             string[] ret = ProcessManager.Injector.
                 Lua_ExecByName("FindLogQuest", new string[] {qtitle});
@@ -719,7 +726,7 @@ namespace BabBot.Wow.Helpers
                     " quest '" + qtitle + "'");
 
             // Now find NPC who has an original quest
-            Quest q = ProcessManager.CurWoWVersion.NPCData.FindQuestById(id);
+            Quest q = DataManager.FindQuestById(id);
 
             if (q != null)
             {
@@ -728,11 +735,13 @@ namespace BabBot.Wow.Helpers
 
                 // After this quest should be marked as Changed and go on export
                 q.DestNpcName = npc_name;
+
+                res = true;
             } else
                 Output.Instance.Log("Unable locate quest giver for quest '" +
                                                                 qtitle + "'");
 
-            return false;
+            return res;
         }
 
         public static NPC MoveInteractService(string service, string lfs)
@@ -760,7 +769,7 @@ namespace BabBot.Wow.Helpers
             string zone = (string) ProcessManager.Player.ZoneText.Clone();
             Vector3D loc = (Vector3D) ProcessManager.Player.Location.Clone();
 
-            foreach (NPC npc in ProcessManager.CurWoWVersion.NPCData.STable.Values)
+            foreach (NPC npc in DataManager.CurWoWVersion.NPCData.STable.Values)
                 if (npc.Services.Table.ContainsKey(service))
                     list.Add(npc);
 
@@ -774,11 +783,11 @@ namespace BabBot.Wow.Helpers
             foreach (NPC npc in list)
             {
                 // Check if NPC on the same continent/zone
-                bool f = npc.Continents.Table.ContainsKey(Convert.ToString(cid));
+                bool f = npc.Continents.Table.ContainsKey(cid.ToString());
                 if (!f)
                     throw new MultiZoneNotSupportedException();
 
-                ContinentId c = npc.Continents.Table[Convert.ToString(cid)];
+                ContinentId c = npc.Continents.Table[cid.ToString()];
                 f = c.Table.ContainsKey(zone);
                 if (!f)
                     throw new MultiZoneNotSupportedException();
@@ -902,22 +911,6 @@ namespace BabBot.Wow.Helpers
             } while (!done); 
 
             // todo close class frame
-        }
-
-        #endregion
-
-        #region Load/Save npc file
-
-        public static NPC LoadXml(string fname)
-        {
-            Serializer<NPC> s = new Serializer<NPC>();
-            return s.Load(fname);
-        }
-
-        public static void SaveXml(string fname, NPC npc)
-        {
-            Serializer<NPC> s = new Serializer<NPC>();
-            s.Save(fname, npc);
         }
 
         #endregion

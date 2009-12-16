@@ -38,19 +38,19 @@ namespace BabBot.Wow
         {
             CurMgr = Globals.CurMgr; // Warning! This must have been initialized (aka logged in and in game)
             LocalGUID = ProcessManager.WowProcess.ReadUInt64(CurMgr + 
-                    ProcessManager.CurWoWVersion.Globals.LocalGuidOffset);
+                                    ProcessManager.GlobalOffsets.LocalGuidOffset);
         }
 
         public uint GetFirstObject()
         {
             return ProcessManager.WowProcess.ReadUInt(CurMgr + 
-                    ProcessManager.CurWoWVersion.Globals.FirstObject);
+                                    ProcessManager.GlobalOffsets.FirstObject);
         }
 
         public uint GetNextObject(uint CurrentObject)
         {
             return ProcessManager.WowProcess.ReadUInt(CurrentObject + 
-                        ProcessManager.CurWoWVersion.Globals.NextObject);
+                                    ProcessManager.GlobalOffsets.NextObject);
         }
 
         public uint GetObjectByGUID(ulong GUID)
@@ -60,7 +60,7 @@ namespace BabBot.Wow
             while ((holder != 0) && ((holder & 1) == 0))
             {
                 if (ProcessManager.WowProcess.ReadUInt64(holder + 
-                    ProcessManager.CurWoWVersion.Globals.GuidOffset) == GUID)
+                    ProcessManager.GlobalOffsets.GuidOffset) == GUID)
                         return holder;
 
                 tempHolder = GetNextObject(holder);
@@ -85,7 +85,7 @@ namespace BabBot.Wow
         public ulong GetGUIDByObject(uint Object)
         {
             return ProcessManager.WowProcess.ReadUInt64(Object + 
-                    ProcessManager.CurWoWVersion.Globals.GuidOffset);
+                                ProcessManager.GlobalOffsets.GuidOffset);
         }
 
         public List<WowObject> GetAllObjectsAroundLocalPlayer()
@@ -152,8 +152,7 @@ namespace BabBot.Wow
 
         public string GetNameFromGuid(ulong guid)
         {
-            ulong nameStorePtr = ProcessManager.
-                    CurWoWVersion.Globals.NameStorePointer; // Player name database
+            ulong nameStorePtr = ProcessManager.GlobalOffsets.NameStorePointer; // Player name database
             const ulong nameMaskOffset = 0x024; // Offset for the mask used with GUID to select a linked list
             const ulong nameBaseOffset = 0x01c; // Offset for the start of the name linked list
             const ulong nameStringOffset = 0x020; // Offset to the C string in a name structure
@@ -193,16 +192,16 @@ namespace BabBot.Wow
         private string GetUnitName(uint unit)
         {
             //unit names are easy to get!
-            uint aaa = ProcessManager.WowProcess.ReadUInt((unit + 0x968 /* 3.0.9: 0x970 */));
-            return
-                ProcessManager.WowProcess.ReadASCIIString(
+            uint aaa = ProcessManager.WowProcess.ReadUInt((unit + 
+                                ProcessManager.GlobalOffsets.UnitNameBaseOffset1));
+            return  ProcessManager.WowProcess.ReadASCIIString(
                     ProcessManager.WowProcess.ReadUInt((aaa + 0x54 /* 3.0.9: 0x3C */)), 40);
         }
 
         public ulong GetMouseOverGUID()
         {
-            return ProcessManager.WowProcess.ReadUInt64(
-                ProcessManager.CurWoWVersion.Globals.MouseOverGuidOffset);
+            return ProcessManager.WowProcess.ReadUInt64(ProcessManager.
+                                                GlobalOffsets.MouseOverGuidOffset);
         }
 
 /*

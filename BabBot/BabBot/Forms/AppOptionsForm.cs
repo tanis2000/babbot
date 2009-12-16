@@ -37,7 +37,7 @@ namespace BabBot.Forms
             : base("app_config")
         {
             InitializeComponent();
-            cbWoWVersion.DataSource = ProcessManager.WoWVersions;
+            cbWoWVersion.DataSource = DataManager.WoWVersions;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

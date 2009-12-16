@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using BabBot.Manager;
 using System.IO;
 using BabBot.Wow;
+using BabBot.Data;
 using BabBot.Common;
 using BabBot.Wow.Helpers;
 
@@ -33,8 +34,7 @@ namespace BabBot.Forms
 {
     public partial class NPCListForm : BabBot.Forms.GenericDialog
     {
-        private string[] CurServiceList;
-        private string[] CurZoneList;
+        private DataTable CurServiceList;
 
         public NPCListForm() : base ("npc_list")
         {
@@ -43,13 +43,19 @@ namespace BabBot.Forms
 
         public void Open()
         {
-            labelWoWVersion.Text = ProcessManager.CurWoWVersion.Build;
+            labelWoWVersion.Text = DataManager.CurWoWVersion.Build;
 
-            // Bind property
-            lbNpcList.DataSource = ProcessManager.CurWoWVersion.NPCData.Items;
+            // Bind NpcList
+            BindNpcList();
 
             IsChanged = false;
             Show();
+        }
+
+        private void BindNpcList()
+        {
+            lbNpcList.DataSource = null;
+            lbNpcList.DataSource = DataManager.CurWoWVersion.NPCData.Items;
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -67,12 +73,12 @@ namespace BabBot.Forms
             {
                 try
                 {
-                    NPC npc = NpcHelper.LoadXml(fname);
+                    NPC npc = DataManager.LoadXml(fname);
                     npc.Changed = false;
-                    ProcessManager.CurWoWVersion.NPCData.Add(npc);
+                    DataManager.CurWoWVersion.NPCData.Add(npc);
 
                     // Save & Index data
-                    ProcessManager.SaveNpcData();
+                    DataManager.SaveNpcData();
                 }
                 catch
                 {
@@ -90,13 +96,20 @@ namespace BabBot.Forms
 
         private void lbNpcList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lbNpcList.SelectedItem == null)
+            bool f = lbNpcList.SelectedItem != null;
+            SetFormControls(f);
+            if (!f)
                 return;
 
             NPC npc = (NPC)lbNpcList.SelectedItem;
             tbName.Text = npc.Name;
 
-            // Pull list of services
+            SetNpcAvailServiceList(npc);
+        }
+
+        void SetFormControls(bool Enabled)
+        {
+            gbNpcDescription.Enabled = Enabled;
         }
 
         private bool CheckBeforeNpcTest()
@@ -141,8 +154,16 @@ namespace BabBot.Forms
             {
                 NPC npc = NpcHelper.AddNpc("npc");
                 if (npc != null)
-                    lbNpcList.SelectedItem = npc;
+                {
+                    // Refresh NPC list
+                    BindNpcList();
+
+                    // Unselect all
+                    foreach (int idx in lbNpcList.SelectedIndices)
+                        lbNpcList.SetSelected(idx, false);
                     // Highlight new npc on the listbox
+                    lbNpcList.SelectedItem = npc;
+                }
             }
             catch (Exception ex)
             {
@@ -165,15 +186,30 @@ namespace BabBot.Forms
                     "Confirmation", MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
                     // Delete from all version or it will merge again
-                    foreach (NPCVersion v in ProcessManager.AllNpcList.Table.Values)
+                    foreach (NPCVersion v in DataManager.AllNpcList.Table.Values)
                         v.STable.Remove(npc_name);
             }
 
             // Now we need save & reindex data
-            ProcessManager.SaveNpcData();
+            DataManager.SaveNpcData();
 
-            lbNpcList.DataSource = null;
-            lbNpcList.DataSource = ProcessManager.CurWoWVersion.NPCData.Items;
+            BindNpcList();
+        }
+
+        private void SetNpcAvailServiceList(NPC npc)
+        {
+            lbActiveServices.SelectedItem = null;
+            serviceTypesNpcAvail.DataSource = null;
+
+            // Pull list of services
+            // Filter available services and add custom list
+            CurServiceList = DataManager.ServiceTypeTable.Clone();
+            foreach (DataRow row in DataManager.ServiceTypeTable.Rows)
+                if (!npc.Services.Table.ContainsKey(row["NAME"].ToString()))
+                    CurServiceList.ImportRow(row);
+            serviceTypesNpcAvail.DataSource = CurServiceList;
+
+            lbActiveServices.DataSource = npc.Services.Items;
         }
 
         private void lbNpcList_KeyDown(object sender, KeyEventArgs e)
@@ -235,6 +271,61 @@ namespace BabBot.Forms
         private void btnClose_Click(object sender, EventArgs e)
         {
             Hide();
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            NPC npc = (NPC)lbNpcList.SelectedItem;
+            string srv = cbAvailServices.Text;
+            if (string.IsNullOrEmpty(srv))
+                return;
+
+            npc.Services.Add(new NPCService(srv));
+            SetNpcAvailServiceList(npc);
+
+            IsChanged = true;
+        }
+
+        private void NPCListForm_Load(object sender, EventArgs e)
+        {
+            serviceTypesAllAvail.DataSource = DataManager.ServiceTypeTable;
+        }
+
+        private void lbActiveServices_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                DeleteSelectedNpcService();
+                e.Handled = true;
+            }
+        }
+
+        private void DeleteSelectedNpcService()
+        {
+            if (lbActiveServices.SelectedItem == null)
+                return;
+
+            NPC npc = (NPC)lbNpcList.SelectedItem;
+            npc.Services.Remove(lbActiveServices.Text);
+
+            SetNpcAvailServiceList(npc);
+
+            IsChanged = true;
+        }
+
+        private void deleteServiceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DeleteSelectedNpcService();
+        }
+
+        private void popServiceActions_VisibleChanged(object sender, EventArgs e)
+        {
+            deleteServiceToolStripMenuItem.Enabled = (lbActiveServices.SelectedItem != null);
+        }
+
+        private void popNpc_VisibleChanged(object sender, EventArgs e)
+        {
+            deleteNPCToolStripMenuItem.Enabled = (lbNpcList.SelectedItem != null);
         }
     }
 }

@@ -43,9 +43,9 @@ namespace BabBot.Wow
                         playerBaseOffset = ProcessManager.WowProcess.ReadUInt(
                             ProcessManager.WowProcess.ReadUInt(
                                 ProcessManager.WowProcess.ReadUInt(
-                                    ProcessManager.CurWoWVersion.Globals.GameOffset) +
-                                        ProcessManager.CurWoWVersion.Globals.PlayerBaseOffset1) + 
-                                            ProcessManager.CurWoWVersion.Globals.PlayerBaseOffset2);
+                                    ProcessManager.GlobalOffsets.GameOffset) +
+                                        ProcessManager.GlobalOffsets.PlayerBaseOffset1) +
+                                            ProcessManager.GlobalOffsets.PlayerBaseOffset2);
                         return playerBaseOffset;
                     }
                     catch

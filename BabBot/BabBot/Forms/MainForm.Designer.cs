@@ -32,6 +32,7 @@
             this.msMain = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startWoWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveCurrentPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -270,6 +271,7 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.startWoWToolStripMenuItem,
+            this.saveCurrentPositionToolStripMenuItem,
             this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -280,19 +282,27 @@
             // 
             this.startWoWToolStripMenuItem.Name = "startWoWToolStripMenuItem";
             this.startWoWToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.startWoWToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.startWoWToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
             this.startWoWToolStripMenuItem.Text = "Start WoW";
             this.startWoWToolStripMenuItem.Click += new System.EventHandler(this.startWoWToolStripMenuItem_Click);
+            // 
+            // saveCurrentPositionToolStripMenuItem
+            // 
+            this.saveCurrentPositionToolStripMenuItem.Name = "saveCurrentPositionToolStripMenuItem";
+            this.saveCurrentPositionToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveCurrentPositionToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
+            this.saveCurrentPositionToolStripMenuItem.Text = "Save windows position";
+            this.saveCurrentPositionToolStripMenuItem.Click += new System.EventHandler(this.SaveWindowsPosition);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(154, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(228, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -467,6 +477,7 @@
             this.txtConsole.Size = new System.Drawing.Size(516, 163);
             this.txtConsole.TabIndex = 90;
             this.txtConsole.Text = "";
+            this.txtConsole.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.txtConsole_LinkClicked);
             // 
             // label35
             // 
@@ -2441,6 +2452,7 @@
         private System.Windows.Forms.Button btnReloadXmlData;
         private System.Windows.Forms.ToolStripMenuItem actionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addTargetNPCToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveCurrentPositionToolStripMenuItem;
     }
 }
 

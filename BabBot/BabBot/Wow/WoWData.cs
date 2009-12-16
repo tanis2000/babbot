@@ -410,7 +410,7 @@ namespace BabBot.Wow
 
         public Continent FindContinentById(int id)
         {
-            return FindItemByName(Convert.ToString(id));
+            return FindItemByName(id.ToString());
         }
 
         public string FindContinentNameById(int id)
@@ -437,7 +437,7 @@ namespace BabBot.Wow
         [XmlAttribute("game_offset")]
         public string StrGameOffset
         {
-            get { return Convert.ToString(GameOffset); }
+            get { return GameOffset.ToString(); }
             set { GameOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint GameOffset;
@@ -445,7 +445,7 @@ namespace BabBot.Wow
         [XmlAttribute("move_mouse_over_guid_offset")]
         public string StrMouseOverGuidOffset
         {
-            get { return Convert.ToString(MouseOverGuidOffset); }
+            get { return MouseOverGuidOffset.ToString(); }
             set { MouseOverGuidOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint MouseOverGuidOffset;
@@ -453,7 +453,7 @@ namespace BabBot.Wow
         [XmlAttribute("name_store_pointer")]
         public string StrNameStorePointer
         {
-            get { return Convert.ToString(NameStorePointer); }
+            get { return NameStorePointer.ToString(); }
             set { NameStorePointer = Convert.ToUInt32(value, 16); }
         }
         internal uint NameStorePointer;
@@ -461,7 +461,7 @@ namespace BabBot.Wow
         [XmlAttribute("player_base_offset1")]
         public string StrPlayerBaseOffset1
         {
-            get { return Convert.ToString(PlayerBaseOffset1); }
+            get { return PlayerBaseOffset1.ToString(); }
             set { PlayerBaseOffset1 = Convert.ToUInt32(value, 16); }
         }
         internal uint PlayerBaseOffset1;
@@ -469,7 +469,7 @@ namespace BabBot.Wow
         [XmlAttribute("player_base_offset2")]
         public string StrPlayerBaseOffset2
         {
-            get { return Convert.ToString(PlayerBaseOffset2); }
+            get { return PlayerBaseOffset2.ToString(); }
             set { PlayerBaseOffset2 = Convert.ToUInt32(value, 16); }
         }
         internal uint PlayerBaseOffset2;
@@ -477,7 +477,7 @@ namespace BabBot.Wow
         [XmlAttribute("player_cur_target_guil_offset")]
         public string StrPlayerCurTargetGuidOffset
         {
-            get { return Convert.ToString(PlayerCurTargetGuidOffset); }
+            get { return PlayerCurTargetGuidOffset.ToString(); }
             set { PlayerCurTargetGuidOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint PlayerCurTargetGuidOffset;
@@ -485,7 +485,7 @@ namespace BabBot.Wow
         [XmlAttribute("player_rotation_offset")]
         public string StrPlayerRotationOffset
         {
-            get { return Convert.ToString(PlayerRotationOffset); }
+            get { return PlayerRotationOffset.ToString(); }
             set { PlayerRotationOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint PlayerRotationOffset;
@@ -493,7 +493,7 @@ namespace BabBot.Wow
         [XmlAttribute("player_x_offset")]
         public string StrPlayerXOffset
         {
-            get { return Convert.ToString(PlayerXOffset); }
+            get { return PlayerXOffset.ToString(); }
             set { PlayerXOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint PlayerXOffset;
@@ -501,7 +501,7 @@ namespace BabBot.Wow
         [XmlAttribute("player_y_offset")]
         public string StrPlayerYOffset
         {
-            get { return Convert.ToString(PlayerYOffset); }
+            get { return PlayerYOffset.ToString(); }
             set { PlayerYOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint PlayerYOffset;
@@ -509,7 +509,7 @@ namespace BabBot.Wow
         [XmlAttribute("player_z_offset")]
         public string StrPlayerZOffset
         {
-            get { return Convert.ToString(PlayerZOffset); }
+            get { return PlayerZOffset.ToString(); }
             set { PlayerZOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint PlayerZOffset;
@@ -517,7 +517,7 @@ namespace BabBot.Wow
         [XmlAttribute("local_player_corpse_offset")]
         public string StrLocalPlayerCorpseOffset
         {
-            get { return Convert.ToString(LocalPlayerCorpseOffset); }
+            get { return LocalPlayerCorpseOffset.ToString(); }
             set { LocalPlayerCorpseOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint LocalPlayerCorpseOffset;
@@ -525,7 +525,7 @@ namespace BabBot.Wow
         [XmlAttribute("camera_offset")]
         public string StrCameraOffset
         {
-            get { return Convert.ToString(CameraOffset); }
+            get { return CameraOffset.ToString(); }
             set { CameraOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint CameraOffset;
@@ -533,7 +533,7 @@ namespace BabBot.Wow
         [XmlAttribute("camera_pointer")]
         public string StrCameraPointer
         {
-            get { return Convert.ToString(CameraPointer); }
+            get { return CameraPointer.ToString(); }
             set { CameraPointer = Convert.ToUInt32(value, 16); }
         }
         internal uint CameraPointer;
@@ -541,7 +541,7 @@ namespace BabBot.Wow
         [XmlAttribute("descriptor_offset")]
         public string StrDescriptorOffset
         {
-            get { return Convert.ToString(DescriptorOffset); }
+            get { return DescriptorOffset.ToString(); }
             set { DescriptorOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint DescriptorOffset;
@@ -549,7 +549,7 @@ namespace BabBot.Wow
         [XmlAttribute("first_object")]
         public string StrFirstObject
         {
-            get { return Convert.ToString(FirstObject); }
+            get { return FirstObject.ToString(); }
             set { FirstObject = Convert.ToUInt32(value, 16); }
         }
         internal uint FirstObject;
@@ -557,7 +557,7 @@ namespace BabBot.Wow
         [XmlAttribute("guid_offset")]
         public string StrGuidOffset
         {
-            get { return Convert.ToString(GuidOffset); }
+            get { return GuidOffset.ToString(); }
             set { GuidOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint GuidOffset;
@@ -565,7 +565,7 @@ namespace BabBot.Wow
         [XmlAttribute("local_guid_offset")]
         public string StrLocalGuidOffset
         {
-            get { return Convert.ToString(LocalGuidOffset); }
+            get { return LocalGuidOffset.ToString(); }
             set { LocalGuidOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint LocalGuidOffset;
@@ -573,7 +573,7 @@ namespace BabBot.Wow
         [XmlAttribute("next_object")]
         public string StrNextObject
         {
-            get { return Convert.ToString(NextObject); }
+            get { return NextObject.ToString(); }
             set { NextObject = Convert.ToUInt32(value, 16); }
         }
         internal uint NextObject;
@@ -581,7 +581,7 @@ namespace BabBot.Wow
         [XmlAttribute("type_offset")]
         public string StrTypeOffset
         {
-            get { return Convert.ToString(TypeOffset); }
+            get { return TypeOffset.ToString(); }
             set { TypeOffset = Convert.ToUInt32(value, 16); }
         }
         internal uint TypeOffset;
@@ -589,7 +589,7 @@ namespace BabBot.Wow
         [XmlAttribute("first_buff")]
         public string StrFirstBuff
         {
-            get { return Convert.ToString(FirstBuff); }
+            get { return FirstBuff.ToString(); }
             set { FirstBuff = Convert.ToUInt32(value, 16); }
         }
         internal uint FirstBuff;
@@ -597,7 +597,7 @@ namespace BabBot.Wow
         [XmlAttribute("next_buff")]
         public string StrNextBuff
         {
-            get { return Convert.ToString(NextBuff); }
+            get { return NextBuff.ToString(); }
             set { NextBuff = Convert.ToUInt32(value, 16); }
         }
         internal uint NextBuff;
@@ -605,7 +605,7 @@ namespace BabBot.Wow
         [XmlAttribute("unit_name_base_offset1")]
         public string StrUnitNameBaseOffset1
         {
-            get { return Convert.ToString(UnitNameBaseOffset1); }
+            get { return UnitNameBaseOffset1.ToString(); }
             set { UnitNameBaseOffset1 = Convert.ToUInt32(value, 16); }
         }
         internal uint UnitNameBaseOffset1;
@@ -613,7 +613,7 @@ namespace BabBot.Wow
         [XmlAttribute("unit_name_base_offset2")]
         public string StrUnitNameBaseOffset2
         {
-            get { return Convert.ToString(UnitNameBaseOffset2); }
+            get { return UnitNameBaseOffset2.ToString(); }
             set { UnitNameBaseOffset2 = Convert.ToUInt32(value, 16); }
         }
         internal uint UnitNameBaseOffset2;
@@ -621,7 +621,7 @@ namespace BabBot.Wow
         [XmlAttribute("unit_name_len")]
         public string StrUnitNameLen
         {
-            get { return Convert.ToString(UnitNameLen); }
+            get { return UnitNameLen.ToString(); }
             set { UnitNameLen = Convert.ToInt32(value, 16); }
         }
         internal int UnitNameLen;
@@ -629,7 +629,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_base")]
         public string StrClickToMoveBase
         {
-            get { return Convert.ToString(ClickToMoveBase); }
+            get { return ClickToMoveBase.ToString(); }
             set { ClickToMoveBase = Convert.ToUInt32(value, 16); }
         }
         internal uint ClickToMoveBase;
@@ -637,7 +637,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_unknown")]
         public string StrClickToMoveUnknown
         {
-            get { return Convert.ToString(ClickToMoveUnknown); }
+            get { return ClickToMoveUnknown.ToString(); }
             set { ClickToMoveUnknown = 
                         ClickToMoveBase + Convert.ToUInt32(value, 16); }
         }
@@ -646,7 +646,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_turn_scale")]
         public string StrClickToMoveTurnScale
         {
-            get { return Convert.ToString(ClickToMoveTurnScale); }
+            get { return ClickToMoveTurnScale.ToString(); }
             set { ClickToMoveTurnScale = 
                         ClickToMoveBase + Convert.ToUInt32(value, 16); }
         }
@@ -655,7 +655,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_unknown_2")]
         public string StrClickToMoveUnknown2
         {
-            get { return Convert.ToString(ClickToMoveUnknown2); }
+            get { return ClickToMoveUnknown2.ToString(); }
             set { ClickToMoveUnknown2 = 
                         ClickToMoveBase + Convert.ToUInt32(value, 16); }
         }
@@ -664,7 +664,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_interact_distance")]
         public string StrClickToMoveInteractDistance
         {
-            get { return Convert.ToString(ClickToMoveInteractDistance); }
+            get { return ClickToMoveInteractDistance.ToString(); }
             set { ClickToMoveInteractDistance = 
                         ClickToMoveBase + Convert.ToUInt32(value, 16); }
         }
@@ -673,7 +673,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_action_type")]
         public string StrClickToMoveActionType
         {
-            get { return Convert.ToString(ClickToMoveActionType); }
+            get { return ClickToMoveActionType.ToString(); }
             set { ClickToMoveActionType = 
                         ClickToMoveBase + Convert.ToUInt32(value, 16); }
         }
@@ -682,7 +682,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_target")]
         public string StrClickToMoveTarget
         {
-            get { return Convert.ToString(ClickToMoveTarget); }
+            get { return ClickToMoveTarget.ToString(); }
             set { ClickToMoveTarget =
                         ClickToMoveBase + Convert.ToUInt32(value, 16);
             }
@@ -692,7 +692,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_dest_x")]
         public string StrClickToMoveDestX
         {
-            get { return Convert.ToString(ClickToMoveDestX); }
+            get { return ClickToMoveDestX.ToString(); }
             set { ClickToMoveDestX =
                         ClickToMoveBase + Convert.ToUInt32(value, 16);
             }
@@ -702,7 +702,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_dest_y")]
         public string StrClickToMoveDestY
         {
-            get { return Convert.ToString(ClickToMoveDestY); }
+            get { return ClickToMoveDestY.ToString(); }
             set { ClickToMoveDestY =
                         ClickToMoveBase + Convert.ToUInt32(value, 16);
             }
@@ -712,7 +712,7 @@ namespace BabBot.Wow
         [XmlAttribute("click_to_move_dest_z")]
         public string StrClickToMoveDestZ
         {
-            get { return Convert.ToString(ClickToMoveDestZ); }
+            get { return ClickToMoveDestZ.ToString(); }
             set { ClickToMoveDestZ =
                         ClickToMoveBase + Convert.ToUInt32(value, 16);
             }
@@ -722,7 +722,7 @@ namespace BabBot.Wow
         [XmlAttribute("lua_dostring")]
         public string StrLuaDoString
         {
-            get { return Convert.ToString(LuaDelegates["lua_dostring"]); }
+            get { return LuaDelegates["lua_dostring"].ToString(); }
             set
             {
                 LuaDelegates.Add("lua_dostring", 
@@ -733,7 +733,7 @@ namespace BabBot.Wow
         [XmlAttribute("lua_getstate")]
         public string StrLuaGetState
         {
-            get { return Convert.ToString(LuaDelegates["lua_getstate"]); }
+            get { return LuaDelegates["lua_getstate"].ToString(); }
             set
             {
                 LuaDelegates.Add("lua_getstate", 
@@ -744,7 +744,7 @@ namespace BabBot.Wow
         [XmlAttribute("lua_gettop")]
         public string StrLuaGetTop
         {
-            get { return Convert.ToString(LuaDelegates["lua_gettop"]); }
+            get { return LuaDelegates["lua_gettop"].ToString(); }
             set
             {
                 LuaDelegates.Add("lua_gettop", 
@@ -755,7 +755,7 @@ namespace BabBot.Wow
         [XmlAttribute("lua_register")]
         public string StrLuaRegister
         {
-            get { return Convert.ToString(LuaDelegates["lua_register"]); }
+            get { return LuaDelegates["lua_register"].ToString(); }
             set
             {
                 LuaDelegates.Add("lua_register", 
@@ -766,7 +766,7 @@ namespace BabBot.Wow
         [XmlAttribute("lua_tostring")]
         public string StrLuaToString
         {
-            get { return Convert.ToString(LuaDelegates["lua_tostring"]); }
+            get { return LuaDelegates["lua_tostring"].ToString(); }
             set
             {
                 LuaDelegates.Add("lua_tostring", 
@@ -777,7 +777,7 @@ namespace BabBot.Wow
         [XmlAttribute("lua_getcurrentmapzone")]
         public string StrLuaGetCurrentMapZone
         {
-            get { return Convert.ToString(LuaDelegates["lua_getcurrentmapzone"]); }
+            get { return LuaDelegates["lua_getcurrentmapzone"].ToString(); }
             set
             {
                 LuaDelegates.Add("lua_getcurrentmapzone", 

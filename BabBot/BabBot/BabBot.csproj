@@ -91,6 +91,9 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -123,6 +126,15 @@
     <Compile Include="Common\WaypointVector3DHelper.cs" />
     <Compile Include="Common\WindowSize.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Data\BotDataSet.cs">
+      <DependentUpon>BotDataSet.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Data\BotDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BotDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -177,6 +189,7 @@
     </Compile>
     <Compile Include="Manager\BotManager.cs" />
     <Compile Include="Manager\CommandManager.cs" />
+    <Compile Include="Manager\DataManager.cs" />
     <Compile Include="Manager\InjectionManager.cs" />
     <Compile Include="Manager\ProcessManager.cs" />
     <Compile Include="Bot\WayPoint.cs" />
@@ -312,6 +325,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="BabBot.snk" />
+    <None Include="Data\BotDataSet.xsc">
+      <DependentUpon>BotDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="Data\BotDataSet.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>BotDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Data\BotDataSet.xss">
+      <DependentUpon>BotDataSet.xsd</DependentUpon>
+    </None>
     <None Include="Img\icon_32x32.ico" />
     <None Include="Img\icon_64x64.ico" />
     <None Include="Img\splash.jpg" />

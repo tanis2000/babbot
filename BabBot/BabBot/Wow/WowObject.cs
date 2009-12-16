@@ -32,14 +32,15 @@ namespace BabBot.Wow
 
         public ulong Guid
         {
-            get { return ReadOffset<UInt64>(ProcessManager.
+            get { return ReadOffset<UInt64>(DataManager.
                             CurWoWVersion.Globals.GuidOffset); }
         }
 
         public Descriptor.eObjType Type
         {
             get { return (Descriptor.eObjType)ReadOffset<int>(
-                ProcessManager.CurWoWVersion.Globals.TypeOffset); }
+                ProcessManager.GlobalOffsets.TypeOffset);
+            }
         }
 
         public virtual string Name
@@ -49,9 +50,9 @@ namespace BabBot.Wow
                 return ProcessManager.WowProcess.ReadASCIIString(
                     ProcessManager.WowProcess.ReadUInt(
                         ProcessManager.WowProcess.ReadUInt(ObjectPointer +
-                            ProcessManager.CurWoWVersion.Globals.UnitNameBaseOffset1) + 
-                                ProcessManager.CurWoWVersion.Globals.UnitNameBaseOffset2),
-                                    ProcessManager.CurWoWVersion.Globals.UnitNameLen);
+                            ProcessManager.GlobalOffsets.UnitNameBaseOffset1) +
+                                ProcessManager.GlobalOffsets.UnitNameBaseOffset2),
+                                    ProcessManager.GlobalOffsets.UnitNameLen);
             }
         }
 
@@ -60,15 +61,15 @@ namespace BabBot.Wow
             get
             {
                 return new Vector3D(
-                    ReadOffset<float>(ProcessManager.CurWoWVersion.Globals.PlayerXOffset),
-                        ReadOffset<float>(ProcessManager.CurWoWVersion.Globals.PlayerYOffset),
-                            ReadOffset<float>(ProcessManager.CurWoWVersion.Globals.PlayerZOffset));
+                    ReadOffset<float>(ProcessManager.GlobalOffsets.PlayerXOffset),
+                        ReadOffset<float>(ProcessManager.GlobalOffsets.PlayerYOffset),
+                            ReadOffset<float>(ProcessManager.GlobalOffsets.PlayerZOffset));
             }
         }
 
         public float Rotation
         {
-            get { return ReadOffset<float>(ProcessManager.
+            get {return ReadOffset<float>(DataManager.
                 CurWoWVersion.Globals.PlayerRotationOffset); }
         }
 
@@ -85,7 +86,7 @@ namespace BabBot.Wow
         public virtual uint Descriptors
         {
             get { return ProcessManager.WowProcess.
-                ReadUInt(ObjectPointer + ProcessManager.
+                ReadUInt(ObjectPointer + DataManager.
                     CurWoWVersion.Globals.DescriptorOffset); }
         }
 

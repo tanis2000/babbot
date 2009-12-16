@@ -218,12 +218,12 @@ namespace BabBot.Wow
             get
             {
                 return new Vector3D(
-                    ProcessManager.WowProcess.ReadFloat(
-                        ProcessManager.CurWoWVersion.Globals.LocalPlayerCorpseOffset),
-                    ProcessManager.WowProcess.ReadFloat(
-                        ProcessManager.CurWoWVersion.Globals.LocalPlayerCorpseOffset + 0x04),
-                    ProcessManager.WowProcess.ReadFloat(
-                    ProcessManager.CurWoWVersion.Globals.LocalPlayerCorpseOffset + 0x08));
+                    ProcessManager.WowProcess.ReadFloat(ProcessManager.
+                                        GlobalOffsets.LocalPlayerCorpseOffset),
+                    ProcessManager.WowProcess.ReadFloat(ProcessManager.
+                                        GlobalOffsets.LocalPlayerCorpseOffset + 0x04),
+                    ProcessManager.WowProcess.ReadFloat(ProcessManager.
+                                        GlobalOffsets.LocalPlayerCorpseOffset + 0x08));
             }
         }
 
@@ -817,23 +817,23 @@ end)()");
         public void ClickToMove(Vector3D dest)
         {
             ProcessManager.WowProcess.SuspendThread();
-            ProcessManager.WowProcess.WriteFloat(
-                ProcessManager.CurWoWVersion.Globals.ClickToMoveUnknown, 9.0f);
-            ProcessManager.WowProcess.WriteFloat(
-                ProcessManager.CurWoWVersion.Globals.ClickToMoveTurnScale, 13.962634f);
-            ProcessManager.WowProcess.WriteFloat(
-                ProcessManager.CurWoWVersion.Globals.ClickToMoveUnknown2, 14.0f);
-            ProcessManager.WowProcess.WriteFloat(
-                ProcessManager.CurWoWVersion.Globals.ClickToMoveInteractDistance, 0.5f);
-            ProcessManager.WowProcess.WriteUInt(
-                ProcessManager.CurWoWVersion.Globals.ClickToMoveActionType, 
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveUnknown, 9.0f);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveTurnScale, 13.962634f);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveUnknown2, 14.0f);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveInteractDistance, 0.5f);
+            ProcessManager.WowProcess.WriteUInt(ProcessManager.
+                                        GlobalOffsets.ClickToMoveActionType, 
                                     (uint)Descriptor.eClickToMoveActionType.WalkTo);
-            ProcessManager.WowProcess.WriteFloat(
-                ProcessManager.CurWoWVersion.Globals.ClickToMoveDestX, dest.X);
-            ProcessManager.WowProcess.WriteFloat(
-                ProcessManager.CurWoWVersion.Globals.ClickToMoveDestY, dest.Y);
-            ProcessManager.WowProcess.WriteFloat(
-                ProcessManager.CurWoWVersion.Globals.ClickToMoveDestZ, dest.Z);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveDestX, dest.X);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveDestY, dest.Y);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveDestZ, dest.Z);
             ProcessManager.WowProcess.ResumeThread();
         }
 
@@ -851,19 +851,18 @@ end)()");
                 Descriptor.eClickToMoveActionType action_type)
         {
             ProcessManager.WowProcess.SuspendThread();
-            ProcessManager.WowProcess.WriteFloat(
-                    ProcessManager.CurWoWVersion.Globals.ClickToMoveUnknown, 9.0f);
-            ProcessManager.WowProcess.WriteFloat(
-                    ProcessManager.CurWoWVersion.Globals.ClickToMoveTurnScale, 13.962634f);
-            ProcessManager.WowProcess.WriteFloat(
-                    ProcessManager.CurWoWVersion.Globals.ClickToMoveUnknown2, 14.0f);
-            ProcessManager.WowProcess.WriteFloat(
-                    ProcessManager.CurWoWVersion.Globals.ClickToMoveInteractDistance, 0.366f);
-            ProcessManager.WowProcess.WriteUInt64(
-                ProcessManager.CurWoWVersion.Globals.ClickToMoveTarget, guid);
-            ProcessManager.WowProcess.WriteUInt(
-                    ProcessManager.CurWoWVersion.Globals.ClickToMoveActionType,
-                                (uint)action_type);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveUnknown, 9.0f);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveTurnScale, 13.962634f);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveUnknown2, 14.0f);
+            ProcessManager.WowProcess.WriteFloat(ProcessManager.
+                                        GlobalOffsets.ClickToMoveInteractDistance, 0.366f);
+            ProcessManager.WowProcess.WriteUInt64(ProcessManager.
+                                        GlobalOffsets.ClickToMoveTarget, guid);
+            ProcessManager.WowProcess.WriteUInt(ProcessManager.
+                                    GlobalOffsets.ClickToMoveActionType, (uint)action_type);
             ProcessManager.WowProcess.ResumeThread();
         }
 
@@ -1263,8 +1262,8 @@ end)()");
             if (!Timed)
             {
                 ProcessManager.WowProcess.SuspendThread();
-                ProcessManager.WowProcess.WriteFloat(ObjectPointer + 
-                    ProcessManager.CurWoWVersion.Globals.PlayerRotationOffset, angle);
+                ProcessManager.WowProcess.WriteFloat(ObjectPointer + ProcessManager.
+                                                    GlobalOffsets.PlayerRotationOffset, angle);
                 ProcessManager.WowProcess.ResumeThread();
 
                 Thread.Sleep(50);
@@ -1302,8 +1301,8 @@ end)()");
                 }
 
                 ProcessManager.WowProcess.SuspendThread();
-                ProcessManager.WowProcess.WriteFloat(ObjectPointer + 
-                    ProcessManager.CurWoWVersion.Globals.PlayerRotationOffset, newOrientation);
+                ProcessManager.WowProcess.WriteFloat(ObjectPointer + ProcessManager.
+                                            GlobalOffsets.PlayerRotationOffset, newOrientation);
                 ProcessManager.WowProcess.ResumeThread();
 
                 PlayerCM.ArrowKeyDown(nextKey);
@@ -1320,8 +1319,8 @@ end)()");
 
             //write the new location memory
             ProcessManager.WowProcess.SuspendThread();
-            ProcessManager.WowProcess.WriteFloat(ObjectPointer + 
-                ProcessManager.CurWoWVersion.Globals.PlayerRotationOffset, angle);
+            ProcessManager.WowProcess.WriteFloat(ObjectPointer + ProcessManager.
+                                            GlobalOffsets.PlayerRotationOffset, angle);
             ProcessManager.WowProcess.ResumeThread();
             Thread.Sleep(50);
 

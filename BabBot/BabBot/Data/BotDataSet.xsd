@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="BotDataSet" targetNamespace="http://tempuri.org/BotDataSet.xsd" xmlns:mstns="http://tempuri.org/BotDataSet.xsd" xmlns="http://tempuri.org/BotDataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="BotDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="BotDataSet" msprop:Generator_DataSetName="BotDataSet" msprop:EnableTableAdapterManager="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="ContinentList" msprop:Generator_UserTableName="ContinentList" msprop:Generator_RowDeletedName="ContinentListRowDeleted" msprop:Generator_RowChangedName="ContinentListRowChanged" msprop:Generator_RowClassName="ContinentListRow" msprop:Generator_RowChangingName="ContinentListRowChanging" msprop:Generator_RowEvArgName="ContinentListRowChangeEvent" msprop:Generator_RowEvHandlerName="ContinentListRowChangeEventHandler" msprop:Generator_TableClassName="ContinentListDataTable" msprop:Generator_TableVarName="tableContinentList" msprop:Generator_RowDeletingName="ContinentListRowDeleting" msprop:Generator_TablePropName="ContinentList">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ID" msprop:Generator_UserColumnName="ID" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" type="xs:int" />
+              <xs:element name="NAME" msprop:Generator_UserColumnName="NAME" msprop:Generator_ColumnVarNameInTable="columnNAME" msprop:Generator_ColumnPropNameInRow="NAME" msprop:Generator_ColumnPropNameInTable="NAMEColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ZoneList" msprop:Generator_UserTableName="ZoneList" msprop:Generator_RowDeletedName="ZoneListRowDeleted" msprop:Generator_RowChangedName="ZoneListRowChanged" msprop:Generator_RowClassName="ZoneListRow" msprop:Generator_RowChangingName="ZoneListRowChanging" msprop:Generator_RowEvArgName="ZoneListRowChangeEvent" msprop:Generator_RowEvHandlerName="ZoneListRowChangeEventHandler" msprop:Generator_TableClassName="ZoneListDataTable" msprop:Generator_TableVarName="tableZoneList" msprop:Generator_RowDeletingName="ZoneListRowDeleting" msprop:Generator_TablePropName="ZoneList">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="ID" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" type="xs:int" />
+              <xs:element name="CID" msdata:Caption="ID" msprop:Generator_UserColumnName="CID" msprop:Generator_ColumnVarNameInTable="columnCID" msprop:Generator_ColumnPropNameInRow="CID" msprop:Generator_ColumnPropNameInTable="CIDColumn" type="xs:int" />
+              <xs:element name="NAME" msprop:Generator_UserColumnName="NAME" msprop:Generator_ColumnVarNameInTable="columnNAME" msprop:Generator_ColumnPropNameInRow="NAME" msprop:Generator_ColumnPropNameInTable="NAMEColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ZoneServices" msprop:Generator_UserTableName="ZoneServices" msprop:Generator_RowDeletedName="ZoneServicesRowDeleted" msprop:Generator_RowChangedName="ZoneServicesRowChanged" msprop:Generator_RowClassName="ZoneServicesRow" msprop:Generator_RowChangingName="ZoneServicesRowChanging" msprop:Generator_RowEvArgName="ZoneServicesRowChangeEvent" msprop:Generator_RowEvHandlerName="ZoneServicesRowChangeEventHandler" msprop:Generator_TableClassName="ZoneServicesDataTable" msprop:Generator_TableVarName="tableZoneServices" msprop:Generator_RowDeletingName="ZoneServicesRowDeleting" msprop:Generator_TablePropName="ZoneServices">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ZID" msprop:Generator_UserColumnName="ZID" msprop:Generator_ColumnVarNameInTable="columnZID" msprop:Generator_ColumnPropNameInRow="ZID" msprop:Generator_ColumnPropNameInTable="ZIDColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="TYPE_ID" msprop:Generator_UserColumnName="TYPE_ID" msprop:Generator_ColumnVarNameInTable="columnTYPE_ID" msprop:Generator_ColumnPropNameInRow="TYPE_ID" msprop:Generator_ColumnPropNameInTable="TYPE_IDColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="NPC_NAME" msprop:Generator_UserColumnName="NPC_NAME" msprop:Generator_ColumnVarNameInTable="columnNPC_NAME" msprop:Generator_ColumnPropNameInRow="NPC_NAME" msprop:Generator_ColumnPropNameInTable="NPC_NAMEColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ServiceTypes" msprop:Generator_UserTableName="ServiceTypes" msprop:Generator_RowDeletedName="ServiceTypesRowDeleted" msprop:Generator_RowChangedName="ServiceTypesRowChanged" msprop:Generator_RowClassName="ServiceTypesRow" msprop:Generator_RowChangingName="ServiceTypesRowChanging" msprop:Generator_RowEvArgName="ServiceTypesRowChangeEvent" msprop:Generator_RowEvHandlerName="ServiceTypesRowChangeEventHandler" msprop:Generator_TableClassName="ServiceTypesDataTable" msprop:Generator_TableVarName="tableServiceTypes" msprop:Generator_RowDeletingName="ServiceTypesRowDeleting" msprop:Generator_TablePropName="ServiceTypes">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ID" msprop:Generator_UserColumnName="ID" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" type="xs:int" />
+              <xs:element name="NAME" msprop:Generator_UserColumnName="NAME" msprop:Generator_ColumnVarNameInTable="columnNAME" msprop:Generator_ColumnPropNameInRow="NAME" msprop:Generator_ColumnPropNameInTable="NAMEColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="CONTINENT_LISTKey1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:ContinentList" />
+      <xs:field xpath="mstns:ID" />
+    </xs:unique>
+    <xs:unique name="Constraint1">
+      <xs:selector xpath=".//mstns:ContinentList" />
+      <xs:field xpath="mstns:NAME" />
+    </xs:unique>
+    <xs:unique name="ZoneList_Constraint1" msdata:ConstraintName="Constraint1">
+      <xs:selector xpath=".//mstns:ZoneList" />
+      <xs:field xpath="mstns:NAME" />
+    </xs:unique>
+    <xs:unique name="Constraint2" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:ZoneList" />
+      <xs:field xpath="mstns:ID" />
+    </xs:unique>
+    <xs:unique name="ZoneServices_Constraint1" msdata:ConstraintName="Constraint1">
+      <xs:selector xpath=".//mstns:ZoneServices" />
+      <xs:field xpath="mstns:NPC_NAME" />
+    </xs:unique>
+    <xs:unique name="ZoneServices_Constraint2" msdata:ConstraintName="Constraint2">
+      <xs:selector xpath=".//mstns:ZoneServices" />
+      <xs:field xpath="mstns:TYPE_ID" />
+    </xs:unique>
+    <xs:unique name="ServiceTypes_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:ServiceTypes" />
+      <xs:field xpath="mstns:ID" />
+    </xs:unique>
+    <xs:unique name="ServiceTypes_Constraint2" msdata:ConstraintName="Constraint2">
+      <xs:selector xpath=".//mstns:ServiceTypes" />
+      <xs:field xpath="mstns:NAME" />
+    </xs:unique>
+    <xs:keyref name="FK_ZoneServices_ServiceTypes" refer="ServiceTypes_Constraint1" msdata:ConstraintOnly="true" msdata:UpdateRule="None" msdata:DeleteRule="None">
+      <xs:selector xpath=".//mstns:ZoneServices" />
+      <xs:field xpath="mstns:TYPE_ID" />
+    </xs:keyref>
+    <xs:keyref name="FK_ZoneList_ZoneServices" refer="Constraint2" msdata:ConstraintOnly="true" msdata:UpdateRule="None" msdata:DeleteRule="None">
+      <xs:selector xpath=".//mstns:ZoneServices" />
+      <xs:field xpath="mstns:ZID" />
+    </xs:keyref>
+    <xs:keyref name="FK_ContinentList_ZoneList" refer="CONTINENT_LISTKey1" msdata:ConstraintOnly="true" msdata:UpdateRule="None" msdata:DeleteRule="None">
+      <xs:selector xpath=".//mstns:ZoneList" />
+      <xs:field xpath="mstns:CID" />
+    </xs:keyref>
+  </xs:element>
+</xs:schema>

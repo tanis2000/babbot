@@ -37,8 +37,7 @@ namespace BabBot.Wow
 
         public float Orientation
         {
-            get { return ReadOffset<float>(ProcessManager.
-                        CurWoWVersion.Globals.PlayerRotationOffset); }
+            get { return ReadOffset<float>(ProcessManager.GlobalOffsets.PlayerRotationOffset); }
         }
         
         public uint Hp

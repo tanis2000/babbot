@@ -82,43 +82,12 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
-        // Quest indexed list
-        internal SortedDictionary<int, Quest> QuestList = 
-                        new SortedDictionary<int, Quest>();
-
-        // Zone sorted list with taxi and bind servcies
-        internal SortedDictionary<string, ZoneServices> ZoneList =
-                new SortedDictionary<string, ZoneServices>();
-
-
-        // This variable is for binding
-        internal Quest[] QuestDataSource
-        {
-            get
-            {
-                Quest[] ret = new Quest[QuestList.Count];
-                QuestList.Values.CopyTo(ret, 0);
-                return ret;
-            }
-        }
-
         public NPC FindNpcByName(string name)
         {
             return FindItemByName(name);
         }
 
-        public Quest FindQuestById(int id)
-        {
-            // Possible exception
-            try
-            {
-                return QuestList[id];
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        
 
         public Quest FindMaxQuestByTitle(string title)
         {
@@ -135,45 +104,6 @@ namespace BabBot.Wow
             }
 
             return res;
-        }
-
-        public void IndexData()
-        {
-            ZoneList.Clear();
-            QuestList.Clear();
-
-            foreach (NPC npc in STable.Values)
-            {
-                // Index zone
-                foreach (string z in npc.Continents.ZoneList)
-                    if (!ZoneList.ContainsKey(z))
-                        ZoneList.Add(z, new ZoneServices());
-
-                // Check if NPC provide taxi/inn
-                // If taxi or inn than npc cannot be in multiple zones
-                if (npc.HasTaxi)
-                    ZoneList[npc.Continents.ContinentList[0].
-                            ZList[0].Name].AddTaxiService(npc.GetSimpleFormat());
-                else if (npc.HasInn)
-                    ZoneList[npc.Continents.ContinentList[0].
-                            ZList[0].Name].AddInnService(npc.GetSimpleFormat());
-
-                // Index quest
-                Quests ql = npc.QuestList;
-                if (ql != null)
-                {
-                    foreach (Quest q in ql.Table.Values)
-                    {
-                        q.SrcNpc = npc;
-                        if (!string.IsNullOrEmpty(q.DestNpcName))
-                            q.DestNpc = (NPC)STable[q.DestNpcName];
-                        QuestList.Add(q.Id, q);
-                    }
-                }
-
-                // Update zone list as well
-
-            }
         }
     }
 
@@ -407,7 +337,7 @@ namespace BabBot.Wow
         [XmlAttribute("idx")]
         public string Idx
         {
-            get { return (QIdx > 0) ? null : Convert.ToString(QIdx); }
+            get { return (QIdx > 0) ? null : QIdx.ToString(); }
             set {QIdx = (value == null) ? 0 : Convert.ToInt32(value); }
         }
 
@@ -622,7 +552,7 @@ namespace BabBot.Wow
 
         public override string ToString()
         {
-            return Convert.ToString(Id);
+            return Id.ToString();
         }
 
         public void MergeWith(object obj)
@@ -649,7 +579,7 @@ namespace BabBot.Wow
 
         public void Add(int quest_id)
         {
-            base.Add(Convert.ToString(quest_id));
+            base.Add(quest_id.ToString());
         }
     }
 
@@ -776,7 +706,7 @@ namespace BabBot.Wow
 
         public ContinentId FindContinentById(int id)
         {
-            return FindItemByName(Convert.ToString(id));
+            return FindItemByName(id.ToString());
         }
     }
 
@@ -997,14 +927,13 @@ namespace BabBot.Wow
         public AbstractQuestObjectiveWithQty(string type, string item_str, bool is_finished)
             : base(type)
         {
-            Regex r = ProcessManager.CurWoWVersion.
-                QuestConfig.ObjectiveRx;
+            Regex r = DataManager.CurWoWVersion.QuestConfig.ObjectiveRx;
             Match m = r.Match(item_str);
 
             if ((!m.Success) || (m.Groups.Count != 4))
                 throw new QuestProcessingException(
                     "Unable parse quest item string '" + item_str +
-                    "' according pattern " + ProcessManager.CurWoWVersion.
+                    "' according pattern " + DataManager.CurWoWVersion.
                                         QuestConfig.ObjectiveRx.ToString());
 
             ItemName = m.Groups[1].ToString();

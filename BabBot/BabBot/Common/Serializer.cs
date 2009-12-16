@@ -289,7 +289,7 @@ namespace BabBot.Common
 
         public override string ToString()
         {
-            return Convert.ToString(Id);
+            return Id.ToString();
         }
 
         public override bool Equals(object obj)
@@ -315,7 +315,7 @@ namespace BabBot.Common
 
         public override string ToString()
         {
-            return Convert.ToString(Id);
+            return Id.ToString();
         }
 
         public override bool Equals(object obj)
@@ -432,6 +432,12 @@ namespace BabBot.Common
         {
             _changed = true;
             _htable.Add(item.ToString(), item);
+        }
+
+        public void Remove(string key)
+        {
+            _changed = true;
+            _htable.Remove(key);
         }
 
         public int ItemCount()
@@ -619,7 +625,7 @@ namespace BabBot.Common
 
         public override string ToString()
         {
-            return Convert.ToString(Id);
+            return Id.ToString();
         }
 
         public override bool Equals(object obj)

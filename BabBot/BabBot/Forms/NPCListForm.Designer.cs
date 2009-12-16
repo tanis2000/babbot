@@ -38,12 +38,16 @@
             this.btnImport = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gbNpcDescription = new System.Windows.Forms.GroupBox();
             this.btnAdd = new System.Windows.Forms.Button();
             this.cbAvailServices = new System.Windows.Forms.ComboBox();
+            this.serviceTypesNpcAvail = new System.Windows.Forms.BindingSource(this.components);
+            this.botDataSet = new BabBot.Data.BotDataSet();
             this.label4 = new System.Windows.Forms.Label();
             this.lbActiveServices = new System.Windows.Forms.ListBox();
             this.popServiceActions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.deleteServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.serviceTypesAllAvail = new System.Windows.Forms.BindingSource(this.components);
             this.btnAddNPC = new System.Windows.Forms.Button();
             this.cbServiceList = new System.Windows.Forms.ComboBox();
             this.btnMoveToNearest = new System.Windows.Forms.Button();
@@ -54,7 +58,11 @@
             this.cbLearnSkills = new System.Windows.Forms.CheckBox();
             this.cbUseState = new System.Windows.Forms.CheckBox();
             this.popNpc.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.gbNpcDescription.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesNpcAvail)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).BeginInit();
+            this.popServiceActions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesAllAvail)).BeginInit();
             this.popQuestActions.SuspendLayout();
             this.gbDebug.SuspendLayout();
             this.SuspendLayout();
@@ -113,6 +121,7 @@
             this.deleteNPCToolStripMenuItem1});
             this.popNpc.Name = "popNpc";
             this.popNpc.Size = new System.Drawing.Size(140, 26);
+            this.popNpc.VisibleChanged += new System.EventHandler(this.popNpc_VisibleChanged);
             // 
             // deleteNPCToolStripMenuItem1
             // 
@@ -151,45 +160,59 @@
             // 
             // tbName
             // 
+            this.tbName.Enabled = false;
             this.tbName.Location = new System.Drawing.Point(50, 19);
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(136, 20);
             this.tbName.TabIndex = 38;
             // 
-            // groupBox1
+            // gbNpcDescription
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.gbNpcDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.btnAdd);
-            this.groupBox1.Controls.Add(this.cbAvailServices);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.lbActiveServices);
-            this.groupBox1.Controls.Add(this.tbName);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Enabled = false;
-            this.groupBox1.Location = new System.Drawing.Point(12, 219);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(593, 196);
-            this.groupBox1.TabIndex = 39;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "NPC Description";
+            this.gbNpcDescription.Controls.Add(this.btnAdd);
+            this.gbNpcDescription.Controls.Add(this.cbAvailServices);
+            this.gbNpcDescription.Controls.Add(this.label4);
+            this.gbNpcDescription.Controls.Add(this.lbActiveServices);
+            this.gbNpcDescription.Controls.Add(this.tbName);
+            this.gbNpcDescription.Controls.Add(this.label3);
+            this.gbNpcDescription.Location = new System.Drawing.Point(12, 219);
+            this.gbNpcDescription.Name = "gbNpcDescription";
+            this.gbNpcDescription.Size = new System.Drawing.Size(593, 196);
+            this.gbNpcDescription.TabIndex = 39;
+            this.gbNpcDescription.TabStop = false;
+            this.gbNpcDescription.Text = "NPC Description";
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(105, 65);
+            this.btnAdd.Location = new System.Drawing.Point(145, 65);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(75, 23);
+            this.btnAdd.Size = new System.Drawing.Size(35, 23);
             this.btnAdd.TabIndex = 42;
             this.btnAdd.Text = "Add";
             this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // cbAvailServices
             // 
+            this.cbAvailServices.DataSource = this.serviceTypesNpcAvail;
+            this.cbAvailServices.DisplayMember = "NAME";
+            this.cbAvailServices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbAvailServices.FormattingEnabled = true;
             this.cbAvailServices.Location = new System.Drawing.Point(6, 67);
             this.cbAvailServices.Name = "cbAvailServices";
-            this.cbAvailServices.Size = new System.Drawing.Size(93, 21);
+            this.cbAvailServices.Size = new System.Drawing.Size(133, 21);
             this.cbAvailServices.TabIndex = 41;
+            // 
+            // serviceTypesNpcAvail
+            // 
+            this.serviceTypesNpcAvail.DataMember = "ServiceTypes";
+            this.serviceTypesNpcAvail.DataSource = this.botDataSet;
+            // 
+            // botDataSet
+            // 
+            this.botDataSet.DataSetName = "BotDataSet";
+            this.botDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
             // label4
             // 
@@ -208,11 +231,27 @@
             this.lbActiveServices.Name = "lbActiveServices";
             this.lbActiveServices.Size = new System.Drawing.Size(174, 69);
             this.lbActiveServices.TabIndex = 39;
+            this.lbActiveServices.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbActiveServices_KeyDown);
             // 
             // popServiceActions
             // 
+            this.popServiceActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteServiceToolStripMenuItem});
             this.popServiceActions.Name = "popServiceActions";
-            this.popServiceActions.Size = new System.Drawing.Size(61, 4);
+            this.popServiceActions.Size = new System.Drawing.Size(155, 26);
+            this.popServiceActions.VisibleChanged += new System.EventHandler(this.popServiceActions_VisibleChanged);
+            // 
+            // deleteServiceToolStripMenuItem
+            // 
+            this.deleteServiceToolStripMenuItem.Name = "deleteServiceToolStripMenuItem";
+            this.deleteServiceToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.deleteServiceToolStripMenuItem.Text = "Delete Service";
+            this.deleteServiceToolStripMenuItem.Click += new System.EventHandler(this.deleteServiceToolStripMenuItem_Click);
+            // 
+            // serviceTypesAllAvail
+            // 
+            this.serviceTypesAllAvail.DataMember = "ServiceTypes";
+            this.serviceTypesAllAvail.DataSource = this.botDataSet;
             // 
             // btnAddNPC
             // 
@@ -228,6 +267,9 @@
             // cbServiceList
             // 
             this.cbServiceList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbServiceList.DataSource = this.serviceTypesAllAvail;
+            this.cbServiceList.DisplayMember = "NAME";
+            this.cbServiceList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbServiceList.FormattingEnabled = true;
             this.cbServiceList.Location = new System.Drawing.Point(184, 192);
             this.cbServiceList.Name = "cbServiceList";
@@ -309,7 +351,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(617, 456);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.gbNpcDescription);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.labelWoWVersion);
             this.Controls.Add(this.lbNpcList);
@@ -323,6 +365,7 @@
             this.MinimumSize = new System.Drawing.Size(625, 490);
             this.Name = "NPCListForm";
             this.Text = "NPC List";
+            this.Load += new System.EventHandler(this.NPCListForm_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NPCListForm_FormClosing);
             this.Controls.SetChildIndex(this.labelServices, 0);
             this.Controls.SetChildIndex(this.cbServiceList, 0);
@@ -334,13 +377,17 @@
             this.Controls.SetChildIndex(this.lbNpcList, 0);
             this.Controls.SetChildIndex(this.labelWoWVersion, 0);
             this.Controls.SetChildIndex(this.btnImport, 0);
-            this.Controls.SetChildIndex(this.groupBox1, 0);
+            this.Controls.SetChildIndex(this.gbNpcDescription, 0);
             this.Controls.SetChildIndex(this.btnHelp, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.popNpc.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.gbNpcDescription.ResumeLayout(false);
+            this.gbNpcDescription.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesNpcAvail)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).EndInit();
+            this.popServiceActions.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesAllAvail)).EndInit();
             this.popQuestActions.ResumeLayout(false);
             this.gbDebug.ResumeLayout(false);
             this.gbDebug.PerformLayout();
@@ -358,7 +405,7 @@
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbName;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbNpcDescription;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListBox lbActiveServices;
         private System.Windows.Forms.Button btnAdd;
@@ -375,5 +422,9 @@
         private System.Windows.Forms.GroupBox gbDebug;
         private System.Windows.Forms.CheckBox cbUseState;
         private System.Windows.Forms.CheckBox cbLearnSkills;
+        private System.Windows.Forms.BindingSource serviceTypesAllAvail;
+        private BabBot.Data.BotDataSet botDataSet;
+        private System.Windows.Forms.BindingSource serviceTypesNpcAvail;
+        private System.Windows.Forms.ToolStripMenuItem deleteServiceToolStripMenuItem;
     }
 }

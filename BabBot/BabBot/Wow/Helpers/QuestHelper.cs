@@ -315,9 +315,7 @@ namespace BabBot.Wow.Helpers
             LuaHelper.Exec("ToggleFrame", "QuestLog");
             NpcHelper.WaitDialogOpen("QuestLog", lfs);
 
-            string[] ret = ProcessManager.
-                    Injector.Lua_ExecByName("SelectAbandonQuest",
-                        new string[] { Convert.ToString(idx) });
+            string[] ret = LuaHelper.Exec("SelectAbandonQuest", idx);
             string aq_name = ret[0];
 
             if (string.IsNullOrEmpty(aq_name))
@@ -375,12 +373,11 @@ namespace BabBot.Wow.Helpers
         {
 
             // Check if quest completed
-            string[] ret = ProcessManager.Injector.
-                Lua_ExecByName("IsLogQuestCompleted", 
-                    new string[] { Convert.ToString(idx) });
+            string[] ret = LuaHelper.Exec("IsLogQuestCompleted", idx);
             return (!string.IsNullOrEmpty(ret[0]) && ret[0].Equals("1"));
 
             /*
+            // Check if quest has objectives. With 0 objectives it's auto-completed by finding quest dest
             string[] obj = QuestHelper.GetQuestObjectives(idx);
 
             for (int i = 0; i < obj.Length; i++)

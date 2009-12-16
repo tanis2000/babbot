@@ -207,7 +207,7 @@ end)()",
         public bool HasBuffById(WowUnit unit, uint BuffToCheck)
         {
             uint CurrentBuff = unit.ObjectPointer + 
-                ProcessManager.CurWoWVersion.Globals.FirstBuff;
+                ProcessManager.GlobalOffsets.FirstBuff;
 
             uint Buff = 1;
             while (Buff != 0 && BuffToCheck != 0)
@@ -218,7 +218,7 @@ end)()",
                     return true;
                 }
 
-                CurrentBuff += ProcessManager.CurWoWVersion.Globals.NextBuff;
+                CurrentBuff += ProcessManager.GlobalOffsets.NextBuff;
             }
             return false;
         }
@@ -263,7 +263,7 @@ end)()",
                 
                 // Register Lua Delegate
                 RemoteObject.RegisterLuaDelegate(
-                        ProcessManager.CurWoWVersion.Globals.LuaDelegates);
+                        ProcessManager.GlobalOffsets.LuaDelegates);
 
                 // Set our codecave offset
                 SetPatchOffset(Convert.ToUInt32(
@@ -571,7 +571,7 @@ end)()",
 
         private LuaFunction FindLuaFunction(string fname)
         {
-            LuaFunction res = ProcessManager.CurWoWVersion.FindLuaFunction(fname);
+            LuaFunction res = DataManager.CurWoWVersion.FindLuaFunction(fname);
 
             if (res == null)
                 ProcessManager.TerminateOnInternalBug(ProcessManager.Bugs.LUA_NOT_FOUND,
