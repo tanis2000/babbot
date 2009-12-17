@@ -54,8 +54,8 @@ namespace BabBot.Forms
 
         private void BindNpcList()
         {
-            lbNpcList.DataSource = null;
-            lbNpcList.DataSource = DataManager.CurWoWVersion.GameObjData.Items;
+            lbGameObjList.DataSource = null;
+            lbGameObjList.DataSource = DataManager.CurWoWVersion.GameObjData.Items;
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -96,12 +96,12 @@ namespace BabBot.Forms
 
         private void lbNpcList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bool f = lbNpcList.SelectedItem != null;
+            bool f = lbGameObjList.SelectedItem != null;
             SetFormControls(f);
             if (!f)
                 return;
 
-            NPC npc = (NPC)lbNpcList.SelectedItem;
+            NPC npc = (NPC)lbGameObjList.SelectedItem;
             tbName.Text = npc.Name;
 
             SetNpcAvailServiceList(npc);
@@ -159,10 +159,10 @@ namespace BabBot.Forms
                     BindNpcList();
 
                     // Unselect all
-                    foreach (int idx in lbNpcList.SelectedIndices)
-                        lbNpcList.SetSelected(idx, false);
+                    foreach (int idx in lbGameObjList.SelectedIndices)
+                        lbGameObjList.SetSelected(idx, false);
                     // Highlight new npc on the listbox
-                    lbNpcList.SelectedItem = npc;
+                    lbGameObjList.SelectedItem = npc;
                 }
             }
             catch (Exception ex)
@@ -179,7 +179,7 @@ namespace BabBot.Forms
         private void DeleteSelectedNpc()
         {
             // Possible multi selection
-            foreach (object obj in lbNpcList.SelectedItems)
+            foreach (object obj in lbGameObjList.SelectedItems)
             {
                 string npc_name = ((NPC) obj).Name;
                 if (MessageBox.Show(this, "Are you sure to delete " + npc_name + "?",
@@ -275,7 +275,7 @@ namespace BabBot.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            NPC npc = (NPC)lbNpcList.SelectedItem;
+            NPC npc = (NPC)lbGameObjList.SelectedItem;
             string srv = cbAvailServices.Text;
             if (string.IsNullOrEmpty(srv))
                 return;
@@ -305,7 +305,7 @@ namespace BabBot.Forms
             if (lbActiveServices.SelectedItem == null)
                 return;
 
-            NPC npc = (NPC)lbNpcList.SelectedItem;
+            NPC npc = (NPC)lbGameObjList.SelectedItem;
             npc.Services.Remove(lbActiveServices.Text);
 
             SetNpcAvailServiceList(npc);
@@ -325,12 +325,27 @@ namespace BabBot.Forms
 
         private void popNpc_VisibleChanged(object sender, EventArgs e)
         {
-            deleteNPCToolStripMenuItem.Enabled = (lbNpcList.SelectedItem != null);
+            deleteNPCToolStripMenuItem.Enabled = (lbGameObjList.SelectedItem != null);
         }
 
         private void btnAddQuest_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnAddNewObj_Click(object sender, EventArgs e)
+        {
+            lbGameObjList.SelectedItem = null;
+            lbGameObjList.Enabled = false;
+            btnAddNewObj.Enabled = false;
+            gameObjectsBindingSource.AddNew();
+
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            // gameObjectsBindingSource.Add((;
+            btnAddNewObj.Enabled = true;
         }
     }
 }

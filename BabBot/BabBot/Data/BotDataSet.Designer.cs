@@ -428,16 +428,16 @@ namespace BabBot.Data {
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneList_ZoneServices", new global::System.Data.DataColumn[] {
-                        this.tableZoneList.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableZoneServices.ZIDColumn});
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneServices_ServiceTypes", new global::System.Data.DataColumn[] {
+                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableZoneServices.SERVICE_IDColumn});
             this.tableZoneServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneServices_ServiceTypes", new global::System.Data.DataColumn[] {
-                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableZoneServices.SERVICE_IDColumn});
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneList_ZoneServices", new global::System.Data.DataColumn[] {
+                        this.tableZoneList.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableZoneServices.ZIDColumn});
             this.tableZoneServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
@@ -449,13 +449,6 @@ namespace BabBot.Data {
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.Cascade;
             fkc.DeleteRule = global::System.Data.Rule.Cascade;
             fkc.UpdateRule = global::System.Data.Rule.Cascade;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_QuestList_QuestItems", new global::System.Data.DataColumn[] {
-                        this.tableQuestList.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableQuestItems.QIDColumn});
-            this.tableQuestItems.Constraints.Add(fkc);
-            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
-            fkc.DeleteRule = global::System.Data.Rule.None;
-            fkc.UpdateRule = global::System.Data.Rule.None;
             fkc = new global::System.Data.ForeignKeyConstraint("FK_QuestItems_QuestItemType", new global::System.Data.DataColumn[] {
                         this.tableQuestItemType.IDColumn}, new global::System.Data.DataColumn[] {
                         this.tableQuestItems.ITEM_TYPE_IDColumn});
@@ -463,10 +456,10 @@ namespace BabBot.Data {
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_GameObjectTypes_GameObjects", new global::System.Data.DataColumn[] {
-                        this.tableGameObjectTypes.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableGameObjects.TYPE_IDColumn});
-            this.tableGameObjects.Constraints.Add(fkc);
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_QuestList_QuestItems", new global::System.Data.DataColumn[] {
+                        this.tableQuestList.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableQuestItems.QIDColumn});
+            this.tableQuestItems.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
@@ -477,16 +470,23 @@ namespace BabBot.Data {
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.SetNull;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ServiceTypes_NpcServices", new global::System.Data.DataColumn[] {
-                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableNpcServices.SERVICE_IDColumn});
-            this.tableNpcServices.Constraints.Add(fkc);
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_GameObjectTypes_GameObjects", new global::System.Data.DataColumn[] {
+                        this.tableGameObjectTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.TYPE_IDColumn});
+            this.tableGameObjects.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
-            fkc.DeleteRule = global::System.Data.Rule.Cascade;
+            fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
             fkc = new global::System.Data.ForeignKeyConstraint("FK_GameObjects_NpcServices", new global::System.Data.DataColumn[] {
                         this.tableGameObjects.IDColumn}, new global::System.Data.DataColumn[] {
                         this.tableNpcServices.GIDColumn});
+            this.tableNpcServices.Constraints.Add(fkc);
+            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
+            fkc.DeleteRule = global::System.Data.Rule.Cascade;
+            fkc.UpdateRule = global::System.Data.Rule.None;
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ServiceTypes_NpcServices", new global::System.Data.DataColumn[] {
+                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableNpcServices.SERVICE_IDColumn});
             this.tableNpcServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.Cascade;
@@ -2492,6 +2492,8 @@ namespace BabBot.Data {
             
             private global::System.Data.DataColumn columnSERVICE_ID;
             
+            private global::System.Data.DataColumn columnCOORD;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public GameObjectsDataTable() {
                 this.TableName = "GameObjects";
@@ -2579,6 +2581,13 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn COORDColumn {
+                get {
+                    return this.columnCOORD;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -2607,7 +2616,7 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public GameObjectsRow AddGameObjectsRow(int TYPE_ID, string NAME, double X, double Y, double Z, ZoneListRow parentZoneListRowByZoneList_GameObjects, int SERVICE_ID) {
+            public GameObjectsRow AddGameObjectsRow(int TYPE_ID, string NAME, double X, double Y, double Z, ZoneListRow parentZoneListRowByZoneList_GameObjects, int SERVICE_ID, string COORD) {
                 GameObjectsRow rowGameObjectsRow = ((GameObjectsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         null,
@@ -2617,7 +2626,8 @@ namespace BabBot.Data {
                         Y,
                         Z,
                         null,
-                        SERVICE_ID};
+                        SERVICE_ID,
+                        COORD};
                 if ((parentZoneListRowByZoneList_GameObjects != null)) {
                     columnValuesArray[6] = parentZoneListRowByZoneList_GameObjects[0];
                 }
@@ -2654,6 +2664,7 @@ namespace BabBot.Data {
                 this.columnZ = base.Columns["Z"];
                 this.columnZONE_ID = base.Columns["ZONE_ID"];
                 this.columnSERVICE_ID = base.Columns["SERVICE_ID"];
+                this.columnCOORD = base.Columns["COORD"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2674,6 +2685,8 @@ namespace BabBot.Data {
                 base.Columns.Add(this.columnZONE_ID);
                 this.columnSERVICE_ID = new global::System.Data.DataColumn("SERVICE_ID", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnSERVICE_ID);
+                this.columnCOORD = new global::System.Data.DataColumn("COORD", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCOORD);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnID}, true));
                 this.columnID.AutoIncrement = true;
@@ -4013,6 +4026,21 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string COORD {
+                get {
+                    try {
+                        return ((string)(this[this.tableGameObjects.COORDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'COORD\' in table \'GameObjects\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGameObjects.COORDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public ZoneListRow ZoneListRow {
                 get {
                     return ((ZoneListRow)(this.GetParentRow(this.Table.ParentRelations["ZoneList_GameObjects"])));
@@ -4090,6 +4118,16 @@ namespace BabBot.Data {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public void SetSERVICE_IDNull() {
                 this[this.tableGameObjects.SERVICE_IDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsCOORDNull() {
+                return this.IsNull(this.tableGameObjects.COORDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetCOORDNull() {
+                this[this.tableGameObjects.COORDColumn] = global::System.Convert.DBNull;
             }
         }
         

@@ -205,7 +205,7 @@ namespace BabBot.Wow
             : base()
         {
             // Increase mergeable array
-            Array.Resize<IMergeable>(ref MergeList, 2);
+            Array.Resize<IMergeable>(ref MergeList, 3);
             /*
             IMergeable im = MergeList[0];
             MergeList = new IMergeable[2];

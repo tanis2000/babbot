@@ -31,15 +31,23 @@
             this.components = new System.ComponentModel.Container();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.lbNpcList = new System.Windows.Forms.ListBox();
+            this.lbGameObjList = new System.Windows.Forms.ListBox();
             this.popNpc = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteNPCToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameObjectsBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.botDataSet = new BabBot.Data.BotDataSet();
             this.labelWoWVersion = new System.Windows.Forms.Label();
             this.btnImport = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
             this.gbNpcDescription = new System.Windows.Forms.GroupBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
@@ -49,7 +57,6 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.cbAvailServices = new System.Windows.Forms.ComboBox();
             this.serviceTypesNpcAvail = new System.Windows.Forms.BindingSource(this.components);
-            this.botDataSet = new BabBot.Data.BotDataSet();
             this.lbActiveServices = new System.Windows.Forms.ListBox();
             this.popServiceActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,15 +71,16 @@
             this.cbLearnSkills = new System.Windows.Forms.CheckBox();
             this.cbUseState = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnAddNewObj = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.popNpc.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gameObjectsBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).BeginInit();
             this.gbNpcDescription.SuspendLayout();
             this.gbNpcQuests.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.serviceTypesNpcAvail)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).BeginInit();
             this.popServiceActions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.serviceTypesAllAvail)).BeginInit();
             this.popQuestActions.SuspendLayout();
@@ -92,6 +100,7 @@
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(449, 421);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // label2
             // 
@@ -112,21 +121,23 @@
             this.label1.TabIndex = 33;
             this.label1.Text = "Game Object List";
             // 
-            // lbNpcList
+            // lbGameObjList
             // 
-            this.lbNpcList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.lbGameObjList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbNpcList.ContextMenuStrip = this.popNpc;
-            this.lbNpcList.FormattingEnabled = true;
-            this.lbNpcList.Location = new System.Drawing.Point(12, 37);
-            this.lbNpcList.MultiColumn = true;
-            this.lbNpcList.Name = "lbNpcList";
-            this.lbNpcList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbNpcList.Size = new System.Drawing.Size(473, 173);
-            this.lbNpcList.TabIndex = 34;
-            this.lbNpcList.SelectedIndexChanged += new System.EventHandler(this.lbNpcList_SelectedIndexChanged);
-            this.lbNpcList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbNpcList_KeyDown);
+            this.lbGameObjList.ContextMenuStrip = this.popNpc;
+            this.lbGameObjList.DataSource = this.gameObjectsBindingSource;
+            this.lbGameObjList.DisplayMember = "NAME";
+            this.lbGameObjList.FormattingEnabled = true;
+            this.lbGameObjList.Location = new System.Drawing.Point(12, 37);
+            this.lbGameObjList.MultiColumn = true;
+            this.lbGameObjList.Name = "lbGameObjList";
+            this.lbGameObjList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lbGameObjList.Size = new System.Drawing.Size(473, 173);
+            this.lbGameObjList.TabIndex = 34;
+            this.lbGameObjList.SelectedIndexChanged += new System.EventHandler(this.lbNpcList_SelectedIndexChanged);
+            this.lbGameObjList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbNpcList_KeyDown);
             // 
             // popNpc
             // 
@@ -142,6 +153,16 @@
             this.deleteNPCToolStripMenuItem1.Size = new System.Drawing.Size(139, 22);
             this.deleteNPCToolStripMenuItem1.Text = "Delete NPC";
             this.deleteNPCToolStripMenuItem1.Click += new System.EventHandler(this.deleteNPCToolStripMenuItem_Click);
+            // 
+            // gameObjectsBindingSource
+            // 
+            this.gameObjectsBindingSource.DataMember = "GameObjects";
+            this.gameObjectsBindingSource.DataSource = this.botDataSet;
+            // 
+            // botDataSet
+            // 
+            this.botDataSet.DataSetName = "BotDataSet";
+            this.botDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
             // labelWoWVersion
             // 
@@ -173,7 +194,7 @@
             // 
             // tbName
             // 
-            this.tbName.Enabled = false;
+            this.tbName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.gameObjectsBindingSource, "NAME", true));
             this.tbName.Location = new System.Drawing.Point(50, 19);
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(144, 20);
@@ -182,9 +203,15 @@
             // gbNpcDescription
             // 
             this.gbNpcDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gbNpcDescription.Controls.Add(this.textBox3);
+            this.gbNpcDescription.Controls.Add(this.textBox2);
+            this.gbNpcDescription.Controls.Add(this.label8);
+            this.gbNpcDescription.Controls.Add(this.label7);
             this.gbNpcDescription.Controls.Add(this.label4);
+            this.gbNpcDescription.Controls.Add(this.textBox1);
             this.gbNpcDescription.Controls.Add(this.tbName);
             this.gbNpcDescription.Controls.Add(this.label3);
+            this.gbNpcDescription.Controls.Add(this.label6);
             this.gbNpcDescription.Controls.Add(this.button2);
             this.gbNpcDescription.Controls.Add(this.button1);
             this.gbNpcDescription.Controls.Add(this.listBox1);
@@ -195,18 +222,69 @@
             this.gbNpcDescription.TabStop = false;
             this.gbNpcDescription.Text = "Object Description";
             // 
+            // textBox3
+            // 
+            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.gameObjectsBindingSource, "Z", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, null, "N2"));
+            this.textBox3.Location = new System.Drawing.Point(139, 110);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(55, 20);
+            this.textBox3.TabIndex = 78;
+            // 
+            // textBox2
+            // 
+            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.gameObjectsBindingSource, "Y", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, null, "N2"));
+            this.textBox2.Location = new System.Drawing.Point(139, 84);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(55, 20);
+            this.textBox2.TabIndex = 77;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(119, 113);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(14, 13);
+            this.label8.TabIndex = 76;
+            this.label8.Text = "Z";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(119, 87);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(14, 13);
+            this.label7.TabIndex = 75;
+            this.label7.Text = "Y";
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 51);
+            this.label4.Location = new System.Drawing.Point(6, 42);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(63, 13);
             this.label4.TabIndex = 40;
             this.label4.Text = "Coordinates";
             // 
+            // textBox1
+            // 
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.gameObjectsBindingSource, "X", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, null, "C2"));
+            this.textBox1.Location = new System.Drawing.Point(139, 58);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(55, 20);
+            this.textBox1.TabIndex = 74;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(119, 61);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(14, 13);
+            this.label6.TabIndex = 74;
+            this.label6.Text = "X";
+            // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(76, 142);
+            this.button2.Location = new System.Drawing.Point(157, 141);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(37, 23);
             this.button2.TabIndex = 70;
@@ -215,19 +293,21 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(119, 141);
+            this.button1.Location = new System.Drawing.Point(9, 141);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(104, 23);
             this.button1.TabIndex = 70;
-            this.button1.Text = "Add Target";
+            this.button1.Text = "Add Player\'s Coord";
             this.button1.UseVisualStyleBackColor = true;
             // 
             // listBox1
             // 
+            this.listBox1.DataSource = this.botDataSet;
+            this.listBox1.DisplayMember = "ServiceTypes.NAME";
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(9, 67);
+            this.listBox1.Location = new System.Drawing.Point(9, 58);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(185, 69);
+            this.listBox1.Size = new System.Drawing.Size(104, 69);
             this.listBox1.TabIndex = 70;
             // 
             // gbNpcQuests
@@ -289,11 +369,6 @@
             // 
             this.serviceTypesNpcAvail.DataMember = "ServiceTypes";
             this.serviceTypesNpcAvail.DataSource = this.botDataSet;
-            // 
-            // botDataSet
-            // 
-            this.botDataSet.DataSetName = "BotDataSet";
-            this.botDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
             // lbActiveServices
             // 
@@ -435,14 +510,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "NPC Services";
             // 
-            // button3
+            // btnAddNewObj
             // 
-            this.button3.Location = new System.Drawing.Point(511, 216);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(94, 23);
-            this.button3.TabIndex = 70;
-            this.button3.Text = "Add New Object";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btnAddNewObj.Location = new System.Drawing.Point(511, 216);
+            this.btnAddNewObj.Name = "btnAddNewObj";
+            this.btnAddNewObj.Size = new System.Drawing.Size(94, 23);
+            this.btnAddNewObj.TabIndex = 70;
+            this.btnAddNewObj.Text = "Add New Object";
+            this.btnAddNewObj.UseVisualStyleBackColor = true;
+            this.btnAddNewObj.Click += new System.EventHandler(this.btnAddNewObj_Click);
             // 
             // button4
             // 
@@ -470,18 +546,18 @@
             this.label5.TabIndex = 73;
             this.label5.Text = "Object";
             // 
-            // NPCListForm
+            // GameObjectsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(617, 456);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.labelWoWVersion);
             this.Controls.Add(this.gbNpcDescription);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnAddNewObj);
             this.Controls.Add(this.gbDebug);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.lbNpcList);
+            this.Controls.Add(this.lbGameObjList);
             this.Controls.Add(this.gbNpcQuests);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
@@ -489,7 +565,7 @@
             this.Controls.Add(this.btnAddNPC);
             this.Controls.Add(this.button4);
             this.MinimumSize = new System.Drawing.Size(625, 490);
-            this.Name = "NPCListForm";
+            this.Name = "GameObjectsForm";
             this.Text = "NPC List";
             this.Load += new System.EventHandler(this.NPCListForm_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NPCListForm_FormClosing);
@@ -499,11 +575,11 @@
             this.Controls.SetChildIndex(this.comboBox1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.gbNpcQuests, 0);
-            this.Controls.SetChildIndex(this.lbNpcList, 0);
+            this.Controls.SetChildIndex(this.lbGameObjList, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.gbDebug, 0);
-            this.Controls.SetChildIndex(this.button3, 0);
+            this.Controls.SetChildIndex(this.btnAddNewObj, 0);
             this.Controls.SetChildIndex(this.gbNpcDescription, 0);
             this.Controls.SetChildIndex(this.labelWoWVersion, 0);
             this.Controls.SetChildIndex(this.btnImport, 0);
@@ -511,11 +587,12 @@
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.popNpc.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gameObjectsBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).EndInit();
             this.gbNpcDescription.ResumeLayout(false);
             this.gbNpcDescription.PerformLayout();
             this.gbNpcQuests.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.serviceTypesNpcAvail)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).EndInit();
             this.popServiceActions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.serviceTypesAllAvail)).EndInit();
             this.popQuestActions.ResumeLayout(false);
@@ -531,7 +608,7 @@
 
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox lbNpcList;
+        private System.Windows.Forms.ListBox lbGameObjList;
         private System.Windows.Forms.Label labelWoWVersion;
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Label label3;
@@ -564,9 +641,16 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnAddNewObj;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.BindingSource gameObjectsBindingSource;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label6;
     }
 }
