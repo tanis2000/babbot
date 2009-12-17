@@ -94,11 +94,6 @@ namespace BabBot.Manager
         /// <param name="err"></param>
         public delegate void ShowErrorMessageHandler(string err);
 
-        /// <summary>
-        /// Initial creation of DataSet
-        /// </summary>
-        public delegate void DataInitHandler();
-
         #endregion
 
         #region WOWApplication Events
@@ -140,11 +135,6 @@ namespace BabBot.Manager
         public static event FirstTimeRunHandler FirstTimeRun;
         public static event ConfigFileChangedHandler ConfigFileChanged;
         public static event ShowErrorMessageHandler ShowErrorMessage;
-
-        /// <summary>
-        /// Fires when DataSet initialized 
-        /// </summary>
-        public static event DataInitHandler OnDataInit;
 
         #endregion
 
@@ -546,9 +536,6 @@ namespace BabBot.Manager
             LoadConfig();
             DataManager.MergeXml(config.WoWInfo.Version);
             DataManager.AfterXmlInit();
-
-            if (OnDataInit != null)
-                OnDataInit();
 
 #if DEBUG
             //\\ Test

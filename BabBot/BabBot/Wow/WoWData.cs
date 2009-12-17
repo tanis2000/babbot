@@ -442,7 +442,7 @@ namespace BabBot.Wow
 
         public override string ToString()
         {
-            return Name;
+            return Id.ToString();
         }
 
         public override bool Equals(object obj)

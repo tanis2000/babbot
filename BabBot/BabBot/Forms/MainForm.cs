@@ -79,8 +79,8 @@ namespace BabBot.Forms
             ProcessManager.UpdateAppStatus += UpdateAppStatus;
             ProcessManager.UpdateGameStatus += UpdateGameStatus;
 
-            // DataManager Events
-            ProcessManager.OnDataInit += DataManager.InitDataSet;
+            // Initialize DataSet
+            DataManager.Initialize();
         }
 
         #region Exception Handler
@@ -103,7 +103,8 @@ namespace BabBot.Forms
 
         #endregion
 
-        [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
+        [System.Security.Permissions.PermissionSet(
+            System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == 0xBEEF)

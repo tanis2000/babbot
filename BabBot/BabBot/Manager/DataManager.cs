@@ -12,17 +12,117 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BabBot.Manager
 {
+    public class ZoneNotFoundException : Exception
+    {
+        public ZoneNotFoundException(string zone_name)
+            : base("Zone " + zone_name +
+                " not found in continent list. Please configure WoWData.xml") { }
+    }
+
     public class DataManager
     {
-        // Reference the whole WoWData
+        /// <summary>
+        /// Reference the whole WoWData
+        /// </summary>
         private static WoWData wdata;
         
-        // Reference the whole NPCData
+        /// <summary>
+        /// Reference the whole NPCData
+        /// </summary>
         private static GameObjectData gdata;
 
-        // Reference the current WoW Version from WoWData
+        /// <summary>
+        /// Reference the current WoW Version from WoWData
+        /// </summary>
         private static WoWVersion wversion;
 
+        /// <summary>
+        /// Current version of GameObjectData
+        /// </summary>
+        private static readonly int GameObjDataVersion = 0;
+
+        /// <summary>
+        /// Gui mode
+        /// </summary>
+        private static bool _gui = false;
+
+        /// <summary>
+        /// Current WoW version loaded
+        /// </summary>
+        public static WoWVersion CurWoWVersion
+        {
+            get { return wversion; }
+        }
+
+        /// <summary>
+        /// Game Objects related to current WoW version
+        /// </summary>
+        public static GameObjectData GameObjList
+        {
+            get { return gdata; }
+        }
+
+        /// <summary>
+        /// GameObjectData xml file name
+        /// </summary>
+        private static string GameObjDataFileName =
+#if DEBUG
+            "..\\..\\Data\\" +
+#endif
+            "GameObjectData.xml";
+
+        /// <summary>
+        /// Application configuration tag from WoWData.xml
+        /// </summary>
+        internal static AppConfig AppConfig
+        {
+            get { return wdata.AppConfig; }
+        }
+
+        /// <summary>
+        /// Global WoW offsets related to current WoW version
+        /// Loaded from WoWData.xml
+        /// </summary>
+        internal static GlobalOffsets Globals
+        {
+            get { return CurWoWVersion.Globals; }
+        }
+
+        /// <summary>
+        /// List of all supported WoW versions
+        /// </summary>
+        internal static WoWVersion[] WoWVersions
+        {
+            get { return wdata.Versions; }
+        }
+
+        /// <summary>
+        /// Quest indexed list
+        /// </summary>
+        internal static SortedDictionary<int, Quest> QuestList =
+                        new SortedDictionary<int, Quest>();
+
+        /// <summary>
+        /// Zone sorted list with npc servcies as:
+        /// taxi, inn, vendor
+        /// </summary>
+        internal static SortedDictionary<string, ZoneServices> ZoneList =
+                new SortedDictionary<string, ZoneServices>();
+
+        // This variable is for binding
+        internal static Quest[] QuestDataSource
+        {
+            get
+            {
+                Quest[] ret = new Quest[QuestList.Count];
+                QuestList.Values.CopyTo(ret, 0);
+                return ret;
+            }
+        }
+
+        #region Bot DataSet
+
+        #region Nested: Enumerates
         /// <summary>
         /// List of services provided by NPC 
         /// </summary>
@@ -44,70 +144,86 @@ namespace BabBot.Manager
         /// </summary>
         public enum GameObjectTypes : byte
         {
-            ITEM = 1,
-            NPC = 2
+            ITEM = 0,
+            NPC = 1
         }
 
-        // Current version of GameObjectData
-        private static readonly int GameObjDataVersion = 0;
-
-        public static WoWVersion CurWoWVersion
+        /// <summary>
+        /// Enumerates for Quest Item Types
+        /// </summary>
+        public enum QuestItemTypes
         {
-            get { return wversion; }
+            REQUIRED = 0,
+            REWARD = 1,
+            CHOICE = 2,
+            OBJECTIVES = 3
         }
 
-        public static GameObjectData GameObjList
-        {
-            get { return gdata; }
-        }
+        #endregion
 
-        // NPCData file name
-        private static string GameObjDataFileName =
-#if DEBUG
-            "..\\..\\Data\\" +
-#endif
-            "GameObjectData.xml";
+        #region Nested: Type Tables
 
-        internal static AppConfig AppConfig
-        {
-            get { return wdata.AppConfig; }
-        }
-
-        internal static GlobalOffsets Globals
-        {
-            get { return CurWoWVersion.Globals; }
-        }
-
-        internal static WoWVersion[] WoWVersions
-        {
-            get { return wdata.Versions; }
-        }
-
-        // Quest indexed list
-        internal static SortedDictionary<int, Quest> QuestList =
-                        new SortedDictionary<int, Quest>();
-
-        // Zone sorted list with taxi and bind servcies
-        internal static SortedDictionary<string, ZoneServices> ZoneList =
-                new SortedDictionary<string, ZoneServices>();
-
-        // This variable is for binding
-        internal static Quest[] QuestDataSource
-        {
-            get
-            {
-                Quest[] ret = new Quest[QuestList.Count];
-                QuestList.Values.CopyTo(ret, 0);
-                return ret;
-            }
-        }
-
-        // Table with all game object types
+        /// <summary>
+        /// Table with all game object types
+        /// </summary>
         internal static BotDataSet.GameObjectTypesDataTable GameObjTypeTable;
 
-        // Table with all npc service types
+        /// <summary>
+        /// Table with all npc service types
+        /// </summary>
         internal static BotDataSet.ServiceTypesDataTable ServiceTypeTable;
 
+        /// <summary>
+        /// Table with QuestsItemTypes
+        /// </summary>
+        internal static BotDataSet.QuestItemTypeDataTable QuestItemTypeTable;
+
+        #endregion
+
+        #region Nested: Data Table
+
+        /// <summary>
+        /// Table with GameObjects
+        /// </summary>
+        internal static BotDataSet.GameObjectsDataTable GameObjTable;
+
+        /// <summary>
+        /// Table with Quest
+        /// </summary>
+        internal static BotDataSet.QuestListDataTable QuestListTable;
+
+        /// <summary>
+        /// Table with Quest Items
+        /// </summary>
+        internal static BotDataSet.QuestItemsDataTable QuestItemsTable;
+
+        /// <summary>
+        /// Table with Continents
+        /// </summary>
+        internal static BotDataSet.ContinentListDataTable ContinentListTable;
+
+        /// <summary>
+        /// Table with Zones
+        /// </summary>
+        internal static BotDataSet.ZoneListDataTable ZoneListTable;
+
+        /// <summary>
+        /// Table with ZoneServices
+        /// </summary>
+        internal static BotDataSet.ZoneServicesDataTable ZoneServicesTable;
+
+        /// <summary>
+        /// Table with NPC Services
+        /// </summary>
+        internal static BotDataSet.NpcServicesDataTable NpcServicesTable;
+
+        #endregion
+
+        #endregion
+
+        /// <summary>
+        /// Data Manager class
+        /// </summary>
         static DataManager()
         {
             // TEST
@@ -119,19 +235,45 @@ namespace BabBot.Manager
              */
         }
 
-        public static void InitDataSet()
+        /// <summary>
+        /// Initialize all DataSet tables required for binding on GUI forms
+        /// When this method calls means bot running in GUI mode
+        /// </summary>
+        public static void Initialize()
         {
-            // Populate local data storage
+            // We running gui
+            _gui = true;
 
             // Add game object types
             GameObjTypeTable = new BotDataSet.GameObjectTypesDataTable();
-            foreach (ServiceTypes z in Enum.GetValues(typeof(ServiceTypes)))
-                ServiceTypeTable.Rows.Add(z, Enum.GetName(typeof(ServiceTypes), z).ToLower());
+            foreach (GameObjectTypes z in Enum.GetValues(typeof(GameObjectTypes)))
+                GameObjTypeTable.Rows.Add(z, Enum.GetName(
+                                            typeof(GameObjectTypes), z).ToLower());
 
             // Add service types
             ServiceTypeTable = new BotDataSet.ServiceTypesDataTable();
             foreach (ServiceTypes z in Enum.GetValues(typeof(ServiceTypes)))
-                ServiceTypeTable.Rows.Add(z, Enum.GetName(typeof(ServiceTypes), z).ToLower());
+                ServiceTypeTable.Rows.Add(z, Enum.GetName(
+                                            typeof(ServiceTypes), z).ToLower());
+
+            QuestItemTypeTable = new BotDataSet.QuestItemTypeDataTable();
+            foreach (QuestItemTypes qi in Enum.GetValues(typeof(QuestItemTypes)))
+                QuestItemTypeTable.Rows.Add(qi, Enum.GetName(
+                                            typeof(QuestItemTypes), qi).ToLower());
+
+            // Create other empty tables
+
+            GameObjTable = new BotDataSet.GameObjectsDataTable();
+            QuestListTable = new BotDataSet.QuestListDataTable();
+            QuestItemsTable = new BotDataSet.QuestItemsDataTable();
+            ContinentListTable = new BotDataSet.ContinentListDataTable();
+            ZoneListTable = new BotDataSet.ZoneListDataTable();
+            ZoneServicesTable = new BotDataSet.ZoneServicesDataTable();
+            NpcServicesTable = new BotDataSet.NpcServicesDataTable();
+
+            //\\ TEST
+            PopulateDataSet();
+
         }
 
         private static void ShowErrorMessage(string err)
@@ -170,27 +312,23 @@ namespace BabBot.Manager
             QuestList.Clear();
 
             foreach (Continent cid in CurWoWVersion.Continents.ContinentList)
-                    foreach (Zone z in cid.ZoneList)
+                    foreach (Zone z in cid.List)
                         ZoneList.Add(z.Name, new ZoneServices(cid.Id));
 
             foreach (GameObject g_obj in CurWoWVersion.GameObjData.STable.Values)
             {
                 ZoneServices zs = null;
 
-                if (!string.IsNullOrEmpty(g_obj.ZoneText) && g_obj.GetType().Equals(typeof(NPC)))
+                if (!string.IsNullOrEmpty(g_obj.ZoneText) && 
+                                            g_obj.GetType().Equals(typeof(NPC)))
                 {
                     NPC npc = (NPC)g_obj;
 
                     if (ZoneList.ContainsKey(g_obj.ZoneText))
-                    {
-                        zs = ZoneList[g_obj.ZoneText];
-
-                        if (npc.HasTaxi)
-                            zs.AddTaxiService(npc);
-                        else if (npc.HasInn)
-                            zs.AddInnService(npc);
-                    } else
-                        throw new Exception("Zone '" + g_obj.ZoneText + "' not defined in WoWData.xml");
+                        ZoneList[g_obj.ZoneText].AddService(npc);
+                    else
+                        throw new Exception("Zone '" + g_obj.ZoneText + 
+                                            "' not defined in WoWData.xml");
                 }
                 
                 // Index quest
@@ -214,6 +352,33 @@ namespace BabBot.Manager
 
         private static void PopulateDataSet()
         {
+            if (!_gui)
+                return;
+
+            // Should invoke cascading deleting
+            GameObjTable.Clear();
+            ContinentListTable.Clear();
+
+            foreach (Continent c in CurWoWVersion.Continents.Table.Values)
+            {
+                ContinentListTable.Rows.Add(c.Id, c.Name);
+                foreach (Zone z in c.List)
+                    ZoneListTable.Rows.Add(null, c.Id, z.Name);
+            }
+
+            foreach (GameObject g in CurWoWVersion.GameObjData.STable.Values)
+            {
+                DataRow[] z = ZoneListTable.Select("NAME = '" + g.ZoneText + "'");
+                if (z == null)
+                    throw new ZoneNotFoundException(g.ZoneText);
+
+                DataRow row = GameObjTable.NewRow();
+                row.ItemArray = new object[] {null, g.Name, g.X, g.Y, g.Z,
+                            g.GetObjType(), Convert.ToInt32(z[0]["ID"]), g.Service};
+                GameObjTable.Rows.Add(row);
+
+                int gid = GameObjTable.Rows.IndexOf(row);
+            }
         }
 
         internal static void ClearXml()
@@ -251,7 +416,8 @@ namespace BabBot.Manager
         {
             // data first
             wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
-            gdata = (GameObjectData)LoadXmlData(GameObjDataFileName, typeof(GameObjectData));
+            gdata = (GameObjectData)LoadXmlData(
+                                GameObjDataFileName, typeof(GameObjectData));
 
             // Check if NPC data version the same
             if (gdata.Version != GameObjDataVersion)
@@ -259,7 +425,8 @@ namespace BabBot.Manager
                 // TODO Migrate data from old format to new and save
                 // Show message for now
                 ShowErrorMessage("NPCData.xml is in old format. It has version " +
-                    gdata.Version + " that different from supported " + GameObjDataVersion);
+                    gdata.Version + " that different from supported " + 
+                                        GameObjDataVersion);
             }
         }
 
@@ -276,11 +443,13 @@ namespace BabBot.Manager
                 // Merge WoW data
                 wnew.MergeWith(wprev);
 
-                // Merge NPCData. Ordering is not an issues since it defined in WoWData already
+                // Merge NPCData. Ordering is not an issues since it defined in 
+                // WoWData already
                 // Ignore all exceptions
                 try
                 {
-                    gdata.FindVersion(wnew.Build).MergeWith(gdata.FindVersion(wprev.Build));
+                    gdata.FindVersion(wnew.Build).MergeWith(
+                                    gdata.FindVersion(wprev.Build));
                 }
                 catch { }
 
@@ -440,6 +609,9 @@ namespace BabBot.Manager
 
         public readonly List<NPC> TaxiServices;
         public readonly List<NPC> InnServices;
+        public readonly List<NPC> RepairServices;
+        public readonly List<NPC> GrosseryServices;
+        public readonly List<NPC> VendorServices;
 
         public ZoneServices(int cid)
         {
@@ -448,14 +620,25 @@ namespace BabBot.Manager
             InnServices = new List<NPC>();
         }
 
-        public void AddTaxiService(NPC npc)
+        public void AddService(NPC npc)
         {
-            TaxiServices.Add(npc);
-        }
-
-        public void AddInnService(NPC npc)
-        {
-            InnServices.Add(npc);
+            if (npc.HasInn)
+                InnServices.Add(npc);
+            
+            if (npc.HasTaxi)
+                TaxiServices.Add(npc);
+                
+            if (npc.IsVendor)
+            {
+                VendorServices.Add(npc);
+                VendorService vs = (VendorService)npc.Services.Table["vendor"];
+                
+                // Check for other services
+                if (vs.CanRepair)
+                    RepairServices.Add(npc);
+                else if (vs.HasFood)
+                    GrosseryServices.Add(npc);
+            }
         }
     }
 }

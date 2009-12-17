@@ -203,8 +203,7 @@ namespace BabBot.Wow.Helpers
             }
             catch
             {
-                new CantReachNpcException(g_obj.Name, "Zone " + zone_text + 
-                    " not found in continent list. Please configure WoWData.xml");
+                new ZoneNotFoundException(zone_text);
             }
 
             // Check if NPC has coordinates in the same continent

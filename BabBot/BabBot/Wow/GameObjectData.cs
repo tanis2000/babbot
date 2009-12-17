@@ -88,11 +88,9 @@ namespace BabBot.Wow
     /// Base class for all In-Game clickable objects
     /// That can own quests
     /// </summary>
+    [XmlInclude(typeof(NPC))]
     public class GameObject : CommonMergeListItem
     {
-        [XmlAttribute("obj_type")]
-        public string GameObjType;
-
         internal Vector3D BasePosition;
 
         [XmlAttribute("x")]
@@ -122,8 +120,8 @@ namespace BabBot.Wow
         [XmlElement("quests")]
         public Quests QuestList
         {
-            get { return (Quests)MergeList[2]; }
-            set { MergeList[2] = value; }
+            get { return (Quests)MergeList[0]; }
+            set { MergeList[0] = value; }
         }
 
         public GameObject() : base()
@@ -132,21 +130,34 @@ namespace BabBot.Wow
             BasePosition = new Vector3D();
         }
 
-        public GameObject(string name, string obj_type, 
-                                    string service, string zone, Vector3D wp)
+        public GameObject(string name, string service, string zone, Vector3D wp)
             : base(name)
         {
-            GameObjType = obj_type;
             ZoneText = zone;
             Service = service;
             BasePosition = (Vector3D)wp.Clone();
         }
 
+        public virtual DataManager.GameObjectTypes GetObjType()
+        {
+            return DataManager.GameObjectTypes.ITEM;
+        }
+
         public override bool Equals(object obj)
         {
-            // TODO
-            // Copy base from NPC
-            return base.Equals(obj);
+            if (!base.Equals(obj))
+                return false;
+
+            GameObject g_obj = (GameObject) obj;
+
+            return ZoneText.Equals(g_obj.ZoneText) &&
+                Service.Equals(g_obj.Service) &&
+                BasePosition.Equals(g_obj.BasePosition);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 
@@ -164,15 +175,15 @@ namespace BabBot.Wow
         [XmlElement("wp_list")]
         public WpZones Zones
         {
-            get { return (WpZones)MergeList[0]; }
-            set { MergeList[0] = value; }
+            get { return (WpZones)MergeList[1]; }
+            set { MergeList[1] = value; }
         }
 
         [XmlElement("services")]
         public NPCServices Services
         {
-            get { return (NPCServices)MergeList[1]; }
-            set { MergeList[1] = value; }
+            get { return (NPCServices)MergeList[2]; }
+            set { MergeList[2] = value; }
         }
 
         internal bool HasTaxi
@@ -185,10 +196,21 @@ namespace BabBot.Wow
             get { return Services.Table.ContainsKey("inn"); }
         }
 
+        internal bool IsVendor
+        {
+            get { return Services.Table.ContainsKey("vendor"); }
+        }
+
         public NPC()
             : base()
         {
+            // Increase mergeable array
+            Array.Resize<IMergeable>(ref MergeList, 2);
+            /*
+            IMergeable im = MergeList[0];
             MergeList = new IMergeable[2];
+            MergeList[0] = im;
+             */
         }
 
         public NPC(WowPlayer player, string race, string sex) : this()
@@ -224,21 +246,23 @@ namespace BabBot.Wow
         
         public override bool Equals(object obj)
         {
-            if ((obj == null) || (obj.GetType() != typeof(NPC)))
+            if (!base.Equals(obj))
                 return false;
+
 
             NPC npc = (NPC)obj;
 
-            return (
-                // Check name
-                Name.Equals(npc.Name) && 
-                
+            return 
+                Race.Equals(npc.Race) &&
+                Sex.Equals(npc.Sex) &&
+                Class.Equals(npc.Class) &&
+
                 // Service list
                 Services.Equals(npc.Services) &&
                 // Waypoints
                 Zones.Equals(npc.Zones) &&
                 // Quest List
-                QuestList.Equals(npc.QuestList));
+                QuestList.Equals(npc.QuestList);
         }
 
         public override int GetHashCode()
@@ -249,6 +273,11 @@ namespace BabBot.Wow
         public int FindQuestQtyByTitle(string title)
         {
             return QuestList.FindQuestQtyByTitle(title);
+        }
+
+        public virtual DataManager.GameObjectTypes GetObjType()
+        {
+            return DataManager.GameObjectTypes.NPC;
         }
     }
 
@@ -627,19 +656,24 @@ namespace BabBot.Wow
         [XmlAttribute("can_repair")]
         public bool CanRepair;
 
-        [XmlAttribute("has_water")]
-        public bool HasWater;
+        [XmlAttribute("has_drink")]
+        public bool HasDrink;
 
         [XmlAttribute("has_food")]
         public bool HasFood;
 
+        internal bool HasGrossery
+        {
+            get { return HasFood && HasDrink; }
+        }
+
         public VendorService() : base() { }
 
-        public VendorService(bool can_repair, bool has_water, bool has_food)
+        public VendorService(bool can_repair, bool has_drink, bool has_food)
             : base("vendor")
         {
             CanRepair = can_repair;
-            HasWater = has_water;
+            HasDrink = has_drink;
             HasFood = has_food;
         }
     }

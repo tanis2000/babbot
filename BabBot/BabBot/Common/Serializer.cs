@@ -129,7 +129,9 @@ namespace BabBot.Common
 
         public override bool Equals(object obj)
         {
-            return (obj != null) && ToString().Equals(obj.ToString());
+            return (obj != null) && 
+                (obj.GetType().Equals(GetType())) && 
+                    ToString().Equals(obj.ToString());
         }
     }
 
@@ -299,7 +301,7 @@ namespace BabBot.Common
     }
 
     /// <summary>
-    /// Common class for collection items with id -> name parameters
+    /// Common class for collection items with id parameter
     /// </summary>
     public abstract class CommonItemId 
     {
@@ -375,6 +377,9 @@ namespace BabBot.Common
         {
             get
             {
+                if (_htable.Count == 0)
+                    return null;
+                
                 T[] res = new T[_htable.Count];
                 _htable.Values.CopyTo(res, 0);
                 return res;
@@ -489,13 +494,18 @@ namespace BabBot.Common
         {
             get
             {
+                if (_stable.Count == 0)
+                    return null;
+
                 T[] res = new T[_stable.Count];
                 _stable.Values.CopyTo(res, 0);
                 return res;
             }
             set
             {
-                if (value == null) return;
+                if (value == null) 
+                    return;
+
                 T[] items = (T[])value;
                 _stable.Clear();
                 foreach (T item in items)
@@ -648,13 +658,18 @@ namespace BabBot.Common
         {
             get
             {
+                if (_list.Count == 0)
+                    return null;
+
                 T[] res = new T[_list.Count];
                 _list.CopyTo(res, 0);
                 return res;
             }
             set
             {
-                if (value == null) return;
+                if (value == null) 
+                    return;
+
                 T[] items = (T[])value;
                 _list.Clear();
                 foreach (T item in items)
