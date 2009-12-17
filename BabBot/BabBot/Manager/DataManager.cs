@@ -8,6 +8,7 @@ using BabBot.Data;
 using BabBot.Common;
 using BabBot.Wow;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BabBot.Manager
 {
@@ -101,6 +102,14 @@ namespace BabBot.Manager
             foreach (ServiceTypes z in Enum.GetValues(typeof(ServiceTypes)))
                 ServiceTypeTable.Rows.Add(z, Enum.GetName(typeof(ServiceTypes), z).ToLower());
             // ServiceTypeTable.AcceptChanges();
+
+            // TEST
+            /*
+            FileStream fs = new FileStream("test.bin", FileMode.Create);
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(fs, ServiceTypeTable);
+            fs.Close();
+             */
         }
 
         private static void ShowErrorMessage(string err)

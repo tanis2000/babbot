@@ -327,5 +327,10 @@ namespace BabBot.Forms
         {
             deleteNPCToolStripMenuItem.Enabled = (lbNpcList.SelectedItem != null);
         }
+
+        private void btnAddQuest_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
