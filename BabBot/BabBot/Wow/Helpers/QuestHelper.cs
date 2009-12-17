@@ -108,19 +108,19 @@ namespace BabBot.Wow.Helpers
             string qt = q.Title;
 
             // Get quest npc
-            NPC npc = q.NpcList[req.NpcId];
-            if (npc == null)
+            GameObject g_obj = q.GameObjList[req.NpcId];
+            if (g_obj == null)
                 throw new QuestSkipException(
                     "Quest " + req.NpcDestText + " NPC not found for quest '" + qt);
 
-            Output.Instance.Log(lfs, "Located NPC '" + npc.Name +
+            Output.Instance.Log(lfs, "Located NPC '" + g_obj.Name +
                 "' as quest " + req.NpcDestText + " for quest '" + qt + "'");
 
             try
             {
                 Output.Instance.Log(lfs, "Moving to quest " +
                                     req.NpcDestText + " ... ");
-                NpcHelper.MoveToNPC(npc, lfs);
+                NpcHelper.MoveToNPC(g_obj, lfs);
             }
             catch (CantReachNpcException e1)
             {
@@ -133,13 +133,13 @@ namespace BabBot.Wow.Helpers
 
             Output.Instance.Debug(lfs, "Reached the quest " +
                                             req.NpcDestText + ".");
-            if (!LuaHelper.TargetUnitByName(npc.Name))
+            if (!LuaHelper.TargetUnitByName(g_obj.Name))
                 throw new QuestSkipException("Unable target NPC");
 
             string[] dinfo;
             try
             {
-                dinfo = NpcHelper.InteractNpc(npc.Name, false, lfs);
+                dinfo = NpcHelper.InteractNpc(g_obj.Name, false, lfs);
             }
             catch (NpcInteractException ne)
             {
@@ -200,7 +200,7 @@ namespace BabBot.Wow.Helpers
 
             if (dinfo == null)
             {
-                dinfo = NpcHelper.GetTargetNpcDialogInfo(q.SrcNpc.Name, false, lfs);
+                dinfo = NpcHelper.GetTargetNpcDialogInfo(q.Src.Name, false, lfs);
                 cur_service = dinfo[0];
             }
             else

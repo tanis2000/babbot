@@ -33,7 +33,7 @@ namespace BabBot.Wow.Helpers
     public class CantReachNpcException : Exception
     {
         public CantReachNpcException(string name, string reason)
-            : base("Can't reach NPC '" + name + "'." + reason) { }
+            : base("Can't reach NPC '" + name + "'. " + reason) { }
     }
 
     public class NpcProcessingException : Exception
@@ -187,37 +187,44 @@ namespace BabBot.Wow.Helpers
             return fparams;
         }
 
-        public static void MoveToNPC(NPC npc, string lfs)
+        public static void MoveToNPC(GameObject g_obj, string lfs)
         {
             WowPlayer player = ProcessManager.Player;
 
-            Output.Instance.Debug(lfs, "Checking coordinates for NPC ." +
-                npc.Name + " ...");
-
-            // Check if NPC has coordinates in the same continent
-            ContinentId c = npc.Continents.FindContinentById(player.ContinentID);
-            if (c == null)
-                throw new CantReachNpcException(npc.Name, 
-                        "NPC located on different continent.");
+            Output.Instance.Debug(lfs, "Checking coordinates for Game Object. " +
+                g_obj.Name + " ...");
 
             // Check if NPC located in the same zone
-            Zone z = c.FindZoneByName(player.ZoneText);
+            int cid = 0;
+            string zone_text = g_obj.ZoneText;
+            try
+            {
+                cid = DataManager.ZoneList[zone_text].ContinentId;
+            }
+            catch
+            {
+                new CantReachNpcException(g_obj.Name, "Zone " + zone_text + 
+                    " not found in continent list. Please configure WoWData.xml");
+            }
 
-            if (z == null)
+            // Check if NPC has coordinates in the same continent
+            if (cid != player.ContinentID)
+                throw new CantReachNpcException(g_obj.Name, 
+                        "NPC located on different continent.");
+            else if (!zone_text.Equals(player.ZoneText))
                 new MultiZoneNotSupportedException();
 
             // Check if NPC has any waypoints assigned
-            if (z.Items.Length == 0)
-                throw new CantReachNpcException(npc.Name, 
+            if (!g_obj.BasePosition.IsValid())
+                throw new CantReachNpcException(g_obj.Name, 
                     "NPC doesn't have any waypoints assigned. " +
                     "Check NPCData.xml and try again.");
 
-            // By default check first waypoint
-            Vector3D npc_loc = z.Items[0];
-            Output.Instance.Debug(lfs, "Usning NPC waypoint: " + npc_loc);
+            // By default check the base position
+            Output.Instance.Debug(lfs, "Usning NPC waypoint: " + g_obj.BasePosition);
 
-            if (!MoveToDest(npc_loc, lfs))
-                throw new CantReachNpcException(npc.Name, "NPC still away after " +
+            if (!MoveToDest(g_obj.BasePosition, lfs))
+                throw new CantReachNpcException(g_obj.Name, "NPC still away after " +
                     (ProcessManager.AppConfig.MaxTargetGetRetries + 1) + " tries");
         }
 
@@ -416,8 +423,8 @@ namespace BabBot.Wow.Helpers
                 try
                 {
                     // If null it produces exception
-                    check = DataManager.
-                        CurWoWVersion.NPCData.FindNpcByName(cur_npc.Name);
+                    check = (NPC) DataManager.CurWoWVersion.
+                        GameObjData.FindGameObjByName(cur_npc.Name);
                 } 
                 catch { }
 
@@ -446,7 +453,7 @@ namespace BabBot.Wow.Helpers
 
                     check = cur_npc;
                     check.Changed = true;
-                    DataManager.CurWoWVersion.NPCData.Add(cur_npc);
+                    DataManager.CurWoWVersion.GameObjData.Add(cur_npc);
 
                     f = true;
                 }
@@ -652,7 +659,7 @@ namespace BabBot.Wow.Helpers
             if (q != null)
             {
                 // Screen in npcdata how many quests with same title exists
-                Quest mq = DataManager.CurWoWVersion.NPCData.FindMaxQuestByTitle(q.Title);
+                Quest mq = DataManager.CurWoWVersion.GameObjData.FindMaxQuestByTitle(q.Title);
                 if (mq != null)
                 {
                     q.QIdx = mq.QIdx + 1;
@@ -734,7 +741,7 @@ namespace BabBot.Wow.Helpers
                                                                 qtitle + "'");
 
                 // After this quest should be marked as Changed and go on export
-                q.DestNpcName = npc_name;
+                q.DestName = npc_name;
 
                 res = true;
             } else
@@ -766,10 +773,10 @@ namespace BabBot.Wow.Helpers
         {
             List<NPC> list = new List<NPC>();
             int cid = ProcessManager.Player.ContinentID;
-            string zone = (string) ProcessManager.Player.ZoneText.Clone();
+            string player_zone = (string) ProcessManager.Player.ZoneText;
             Vector3D loc = (Vector3D) ProcessManager.Player.Location.Clone();
 
-            foreach (NPC npc in DataManager.CurWoWVersion.NPCData.STable.Values)
+            foreach (NPC npc in DataManager.CurWoWVersion.GameObjData.STable.Values)
                 if (npc.Services.Table.ContainsKey(service))
                     list.Add(npc);
 
@@ -777,34 +784,33 @@ namespace BabBot.Wow.Helpers
                 return null;
 
             // Find closest
-            float dist = -1;
+            float dist = float.MaxValue;
             NpcDest res = null;
 
             foreach (NPC npc in list)
             {
                 // Check if NPC on the same continent/zone
-                bool f = npc.Continents.Table.ContainsKey(cid.ToString());
-                if (!f)
+                if (!player_zone.Equals(npc.ZoneText))
                     throw new MultiZoneNotSupportedException();
 
-                ContinentId c = npc.Continents.Table[cid.ToString()];
-                f = c.Table.ContainsKey(zone);
-                if (!f)
-                    throw new MultiZoneNotSupportedException();
-
-                Zone z = c.Table[zone];
                 res = new NpcDest();
 
-                foreach (Vector3D v in z.List)
+                float d1 = loc.GetDistanceTo(npc.BasePosition);
+
+                if (d1 < dist)
                 {
-                    // Calculate straight distance to each NPC waypoints
-                    if (dist < 0)
+                    res.Init(npc, npc.BasePosition);
+                    dist = d1;
+                } 
+
+                foreach (ZoneWp z in npc.Zones.Items)
+                {
+                    if (!z.Name.Equals(player_zone))
+                        continue;
+
+                    foreach (Vector3D v in z.List)
                     {
-                        res.Init(npc, v);
-                        dist = loc.GetDistanceTo(v);
-                    }
-                    else
-                    {
+                        // Calculate straight distance to each NPC waypoints
                         float dist1 = loc.GetDistanceTo(v);
                         if (dist1 < dist)
                         {

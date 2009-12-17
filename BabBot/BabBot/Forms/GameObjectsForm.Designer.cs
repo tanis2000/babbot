@@ -1,6 +1,6 @@
 ﻿namespace BabBot.Forms
 {
-    partial class NPCListForm
+    partial class GameObjectsForm
     {
         /// <summary>
         /// Required designer variable.

@@ -29,60 +29,37 @@ using System.Collections.Generic;
 
 namespace BabBot.Wow
 {
-    #region NPC
+    #region Game Objects
     
-    [XmlRoot("npc_data")]
-    public class NPCData : CommonTable<NPCVersion>
+    [XmlRoot("game_object_data")]
+    public class GameObjectData : CommonTable<GameDataVersion>
     {
         [XmlAttribute("version")]
         public int Version;
 
         [XmlElement("wow_version")]
-        public NPCVersion[] Versions
+        public GameDataVersion[] Versions
         {
-            get { return (NPCVersion[])Items; }
+            get { return (GameDataVersion[])Items; }
             set { Items = value; }
         }
 
-        public NPCVersion FindVersion(string version)
+        public GameDataVersion FindVersion(string version)
         {
             return FindItemByName(version);
         }
     }
-    
-    public class ZoneServices
-    {
-        List<SimpleNpc> TaxiServices;
-        List<SimpleNpc> InnServices;
-
-        public ZoneServices()
-        {
-            TaxiServices = new List<SimpleNpc>();
-            InnServices = new List<SimpleNpc>();
-        }
-
-        public void AddTaxiService(SimpleNpc npc)
-        {
-            TaxiServices.Add(npc);
-        }
-
-        public void AddInnService(SimpleNpc npc)
-        {
-            InnServices.Add(npc);
-        }
-    }
-
     [Serializable]
-    public class NPCVersion : CommonNameTable<NPC>
+    public class GameDataVersion : CommonNameTable<GameObject>
     {
         [XmlElement("npc")]
-        public NPC[] NPCList
+        public GameObject[] NPCList
         {
             get { return Items; }
             set { Items = value; }
         }
 
-        public NPC FindNpcByName(string name)
+        public GameObject FindGameObjByName(string name)
         {
             return FindItemByName(name);
         }
@@ -108,66 +85,72 @@ namespace BabBot.Wow
     }
 
     /// <summary>
-    /// Abstract NPC base class
+    /// Base class for all In-Game clickable objects
+    /// That can own quests
     /// </summary>
-    public abstract class AbstractNpc : CommonMergeListItem
+    public class GameObject : CommonMergeListItem
     {
-        public AbstractNpc() : base() { }
+        [XmlAttribute("obj_type")]
+        public string GameObjType;
 
-        public AbstractNpc(string name) : base(name) { }
-    }
-
-    /// <summary>
-    /// Class to keep NPC that has single service and never move (taxi, bankers, ah)
-    /// in simple format in toon's profile or in indexed list
-    /// </summary>
-    public class SimpleNpc : AbstractNpc
-    {
-        [XmlAttribute("service")]
-        public string Service;
-
-        [XmlAttribute("continent_id")]
-        public int CID;
-
-        [XmlAttribute("zone")]
-        public string ZoneText;
-
-        internal Vector3D BaseWaypoint;
+        internal Vector3D BasePosition;
 
         [XmlAttribute("x")]
         public float X {
-            get { return BaseWaypoint.X; }
-            set { BaseWaypoint.X = value; }
+            get { return BasePosition.X; }
+            set { BasePosition.X = value; }
         }
 
         [XmlAttribute("y")]
         public float Y {
-            get { return BaseWaypoint.Y; }
-            set { BaseWaypoint.Y = value; }
+            get { return BasePosition.Y; }
+            set { BasePosition.Y = value; }
         }
         
         [XmlAttribute("z")]
         public float Z {
-            get { return BaseWaypoint.Z; }
-            set { BaseWaypoint.Z = value; }
+            get { return BasePosition.Z; }
+            set { BasePosition.Z = value; }
         }
 
-        public SimpleNpc()
+        [XmlAttribute("zone")]
+        public string ZoneText;
+
+        [XmlAttribute("service")]
+        public string Service;
+
+        [XmlElement("quests")]
+        public Quests QuestList
         {
-            BaseWaypoint = new Vector3D();
+            get { return (Quests)MergeList[2]; }
+            set { MergeList[2] = value; }
         }
 
-        public SimpleNpc(string name, string service, int cid, string zone, Vector3D wp)
+        public GameObject() : base()
+        {
+            MergeList = new IMergeable[1];
+            BasePosition = new Vector3D();
+        }
+
+        public GameObject(string name, string obj_type, 
+                                    string service, string zone, Vector3D wp)
             : base(name)
         {
-            Service = service;
-            CID = cid;
+            GameObjType = obj_type;
             ZoneText = zone;
-            BaseWaypoint = (Vector3D) wp.Clone();
+            Service = service;
+            BasePosition = (Vector3D)wp.Clone();
+        }
+
+        public override bool Equals(object obj)
+        {
+            // TODO
+            // Copy base from NPC
+            return base.Equals(obj);
         }
     }
 
-    public class NPC :AbstractNpc
+    public class NPC : GameObject
     {
         [XmlAttribute("race")]
         public string Race;
@@ -179,9 +162,9 @@ namespace BabBot.Wow
         public string Class;
 
         [XmlElement("wp_list")]
-        public ContinentListId Continents
+        public WpZones Zones
         {
-            get { return (ContinentListId)MergeList[0]; }
+            get { return (WpZones)MergeList[0]; }
             set { MergeList[0] = value; }
         }
 
@@ -190,13 +173,6 @@ namespace BabBot.Wow
         {
             get { return (NPCServices)MergeList[1]; }
             set { MergeList[1] = value; }
-        }
-
-        [XmlElement("quests")]
-        public Quests QuestList
-        {
-            get { return (Quests)MergeList[2]; }
-            set { MergeList[2] = value; }
         }
 
         internal bool HasTaxi
@@ -212,7 +188,7 @@ namespace BabBot.Wow
         public NPC()
             : base()
         {
-            MergeList = new IMergeable[3];
+            MergeList = new IMergeable[2];
         }
 
         public NPC(WowPlayer player, string race, string sex) : this()
@@ -229,12 +205,11 @@ namespace BabBot.Wow
             Name = name;
             Race = race;
             Sex = sex;
+            BasePosition = (Vector3D) waypoint.Clone();
 
-            Continents = new ContinentListId();
+            Zones = new WpZones();
             Services = new NPCServices();
             QuestList = new Quests();
-
-            Continents.Add(new ContinentId(continent_id, new Zone(zone_text, waypoint)));
         }
 
         public void AddService(NPCService service)
@@ -261,7 +236,7 @@ namespace BabBot.Wow
                 // Service list
                 Services.Equals(npc.Services) &&
                 // Waypoints
-                Continents.Equals(npc.Continents) &&
+                Zones.Equals(npc.Zones) &&
                 // Quest List
                 QuestList.Equals(npc.QuestList));
         }
@@ -274,13 +249,6 @@ namespace BabBot.Wow
         public int FindQuestQtyByTitle(string title)
         {
             return QuestList.FindQuestQtyByTitle(title);
-        }
-
-        public SimpleNpc GetSimpleFormat()
-        {
-            ContinentId c = Continents.ContinentList[0];
-            Zone z = c.ZList[0];
-            return new SimpleNpc(Name, Services.ServiceList[0].SType, c.Id, z.Name, z.List[0]);
         }
     }
 
@@ -344,16 +312,16 @@ namespace BabBot.Wow
         [XmlAttribute("bonus_spell")]
         public string BonusSpell = "";
 
-        private string _dest_npc_name = "";
+        private string _dest_name = "";
 
-        [XmlAttribute("dest_npc")]
-        public string DestNpcName
+        [XmlAttribute("dest_name")]
+        public string DestName
         {
-            get { return _dest_npc_name; }
+            get { return _dest_name; }
             set
             {
                 _changed = true;
-                _dest_npc_name = value;
+                _dest_name = value;
             }
         }
 
@@ -390,19 +358,19 @@ namespace BabBot.Wow
 
         internal QuestItem[] QuestItems = new QuestItem[3];
 
-        internal NPC SrcNpc
+        internal GameObject Src
         {
-            get { return NpcList[0]; }
-            set { NpcList[0] = value; }
+            get { return GameObjList[0]; }
+            set { GameObjList[0] = value; }
         }
 
-        internal NPC DestNpc
+        internal GameObject Dest
         {
-            get { return NpcList[1]; }
-            set { NpcList[1] = value; }
+            get { return GameObjList[1]; }
+            set { GameObjList[1] = value; }
         }
 
-        internal NPC[] NpcList = new NPC[2];
+        internal GameObject[] GameObjList = new GameObject[2];
         
         [XmlElement("req_items")]
         public QuestItem ReqItems
@@ -501,7 +469,7 @@ namespace BabBot.Wow
                 q.ObjectivesText.Equals(ObjectivesText) &&
                 q.BonusSpell.Equals(BonusSpell) &&
                 q.Id == Id &&
-                q.DestNpcName.Equals(DestNpcName) &&
+                q.DestName.Equals(DestName) &&
                 q.Link.Equals(Link);
                 
 
@@ -563,8 +531,8 @@ namespace BabBot.Wow
             Quest q2 = (Quest) obj;
 
             // Update dest npc name
-            if (string.IsNullOrEmpty(DestNpcName)) 
-                DestNpcName = q2.DestNpcName;
+            if (string.IsNullOrEmpty(DestName))
+                DestName = q2.DestName;
                     
             // and merge dependencies
             Relations.MergeWith(q2.Relations);
@@ -680,62 +648,25 @@ namespace BabBot.Wow
 
     #region Waypoints
 
-    public class ContinentListId : CommonTable<ContinentId>
-    {
-        [XmlElement("continent")]
-        public ContinentId[] ContinentList
-        {
-            get { return Items; }
-            set { Items = value; }
-        }
 
-        internal string[] ZoneList
-        {
-            get
-            {
-                List<string> list = new List<string>();
-                foreach (ContinentId c in Table.Values)
-                    foreach (string z in c.Table.Keys)
-                        list.Add(z);
-
-                string[] res = new string[list.Count];
-                list.CopyTo(res);
-                return res;
-            }
-        }
-
-        public ContinentId FindContinentById(int id)
-        {
-            return FindItemByName(id.ToString());
-        }
-    }
-
-    public class ContinentId : CommonIdMergeTable<Zone>
+    public class WpZones : CommonIdMergeTable<ZoneWp>
     {
         [XmlElement("zone")]
-        public Zone[] ZList
+        public ZoneWp[] ZoneList
         {
             get { return Items; }
             set { Items = value; }
         }
 
-        public ContinentId() { }
-        public ContinentId(int id) : base(id) { }
-        public ContinentId(int id, Zone z) 
-            : this(id) 
-        {
-            Table.Add(z.Name, z);
-        }
+        public WpZones() { }
 
-        public Zone FindZoneByName(string name)
+        public ZoneWp FindZoneWpByName(string name)
         {
             return FindItemByName(name);
         }
     }
 
-    
-
-    public class Zone : CommonNameList<Vector3D>
+    public class ZoneWp : CommonNameList<Vector3D>
     {
         [XmlElement("waypoint")]
         public Vector3D[] VectorList
@@ -744,9 +675,9 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
-        public Zone() { }
-        public Zone(string name) : base(name) { }
-        public Zone(string name, Vector3D v)
+        public ZoneWp() { }
+        public ZoneWp(string name) : base(name) { }
+        public ZoneWp(string name, Vector3D v)
             : this(name)
         {
             List.Add(v);
@@ -757,7 +688,7 @@ namespace BabBot.Wow
             if (obj == null)
                 return false;
 
-            Zone z = (Zone) obj;
+            ZoneWp z = (ZoneWp)obj;
             if (!z.Name.Equals(Name))
                 return false;
 
@@ -797,6 +728,11 @@ namespace BabBot.Wow
             }
 
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 
@@ -887,8 +823,8 @@ namespace BabBot.Wow
         [XmlAttribute("name")]
         public string Name;
 
-        [XmlElement("waypoints")]
-        public ContinentListId Waypoints;
+        [XmlElement("wp_list")]
+        public WpZones Waypoints;
 
         internal bool Finished = false;
 

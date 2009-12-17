@@ -32,11 +32,11 @@ using BabBot.Wow.Helpers;
 
 namespace BabBot.Forms
 {
-    public partial class NPCListForm : BabBot.Forms.GenericDialog
+    public partial class GameObjectsForm : BabBot.Forms.GenericDialog
     {
         private DataTable CurServiceList;
 
-        public NPCListForm() : base ("npc_list")
+        public GameObjectsForm() : base ("npc_list")
         {
             InitializeComponent();
         }
@@ -55,7 +55,7 @@ namespace BabBot.Forms
         private void BindNpcList()
         {
             lbNpcList.DataSource = null;
-            lbNpcList.DataSource = DataManager.CurWoWVersion.NPCData.Items;
+            lbNpcList.DataSource = DataManager.CurWoWVersion.GameObjData.Items;
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -75,7 +75,7 @@ namespace BabBot.Forms
                 {
                     NPC npc = DataManager.LoadXml(fname);
                     npc.Changed = false;
-                    DataManager.CurWoWVersion.NPCData.Add(npc);
+                    DataManager.CurWoWVersion.GameObjData.Add(npc);
 
                     // Save & Index data
                     DataManager.SaveNpcData();
@@ -186,7 +186,7 @@ namespace BabBot.Forms
                     "Confirmation", MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
                     // Delete from all version or it will merge again
-                    foreach (NPCVersion v in DataManager.AllNpcList.Table.Values)
+                    foreach (GameDataVersion v in DataManager.GameObjList.Table.Values)
                         v.STable.Remove(npc_name);
             }
 

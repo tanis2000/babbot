@@ -94,6 +94,11 @@ namespace BabBot.Manager
         /// <param name="err"></param>
         public delegate void ShowErrorMessageHandler(string err);
 
+        /// <summary>
+        /// Initial creation of DataSet
+        /// </summary>
+        public delegate void DataInitHandler();
+
         #endregion
 
         #region WOWApplication Events
@@ -135,6 +140,11 @@ namespace BabBot.Manager
         public static event FirstTimeRunHandler FirstTimeRun;
         public static event ConfigFileChangedHandler ConfigFileChanged;
         public static event ShowErrorMessageHandler ShowErrorMessage;
+
+        /// <summary>
+        /// Fires when DataSet initialized 
+        /// </summary>
+        public static event DataInitHandler OnDataInit;
 
         #endregion
 
@@ -537,6 +547,9 @@ namespace BabBot.Manager
             DataManager.MergeXml(config.WoWInfo.Version);
             DataManager.AfterXmlInit();
 
+            if (OnDataInit != null)
+                OnDataInit();
+
 #if DEBUG
             //\\ Test
             // Quest merge test
@@ -548,13 +561,13 @@ namespace BabBot.Manager
 
             // Add link  and dest 
             q2.Relations.Add(11);
-            q2.DestNpcName = "npc";
+            q2.DestName = "npc";
 
             // Merge
             q1.MergeWith(q2);
 
             // check
-            if (!q1.DestNpcName.Equals("npc"))
+            if (!q1.DestName.Equals("npc"))
                 throw new Exception("Quest Test 2 failed");
 
             if (!q1.RelatedTo.Equals("11"))
@@ -990,9 +1003,7 @@ namespace BabBot.Manager
         {
             ShowError("Internal bug " + Enum.GetName(typeof(Bugs), bug_id) + 
                 ". " + err + ". Terminating application");
-#if !DEBUG
             Environment.Exit((int) bug_id);
-#endif
         }
         
         #region XML

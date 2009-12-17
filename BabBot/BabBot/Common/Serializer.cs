@@ -635,8 +635,9 @@ namespace BabBot.Common
     }
 
     /// <summary>
-    /// Class with internal list that needs to be serialized
-    /// Used for elements like list of waypoints where each element is not meargeable
+    /// Class with internal list (sorted or not) that needs to be serialized
+    /// Used for elements like list of zones or waypoints 
+    /// Used by: Continent, Zone
     /// </summary>
     /// <typeparam name="T">Type of elements in the list</typeparam>
     public abstract class CommonList<T> : IMergeable

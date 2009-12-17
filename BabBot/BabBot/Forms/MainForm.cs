@@ -45,7 +45,7 @@ namespace BabBot.Forms
         private Radar.Radar Radar;
         private AppOptionsForm AppOptionsForm;
         private OptionsForm BotOptionsForm;
-        private NPCListForm NPCListForm;
+        private GameObjectsForm NPCListForm;
         // number of lines in logging window
         private int _log_len = 500;
 
@@ -78,6 +78,9 @@ namespace BabBot.Forms
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
             ProcessManager.UpdateAppStatus += UpdateAppStatus;
             ProcessManager.UpdateGameStatus += UpdateGameStatus;
+
+            // DataManager Events
+            ProcessManager.OnDataInit += DataManager.InitDataSet;
         }
 
         #region Exception Handler
@@ -1346,7 +1349,7 @@ namespace BabBot.Forms
         private void npcListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (NPCListForm == null)
-                NPCListForm = new NPCListForm();
+                NPCListForm = new GameObjectsForm();
             NPCListForm.TopMost = this.TopMost;
 
             if (!NPCListForm.Visible)

@@ -75,9 +75,9 @@ namespace BabBot.Wow
         }
 
         [XmlElement("continents")]
-        public ContinentList Continents
+        public Continents Continents
         {
-            get { return (ContinentList)MergeList[2]; }
+            get { return (Continents)MergeList[2]; }
             set { MergeList[2] = value; }
         }
 
@@ -99,7 +99,7 @@ namespace BabBot.Wow
         public GlobalOffsets Globals;
 
         [XmlIgnore]
-        public NPCVersion NPCData;
+        public GameDataVersion GameObjData;
 
         public WoWVersion() 
             : base()
@@ -399,10 +399,10 @@ namespace BabBot.Wow
     /// <summary>
     /// Class with list of continents
     /// </summary>
-    public class ContinentList : CommonTable<Continent>
+    public class Continents : CommonTable<Continent>
     {
         [XmlElement("continent")]
-        public Continent[] Continents
+        public Continent[] ContinentList
         {
             get { return Items; }
             set { Items = value; }
@@ -423,10 +423,42 @@ namespace BabBot.Wow
     /// <summary>
     /// Class with Continent Description
     /// </summary>
-    public class Continent : CommonItemEx
+    public class Continent : CommonList<Zone>
     {
-        public Continent() { }
+        [XmlAttribute("id")]
+        public int Id;
+
+        [XmlAttribute("name")]
+        public string Name;
+
+        [XmlElement("zone")]
+        public Zone[] ZoneList
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+
+        public Continent() : base(true) { }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj) && 
+                ((Continent) obj).Id.Equals(Id) &&
+                    ((Continent)obj).Name.Equals(Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
+
+    public class Zone : CommonItem {}
 
     #endregion
 

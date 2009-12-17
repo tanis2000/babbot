@@ -18,11 +18,14 @@ namespace BabBot.Manager
         private static WoWData wdata;
         
         // Reference the whole NPCData
-        private static NPCData ndata;
+        private static GameObjectData gdata;
 
         // Reference the current WoW Version from WoWData
         private static WoWVersion wversion;
 
+        /// <summary>
+        /// List of services provided by NPC 
+        /// </summary>
         public enum ServiceTypes : byte
         {
             BANKER = 1,
@@ -36,25 +39,34 @@ namespace BabBot.Manager
             WEP_SKILL_TRAINER = 9,
         }
 
-        // Current version of NPCData
-        private static readonly int NPCDataVersion = 0;
+        /// <summary>
+        /// Game object types that can own quest
+        /// </summary>
+        public enum GameObjectTypes : byte
+        {
+            ITEM = 1,
+            NPC = 2
+        }
+
+        // Current version of GameObjectData
+        private static readonly int GameObjDataVersion = 0;
 
         public static WoWVersion CurWoWVersion
         {
             get { return wversion; }
         }
 
-        public static NPCData AllNpcList
+        public static GameObjectData GameObjList
         {
-            get { return ndata; }
+            get { return gdata; }
         }
 
         // NPCData file name
-        private static string NPCDataFileName =
+        private static string GameObjDataFileName =
 #if DEBUG
             "..\\..\\Data\\" +
 #endif
-            "NPCData.xml";
+            "GameObjectData.xml";
 
         internal static AppConfig AppConfig
         {
@@ -90,19 +102,14 @@ namespace BabBot.Manager
             }
         }
 
+        // Table with all game object types
+        internal static BotDataSet.GameObjectTypesDataTable GameObjTypeTable;
+
         // Table with all npc service types
         internal static BotDataSet.ServiceTypesDataTable ServiceTypeTable;
 
         static DataManager()
         {
-            // Populate local data storage
-
-            // Add service types
-            ServiceTypeTable = new BotDataSet.ServiceTypesDataTable();
-            foreach (ServiceTypes z in Enum.GetValues(typeof(ServiceTypes)))
-                ServiceTypeTable.Rows.Add(z, Enum.GetName(typeof(ServiceTypes), z).ToLower());
-            // ServiceTypeTable.AcceptChanges();
-
             // TEST
             /*
             FileStream fs = new FileStream("test.bin", FileMode.Create);
@@ -110,6 +117,21 @@ namespace BabBot.Manager
             bf.Serialize(fs, ServiceTypeTable);
             fs.Close();
              */
+        }
+
+        public static void InitDataSet()
+        {
+            // Populate local data storage
+
+            // Add game object types
+            GameObjTypeTable = new BotDataSet.GameObjectTypesDataTable();
+            foreach (ServiceTypes z in Enum.GetValues(typeof(ServiceTypes)))
+                ServiceTypeTable.Rows.Add(z, Enum.GetName(typeof(ServiceTypes), z).ToLower());
+
+            // Add service types
+            ServiceTypeTable = new BotDataSet.ServiceTypesDataTable();
+            foreach (ServiceTypes z in Enum.GetValues(typeof(ServiceTypes)))
+                ServiceTypeTable.Rows.Add(z, Enum.GetName(typeof(ServiceTypes), z).ToLower());
         }
 
         private static void ShowErrorMessage(string err)
@@ -147,43 +169,56 @@ namespace BabBot.Manager
             ZoneList.Clear();
             QuestList.Clear();
 
-            foreach (NPC npc in CurWoWVersion.NPCData.STable.Values)
+            foreach (Continent cid in CurWoWVersion.Continents.ContinentList)
+                    foreach (Zone z in cid.ZoneList)
+                        ZoneList.Add(z.Name, new ZoneServices(cid.Id));
+
+            foreach (GameObject g_obj in CurWoWVersion.GameObjData.STable.Values)
             {
-                // Index zone
-                foreach (string z in npc.Continents.ZoneList)
-                    if (!ZoneList.ContainsKey(z))
-                        ZoneList.Add(z, new ZoneServices());
+                ZoneServices zs = null;
 
-                // Check if NPC provide taxi/inn
-                // If taxi or inn than npc cannot be in multiple zones
-                if (npc.HasTaxi)
-                    ZoneList[npc.Continents.ContinentList[0].
-                            ZList[0].Name].AddTaxiService(npc.GetSimpleFormat());
-                else if (npc.HasInn)
-                    ZoneList[npc.Continents.ContinentList[0].
-                            ZList[0].Name].AddInnService(npc.GetSimpleFormat());
+                if (!string.IsNullOrEmpty(g_obj.ZoneText) && g_obj.GetType().Equals(typeof(NPC)))
+                {
+                    NPC npc = (NPC)g_obj;
 
+                    if (ZoneList.ContainsKey(g_obj.ZoneText))
+                    {
+                        zs = ZoneList[g_obj.ZoneText];
+
+                        if (npc.HasTaxi)
+                            zs.AddTaxiService(npc);
+                        else if (npc.HasInn)
+                            zs.AddInnService(npc);
+                    } else
+                        throw new Exception("Zone '" + g_obj.ZoneText + "' not defined in WoWData.xml");
+                }
+                
                 // Index quest
-                Quests ql = npc.QuestList;
+                Quests ql = g_obj.QuestList;
                 if (ql != null)
                 {
                     foreach (Quest q in ql.Table.Values)
                     {
-                        q.SrcNpc = npc;
-                        if (!string.IsNullOrEmpty(q.DestNpcName))
-                            q.DestNpc = CurWoWVersion.NPCData.STable[q.DestNpcName];
+                        q.Src = g_obj;
+                        if (!string.IsNullOrEmpty(q.DestName))
+                            q.Dest = CurWoWVersion.GameObjData.STable[q.DestName];
                         QuestList.Add(q.Id, q);
                     }
                 }
 
-                // Update zone list as well
-
+                // Fill dataset if we running in GUI mode
+                if (Program.mainForm != null)
+                    PopulateDataSet();
             }
+        }
+
+        private static void PopulateDataSet()
+        {
         }
 
         internal static void ClearXml()
         {
-            ndata = null;
+            gdata = null;
             wdata = null;
         }
 
@@ -216,15 +251,15 @@ namespace BabBot.Manager
         {
             // data first
             wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
-            ndata = (NPCData)LoadXmlData(NPCDataFileName, typeof(NPCData));
+            gdata = (GameObjectData)LoadXmlData(GameObjDataFileName, typeof(GameObjectData));
 
             // Check if NPC data version the same
-            if (ndata.Version != NPCDataVersion)
+            if (gdata.Version != GameObjDataVersion)
             {
                 // TODO Migrate data from old format to new and save
                 // Show message for now
                 ShowErrorMessage("NPCData.xml is in old format. It has version " +
-                    ndata.Version + " that different from supported " + NPCDataVersion);
+                    gdata.Version + " that different from supported " + GameObjDataVersion);
             }
         }
 
@@ -245,7 +280,7 @@ namespace BabBot.Manager
                 // Ignore all exceptions
                 try
                 {
-                    ndata.FindVersion(wnew.Build).MergeWith(ndata.FindVersion(wprev.Build));
+                    gdata.FindVersion(wnew.Build).MergeWith(gdata.FindVersion(wprev.Build));
                 }
                 catch { }
 
@@ -257,7 +292,7 @@ namespace BabBot.Manager
         internal static void AfterXmlInit()
         {
             // Attach NPC data to selected WoW version
-            wversion.NPCData = ndata.FindVersion(wversion.Build);
+            wversion.GameObjData = gdata.FindVersion(wversion.Build);
 
             // Index NPC data for future use
             DataManager.IndexData();
@@ -271,7 +306,7 @@ namespace BabBot.Manager
         /// </summary>
         private static void ResetChanged()
         {
-            foreach (NPC npc in CurWoWVersion.NPCData.STable.Values)
+            foreach (NPC npc in CurWoWVersion.GameObjData.STable.Values)
                 npc.Changed = false;
         }
 
@@ -295,33 +330,33 @@ namespace BabBot.Manager
         public static bool SaveNpcData()
         {
             // Backup old NPC data before save
-            string bf = System.IO.Path.GetDirectoryName(NPCDataFileName) +
+            string bf = System.IO.Path.GetDirectoryName(GameObjDataFileName) +
                 System.IO.Path.DirectorySeparatorChar +
-                System.IO.Path.GetFileNameWithoutExtension(NPCDataFileName) + ".bak";
-            Output.Instance.Log("npc", "Saving " + NPCDataFileName +
+                System.IO.Path.GetFileNameWithoutExtension(GameObjDataFileName) + ".bak";
+            Output.Instance.Log("npc", "Saving " + GameObjDataFileName +
                 " before serializing to " + bf);
 
             try
             {
-                File.Copy(NPCDataFileName, bf, true);
+                File.Copy(GameObjDataFileName, bf, true);
             }
             catch (Exception e)
             {
-                ShowErrorMessage("Failed update NPC Data. Unable copy file " + NPCDataFileName +
+                ShowErrorMessage("Failed update NPC Data. Unable copy file " + GameObjDataFileName +
                             "  to " + bf + ". " + e.Message);
 
                 return false;
             }
 
-            if (!SaveXmlData(NPCDataFileName, typeof(NPCData), ndata))
+            if (!SaveXmlData(GameObjDataFileName, typeof(GameObjectData), gdata))
             {
-                Output.Instance.Log("npc", "Recovering " + NPCDataFileName +
+                Output.Instance.Log("npc", "Recovering " + GameObjDataFileName +
                     " after error from " + bf);
-                File.Copy(bf, NPCDataFileName);
+                File.Copy(bf, GameObjDataFileName);
                 return false;
             }
             else
-                Output.Instance.Log("npc", "File " + NPCDataFileName +
+                Output.Instance.Log("npc", "File " + GameObjDataFileName +
                                                             " successfully saved.");
 
             // Index NPC Data
@@ -329,7 +364,7 @@ namespace BabBot.Manager
 
             // Check all list and generate chanded data for export
 
-            foreach (NPC npc in CurWoWVersion.NPCData.STable.Values)
+            foreach (NPC npc in CurWoWVersion.GameObjData.STable.Values)
                 if (npc.Changed)
                     ExportNPC(npc);
 
@@ -397,5 +432,30 @@ namespace BabBot.Manager
         }
 
         #endregion
+    }
+
+    public class ZoneServices
+    {
+        public readonly int ContinentId;
+
+        public readonly List<NPC> TaxiServices;
+        public readonly List<NPC> InnServices;
+
+        public ZoneServices(int cid)
+        {
+            ContinentId = cid;
+            TaxiServices = new List<NPC>();
+            InnServices = new List<NPC>();
+        }
+
+        public void AddTaxiService(NPC npc)
+        {
+            TaxiServices.Add(npc);
+        }
+
+        public void AddInnService(NPC npc)
+        {
+            InnServices.Add(npc);
+        }
     }
 }

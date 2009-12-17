@@ -39,6 +39,14 @@ namespace BabBot.Data {
         
         private QuestItemTypeDataTable tableQuestItemType;
         
+        private GameObjectsDataTable tableGameObjects;
+        
+        private GameObjectTypesDataTable tableGameObjectTypes;
+        
+        private NpcServicesDataTable tableNpcServices;
+        
+        private global::System.Data.DataRelation relationZoneList_GameObjects;
+        
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -85,6 +93,15 @@ namespace BabBot.Data {
                 }
                 if ((ds.Tables["QuestItemType"] != null)) {
                     base.Tables.Add(new QuestItemTypeDataTable(ds.Tables["QuestItemType"]));
+                }
+                if ((ds.Tables["GameObjects"] != null)) {
+                    base.Tables.Add(new GameObjectsDataTable(ds.Tables["GameObjects"]));
+                }
+                if ((ds.Tables["GameObjectTypes"] != null)) {
+                    base.Tables.Add(new GameObjectTypesDataTable(ds.Tables["GameObjectTypes"]));
+                }
+                if ((ds.Tables["NpcServices"] != null)) {
+                    base.Tables.Add(new NpcServicesDataTable(ds.Tables["NpcServices"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -168,6 +185,33 @@ namespace BabBot.Data {
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public GameObjectsDataTable GameObjects {
+            get {
+                return this.tableGameObjects;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public GameObjectTypesDataTable GameObjectTypes {
+            get {
+                return this.tableGameObjectTypes;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public NpcServicesDataTable NpcServices {
+            get {
+                return this.tableNpcServices;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
         public override global::System.Data.SchemaSerializationMode SchemaSerializationMode {
@@ -247,6 +291,15 @@ namespace BabBot.Data {
                 if ((ds.Tables["QuestItemType"] != null)) {
                     base.Tables.Add(new QuestItemTypeDataTable(ds.Tables["QuestItemType"]));
                 }
+                if ((ds.Tables["GameObjects"] != null)) {
+                    base.Tables.Add(new GameObjectsDataTable(ds.Tables["GameObjects"]));
+                }
+                if ((ds.Tables["GameObjectTypes"] != null)) {
+                    base.Tables.Add(new GameObjectTypesDataTable(ds.Tables["GameObjectTypes"]));
+                }
+                if ((ds.Tables["NpcServices"] != null)) {
+                    base.Tables.Add(new NpcServicesDataTable(ds.Tables["NpcServices"]));
+                }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
                 this.Namespace = ds.Namespace;
@@ -319,6 +372,25 @@ namespace BabBot.Data {
                     this.tableQuestItemType.InitVars();
                 }
             }
+            this.tableGameObjects = ((GameObjectsDataTable)(base.Tables["GameObjects"]));
+            if ((initTable == true)) {
+                if ((this.tableGameObjects != null)) {
+                    this.tableGameObjects.InitVars();
+                }
+            }
+            this.tableGameObjectTypes = ((GameObjectTypesDataTable)(base.Tables["GameObjectTypes"]));
+            if ((initTable == true)) {
+                if ((this.tableGameObjectTypes != null)) {
+                    this.tableGameObjectTypes.InitVars();
+                }
+            }
+            this.tableNpcServices = ((NpcServicesDataTable)(base.Tables["NpcServices"]));
+            if ((initTable == true)) {
+                if ((this.tableNpcServices != null)) {
+                    this.tableNpcServices.InitVars();
+                }
+            }
+            this.relationZoneList_GameObjects = this.Relations["ZoneList_GameObjects"];
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -342,11 +414,24 @@ namespace BabBot.Data {
             base.Tables.Add(this.tableQuestItems);
             this.tableQuestItemType = new QuestItemTypeDataTable();
             base.Tables.Add(this.tableQuestItemType);
+            this.tableGameObjects = new GameObjectsDataTable();
+            base.Tables.Add(this.tableGameObjects);
+            this.tableGameObjectTypes = new GameObjectTypesDataTable();
+            base.Tables.Add(this.tableGameObjectTypes);
+            this.tableNpcServices = new NpcServicesDataTable();
+            base.Tables.Add(this.tableNpcServices);
             global::System.Data.ForeignKeyConstraint fkc;
             fkc = new global::System.Data.ForeignKeyConstraint("FK_ContinentList_ZoneList", new global::System.Data.DataColumn[] {
                         this.tableContinentList.IDColumn}, new global::System.Data.DataColumn[] {
                         this.tableZoneList.CIDColumn});
             this.tableZoneList.Constraints.Add(fkc);
+            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
+            fkc.DeleteRule = global::System.Data.Rule.None;
+            fkc.UpdateRule = global::System.Data.Rule.None;
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneServices_ServiceTypes", new global::System.Data.DataColumn[] {
+                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableZoneServices.SERVICE_IDColumn});
+            this.tableZoneServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
@@ -357,13 +442,59 @@ namespace BabBot.Data {
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneServices_ServiceTypes", new global::System.Data.DataColumn[] {
-                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableZoneServices.TYPE_IDColumn});
-            this.tableZoneServices.Constraints.Add(fkc);
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_GameObjects_QuestList", new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableQuestList.OBJECT_IDColumn});
+            this.tableQuestList.Constraints.Add(fkc);
+            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.Cascade;
+            fkc.DeleteRule = global::System.Data.Rule.Cascade;
+            fkc.UpdateRule = global::System.Data.Rule.Cascade;
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_QuestItems_QuestItemType", new global::System.Data.DataColumn[] {
+                        this.tableQuestItemType.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableQuestItems.ITEM_TYPE_IDColumn});
+            this.tableQuestItems.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_QuestList_QuestItems", new global::System.Data.DataColumn[] {
+                        this.tableQuestList.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableQuestItems.QIDColumn});
+            this.tableQuestItems.Constraints.Add(fkc);
+            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
+            fkc.DeleteRule = global::System.Data.Rule.None;
+            fkc.UpdateRule = global::System.Data.Rule.None;
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ServiceTypes_GameObjects", new global::System.Data.DataColumn[] {
+                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.SERVICE_IDColumn});
+            this.tableGameObjects.Constraints.Add(fkc);
+            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
+            fkc.DeleteRule = global::System.Data.Rule.SetNull;
+            fkc.UpdateRule = global::System.Data.Rule.None;
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_GameObjectTypes_GameObjects", new global::System.Data.DataColumn[] {
+                        this.tableGameObjectTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.TYPE_IDColumn});
+            this.tableGameObjects.Constraints.Add(fkc);
+            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
+            fkc.DeleteRule = global::System.Data.Rule.None;
+            fkc.UpdateRule = global::System.Data.Rule.None;
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_GameObjects_NpcServices", new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableNpcServices.GIDColumn});
+            this.tableNpcServices.Constraints.Add(fkc);
+            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
+            fkc.DeleteRule = global::System.Data.Rule.Cascade;
+            fkc.UpdateRule = global::System.Data.Rule.None;
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ServiceTypes_NpcServices", new global::System.Data.DataColumn[] {
+                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableNpcServices.SERVICE_IDColumn});
+            this.tableNpcServices.Constraints.Add(fkc);
+            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
+            fkc.DeleteRule = global::System.Data.Rule.Cascade;
+            fkc.UpdateRule = global::System.Data.Rule.None;
+            this.relationZoneList_GameObjects = new global::System.Data.DataRelation("ZoneList_GameObjects", new global::System.Data.DataColumn[] {
+                        this.tableZoneList.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.ZONE_IDColumn}, false);
+            this.Relations.Add(this.relationZoneList_GameObjects);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -398,6 +529,21 @@ namespace BabBot.Data {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         private bool ShouldSerializeQuestItemType() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        private bool ShouldSerializeGameObjects() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        private bool ShouldSerializeGameObjectTypes() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        private bool ShouldSerializeNpcServices() {
             return false;
         }
         
@@ -467,6 +613,12 @@ namespace BabBot.Data {
         public delegate void QuestItemsRowChangeEventHandler(object sender, QuestItemsRowChangeEvent e);
         
         public delegate void QuestItemTypeRowChangeEventHandler(object sender, QuestItemTypeRowChangeEvent e);
+        
+        public delegate void GameObjectsRowChangeEventHandler(object sender, GameObjectsRowChangeEvent e);
+        
+        public delegate void GameObjectTypesRowChangeEventHandler(object sender, GameObjectTypesRowChangeEvent e);
+        
+        public delegate void NpcServicesRowChangeEventHandler(object sender, NpcServicesRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -994,7 +1146,7 @@ namespace BabBot.Data {
             
             private global::System.Data.DataColumn columnZID;
             
-            private global::System.Data.DataColumn columnTYPE_ID;
+            private global::System.Data.DataColumn columnSERVICE_ID;
             
             private global::System.Data.DataColumn columnNPC_NAME;
             
@@ -1036,9 +1188,9 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public global::System.Data.DataColumn TYPE_IDColumn {
+            public global::System.Data.DataColumn SERVICE_IDColumn {
                 get {
-                    return this.columnTYPE_ID;
+                    return this.columnSERVICE_ID;
                 }
             }
             
@@ -1078,11 +1230,11 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public ZoneServicesRow AddZoneServicesRow(int ZID, int TYPE_ID, string NPC_NAME) {
+            public ZoneServicesRow AddZoneServicesRow(int ZID, int SERVICE_ID, string NPC_NAME) {
                 ZoneServicesRow rowZoneServicesRow = ((ZoneServicesRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         ZID,
-                        TYPE_ID,
+                        SERVICE_ID,
                         NPC_NAME};
                 rowZoneServicesRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowZoneServicesRow);
@@ -1104,7 +1256,7 @@ namespace BabBot.Data {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             internal void InitVars() {
                 this.columnZID = base.Columns["ZID"];
-                this.columnTYPE_ID = base.Columns["TYPE_ID"];
+                this.columnSERVICE_ID = base.Columns["SERVICE_ID"];
                 this.columnNPC_NAME = base.Columns["NPC_NAME"];
             }
             
@@ -1112,15 +1264,15 @@ namespace BabBot.Data {
             private void InitClass() {
                 this.columnZID = new global::System.Data.DataColumn("ZID", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnZID);
-                this.columnTYPE_ID = new global::System.Data.DataColumn("TYPE_ID", typeof(int), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnTYPE_ID);
+                this.columnSERVICE_ID = new global::System.Data.DataColumn("SERVICE_ID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSERVICE_ID);
                 this.columnNPC_NAME = new global::System.Data.DataColumn("NPC_NAME", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnNPC_NAME);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnNPC_NAME}, false));
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint2", new global::System.Data.DataColumn[] {
-                                this.columnTYPE_ID}, false));
-                this.columnTYPE_ID.Unique = true;
+                                this.columnSERVICE_ID}, false));
+                this.columnSERVICE_ID.Unique = true;
                 this.columnNPC_NAME.Unique = true;
             }
             
@@ -1498,6 +1650,8 @@ namespace BabBot.Data {
             
             private global::System.Data.DataColumn columnID;
             
+            private global::System.Data.DataColumn columnOBJECT_ID;
+            
             private global::System.Data.DataColumn columnNAME;
             
             private global::System.Data.DataColumn columnGREETING_TEXT;
@@ -1542,6 +1696,13 @@ namespace BabBot.Data {
             public global::System.Data.DataColumn IDColumn {
                 get {
                     return this.columnID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn OBJECT_IDColumn {
+                get {
+                    return this.columnOBJECT_ID;
                 }
             }
             
@@ -1609,10 +1770,11 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public QuestListRow AddQuestListRow(int ID, string NAME, string GREETING_TEXT, string OBJECTIVES_TEXT, string START_FROM, string DELIVER_TO) {
+            public QuestListRow AddQuestListRow(int ID, int OBJECT_ID, string NAME, string GREETING_TEXT, string OBJECTIVES_TEXT, string START_FROM, string DELIVER_TO) {
                 QuestListRow rowQuestListRow = ((QuestListRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         ID,
+                        OBJECT_ID,
                         NAME,
                         GREETING_TEXT,
                         OBJECTIVES_TEXT,
@@ -1644,6 +1806,7 @@ namespace BabBot.Data {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             internal void InitVars() {
                 this.columnID = base.Columns["ID"];
+                this.columnOBJECT_ID = base.Columns["OBJECT_ID"];
                 this.columnNAME = base.Columns["NAME"];
                 this.columnGREETING_TEXT = base.Columns["GREETING_TEXT"];
                 this.columnOBJECTIVES_TEXT = base.Columns["OBJECTIVES_TEXT"];
@@ -1655,6 +1818,8 @@ namespace BabBot.Data {
             private void InitClass() {
                 this.columnID = new global::System.Data.DataColumn("ID", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnID);
+                this.columnOBJECT_ID = new global::System.Data.DataColumn("OBJECT_ID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnOBJECT_ID);
                 this.columnNAME = new global::System.Data.DataColumn("NAME", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnNAME);
                 this.columnGREETING_TEXT = new global::System.Data.DataColumn("GREETING_TEXT", typeof(string), null, global::System.Data.MappingType.Element);
@@ -1667,8 +1832,11 @@ namespace BabBot.Data {
                 base.Columns.Add(this.columnDELIVER_TO);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnID}, true));
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint2", new global::System.Data.DataColumn[] {
+                                this.columnOBJECT_ID}, false));
                 this.columnID.AllowDBNull = false;
                 this.columnID.Unique = true;
+                this.columnOBJECT_ID.Unique = true;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1889,7 +2057,7 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public QuestItemsRow AddQuestItemsRow(string QID, string ITEM_TYPE_ID, string NAME, string QTY) {
+            public QuestItemsRow AddQuestItemsRow(int QID, string ITEM_TYPE_ID, string NAME, string QTY) {
                 QuestItemsRow rowQuestItemsRow = ((QuestItemsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         QID,
@@ -1923,7 +2091,7 @@ namespace BabBot.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             private void InitClass() {
-                this.columnQID = new global::System.Data.DataColumn("QID", typeof(string), null, global::System.Data.MappingType.Element);
+                this.columnQID = new global::System.Data.DataColumn("QID", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnQID);
                 this.columnITEM_TYPE_ID = new global::System.Data.DataColumn("ITEM_TYPE_ID", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnITEM_TYPE_ID);
@@ -1931,6 +2099,9 @@ namespace BabBot.Data {
                 base.Columns.Add(this.columnNAME);
                 this.columnQTY = new global::System.Data.DataColumn("QTY", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnQTY);
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
+                                this.columnITEM_TYPE_ID}, false));
+                this.columnITEM_TYPE_ID.Unique = true;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2058,6 +2229,8 @@ namespace BabBot.Data {
             
             private global::System.Data.DataColumn columnID;
             
+            private global::System.Data.DataColumn columnTYPE;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public QuestItemTypeDataTable() {
                 this.TableName = "QuestItemType";
@@ -2096,6 +2269,13 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn TYPEColumn {
+                get {
+                    return this.columnTYPE;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -2124,13 +2304,20 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public QuestItemTypeRow AddQuestItemTypeRow(string ID) {
+            public QuestItemTypeRow AddQuestItemTypeRow(string ID, string TYPE) {
                 QuestItemTypeRow rowQuestItemTypeRow = ((QuestItemTypeRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        ID};
+                        ID,
+                        TYPE};
                 rowQuestItemTypeRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowQuestItemTypeRow);
                 return rowQuestItemTypeRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemTypeRow FindByID(string ID) {
+                return ((QuestItemTypeRow)(this.Rows.Find(new object[] {
+                            ID})));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2148,12 +2335,22 @@ namespace BabBot.Data {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             internal void InitVars() {
                 this.columnID = base.Columns["ID"];
+                this.columnTYPE = base.Columns["TYPE"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             private void InitClass() {
                 this.columnID = new global::System.Data.DataColumn("ID", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnID);
+                this.columnTYPE = new global::System.Data.DataColumn("TYPE", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTYPE);
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
+                                this.columnTYPE}, false));
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint2", new global::System.Data.DataColumn[] {
+                                this.columnID}, true));
+                this.columnID.AllowDBNull = false;
+                this.columnID.Unique = true;
+                this.columnTYPE.Unique = true;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2231,6 +2428,818 @@ namespace BabBot.Data {
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
                 attribute2.FixedValue = "QuestItemTypeDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class GameObjectsDataTable : global::System.Data.TypedTableBase<GameObjectsRow> {
+            
+            private global::System.Data.DataColumn columnID;
+            
+            private global::System.Data.DataColumn columnTYPE_ID;
+            
+            private global::System.Data.DataColumn columnNAME;
+            
+            private global::System.Data.DataColumn columnX;
+            
+            private global::System.Data.DataColumn columnY;
+            
+            private global::System.Data.DataColumn columnZ;
+            
+            private global::System.Data.DataColumn columnZONE_ID;
+            
+            private global::System.Data.DataColumn columnSERVICE_ID;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectsDataTable() {
+                this.TableName = "GameObjects";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal GameObjectsDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected GameObjectsDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn IDColumn {
+                get {
+                    return this.columnID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn TYPE_IDColumn {
+                get {
+                    return this.columnTYPE_ID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn NAMEColumn {
+                get {
+                    return this.columnNAME;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn XColumn {
+                get {
+                    return this.columnX;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn YColumn {
+                get {
+                    return this.columnY;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn ZColumn {
+                get {
+                    return this.columnZ;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn ZONE_IDColumn {
+                get {
+                    return this.columnZONE_ID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn SERVICE_IDColumn {
+                get {
+                    return this.columnSERVICE_ID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectsRow this[int index] {
+                get {
+                    return ((GameObjectsRow)(this.Rows[index]));
+                }
+            }
+            
+            public event GameObjectsRowChangeEventHandler GameObjectsRowChanging;
+            
+            public event GameObjectsRowChangeEventHandler GameObjectsRowChanged;
+            
+            public event GameObjectsRowChangeEventHandler GameObjectsRowDeleting;
+            
+            public event GameObjectsRowChangeEventHandler GameObjectsRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void AddGameObjectsRow(GameObjectsRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectsRow AddGameObjectsRow(int ID, int TYPE_ID, string NAME, double X, double Y, double Z, ZoneListRow parentZoneListRowByZoneList_GameObjects, int SERVICE_ID) {
+                GameObjectsRow rowGameObjectsRow = ((GameObjectsRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        ID,
+                        TYPE_ID,
+                        NAME,
+                        X,
+                        Y,
+                        Z,
+                        null,
+                        SERVICE_ID};
+                if ((parentZoneListRowByZoneList_GameObjects != null)) {
+                    columnValuesArray[6] = parentZoneListRowByZoneList_GameObjects[0];
+                }
+                rowGameObjectsRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowGameObjectsRow);
+                return rowGameObjectsRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectsRow FindByID(int ID) {
+                return ((GameObjectsRow)(this.Rows.Find(new object[] {
+                            ID})));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public override global::System.Data.DataTable Clone() {
+                GameObjectsDataTable cln = ((GameObjectsDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new GameObjectsDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal void InitVars() {
+                this.columnID = base.Columns["ID"];
+                this.columnTYPE_ID = base.Columns["TYPE_ID"];
+                this.columnNAME = base.Columns["NAME"];
+                this.columnX = base.Columns["X"];
+                this.columnY = base.Columns["Y"];
+                this.columnZ = base.Columns["Z"];
+                this.columnZONE_ID = base.Columns["ZONE_ID"];
+                this.columnSERVICE_ID = base.Columns["SERVICE_ID"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            private void InitClass() {
+                this.columnID = new global::System.Data.DataColumn("ID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnID);
+                this.columnTYPE_ID = new global::System.Data.DataColumn("TYPE_ID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTYPE_ID);
+                this.columnNAME = new global::System.Data.DataColumn("NAME", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnNAME);
+                this.columnX = new global::System.Data.DataColumn("X", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnX);
+                this.columnY = new global::System.Data.DataColumn("Y", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnY);
+                this.columnZ = new global::System.Data.DataColumn("Z", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnZ);
+                this.columnZONE_ID = new global::System.Data.DataColumn("ZONE_ID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnZONE_ID);
+                this.columnSERVICE_ID = new global::System.Data.DataColumn("SERVICE_ID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSERVICE_ID);
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
+                                this.columnID}, true));
+                this.columnID.AllowDBNull = false;
+                this.columnID.Unique = true;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectsRow NewGameObjectsRow() {
+                return ((GameObjectsRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new GameObjectsRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Type GetRowType() {
+                return typeof(GameObjectsRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.GameObjectsRowChanged != null)) {
+                    this.GameObjectsRowChanged(this, new GameObjectsRowChangeEvent(((GameObjectsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.GameObjectsRowChanging != null)) {
+                    this.GameObjectsRowChanging(this, new GameObjectsRowChangeEvent(((GameObjectsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.GameObjectsRowDeleted != null)) {
+                    this.GameObjectsRowDeleted(this, new GameObjectsRowChangeEvent(((GameObjectsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.GameObjectsRowDeleting != null)) {
+                    this.GameObjectsRowDeleting(this, new GameObjectsRowChangeEvent(((GameObjectsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void RemoveGameObjectsRow(GameObjectsRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                BotDataSet ds = new BotDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "GameObjectsDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class GameObjectTypesDataTable : global::System.Data.TypedTableBase<GameObjectTypesRow> {
+            
+            private global::System.Data.DataColumn columnID;
+            
+            private global::System.Data.DataColumn columnTYPE;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectTypesDataTable() {
+                this.TableName = "GameObjectTypes";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal GameObjectTypesDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected GameObjectTypesDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn IDColumn {
+                get {
+                    return this.columnID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn TYPEColumn {
+                get {
+                    return this.columnTYPE;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectTypesRow this[int index] {
+                get {
+                    return ((GameObjectTypesRow)(this.Rows[index]));
+                }
+            }
+            
+            public event GameObjectTypesRowChangeEventHandler GameObjectTypesRowChanging;
+            
+            public event GameObjectTypesRowChangeEventHandler GameObjectTypesRowChanged;
+            
+            public event GameObjectTypesRowChangeEventHandler GameObjectTypesRowDeleting;
+            
+            public event GameObjectTypesRowChangeEventHandler GameObjectTypesRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void AddGameObjectTypesRow(GameObjectTypesRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectTypesRow AddGameObjectTypesRow(int ID, string TYPE) {
+                GameObjectTypesRow rowGameObjectTypesRow = ((GameObjectTypesRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        ID,
+                        TYPE};
+                rowGameObjectTypesRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowGameObjectTypesRow);
+                return rowGameObjectTypesRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectTypesRow FindByID(int ID) {
+                return ((GameObjectTypesRow)(this.Rows.Find(new object[] {
+                            ID})));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public override global::System.Data.DataTable Clone() {
+                GameObjectTypesDataTable cln = ((GameObjectTypesDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new GameObjectTypesDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal void InitVars() {
+                this.columnID = base.Columns["ID"];
+                this.columnTYPE = base.Columns["TYPE"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            private void InitClass() {
+                this.columnID = new global::System.Data.DataColumn("ID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnID);
+                this.columnTYPE = new global::System.Data.DataColumn("TYPE", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTYPE);
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
+                                this.columnTYPE}, false));
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint2", new global::System.Data.DataColumn[] {
+                                this.columnID}, true));
+                this.columnID.AllowDBNull = false;
+                this.columnID.Unique = true;
+                this.columnTYPE.Unique = true;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectTypesRow NewGameObjectTypesRow() {
+                return ((GameObjectTypesRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new GameObjectTypesRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Type GetRowType() {
+                return typeof(GameObjectTypesRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.GameObjectTypesRowChanged != null)) {
+                    this.GameObjectTypesRowChanged(this, new GameObjectTypesRowChangeEvent(((GameObjectTypesRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.GameObjectTypesRowChanging != null)) {
+                    this.GameObjectTypesRowChanging(this, new GameObjectTypesRowChangeEvent(((GameObjectTypesRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.GameObjectTypesRowDeleted != null)) {
+                    this.GameObjectTypesRowDeleted(this, new GameObjectTypesRowChangeEvent(((GameObjectTypesRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.GameObjectTypesRowDeleting != null)) {
+                    this.GameObjectTypesRowDeleting(this, new GameObjectTypesRowChangeEvent(((GameObjectTypesRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void RemoveGameObjectTypesRow(GameObjectTypesRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                BotDataSet ds = new BotDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "GameObjectTypesDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class NpcServicesDataTable : global::System.Data.TypedTableBase<NpcServicesRow> {
+            
+            private global::System.Data.DataColumn columnGID;
+            
+            private global::System.Data.DataColumn columnSERVICE_ID;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public NpcServicesDataTable() {
+                this.TableName = "NpcServices";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal NpcServicesDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected NpcServicesDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn GIDColumn {
+                get {
+                    return this.columnGID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn SERVICE_IDColumn {
+                get {
+                    return this.columnSERVICE_ID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public NpcServicesRow this[int index] {
+                get {
+                    return ((NpcServicesRow)(this.Rows[index]));
+                }
+            }
+            
+            public event NpcServicesRowChangeEventHandler NpcServicesRowChanging;
+            
+            public event NpcServicesRowChangeEventHandler NpcServicesRowChanged;
+            
+            public event NpcServicesRowChangeEventHandler NpcServicesRowDeleting;
+            
+            public event NpcServicesRowChangeEventHandler NpcServicesRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void AddNpcServicesRow(NpcServicesRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public NpcServicesRow AddNpcServicesRow(int GID, int SERVICE_ID) {
+                NpcServicesRow rowNpcServicesRow = ((NpcServicesRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        GID,
+                        SERVICE_ID};
+                rowNpcServicesRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowNpcServicesRow);
+                return rowNpcServicesRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public override global::System.Data.DataTable Clone() {
+                NpcServicesDataTable cln = ((NpcServicesDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new NpcServicesDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal void InitVars() {
+                this.columnGID = base.Columns["GID"];
+                this.columnSERVICE_ID = base.Columns["SERVICE_ID"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            private void InitClass() {
+                this.columnGID = new global::System.Data.DataColumn("GID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnGID);
+                this.columnSERVICE_ID = new global::System.Data.DataColumn("SERVICE_ID", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSERVICE_ID);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public NpcServicesRow NewNpcServicesRow() {
+                return ((NpcServicesRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new NpcServicesRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override global::System.Type GetRowType() {
+                return typeof(NpcServicesRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.NpcServicesRowChanged != null)) {
+                    this.NpcServicesRowChanged(this, new NpcServicesRowChangeEvent(((NpcServicesRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.NpcServicesRowChanging != null)) {
+                    this.NpcServicesRowChanging(this, new NpcServicesRowChangeEvent(((NpcServicesRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.NpcServicesRowDeleted != null)) {
+                    this.NpcServicesRowDeleted(this, new NpcServicesRowChangeEvent(((NpcServicesRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.NpcServicesRowDeleting != null)) {
+                    this.NpcServicesRowDeleting(this, new NpcServicesRowChangeEvent(((NpcServicesRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void RemoveNpcServicesRow(NpcServicesRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                BotDataSet ds = new BotDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "NpcServicesDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -2379,6 +3388,16 @@ namespace BabBot.Data {
             public void SetNAMENull() {
                 this[this.tableZoneList.NAMEColumn] = global::System.Convert.DBNull;
             }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectsRow[] GetGameObjectsRows() {
+                if ((this.Table.ChildRelations["ZoneList_GameObjects"] == null)) {
+                    return new GameObjectsRow[0];
+                }
+                else {
+                    return ((GameObjectsRow[])(base.GetChildRows(this.Table.ChildRelations["ZoneList_GameObjects"])));
+                }
+            }
         }
         
         /// <summary>
@@ -2411,17 +3430,17 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public int TYPE_ID {
+            public int SERVICE_ID {
                 get {
                     try {
-                        return ((int)(this[this.tableZoneServices.TYPE_IDColumn]));
+                        return ((int)(this[this.tableZoneServices.SERVICE_IDColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'TYPE_ID\' in table \'ZoneServices\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SERVICE_ID\' in table \'ZoneServices\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableZoneServices.TYPE_IDColumn] = value;
+                    this[this.tableZoneServices.SERVICE_IDColumn] = value;
                 }
             }
             
@@ -2451,13 +3470,13 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsTYPE_IDNull() {
-                return this.IsNull(this.tableZoneServices.TYPE_IDColumn);
+            public bool IsSERVICE_IDNull() {
+                return this.IsNull(this.tableZoneServices.SERVICE_IDColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetTYPE_IDNull() {
-                this[this.tableZoneServices.TYPE_IDColumn] = global::System.Convert.DBNull;
+            public void SetSERVICE_IDNull() {
+                this[this.tableZoneServices.SERVICE_IDColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2546,6 +3565,21 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int OBJECT_ID {
+                get {
+                    try {
+                        return ((int)(this[this.tableQuestList.OBJECT_IDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'OBJECT_ID\' in table \'QuestList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestList.OBJECT_IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public string NAME {
                 get {
                     try {
@@ -2621,6 +3655,16 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsOBJECT_IDNull() {
+                return this.IsNull(this.tableQuestList.OBJECT_IDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetOBJECT_IDNull() {
+                this[this.tableQuestList.OBJECT_IDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public bool IsNAMENull() {
                 return this.IsNull(this.tableQuestList.NAMEColumn);
             }
@@ -2686,10 +3730,10 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public string QID {
+            public int QID {
                 get {
                     try {
-                        return ((string)(this[this.tableQuestItems.QIDColumn]));
+                        return ((int)(this[this.tableQuestItems.QIDColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
                         throw new global::System.Data.StrongTypingException("The value for column \'QID\' in table \'QuestItems\' is DBNull.", e);
@@ -2803,12 +3847,7 @@ namespace BabBot.Data {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public string ID {
                 get {
-                    try {
-                        return ((string)(this[this.tableQuestItemType.IDColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ID\' in table \'QuestItemType\' is DBNull.", e);
-                    }
+                    return ((string)(this[this.tableQuestItemType.IDColumn]));
                 }
                 set {
                     this[this.tableQuestItemType.IDColumn] = value;
@@ -2816,13 +3855,353 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsIDNull() {
-                return this.IsNull(this.tableQuestItemType.IDColumn);
+            public string TYPE {
+                get {
+                    try {
+                        return ((string)(this[this.tableQuestItemType.TYPEColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'TYPE\' in table \'QuestItemType\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableQuestItemType.TYPEColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetIDNull() {
-                this[this.tableQuestItemType.IDColumn] = global::System.Convert.DBNull;
+            public bool IsTYPENull() {
+                return this.IsNull(this.tableQuestItemType.TYPEColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetTYPENull() {
+                this[this.tableQuestItemType.TYPEColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public partial class GameObjectsRow : global::System.Data.DataRow {
+            
+            private GameObjectsDataTable tableGameObjects;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal GameObjectsRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableGameObjects = ((GameObjectsDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int ID {
+                get {
+                    return ((int)(this[this.tableGameObjects.IDColumn]));
+                }
+                set {
+                    this[this.tableGameObjects.IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int TYPE_ID {
+                get {
+                    try {
+                        return ((int)(this[this.tableGameObjects.TYPE_IDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'TYPE_ID\' in table \'GameObjects\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGameObjects.TYPE_IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string NAME {
+                get {
+                    try {
+                        return ((string)(this[this.tableGameObjects.NAMEColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'NAME\' in table \'GameObjects\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGameObjects.NAMEColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public double X {
+                get {
+                    try {
+                        return ((double)(this[this.tableGameObjects.XColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'X\' in table \'GameObjects\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGameObjects.XColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public double Y {
+                get {
+                    try {
+                        return ((double)(this[this.tableGameObjects.YColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Y\' in table \'GameObjects\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGameObjects.YColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public double Z {
+                get {
+                    try {
+                        return ((double)(this[this.tableGameObjects.ZColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Z\' in table \'GameObjects\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGameObjects.ZColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int ZONE_ID {
+                get {
+                    try {
+                        return ((int)(this[this.tableGameObjects.ZONE_IDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'ZONE_ID\' in table \'GameObjects\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGameObjects.ZONE_IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int SERVICE_ID {
+                get {
+                    try {
+                        return ((int)(this[this.tableGameObjects.SERVICE_IDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'SERVICE_ID\' in table \'GameObjects\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGameObjects.SERVICE_IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public ZoneListRow ZoneListRow {
+                get {
+                    return ((ZoneListRow)(this.GetParentRow(this.Table.ParentRelations["ZoneList_GameObjects"])));
+                }
+                set {
+                    this.SetParentRow(value, this.Table.ParentRelations["ZoneList_GameObjects"]);
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsTYPE_IDNull() {
+                return this.IsNull(this.tableGameObjects.TYPE_IDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetTYPE_IDNull() {
+                this[this.tableGameObjects.TYPE_IDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsNAMENull() {
+                return this.IsNull(this.tableGameObjects.NAMEColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetNAMENull() {
+                this[this.tableGameObjects.NAMEColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsXNull() {
+                return this.IsNull(this.tableGameObjects.XColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetXNull() {
+                this[this.tableGameObjects.XColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsYNull() {
+                return this.IsNull(this.tableGameObjects.YColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetYNull() {
+                this[this.tableGameObjects.YColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsZNull() {
+                return this.IsNull(this.tableGameObjects.ZColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetZNull() {
+                this[this.tableGameObjects.ZColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsZONE_IDNull() {
+                return this.IsNull(this.tableGameObjects.ZONE_IDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetZONE_IDNull() {
+                this[this.tableGameObjects.ZONE_IDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsSERVICE_IDNull() {
+                return this.IsNull(this.tableGameObjects.SERVICE_IDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetSERVICE_IDNull() {
+                this[this.tableGameObjects.SERVICE_IDColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public partial class GameObjectTypesRow : global::System.Data.DataRow {
+            
+            private GameObjectTypesDataTable tableGameObjectTypes;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal GameObjectTypesRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableGameObjectTypes = ((GameObjectTypesDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int ID {
+                get {
+                    return ((int)(this[this.tableGameObjectTypes.IDColumn]));
+                }
+                set {
+                    this[this.tableGameObjectTypes.IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public string TYPE {
+                get {
+                    try {
+                        return ((string)(this[this.tableGameObjectTypes.TYPEColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'TYPE\' in table \'GameObjectTypes\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGameObjectTypes.TYPEColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsTYPENull() {
+                return this.IsNull(this.tableGameObjectTypes.TYPEColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetTYPENull() {
+                this[this.tableGameObjectTypes.TYPEColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public partial class NpcServicesRow : global::System.Data.DataRow {
+            
+            private NpcServicesDataTable tableNpcServices;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            internal NpcServicesRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableNpcServices = ((NpcServicesDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int GID {
+                get {
+                    try {
+                        return ((int)(this[this.tableNpcServices.GIDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'GID\' in table \'NpcServices\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableNpcServices.GIDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int SERVICE_ID {
+                get {
+                    try {
+                        return ((int)(this[this.tableNpcServices.SERVICE_IDColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'SERVICE_ID\' in table \'NpcServices\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableNpcServices.SERVICE_IDColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsGIDNull() {
+                return this.IsNull(this.tableNpcServices.GIDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetGIDNull() {
+                this[this.tableNpcServices.GIDColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public bool IsSERVICE_IDNull() {
+                return this.IsNull(this.tableNpcServices.SERVICE_IDColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public void SetSERVICE_IDNull() {
+                this[this.tableNpcServices.SERVICE_IDColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -3030,6 +4409,99 @@ namespace BabBot.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public QuestItemTypeRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public class GameObjectsRowChangeEvent : global::System.EventArgs {
+            
+            private GameObjectsRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectsRowChangeEvent(GameObjectsRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectsRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public class GameObjectTypesRowChangeEvent : global::System.EventArgs {
+            
+            private GameObjectTypesRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectTypesRowChangeEvent(GameObjectTypesRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectTypesRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
+        public class NpcServicesRowChangeEvent : global::System.EventArgs {
+            
+            private NpcServicesRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public NpcServicesRowChangeEvent(NpcServicesRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public NpcServicesRow Row {
                 get {
                     return this.eventRow;
                 }
