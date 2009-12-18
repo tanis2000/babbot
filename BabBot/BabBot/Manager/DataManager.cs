@@ -122,6 +122,8 @@ namespace BabBot.Manager
 
         #region Bot DataSet
 
+        public static BotDataSet GameData { get; private set; }
+
         #region Nested: Enumerates
         /// <summary>
         /// List of services provided by NPC 
@@ -244,32 +246,26 @@ namespace BabBot.Manager
             // We running gui
             _gui = true;
 
+            GameData = new BotDataSet();
+
             // Add game object types
             GameObjTypeTable = new BotDataSet.GameObjectTypesDataTable();
             foreach (GameObjectTypes z in Enum.GetValues(typeof(GameObjectTypes)))
-                GameObjTypeTable.Rows.Add(z, Enum.GetName(
+                GameData.GameObjectTypes.Rows.Add(z, Enum.GetName(
                                             typeof(GameObjectTypes), z).ToLower());
 
             // Add service types
             ServiceTypeTable = new BotDataSet.ServiceTypesDataTable();
             foreach (ServiceTypes z in Enum.GetValues(typeof(ServiceTypes)))
-                ServiceTypeTable.Rows.Add(z, Enum.GetName(
+                GameData.ServiceTypes.Rows.Add(z, Enum.GetName(
                                             typeof(ServiceTypes), z).ToLower());
 
             QuestItemTypeTable = new BotDataSet.QuestItemTypeDataTable();
             foreach (QuestItemTypes qi in Enum.GetValues(typeof(QuestItemTypes)))
-                QuestItemTypeTable.Rows.Add(qi, Enum.GetName(
+                GameData.QuestItemType.Rows.Add(qi, Enum.GetName(
                                             typeof(QuestItemTypes), qi).ToLower());
 
             // Create other empty tables
-
-            GameObjTable = new BotDataSet.GameObjectsDataTable();
-            QuestListTable = new BotDataSet.QuestListDataTable();
-            QuestItemsTable = new BotDataSet.QuestItemsDataTable();
-            ContinentListTable = new BotDataSet.ContinentListDataTable();
-            ZoneListTable = new BotDataSet.ZoneListDataTable();
-            ZoneServicesTable = new BotDataSet.ZoneServicesDataTable();
-            NpcServicesTable = new BotDataSet.NpcServicesDataTable();
 
             //\\ TEST
             PopulateDataSet();
@@ -356,14 +352,14 @@ namespace BabBot.Manager
                 return;
 
             // Should invoke cascading deleting
-            GameObjTable.Clear();
-            ContinentListTable.Clear();
+            GameData.GameObjects.Clear();
+            GameData.ContinentList.Clear();
 
             foreach (Continent c in CurWoWVersion.Continents.Table.Values)
             {
-                ContinentListTable.Rows.Add(c.Id, c.Name);
+                GameData.ContinentList.Rows.Add(c.Id, c.Name);
                 foreach (Zone z in c.List)
-                    ZoneListTable.Rows.Add(null, c.Id, z.Name);
+                    GameData.ZoneList.Rows.Add(null, c.Id, z.Name);
             }
 
             foreach (GameObject g in CurWoWVersion.GameObjData.STable.Values)
@@ -375,9 +371,9 @@ namespace BabBot.Manager
                 DataRow row = GameObjTable.NewRow();
                 row.ItemArray = new object[] {null, g.Name, g.X, g.Y, g.Z,
                             g.GetObjType(), Convert.ToInt32(z[0]["ID"]), g.Service};
-                GameObjTable.Rows.Add(row);
+                GameData.GameObjects.Rows.Add(row);
 
-                int gid = GameObjTable.Rows.IndexOf(row);
+                int gid = GameData.GameObjects.Rows.IndexOf(row);
             }
         }
 

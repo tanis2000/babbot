@@ -996,6 +996,10 @@ namespace BabBot.Forms
                     case 1:
                         npcListToolStripMenuItem_Click(sender, e);
                         break;
+
+                    case 2:
+                        questListToolStripMenuItem_Click(sender, e);
+                        break;
                 }
             }
 #endif
@@ -1811,6 +1815,11 @@ namespace BabBot.Forms
             string browser_path = ((string)registryKey.GetValue(null, null)).Split('"')[1];
 
             Process.Start(browser_path, e.LinkText);
+        }
+
+        private void questListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new QuestList().Show();
         }
     }
 }

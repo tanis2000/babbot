@@ -41,6 +41,7 @@
             this.npcListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.talentTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.realmListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.questListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addTargetNPCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -281,7 +282,7 @@
             // startWoWToolStripMenuItem
             // 
             this.startWoWToolStripMenuItem.Name = "startWoWToolStripMenuItem";
-            this.startWoWToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.startWoWToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F10;
             this.startWoWToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
             this.startWoWToolStripMenuItem.Text = "Start WoW";
             this.startWoWToolStripMenuItem.Click += new System.EventHandler(this.startWoWToolStripMenuItem_Click);
@@ -313,7 +314,8 @@
             this.botOptionsToolStripMenuItem,
             this.npcListToolStripMenuItem,
             this.talentTemplatesToolStripMenuItem,
-            this.realmListToolStripMenuItem});
+            this.realmListToolStripMenuItem,
+            this.questListToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.editToolStripMenuItem.Text = "&Edit";
@@ -354,6 +356,14 @@
             this.realmListToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
             this.realmListToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.realmListToolStripMenuItem.Text = "Realm List";
+            // 
+            // questListToolStripMenuItem
+            // 
+            this.questListToolStripMenuItem.Name = "questListToolStripMenuItem";
+            this.questListToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.questListToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.questListToolStripMenuItem.Text = "Quest List";
+            this.questListToolStripMenuItem.Click += new System.EventHandler(this.questListToolStripMenuItem_Click);
             // 
             // actionsToolStripMenuItem
             // 
@@ -2453,6 +2463,7 @@
         private System.Windows.Forms.ToolStripMenuItem actionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addTargetNPCToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveCurrentPositionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem questListToolStripMenuItem;
     }
 }
 

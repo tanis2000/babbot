@@ -177,6 +177,12 @@
     <Compile Include="Forms\OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\QuestList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\QuestList.Designer.cs">
+      <DependentUpon>QuestList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Radar\Radar.cs" />
     <Compile Include="Forms\Radar\RadarItem.cs" />
     <Compile Include="Forms\Radar\RadarItems\CircleRadarItem.cs" />
@@ -228,6 +234,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\OptionsForm.resx">
       <DependentUpon>OptionsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\QuestList.resx">
+      <DependentUpon>QuestList.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Shared\QuestInfo.resx">
