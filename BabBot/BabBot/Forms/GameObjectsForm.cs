@@ -36,12 +36,35 @@ namespace BabBot.Forms
     {
         private DataTable CurServiceList;
 
+        protected override bool IsChanged
+        {
+            set
+            {
+                base.IsChanged = value;
+
+                if (value)
+                    btnClose.Text = "Cancel";
+                else
+                    btnClose.Text = "Close";
+            }
+        }
+
         public GameObjectsForm() : base ("npc_list")
         {
             InitializeComponent();
 
-            gameObjectsBindingSource.DataSource = DataManager.GameData;
-            serviceTypesBindingSource.DataSource = DataManager.GameData;
+            bsGameObjects.DataSource = DataManager.GameData;
+            bsServiceTypesFull.DataSource = DataManager.GameData;
+            bsServiceTypesFiltered.DataSource = DataManager.GameData;
+
+#if DEBUG
+            if (ProcessManager.Config.Test == 1)
+            {
+                tbX.Text = "1.1";
+                tbY.Text = "2.2";
+                tbZ.Text = "3.3";
+            }
+#endif
         }
 
         public void Open()
@@ -88,29 +111,14 @@ namespace BabBot.Forms
             e.Cancel = true; // this cancels the close event.
         }
 
-        private void lbNpcList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            /*
-            bool f = lbGameObjList.SelectedItem != null;
-            SetFormControls(f);
-            if (!f)
-                return;
-
-            NPC npc = (NPC)lbGameObjList.SelectedItem;
-            tbName.Text = npc.Name;
-
-            SetNpcAvailServiceList(npc);
-             */
-        }
-
         void SetFormControls(bool Enabled)
         {
-            gbNpcDescription.Enabled = Enabled;
+            gbDescription.Enabled = Enabled;
         }
 
         private bool CheckBeforeNpcTest()
         {
-            if (!CheckInGame())
+            if (!CheckTarget())
                 return false;
 
             // Start NPC channel and switch to main form
@@ -162,51 +170,6 @@ namespace BabBot.Forms
             catch (Exception ex)
             {
                 ShowErrorMessage("Can't add current NPC. " + ex.Message);
-            }
-        }
-
-        private void deleteNPCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DeleteSelectedNpc();
-        }
-
-        private void DeleteSelectedNpc()
-        {
-            // Possible multi selection
-            foreach (object obj in lbGameObjList.SelectedItems)
-            {
-                string npc_name = ((NPC) obj).Name;
-                if (MessageBox.Show(this, "Are you sure to delete " + npc_name + "?",
-                    "Confirmation", MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question) == DialogResult.Yes)
-                    // Delete from all version or it will merge again
-                    foreach (GameDataVersion v in DataManager.GameObjList.Table.Values)
-                        v.STable.Remove(npc_name);
-            }
-
-            // Now we need save & reindex data
-            DataManager.SaveNpcData();
-        }
-
-        private void SetNpcAvailServiceList(NPC npc)
-        {
-            // serviceTypesNpcAvail.DataSource = null;
-
-            // Pull list of services
-            // Filter available services and add custom list
-            CurServiceList = DataManager.GameData.ServiceTypes.Clone();
-            foreach (DataRow row in DataManager.GameData.ServiceTypes.Rows)
-                if (!npc.Services.Table.ContainsKey(row["NAME"].ToString()))
-                    CurServiceList.ImportRow(row);
-            // serviceTypesNpcAvail.DataSource = CurServiceList;
-        }
-
-        private void lbNpcList_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete)
-            {
-                DeleteSelectedNpc();
-                e.Handled = true;
             }
         }
 
@@ -262,18 +225,42 @@ namespace BabBot.Forms
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            Hide();
+            if (IsChanged && (MessageBox.Show("Are you sure cancel changes ?",
+                        "Confirmation", MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Exclamation) == DialogResult.No))
+                return;
+            else
+            {
+                BotDataSet.GameObjectsRow row = GetCurrentRow();
+                // row.CancelEdit();
+                DataManager.GameData.RejectChanges();
+                tbName.Text = row.NAME;
+            }
+
+            if (btnClose.Text.Equals("Close"))
+                Hide();
+            else
+            {
+                tbName.TextChanged -= tbName_TextChanged;
+
+                SetEditControls(false);
+            }
+
+            IsChanged = false;
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            NPC npc = (NPC)lbGameObjList.SelectedItem;
-            string srv = cbAvailServices.Text;
-            if (string.IsNullOrEmpty(srv))
+
+            DataRowView srv_row = (DataRowView)bsServiceTypesFiltered.Current;
+
+            if (srv_row == null)
                 return;
 
-            npc.Services.Add(new NPCService(srv));
-            SetNpcAvailServiceList(npc);
+            BotDataSet.ServiceTypesRow srow = (BotDataSet.ServiceTypesRow) srv_row.Row; 
+            BotDataSet.GameObjectsRow mrow = GetCurrentRow();
+
+            DataManager.GameData.NpcServices.AddNpcServicesRow(mrow, srow, srow.NAME);
 
             IsChanged = true;
         }
@@ -292,10 +279,7 @@ namespace BabBot.Forms
             if (lbActiveServices.SelectedItem == null)
                 return;
 
-            NPC npc = (NPC)lbGameObjList.SelectedItem;
-            npc.Services.Remove(lbActiveServices.Text);
-
-            SetNpcAvailServiceList(npc);
+            ((DataRowView)bsFKGameObjectsNpcServices.Current).Delete();
 
             IsChanged = true;
         }
@@ -305,60 +289,296 @@ namespace BabBot.Forms
             DeleteSelectedNpcService();
         }
 
-        private void popServiceActions_VisibleChanged(object sender, EventArgs e)
-        {
-            deleteServiceToolStripMenuItem.Enabled = (lbActiveServices.SelectedItem != null);
-        }
-
-        private void popNpc_VisibleChanged(object sender, EventArgs e)
-        {
-            deleteNPCToolStripMenuItem.Enabled = (lbGameObjList.SelectedItem != null);
-        }
-
-        private void btnAddQuest_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnAddNewObj_Click(object sender, EventArgs e)
         {
-            lbGameObjList.SelectedItem = null;
-            lbGameObjList.Enabled = false;
-            btnAddNewObj.Enabled = false;
-            // gameObjectsBindingSource.AddNew();
-
+            // TODO
+            ShowErrorMessage("Not implemented yet");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            // gameObjectsBindingSource.Add((;
-            btnAddNewObj.Enabled = true;
+            BotDataSet.GameObjectsRow row = GetCurrentRow();
+            row.EndEdit();
+
+            tbName.TextChanged -= tbName_TextChanged;
+
+            try
+            {
+                // Save data on the disk
+                // TODO
+
+                DataManager.SaveGameObjRow(row);
+                DataManager.GameData.AcceptChanges();
+
+                SetEditControls(false);
+
+                IsChanged = false;
+            }
+            catch
+            {
+                // Keep edit state
+            }
         }
 
-        private void cbAvailServices_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
+        #region GameObjects
 
         private void gameObjectsBindingSource_CurrentChanged(object sender, EventArgs e)
         {
+            
+        }
+
+        private void lbGameObjectList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                DeleteSelectedObject();
+                e.Handled = true;
+            }
+        }
+
+        private void deleteGameObjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DeleteSelectedObject();
+        }
+
+        private void DeleteSelectedObject()
+        {
+            // Possible multi selection
+            foreach (object obj in lbGameObjList.SelectedItems)
+            {
+                string npc_name = ((NPC)obj).Name;
+                if (MessageBox.Show(this, "Are you sure to delete " + npc_name + "?",
+                    "Confirmation", MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question) == DialogResult.Yes)
+                    // Delete from all version or it will merge again
+                    foreach (GameDataVersion v in DataManager.GameObjList.Table.Values)
+                        v.STable.Remove(npc_name);
+            }
+
+            // Now we need save & reindex data
+            DataManager.SaveNpcData();
+        }
+
+        #endregion
+
+        #region Services
+
+        private void popServiceActions_Opening(object sender, CancelEventArgs e)
+        {
+            deleteServiceToolStripMenuItem.Enabled =
+                    (lbActiveServices.SelectedItem != null);
+        }
+
+        #endregion
+
+        #region Quests
+
+        private void popQuestActions_Opening(object sender, CancelEventArgs e)
+        {
+            deleteQuestToolStripMenuItem.Enabled = 
+                    (lbQuestList.SelectedItems.Count > 0);
+        }
+
+        private void btnAddQuest_Click(object sender, EventArgs e)
+        {
+            // TODO
+            ShowErrorMessage("Not implemented yet");
+        }
+
+        private void deleteQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DeleteSelectedObject();
+        }
+
+        public void DeleteSelectedQuest()
+        {
+            if (lbQuestList.SelectedItem == null)
+                return;
+
+            ((DataRowView)bsFKGameObjectsQuestList.Current).Delete();
+
+            IsChanged = true;
+        }
+
+        #endregion
+
+        #region Coordinates
+
+        private void deleteCoordinatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DeleteSelectedCoordinates();
+        }
+
+        private void lbCoordinates_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                DeleteSelectedCoordinates();
+                e.Handled = true;
+            }
+        }
+
+        private void DeleteSelectedCoordinates()
+        {
+            if (lbCoordinates.SelectedItem == null)
+                return;
+            else if (lbCoordinates.Items.Count == 1)
+            {
+                ShowErrorMessage("The base object coordinates cannot be deleted");
+                return;
+            }
+
+            ((DataRowView)bsFKGameObjectsCoordinates.Current).Delete();
+
+            IsChanged = true;
+        }
+
+        private void popCoordinates_Opening(object sender, CancelEventArgs e)
+        {
+            deleteCoordinatesToolStripMenuItem.Enabled =
+                            (lbCoordinates.SelectedItem != null);
+        }
+
+        private void btnAddAsPlayerCoord_Click(object sender, EventArgs e)
+        {
+            if (!CheckInGame())
+                return;
+
+            AddGameObjCoord(ProcessManager.Player.Location);
+        }
+
+        private void btnAddAsTargetCoord_Click(object sender, EventArgs e)
+        {
+            if (!CheckTarget())
+                return;
+
+            AddGameObjCoord(ProcessManager.Player.CurTarget.Location);
+        }
+
+        private void btnAddCoord_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                AddGameObjCoord(Convert.ToDecimal(tbX.Text),
+                    Convert.ToDecimal(tbY.Text), Convert.ToDecimal(tbZ.Text));
+
+                tbX.Text = String.Empty;
+                tbY.Text = String.Empty;
+                tbZ.Text = String.Empty;
+#if DEBUG
+                if (ProcessManager.Config.Test == 1)
+                {
+                    tbX.Text = "1.1";
+                    tbY.Text = "2.2";
+                    tbZ.Text = "3.3";
+                }
+#endif
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
+        private void AddGameObjCoord(Vector3D v)
+        {
+            AddGameObjCoord((decimal)v.X, (decimal)v.Y, (decimal)v.Z);
+        }
+
+        private void AddGameObjCoord(decimal x, decimal y, decimal z)
+        {
+            DataManager.GameData.Coordinates.AddCoordinatesRow(
+                GetCurrentRow(), x, y, z, null);
+
+            // Select last row
+            lbCoordinates.SelectedIndex = lbCoordinates.Items.Count - 1;
+
+            IsChanged = true;
+        }
+
+        #endregion
+
+        private void btnEditObject_Click(object sender, EventArgs e)
+        {
+            SetEditControls(true);
+            btnClose.Text = "Cancel";
+            tbName.TextChanged += tbName_TextChanged;
+
+            ((DataRowView)bsGameObjects.Current).Row.BeginEdit();
+        }
+
+        private void SetEditControls(bool enabled)
+        {
+#if DEBUG
+            gbDebug.Enabled = !enabled;
+#endif
+            // Group Boxes
+            gbQuestList.Enabled = !enabled;
+            gbCoordinates.Enabled = !enabled;
+
+            // Combo Boxes
+            cbItemList.Enabled = !enabled;
+            cbAvailServices.Enabled = !enabled;
+
+            // Buttons
+            btnAddNewObj.Enabled = !enabled;
+            btnImport.Enabled = !enabled;
+            btnAddNPC.Enabled = !enabled;
+            btnAddItem.Enabled = !enabled;
+            btnAddService.Enabled = !enabled;
+            btnAddAsPlayerCoord.Enabled = !enabled;
+            btnEditObject.Enabled = !enabled;
+
+            // ListBoxes
+            lbGameObjList.Enabled = !enabled;
+            lbActiveServices.Enabled = !enabled;
+
+            // Enable name editing
+            tbName.ReadOnly = !enabled;
+        }
+
+        private void tbName_TextChanged(object sender, EventArgs e)
+        {
+            RegisterChange(sender, e);
+        }
+
+        private BotDataSet.GameObjectsRow GetCurrentRow()
+        {
+            DataRowView rview = (DataRowView)bsGameObjects.Current;
+            if (rview == null)
+                return null;
+
+            return  (BotDataSet.GameObjectsRow) rview.Row;
+
+        }
+
+        private void bsFKGameObjectsNpcServices_ListChanged(object sender, ListChangedEventArgs e)
+        {
             // Set filter on available services
-            DataRowView current = (DataRowView)gameObjectsBindingSource.Current;
-            DataRowView srv = (DataRowView) fKGameObjectsNpcServicesBindingSource.Current;
+            BotDataSet.GameObjectsRow current = GetCurrentRow();
+            DataRowView srv = (DataRowView)bsFKGameObjectsNpcServices.Current;
+            bsServiceTypesFiltered.Filter = "";
 
             if (srv == null)
-                serviceTypesBindingSource.RemoveFilter();
+                bsServiceTypesFiltered.RemoveFilter();
             else
             {
-                DataRow[] cur_srv = DataManager.GameData.NpcServices.Select("GID=" + current["ID"]);
+                DataRow[] cur_srv = DataManager.
+                    GameData.NpcServices.Select("GID=" + current.ID);
+
                 if (cur_srv.Length > 0)
                 {
                     string filter = "ID NOT IN (" + cur_srv[0]["SERVICE_ID"];
                     for (int i = 1; i < cur_srv.Length; i++)
                         filter += "," + cur_srv[i]["SERVICE_ID"];
-                    serviceTypesBindingSource.Filter = filter + ")";
+                    bsServiceTypesFiltered.Filter = filter + ")";
                 }
             }
+        }
+
+        private void btnAddItem_Click(object sender, EventArgs e)
+        {
+            ShowErrorMessage("Not implemented yet");
         }
     }
 }

@@ -15,6 +15,20 @@
         <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
       </services>
     </npc>
+    <npc d3p1:type="NPC" name="Melithar Staghelm" zone="Teldrassil" x="10389.8" y="763.477" z="1319.95337" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests>
+        <quest name="The Woodland Protector" id="458" link="|cffffff00|Hquest:458:1|h[The Woodland Protector]|h|r" level="1" bonus_spell="" idx="0" dest_name="">
+          <text><![CDATA[Thank goodness you are here, priest. Strange news has traveled to me through the whisperings of the forest spirits.
+
+The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
+
+Seek out Tarindrella and see what business she tends to in our grove. One of the Sentinels reported seeing her to the southwest of Aldrassil.]]></text>
+          <objectives_text><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives_text>
+        </quest>
+      </quests>
+      <coordinates id="0" />
+      <services />
+    </npc>
   </wow_version>
   <wow_version name="3.3.0.11159" />
 </game_object_data>

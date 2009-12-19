@@ -37,7 +37,7 @@ namespace BabBot.Forms
         // Change tracking
         private bool _changed = false;
 
-        protected bool IsChanged
+        protected virtual bool IsChanged
         {
             get { return _changed; }
             set { 
@@ -70,6 +70,20 @@ namespace BabBot.Forms
             if (!ProcessManager.InGame)
             {
                 MessageBox.Show("Not in game");
+                return false;
+            }
+
+            return true;
+        }
+
+        protected bool CheckTarget()
+        {
+            if (!CheckInGame())
+                return false;
+
+            if (ProcessManager.Player.CurTarget == null)
+            {
+                MessageBox.Show("Toon has no target");
                 return false;
             }
 

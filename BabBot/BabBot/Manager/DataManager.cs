@@ -214,6 +214,7 @@ namespace BabBot.Manager
                                             typeof(QuestItemTypes), qi).ToLower());
 
             // Create other empty tables
+            GameData.AcceptChanges();
 
             //\\ TEST
             PopulateDataSet();
@@ -319,8 +320,8 @@ namespace BabBot.Manager
 
                 BotDataSet.GameObjectsRow gobj_row = GameData.
                             GameObjects.AddGameObjectsRow(
-                                GameData.GameObjectTypes.FindByID((int) g.GetObjType()), 
-                                    g.Name, z, g.FullName);
+                                GameData.GameObjectTypes.FindByID((int) 
+                                                g.GetObjType()), g.Name, z);
 
                 // Add base coordinates
                 GameData.Coordinates.Rows.Add(gobj_row.ID, g.X, g.Y, g.Z);
@@ -347,8 +348,9 @@ namespace BabBot.Manager
                         GameData.NpcServices.AddNpcServicesRow(gobj_row, srv_row, srv_row.NAME);
                     }
                 }
-                
             }
+
+            GameData.AcceptChanges();
         }
 
         internal static void ClearXml()
@@ -447,6 +449,15 @@ namespace BabBot.Manager
         {
             foreach (NPC npc in CurWoWVersion.GameObjData.STable.Values)
                 npc.Changed = false;
+        }
+
+        public static void SaveGameObjRow(BotDataSet.GameObjectsRow row)
+        {
+            // Delete Game Object data
+
+            // Add Game Object from dataset
+
+            // Save data
         }
 
         #region Load/Save npc file
