@@ -19,6 +19,13 @@ namespace BabBot.Manager
                 " not found in continent list. Please configure WoWData.xml") { }
     }
 
+    public class UnknownNpcServiceException : Exception
+    {
+        public UnknownNpcServiceException(string service)
+            : base("New NPC Service " + service +
+                " found in GameObjectData.xml but is not defined internally.") { }
+    }
+
     public class DataManager
     {
         /// <summary>
@@ -130,6 +137,7 @@ namespace BabBot.Manager
         /// </summary>
         public enum ServiceTypes : byte
         {
+            INN = 0,
             BANKER = 1,
             BATTLEMASTER = 2,
             CLASS_TRAINER = 3,
@@ -163,64 +171,6 @@ namespace BabBot.Manager
 
         #endregion
 
-        #region Nested: Type Tables
-
-        /// <summary>
-        /// Table with all game object types
-        /// </summary>
-        internal static BotDataSet.GameObjectTypesDataTable GameObjTypeTable;
-
-        /// <summary>
-        /// Table with all npc service types
-        /// </summary>
-        internal static BotDataSet.ServiceTypesDataTable ServiceTypeTable;
-
-        /// <summary>
-        /// Table with QuestsItemTypes
-        /// </summary>
-        internal static BotDataSet.QuestItemTypeDataTable QuestItemTypeTable;
-
-        #endregion
-
-        #region Nested: Data Table
-
-        /// <summary>
-        /// Table with GameObjects
-        /// </summary>
-        internal static BotDataSet.GameObjectsDataTable GameObjTable;
-
-        /// <summary>
-        /// Table with Quest
-        /// </summary>
-        internal static BotDataSet.QuestListDataTable QuestListTable;
-
-        /// <summary>
-        /// Table with Quest Items
-        /// </summary>
-        internal static BotDataSet.QuestItemsDataTable QuestItemsTable;
-
-        /// <summary>
-        /// Table with Continents
-        /// </summary>
-        internal static BotDataSet.ContinentListDataTable ContinentListTable;
-
-        /// <summary>
-        /// Table with Zones
-        /// </summary>
-        internal static BotDataSet.ZoneListDataTable ZoneListTable;
-
-        /// <summary>
-        /// Table with ZoneServices
-        /// </summary>
-        internal static BotDataSet.ZoneServicesDataTable ZoneServicesTable;
-
-        /// <summary>
-        /// Table with NPC Services
-        /// </summary>
-        internal static BotDataSet.NpcServicesDataTable NpcServicesTable;
-
-        #endregion
-
         #endregion
 
         /// <summary>
@@ -249,18 +199,16 @@ namespace BabBot.Manager
             GameData = new BotDataSet();
 
             // Add game object types
-            GameObjTypeTable = new BotDataSet.GameObjectTypesDataTable();
             foreach (GameObjectTypes z in Enum.GetValues(typeof(GameObjectTypes)))
-                GameData.GameObjectTypes.Rows.Add(z, Enum.GetName(
+                GameData.GameObjectTypes.AddGameObjectTypesRow((int) z, Enum.GetName(
                                             typeof(GameObjectTypes), z).ToLower());
 
             // Add service types
-            ServiceTypeTable = new BotDataSet.ServiceTypesDataTable();
             foreach (ServiceTypes z in Enum.GetValues(typeof(ServiceTypes)))
                 GameData.ServiceTypes.Rows.Add(z, Enum.GetName(
                                             typeof(ServiceTypes), z).ToLower());
 
-            QuestItemTypeTable = new BotDataSet.QuestItemTypeDataTable();
+            // Add Quest Item Types
             foreach (QuestItemTypes qi in Enum.GetValues(typeof(QuestItemTypes)))
                 GameData.QuestItemType.Rows.Add(qi, Enum.GetName(
                                             typeof(QuestItemTypes), qi).ToLower());
@@ -359,21 +307,47 @@ namespace BabBot.Manager
             {
                 GameData.ContinentList.Rows.Add(c.Id, c.Name);
                 foreach (Zone z in c.List)
-                    GameData.ZoneList.Rows.Add(null, c.Id, z.Name);
+                    GameData.ZoneList.AddZoneListRow(z.Name, c.Id);
             }
 
             foreach (GameObject g in CurWoWVersion.GameObjData.STable.Values)
             {
-                DataRow[] z = ZoneListTable.Select("NAME = '" + g.ZoneText + "'");
+                BotDataSet.ZoneListRow z = GameData.ZoneList.FindByNAME(g.ZoneText);
+
                 if (z == null)
                     throw new ZoneNotFoundException(g.ZoneText);
 
-                DataRow row = GameObjTable.NewRow();
-                row.ItemArray = new object[] {null, g.Name, g.X, g.Y, g.Z,
-                            g.GetObjType(), Convert.ToInt32(z[0]["ID"]), g.Service};
-                GameData.GameObjects.Rows.Add(row);
+                BotDataSet.GameObjectsRow gobj_row = GameData.
+                            GameObjects.AddGameObjectsRow(
+                                GameData.GameObjectTypes.FindByID((int) g.GetObjType()), 
+                                    g.Name, z, g.FullName);
 
-                int gid = GameData.GameObjects.Rows.IndexOf(row);
+                // Add base coordinates
+                GameData.Coordinates.Rows.Add(gobj_row.ID, g.X, g.Y, g.Z);
+
+                // Add quests
+
+                
+                if (g.GetObjType() == GameObjectTypes.NPC)
+                {
+                    NPC npc = (NPC) g;
+
+                    // Add other coordinates
+                    foreach (ZoneWp coord in npc.Coordinates.Table.Values)
+                        foreach (Vector3D v in coord.List)
+                            GameData.Coordinates.Rows.Add(gobj_row.ID, v.X, v.Y, v.Z);
+
+                    // Add Services
+                    foreach (NPCService srv in npc.Services.Table.Values)
+                    {
+                        // Locate service
+                        BotDataSet.ServiceTypesRow srv_row = 
+                            GameData.ServiceTypes.FindByID((int) srv.SrvType);
+
+                        GameData.NpcServices.AddNpcServicesRow(gobj_row, srv_row, srv_row.NAME);
+                    }
+                }
+                
             }
         }
 
@@ -612,8 +586,13 @@ namespace BabBot.Manager
         public ZoneServices(int cid)
         {
             ContinentId = cid;
+
             TaxiServices = new List<NPC>();
             InnServices = new List<NPC>();
+
+            RepairServices = new List<NPC>();
+            GrosseryServices = new List<NPC>();
+            VendorServices = new List<NPC>();
         }
 
         public void AddService(NPC npc)

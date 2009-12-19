@@ -378,7 +378,7 @@ namespace BabBot.Forms
             MessageBox.Show(this, error, "Error", 
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             // Leave the last error message in error log
-            RichTextBox rb = (RichTextBox) tabControlMain.SelectedTab.Controls[0];
+            RichTextBox rb = (RichTextBox) tabLogs.SelectedTab.Controls[0];
 
             AppendText(rb, "Last Error: " + error, Color.Red);
         }

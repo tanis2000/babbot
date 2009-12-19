@@ -2,6 +2,9 @@
     
     
     public partial class BotDataSet {
-        
+
+        partial class GameObjectsDataTable
+        {
+      }
     }
 }

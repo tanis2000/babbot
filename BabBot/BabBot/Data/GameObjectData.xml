@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <game_object_data version="0">
-  <wow_version name="3.2.2.10505" />
+  <wow_version name="3.2.2.10505">
+    <npc d3p1:type="NPC" name="Dellylah" zone="Teldrassil" x="10450.2" y="779.858" z="1322.67017" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates id="0" />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="false" has_drink="true" has_food="true" />
+      </services>
+    </npc>
+    <npc d3p1:type="NPC" name="Keina" zone="Teldrassil" x="10436.7" y="794.837" z="1322.70386" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates id="0" />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
+      </services>
+    </npc>
+  </wow_version>
   <wow_version name="3.3.0.11159" />
 </game_object_data>

@@ -114,8 +114,10 @@ namespace BabBot.Wow
         [XmlAttribute("zone")]
         public string ZoneText;
 
+        /*
         [XmlAttribute("service")]
         public string Service;
+        */
 
         [XmlElement("quests")]
         public Quests QuestList
@@ -124,17 +126,25 @@ namespace BabBot.Wow
             set { MergeList[0] = value; }
         }
 
-        public GameObject() : base()
+        internal virtual string FullName
+        {
+            get { return "Item: " + Name; }
+        }
+
+        public GameObject()
+            : base()
         {
             MergeList = new IMergeable[1];
             BasePosition = new Vector3D();
         }
 
-        public GameObject(string name, string service, string zone, Vector3D wp)
+        public GameObject(WowPlayer player) :
+            this(player.CurTarget.Name, player.ZoneText, player.CurTarget.Location) {}
+
+        public GameObject(string name, string zone, Vector3D wp)
             : base(name)
         {
             ZoneText = zone;
-            Service = service;
             BasePosition = (Vector3D)wp.Clone();
         }
 
@@ -151,7 +161,7 @@ namespace BabBot.Wow
             GameObject g_obj = (GameObject) obj;
 
             return ZoneText.Equals(g_obj.ZoneText) &&
-                Service.Equals(g_obj.Service) &&
+                // Service.Equals(g_obj.Service) &&
                 BasePosition.Equals(g_obj.BasePosition);
         }
 
@@ -163,17 +173,11 @@ namespace BabBot.Wow
 
     public class NPC : GameObject
     {
-        [XmlAttribute("race")]
-        public string Race;
+        [XmlAttribute("faction")]
+        public string Faction;
 
-        [XmlAttribute("sex")]
-        public string Sex;
-
-        [XmlAttribute("class")]
-        public string Class;
-
-        [XmlElement("wp_list")]
-        public WpZones Zones
+        [XmlElement("coordinates")]
+        public WpZones Coordinates
         {
             get { return (WpZones)MergeList[1]; }
             set { MergeList[1] = value; }
@@ -184,6 +188,11 @@ namespace BabBot.Wow
         {
             get { return (NPCServices)MergeList[2]; }
             set { MergeList[2] = value; }
+        }
+
+        internal override string FullName
+        {
+            get { return "Npc: " + Name; }
         }
 
         internal bool HasTaxi
@@ -213,29 +222,21 @@ namespace BabBot.Wow
              */
         }
 
-        public NPC(WowPlayer player, string race, string sex) : this()
+        public NPC(WowPlayer player, string faction) : base(player)
         {
-            WowUnit w = player.CurTarget;
+            Faction = faction;
+            
+            Array.Resize<IMergeable>(ref MergeList, 3);
 
-            Init(w.Name, race, sex, player.ContinentID, 
-                player.ZoneText, (Vector3D) w.Location.Clone());
-        }
-
-        public void Init(string name, string race, string sex, 
-                int continent_id, string zone_text, Vector3D waypoint)
-        {
-            Name = name;
-            Race = race;
-            Sex = sex;
-            BasePosition = (Vector3D) waypoint.Clone();
-
-            Zones = new WpZones();
+            Coordinates = new WpZones();
             Services = new NPCServices();
             QuestList = new Quests();
+
         }
 
         public void AddService(NPCService service)
         {
+            // if (string.IsNullOrEmpty(Service)) Service = service.Name;
             Services.Add(service);
         }
 
@@ -252,15 +253,13 @@ namespace BabBot.Wow
 
             NPC npc = (NPC)obj;
 
-            return 
-                Race.Equals(npc.Race) &&
-                Sex.Equals(npc.Sex) &&
-                Class.Equals(npc.Class) &&
+            return
+                MergeHelper.Compare(Faction, npc.Faction) &&
 
                 // Service list
                 Services.Equals(npc.Services) &&
                 // Waypoints
-                Zones.Equals(npc.Zones) &&
+                Coordinates.Equals(npc.Coordinates) &&
                 // Quest List
                 QuestList.Equals(npc.QuestList);
         }
@@ -275,7 +274,7 @@ namespace BabBot.Wow
             return QuestList.FindQuestQtyByTitle(title);
         }
 
-        public virtual DataManager.GameObjectTypes GetObjType()
+        public override DataManager.GameObjectTypes GetObjType()
         {
             return DataManager.GameObjectTypes.NPC;
         }
@@ -612,10 +611,30 @@ namespace BabBot.Wow
     [XmlInclude(typeof(VendorService))]
     public class NPCService : CommonItem
     {
-        [XmlIgnore]
-        public string SType
+        /// <summary>
+        /// NPC type as stored in XML
+        /// </summary>
+        internal string SType
         {
             get { return Name; }
+        }
+
+        /// <summary>
+        /// NPC type as stored in Bot Data Set
+        /// </summary>
+        internal virtual DataManager.ServiceTypes SrvType
+        {
+            get {
+                switch (SType)
+                {
+                    case "banker": return DataManager.ServiceTypes.BANKER;
+                    case "taxi": return DataManager.ServiceTypes.TAXI;
+                    case "battlemaster": return DataManager.ServiceTypes.BATTLEMASTER;
+                    case "inn": return DataManager.ServiceTypes.INN;
+                    default:
+                        throw new ServiceNotFound(SType);
+                }
+            }
         }
 
         public NPCService() : base() { }
@@ -628,6 +647,11 @@ namespace BabBot.Wow
         [XmlAttribute("class")]
         public string CharClass;
 
+        internal override DataManager.ServiceTypes SrvType
+        {
+            get { return DataManager.ServiceTypes.CLASS_TRAINER; }
+        }
+
         public ClassTrainingService() : base() { }
 
         public ClassTrainingService(string class_name)
@@ -637,10 +661,34 @@ namespace BabBot.Wow
         }
     }
 
+    public class WepSkillService : NPCService
+    {
+        [XmlAttribute("wep_skills")]
+        public string WepSkills;
+
+        internal override DataManager.ServiceTypes SrvType
+        {
+            get { return DataManager.ServiceTypes.WEP_SKILL_TRAINER; }
+        }
+
+        public WepSkillService() : base() { }
+
+        public WepSkillService(string wep_skills)
+            : base("wep_skill_trainer")
+        {
+            WepSkills = wep_skills;
+        }
+    }
+
     public class TradeSkillTrainingService : NPCService
     {
         [XmlAttribute("trade_skill")]
         public string TradeSkill;
+
+        internal override DataManager.ServiceTypes SrvType
+        {
+            get { return DataManager.ServiceTypes.TRADE_SKILL_TRAINER; }
+        }
 
         public TradeSkillTrainingService() : base() { }
 
@@ -661,6 +709,19 @@ namespace BabBot.Wow
 
         [XmlAttribute("has_food")]
         public bool HasFood;
+
+        internal override DataManager.ServiceTypes SrvType
+        {
+            get 
+            {
+                if (CanRepair)
+                    return DataManager.ServiceTypes.VENDOR_REPEAR;
+                else if (HasFood || HasDrink)
+                    return DataManager.ServiceTypes.VENDOR_GROSSERY;
+                else
+                    return DataManager.ServiceTypes.VENDOR_REGULAR;
+            }
+        }
 
         internal bool HasGrossery
         {

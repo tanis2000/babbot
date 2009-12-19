@@ -39,23 +39,17 @@ namespace BabBot.Forms
         public GameObjectsForm() : base ("npc_list")
         {
             InitializeComponent();
+
+            gameObjectsBindingSource.DataSource = DataManager.GameData;
+            serviceTypesBindingSource.DataSource = DataManager.GameData;
         }
 
         public void Open()
         {
             labelWoWVersion.Text = DataManager.CurWoWVersion.Build;
 
-            // Bind NpcList
-            BindNpcList();
-
             IsChanged = false;
             Show();
-        }
-
-        private void BindNpcList()
-        {
-            lbGameObjList.DataSource = null;
-            lbGameObjList.DataSource = DataManager.CurWoWVersion.GameObjData.Items;
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -96,6 +90,7 @@ namespace BabBot.Forms
 
         private void lbNpcList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            /*
             bool f = lbGameObjList.SelectedItem != null;
             SetFormControls(f);
             if (!f)
@@ -105,6 +100,7 @@ namespace BabBot.Forms
             tbName.Text = npc.Name;
 
             SetNpcAvailServiceList(npc);
+             */
         }
 
         void SetFormControls(bool Enabled)
@@ -138,7 +134,8 @@ namespace BabBot.Forms
                     // Target NPC
                     // string name = "Melithar Staghelm";
                     // string name = "Conservator Ilthalaine";
-                    string name = "Gilshalan Windwalker";
+                    // string name = "Gilshalan Windwalker";
+                    string name = "Dellylah";
                     LuaHelper.TargetUnitByName(name);
                 }
 #endif
@@ -155,9 +152,6 @@ namespace BabBot.Forms
                 NPC npc = NpcHelper.AddNpc("npc");
                 if (npc != null)
                 {
-                    // Refresh NPC list
-                    BindNpcList();
-
                     // Unselect all
                     foreach (int idx in lbGameObjList.SelectedIndices)
                         lbGameObjList.SetSelected(idx, false);
@@ -192,24 +186,19 @@ namespace BabBot.Forms
 
             // Now we need save & reindex data
             DataManager.SaveNpcData();
-
-            BindNpcList();
         }
 
         private void SetNpcAvailServiceList(NPC npc)
         {
-            lbActiveServices.SelectedItem = null;
-            serviceTypesNpcAvail.DataSource = null;
+            // serviceTypesNpcAvail.DataSource = null;
 
             // Pull list of services
             // Filter available services and add custom list
-            CurServiceList = DataManager.ServiceTypeTable.Clone();
-            foreach (DataRow row in DataManager.ServiceTypeTable.Rows)
+            CurServiceList = DataManager.GameData.ServiceTypes.Clone();
+            foreach (DataRow row in DataManager.GameData.ServiceTypes.Rows)
                 if (!npc.Services.Table.ContainsKey(row["NAME"].ToString()))
                     CurServiceList.ImportRow(row);
-            serviceTypesNpcAvail.DataSource = CurServiceList;
-
-            lbActiveServices.DataSource = npc.Services.Items;
+            // serviceTypesNpcAvail.DataSource = CurServiceList;
         }
 
         private void lbNpcList_KeyDown(object sender, KeyEventArgs e)
@@ -258,6 +247,9 @@ namespace BabBot.Forms
 
         private void cbServiceList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (cbServiceList.SelectedItem == null)
+                return;
+
             string skill = cbServiceList.SelectedItem.ToString();
             // btnLearnSkill.Enabled = (skill.Equals("class_trainer") || skill.Equals("wep_skill_trainer"));
             btnMoveToNearest.Enabled = cbServiceList.SelectedItem != null;
@@ -284,11 +276,6 @@ namespace BabBot.Forms
             SetNpcAvailServiceList(npc);
 
             IsChanged = true;
-        }
-
-        private void NPCListForm_Load(object sender, EventArgs e)
-        {
-            serviceTypesAllAvail.DataSource = DataManager.ServiceTypeTable;
         }
 
         private void lbActiveServices_KeyDown(object sender, KeyEventArgs e)
@@ -338,7 +325,7 @@ namespace BabBot.Forms
             lbGameObjList.SelectedItem = null;
             lbGameObjList.Enabled = false;
             btnAddNewObj.Enabled = false;
-            gameObjectsBindingSource.AddNew();
+            // gameObjectsBindingSource.AddNew();
 
         }
 
@@ -346,6 +333,32 @@ namespace BabBot.Forms
         {
             // gameObjectsBindingSource.Add((;
             btnAddNewObj.Enabled = true;
+        }
+
+        private void cbAvailServices_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void gameObjectsBindingSource_CurrentChanged(object sender, EventArgs e)
+        {
+            // Set filter on available services
+            DataRowView current = (DataRowView)gameObjectsBindingSource.Current;
+            DataRowView srv = (DataRowView) fKGameObjectsNpcServicesBindingSource.Current;
+
+            if (srv == null)
+                serviceTypesBindingSource.RemoveFilter();
+            else
+            {
+                DataRow[] cur_srv = DataManager.GameData.NpcServices.Select("GID=" + current["ID"]);
+                if (cur_srv.Length > 0)
+                {
+                    string filter = "ID NOT IN (" + cur_srv[0]["SERVICE_ID"];
+                    for (int i = 1; i < cur_srv.Length; i++)
+                        filter += "," + cur_srv[i]["SERVICE_ID"];
+                    serviceTypesBindingSource.Filter = filter + ")";
+                }
+            }
         }
     }
 }

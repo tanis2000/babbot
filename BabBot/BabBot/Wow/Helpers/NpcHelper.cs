@@ -406,7 +406,7 @@ namespace BabBot.Wow.Helpers
                 Lua_ExecByName("GetUnitInfo", new object[] { "target" });
 
             Output.Instance.Log("Checking NPC Info ...");
-            NPC npc = new NPC(ProcessManager.Player, npc_info[3], npc_info[4]);
+            NPC npc = new NPC(ProcessManager.Player, npc_info[2]);
 
             if (!AddTargetNpcInfo(npc, lfs))
                 return null;
@@ -802,7 +802,7 @@ namespace BabBot.Wow.Helpers
                     dist = d1;
                 } 
 
-                foreach (ZoneWp z in npc.Zones.Items)
+                foreach (ZoneWp z in npc.Coordinates.Items)
                 {
                     if (!z.Name.Equals(player_zone))
                         continue;

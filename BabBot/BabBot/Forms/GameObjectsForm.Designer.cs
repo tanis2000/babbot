@@ -41,6 +41,13 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
             this.gbNpcDescription = new System.Windows.Forms.GroupBox();
+            this.btnAdd = new System.Windows.Forms.Button();
+            this.lbActiveServices = new System.Windows.Forms.ListBox();
+            this.popServiceActions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.deleteServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fKGameObjectsNpcServicesBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.cbAvailServices = new System.Windows.Forms.ComboBox();
+            this.serviceTypesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -49,18 +56,12 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnAddAsPlayerCoord = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.fKGameObjectsCoordinatesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.gbNpcQuests = new System.Windows.Forms.GroupBox();
             this.btnAddQuest = new System.Windows.Forms.Button();
             this.lvNpcList = new System.Windows.Forms.ListView();
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.cbAvailServices = new System.Windows.Forms.ComboBox();
-            this.serviceTypesNpcAvail = new System.Windows.Forms.BindingSource(this.components);
-            this.lbActiveServices = new System.Windows.Forms.ListBox();
-            this.popServiceActions = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.deleteServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.serviceTypesAllAvail = new System.Windows.Forms.BindingSource(this.components);
             this.btnAddNPC = new System.Windows.Forms.Button();
             this.cbServiceList = new System.Windows.Forms.ComboBox();
             this.btnMoveToNearest = new System.Windows.Forms.Button();
@@ -71,6 +72,7 @@
             this.cbLearnSkills = new System.Windows.Forms.CheckBox();
             this.cbUseState = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnAddAsTargetCoord = new System.Windows.Forms.Button();
             this.btnAddNewObj = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
@@ -79,10 +81,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.gameObjectsBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).BeginInit();
             this.gbNpcDescription.SuspendLayout();
-            this.gbNpcQuests.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesNpcAvail)).BeginInit();
             this.popServiceActions.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesAllAvail)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fKGameObjectsNpcServicesBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fKGameObjectsCoordinatesBindingSource)).BeginInit();
+            this.gbNpcQuests.SuspendLayout();
             this.popQuestActions.SuspendLayout();
             this.gbDebug.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -94,12 +97,12 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(530, 421);
+            this.btnClose.Location = new System.Drawing.Point(598, 421);
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(449, 421);
+            this.btnSave.Location = new System.Drawing.Point(517, 421);
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // label2
@@ -128,13 +131,13 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.lbGameObjList.ContextMenuStrip = this.popNpc;
             this.lbGameObjList.DataSource = this.gameObjectsBindingSource;
-            this.lbGameObjList.DisplayMember = "NAME";
+            this.lbGameObjList.DisplayMember = "FULL_NAME";
             this.lbGameObjList.FormattingEnabled = true;
             this.lbGameObjList.Location = new System.Drawing.Point(12, 37);
             this.lbGameObjList.MultiColumn = true;
             this.lbGameObjList.Name = "lbGameObjList";
             this.lbGameObjList.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbGameObjList.Size = new System.Drawing.Size(473, 173);
+            this.lbGameObjList.Size = new System.Drawing.Size(541, 173);
             this.lbGameObjList.TabIndex = 34;
             this.lbGameObjList.SelectedIndexChanged += new System.EventHandler(this.lbNpcList_SelectedIndexChanged);
             this.lbGameObjList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbNpcList_KeyDown);
@@ -158,6 +161,8 @@
             // 
             this.gameObjectsBindingSource.DataMember = "GameObjects";
             this.gameObjectsBindingSource.DataSource = this.botDataSet;
+            this.gameObjectsBindingSource.Sort = "FULL_NAME";
+            this.gameObjectsBindingSource.CurrentChanged += new System.EventHandler(this.gameObjectsBindingSource_CurrentChanged);
             // 
             // botDataSet
             // 
@@ -175,7 +180,7 @@
             // btnImport
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImport.Location = new System.Drawing.Point(368, 421);
+            this.btnImport.Location = new System.Drawing.Point(436, 421);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(75, 23);
             this.btnImport.TabIndex = 36;
@@ -186,7 +191,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 22);
+            this.label3.Location = new System.Drawing.Point(6, 16);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(38, 13);
             this.label3.TabIndex = 37;
@@ -195,158 +200,30 @@
             // tbName
             // 
             this.tbName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.gameObjectsBindingSource, "NAME", true));
-            this.tbName.Location = new System.Drawing.Point(50, 19);
+            this.tbName.Location = new System.Drawing.Point(9, 30);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(144, 20);
+            this.tbName.ReadOnly = true;
+            this.tbName.Size = new System.Drawing.Size(146, 20);
             this.tbName.TabIndex = 38;
             // 
             // gbNpcDescription
             // 
             this.gbNpcDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.gbNpcDescription.Controls.Add(this.textBox3);
-            this.gbNpcDescription.Controls.Add(this.textBox2);
-            this.gbNpcDescription.Controls.Add(this.label8);
-            this.gbNpcDescription.Controls.Add(this.label7);
-            this.gbNpcDescription.Controls.Add(this.label4);
-            this.gbNpcDescription.Controls.Add(this.textBox1);
+            this.gbNpcDescription.Controls.Add(this.btnAdd);
             this.gbNpcDescription.Controls.Add(this.tbName);
+            this.gbNpcDescription.Controls.Add(this.lbActiveServices);
+            this.gbNpcDescription.Controls.Add(this.cbAvailServices);
             this.gbNpcDescription.Controls.Add(this.label3);
-            this.gbNpcDescription.Controls.Add(this.label6);
-            this.gbNpcDescription.Controls.Add(this.button2);
-            this.gbNpcDescription.Controls.Add(this.button1);
-            this.gbNpcDescription.Controls.Add(this.listBox1);
             this.gbNpcDescription.Location = new System.Drawing.Point(12, 245);
             this.gbNpcDescription.Name = "gbNpcDescription";
-            this.gbNpcDescription.Size = new System.Drawing.Size(200, 170);
+            this.gbNpcDescription.Size = new System.Drawing.Size(161, 170);
             this.gbNpcDescription.TabIndex = 39;
             this.gbNpcDescription.TabStop = false;
             this.gbNpcDescription.Text = "Object Description";
             // 
-            // textBox3
-            // 
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.gameObjectsBindingSource, "Z", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, null, "N2"));
-            this.textBox3.Location = new System.Drawing.Point(139, 110);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(55, 20);
-            this.textBox3.TabIndex = 78;
-            // 
-            // textBox2
-            // 
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.gameObjectsBindingSource, "Y", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, null, "N2"));
-            this.textBox2.Location = new System.Drawing.Point(139, 84);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(55, 20);
-            this.textBox2.TabIndex = 77;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(119, 113);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(14, 13);
-            this.label8.TabIndex = 76;
-            this.label8.Text = "Z";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(119, 87);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(14, 13);
-            this.label7.TabIndex = 75;
-            this.label7.Text = "Y";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 42);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(63, 13);
-            this.label4.TabIndex = 40;
-            this.label4.Text = "Coordinates";
-            // 
-            // textBox1
-            // 
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.gameObjectsBindingSource, "X", true, System.Windows.Forms.DataSourceUpdateMode.OnValidation, null, "C2"));
-            this.textBox1.Location = new System.Drawing.Point(139, 58);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(55, 20);
-            this.textBox1.TabIndex = 74;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(119, 61);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(14, 13);
-            this.label6.TabIndex = 74;
-            this.label6.Text = "X";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(157, 141);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(37, 23);
-            this.button2.TabIndex = 70;
-            this.button2.Text = "Add";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(9, 141);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(104, 23);
-            this.button1.TabIndex = 70;
-            this.button1.Text = "Add Player\'s Coord";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // listBox1
-            // 
-            this.listBox1.DataSource = this.botDataSet;
-            this.listBox1.DisplayMember = "ServiceTypes.NAME";
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(9, 58);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(104, 69);
-            this.listBox1.TabIndex = 70;
-            // 
-            // gbNpcQuests
-            // 
-            this.gbNpcQuests.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbNpcQuests.Controls.Add(this.btnAddQuest);
-            this.gbNpcQuests.Controls.Add(this.lvNpcList);
-            this.gbNpcQuests.Location = new System.Drawing.Point(387, 245);
-            this.gbNpcQuests.Name = "gbNpcQuests";
-            this.gbNpcQuests.Size = new System.Drawing.Size(218, 170);
-            this.gbNpcQuests.TabIndex = 45;
-            this.gbNpcQuests.TabStop = false;
-            this.gbNpcQuests.Text = "Quest List";
-            // 
-            // btnAddQuest
-            // 
-            this.btnAddQuest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddQuest.Location = new System.Drawing.Point(137, 141);
-            this.btnAddQuest.Name = "btnAddQuest";
-            this.btnAddQuest.Size = new System.Drawing.Size(75, 23);
-            this.btnAddQuest.TabIndex = 44;
-            this.btnAddQuest.Text = "Add Quest";
-            this.btnAddQuest.UseVisualStyleBackColor = true;
-            this.btnAddQuest.Click += new System.EventHandler(this.btnAddQuest_Click);
-            // 
-            // lvNpcList
-            // 
-            this.lvNpcList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvNpcList.Location = new System.Drawing.Point(10, 19);
-            this.lvNpcList.Name = "lvNpcList";
-            this.lvNpcList.Size = new System.Drawing.Size(202, 116);
-            this.lvNpcList.TabIndex = 43;
-            this.lvNpcList.UseCompatibleStateImageBehavior = false;
-            // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(122, 22);
+            this.btnAdd.Location = new System.Drawing.Point(120, 61);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(35, 23);
             this.btnAdd.TabIndex = 42;
@@ -354,29 +231,16 @@
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
-            // cbAvailServices
-            // 
-            this.cbAvailServices.DataSource = this.serviceTypesNpcAvail;
-            this.cbAvailServices.DisplayMember = "NAME";
-            this.cbAvailServices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbAvailServices.FormattingEnabled = true;
-            this.cbAvailServices.Location = new System.Drawing.Point(6, 24);
-            this.cbAvailServices.Name = "cbAvailServices";
-            this.cbAvailServices.Size = new System.Drawing.Size(110, 21);
-            this.cbAvailServices.TabIndex = 41;
-            // 
-            // serviceTypesNpcAvail
-            // 
-            this.serviceTypesNpcAvail.DataMember = "ServiceTypes";
-            this.serviceTypesNpcAvail.DataSource = this.botDataSet;
-            // 
             // lbActiveServices
             // 
             this.lbActiveServices.ContextMenuStrip = this.popServiceActions;
+            this.lbActiveServices.DataSource = this.fKGameObjectsNpcServicesBindingSource;
+            this.lbActiveServices.DisplayMember = "SERVICE_NAME";
             this.lbActiveServices.FormattingEnabled = true;
-            this.lbActiveServices.Location = new System.Drawing.Point(6, 51);
+            this.lbActiveServices.Location = new System.Drawing.Point(10, 90);
             this.lbActiveServices.Name = "lbActiveServices";
-            this.lbActiveServices.Size = new System.Drawing.Size(151, 108);
+            this.lbActiveServices.ScrollAlwaysVisible = true;
+            this.lbActiveServices.Size = new System.Drawing.Size(145, 69);
             this.lbActiveServices.TabIndex = 39;
             this.lbActiveServices.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbActiveServices_KeyDown);
             // 
@@ -395,10 +259,154 @@
             this.deleteServiceToolStripMenuItem.Text = "Delete Service";
             this.deleteServiceToolStripMenuItem.Click += new System.EventHandler(this.deleteServiceToolStripMenuItem_Click);
             // 
-            // serviceTypesAllAvail
+            // fKGameObjectsNpcServicesBindingSource
             // 
-            this.serviceTypesAllAvail.DataMember = "ServiceTypes";
-            this.serviceTypesAllAvail.DataSource = this.botDataSet;
+            this.fKGameObjectsNpcServicesBindingSource.DataMember = "FK_GameObjects_NpcServices";
+            this.fKGameObjectsNpcServicesBindingSource.DataSource = this.gameObjectsBindingSource;
+            // 
+            // cbAvailServices
+            // 
+            this.cbAvailServices.DataSource = this.serviceTypesBindingSource;
+            this.cbAvailServices.DisplayMember = "NAME";
+            this.cbAvailServices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbAvailServices.FormattingEnabled = true;
+            this.cbAvailServices.Location = new System.Drawing.Point(9, 63);
+            this.cbAvailServices.Name = "cbAvailServices";
+            this.cbAvailServices.Size = new System.Drawing.Size(104, 21);
+            this.cbAvailServices.TabIndex = 41;
+            this.cbAvailServices.SelectedIndexChanged += new System.EventHandler(this.cbAvailServices_SelectedIndexChanged);
+            // 
+            // serviceTypesBindingSource
+            // 
+            this.serviceTypesBindingSource.DataMember = "ServiceTypes";
+            this.serviceTypesBindingSource.DataSource = this.botDataSet;
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(190, 53);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(55, 20);
+            this.textBox3.TabIndex = 78;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(190, 30);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(55, 20);
+            this.textBox2.TabIndex = 77;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(173, 56);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(14, 13);
+            this.label8.TabIndex = 76;
+            this.label8.Text = "Z";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(173, 33);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(14, 13);
+            this.label7.TabIndex = 75;
+            this.label7.Text = "Y";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 16);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(63, 13);
+            this.label4.TabIndex = 40;
+            this.label4.Text = "Coordinates";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(190, 8);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(55, 20);
+            this.textBox1.TabIndex = 74;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(173, 11);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(14, 13);
+            this.label6.TabIndex = 74;
+            this.label6.Text = "X";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(208, 79);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(37, 23);
+            this.button2.TabIndex = 70;
+            this.button2.Text = "Add";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // btnAddAsPlayerCoord
+            // 
+            this.btnAddAsPlayerCoord.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddAsPlayerCoord.Location = new System.Drawing.Point(6, 141);
+            this.btnAddAsPlayerCoord.Name = "btnAddAsPlayerCoord";
+            this.btnAddAsPlayerCoord.Size = new System.Drawing.Size(108, 23);
+            this.btnAddAsPlayerCoord.TabIndex = 70;
+            this.btnAddAsPlayerCoord.Text = "Add As Player\'s Coord";
+            this.btnAddAsPlayerCoord.UseVisualStyleBackColor = true;
+            // 
+            // listBox1
+            // 
+            this.listBox1.DataSource = this.fKGameObjectsCoordinatesBindingSource;
+            this.listBox1.DisplayMember = "COORD";
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(11, 30);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.ScrollAlwaysVisible = true;
+            this.listBox1.Size = new System.Drawing.Size(156, 108);
+            this.listBox1.TabIndex = 70;
+            // 
+            // fKGameObjectsCoordinatesBindingSource
+            // 
+            this.fKGameObjectsCoordinatesBindingSource.DataMember = "FK_GameObjects_Coordinates";
+            this.fKGameObjectsCoordinatesBindingSource.DataSource = this.gameObjectsBindingSource;
+            // 
+            // gbNpcQuests
+            // 
+            this.gbNpcQuests.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbNpcQuests.Controls.Add(this.btnAddQuest);
+            this.gbNpcQuests.Controls.Add(this.lvNpcList);
+            this.gbNpcQuests.Location = new System.Drawing.Point(436, 245);
+            this.gbNpcQuests.Name = "gbNpcQuests";
+            this.gbNpcQuests.Size = new System.Drawing.Size(237, 170);
+            this.gbNpcQuests.TabIndex = 45;
+            this.gbNpcQuests.TabStop = false;
+            this.gbNpcQuests.Text = "Quest List";
+            // 
+            // btnAddQuest
+            // 
+            this.btnAddQuest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddQuest.Location = new System.Drawing.Point(156, 141);
+            this.btnAddQuest.Name = "btnAddQuest";
+            this.btnAddQuest.Size = new System.Drawing.Size(75, 23);
+            this.btnAddQuest.TabIndex = 44;
+            this.btnAddQuest.Text = "Add Quest";
+            this.btnAddQuest.UseVisualStyleBackColor = true;
+            this.btnAddQuest.Click += new System.EventHandler(this.btnAddQuest_Click);
+            // 
+            // lvNpcList
+            // 
+            this.lvNpcList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvNpcList.DataBindings.Add(new System.Windows.Forms.Binding("Tag", this.botDataSet, "GameObjects.FK_GameObjects_QuestList.NAME", true));
+            this.lvNpcList.Location = new System.Drawing.Point(10, 19);
+            this.lvNpcList.Name = "lvNpcList";
+            this.lvNpcList.Size = new System.Drawing.Size(221, 116);
+            this.lvNpcList.TabIndex = 43;
+            this.lvNpcList.UseCompatibleStateImageBehavior = false;
             // 
             // btnAddNPC
             // 
@@ -414,7 +422,7 @@
             // cbServiceList
             // 
             this.cbServiceList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbServiceList.DataSource = this.serviceTypesAllAvail;
+            this.cbServiceList.DataSource = this.serviceTypesBindingSource;
             this.cbServiceList.DisplayMember = "NAME";
             this.cbServiceList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbServiceList.FormattingEnabled = true;
@@ -469,7 +477,7 @@
             this.gbDebug.Controls.Add(this.labelServices);
             this.gbDebug.Controls.Add(this.cbServiceList);
             this.gbDebug.Controls.Add(this.btnMoveToNearest);
-            this.gbDebug.Location = new System.Drawing.Point(491, 33);
+            this.gbDebug.Location = new System.Drawing.Point(559, 33);
             this.gbDebug.Name = "gbDebug";
             this.gbDebug.Size = new System.Drawing.Size(114, 177);
             this.gbDebug.TabIndex = 68;
@@ -500,15 +508,33 @@
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBox1.Controls.Add(this.btnAdd);
-            this.groupBox1.Controls.Add(this.lbActiveServices);
-            this.groupBox1.Controls.Add(this.cbAvailServices);
-            this.groupBox1.Location = new System.Drawing.Point(218, 245);
+            this.groupBox1.Controls.Add(this.btnAddAsTargetCoord);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.textBox3);
+            this.groupBox1.Controls.Add(this.textBox2);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.listBox1);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.btnAddAsPlayerCoord);
+            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.button2);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Location = new System.Drawing.Point(179, 245);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(163, 170);
+            this.groupBox1.Size = new System.Drawing.Size(251, 170);
             this.groupBox1.TabIndex = 69;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "NPC Services";
+            // 
+            // btnAddAsTargetCoord
+            // 
+            this.btnAddAsTargetCoord.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddAsTargetCoord.Location = new System.Drawing.Point(116, 141);
+            this.btnAddAsTargetCoord.Name = "btnAddAsTargetCoord";
+            this.btnAddAsTargetCoord.Size = new System.Drawing.Size(108, 23);
+            this.btnAddAsTargetCoord.TabIndex = 79;
+            this.btnAddAsTargetCoord.Text = "Add AsTargets Coord";
+            this.btnAddAsTargetCoord.UseVisualStyleBackColor = true;
             // 
             // btnAddNewObj
             // 
@@ -549,7 +575,7 @@
             // GameObjectsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(617, 456);
+            this.ClientSize = new System.Drawing.Size(685, 456);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.labelWoWVersion);
             this.Controls.Add(this.gbNpcDescription);
@@ -567,7 +593,6 @@
             this.MinimumSize = new System.Drawing.Size(625, 490);
             this.Name = "GameObjectsForm";
             this.Text = "NPC List";
-            this.Load += new System.EventHandler(this.NPCListForm_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NPCListForm_FormClosing);
             this.Controls.SetChildIndex(this.button4, 0);
             this.Controls.SetChildIndex(this.btnAddNPC, 0);
@@ -591,14 +616,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).EndInit();
             this.gbNpcDescription.ResumeLayout(false);
             this.gbNpcDescription.PerformLayout();
-            this.gbNpcQuests.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesNpcAvail)).EndInit();
             this.popServiceActions.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesAllAvail)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fKGameObjectsNpcServicesBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.serviceTypesBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fKGameObjectsCoordinatesBindingSource)).EndInit();
+            this.gbNpcQuests.ResumeLayout(false);
             this.popQuestActions.ResumeLayout(false);
             this.gbDebug.ResumeLayout(false);
             this.gbDebug.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -630,27 +657,29 @@
         private System.Windows.Forms.GroupBox gbDebug;
         private System.Windows.Forms.CheckBox cbUseState;
         private System.Windows.Forms.CheckBox cbLearnSkills;
-        private System.Windows.Forms.BindingSource serviceTypesAllAvail;
-        private BabBot.Data.BotDataSet botDataSet;
-        private System.Windows.Forms.BindingSource serviceTypesNpcAvail;
         private System.Windows.Forms.ToolStripMenuItem deleteServiceToolStripMenuItem;
         private System.Windows.Forms.ListView lvNpcList;
         private System.Windows.Forms.GroupBox gbNpcQuests;
         private System.Windows.Forms.Button btnAddQuest;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnAddAsPlayerCoord;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button btnAddNewObj;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.BindingSource gameObjectsBindingSource;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.BindingSource gameObjectsBindingSource;
+        private BabBot.Data.BotDataSet botDataSet;
+        private System.Windows.Forms.BindingSource serviceTypesBindingSource;
+        private System.Windows.Forms.Button btnAddAsTargetCoord;
+        private System.Windows.Forms.BindingSource fKGameObjectsNpcServicesBindingSource;
+        private System.Windows.Forms.BindingSource fKGameObjectsCoordinatesBindingSource;
     }
 }

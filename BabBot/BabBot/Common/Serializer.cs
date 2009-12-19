@@ -95,6 +95,18 @@ namespace BabBot.Common
         {
             return (obj2 != null) &&  obj1.GetType().Equals(obj2.GetType());
         }
+
+        /// <summary>
+        /// Compare 2 objects that might be null
+        /// </summary>
+        /// <param name="obj1">Object 1</param>
+        /// <param name="obj2">Object 2</param>
+        /// <returns>True if both objects null or they equal</returns>
+        public static bool Compare(object obj1, object obj2)
+        {
+            return ((obj1 == null) && (obj2 == null)) ||
+                    ((obj1 != null) && (obj2 != null) && obj1.Equals(obj2));
+        }
     }
 
     #endregion

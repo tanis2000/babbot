@@ -929,7 +929,9 @@ end)()]]>
         1 - english class
         The fully capitalized english class name with no spaces, e.g. "MAGE", "WARRIOR", "DEATHKNIGHT", etc.
 
-        2 - localized race
+        2 - english faction (Alliance/Horde)
+          Note that for NPCs, the function will only return Alliance/Horde for factions 
+          closely allied with either side. Goblins, for instance, return nil,nil.
 
         3 - english race (TROLL, HUMAN)
 
@@ -942,12 +944,13 @@ end)()]]>
           <![CDATA[(function()
   class1, class2 = UnitClass("{0}")
   race1, race2 = UnitRace("{0}")
-  
+  faction = UnitFactionGroup("{0}")
+
   if (race2) then
     race2 = string.upper(race2)
   end
   
-  return class1, class2, race1, race2,  UnitSex("{0}")
+  return class1, class2, faction, race2,  UnitSex("{0}")
 end)()]]>
         </text>
       </function>
