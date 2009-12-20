@@ -91,6 +91,13 @@ namespace BabBot.Wow
             set { MergeList[3] = value; }
         }
 
+        [XmlElement("factions")]
+        public Factions Factions
+        {
+            get { return (Factions)MergeList[4]; }
+            set { MergeList[4] = value; }
+        }
+
         internal string Build
         {
             get { return Name; }
@@ -108,7 +115,7 @@ namespace BabBot.Wow
             : base()
         {
 
-            MergeList = new IMergeable[4];
+            MergeList = new IMergeable[5];
         }
 
         public LuaFunction FindLuaFunction(string name)
@@ -307,10 +314,33 @@ namespace BabBot.Wow
 
         [XmlAttribute("id")]
         public int Id;
+
+        [XmlAttribute("faction")]
+        public string Faction;
     }
 
     #endregion
 
+    #region Factions
+
+    public class Factions : CommonTable<Faction>
+    {
+        [XmlElement("faction")]
+        public Faction[] FactionList
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+
+        public Faction FindFactionByName(string name)
+        {
+            return FindItemByName(name);
+        }
+    }
+
+    public class Faction : CommonItem { }
+
+    #endregion
     #region Configurations
 
     public class TalentConfig

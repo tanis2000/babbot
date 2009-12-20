@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace BabBot.Wow
 {
     #region Game Objects
-    
+
     [XmlRoot("game_object_data")]
     public class GameObjectData : CommonTable<GameDataVersion>
     {
@@ -52,7 +52,7 @@ namespace BabBot.Wow
     [Serializable]
     public class GameDataVersion : CommonNameTable<GameObject>
     {
-        [XmlElement("npc")]
+        [XmlElement("game_object")]
         public GameObject[] GameObjList
         {
             get { return Items; }
@@ -135,9 +135,6 @@ namespace BabBot.Wow
             MergeList = new IMergeable[1];
             BasePosition = new Vector3D();
         }
-
-        public GameObject(WowPlayer player) :
-            this(player.CurTarget.Name, player.ZoneText, player.CurTarget.Location) {}
 
         public GameObject(string name, string zone, Vector3D wp)
             : base(name)
@@ -223,24 +220,23 @@ namespace BabBot.Wow
         {
             // Increase mergeable array
             Array.Resize<IMergeable>(ref MergeList, 3);
-            /*
-            IMergeable im = MergeList[0];
-            MergeList = new IMergeable[2];
-            MergeList[0] = im;
-             */
         }
 
-        public NPC(WowPlayer player, string faction) : base(player)
+        public NPC(string name, string zone, Vector3D wp, string faction)
+            : base(name, zone, wp)
         {
             Faction = faction;
-            
+
             Array.Resize<IMergeable>(ref MergeList, 3);
 
             Coordinates = new WpZones();
             Services = new NPCServices();
             QuestList = new Quests();
-
         }
+
+
+        public NPC(WowPlayer player, string faction)
+            : this(player.CurTarget.Name, player.ZoneText, player.CurTarget.Location, faction) { }
 
         public void AddService(NPCService service)
         {
@@ -248,7 +244,10 @@ namespace BabBot.Wow
             Services.Add(service);
         }
 
-        
+        public bool IsFriendly(string faction)
+        {
+            return faction.Equals(Faction);
+        }
         
         public override bool Equals(object obj)
         {
@@ -481,18 +480,24 @@ namespace BabBot.Wow
 
         public Quest() :base() {}
 
-        public Quest(int id, string title, string text, string objectives, int level, 
-                        int[] det_qty, string[] det_list, string objs, 
-                                string bonus_spell, string link) :
+        public Quest(int id, string title, string text, string objectives, 
+                                int level, string bonus_spell, string link) :
             base(title, text)
         {
             Id = id;
             Link = link;
             Level = level;
+            BonusSpell = bonus_spell;
 
             XmlDocument doc = new XmlDocument();
             TextObjectives = doc.CreateCDataSection(objectives);
+        }
 
+        public Quest(int id, string title, string text, string objectives, int level, 
+                        int[] det_qty, string[] det_list, string objs, 
+                                string bonus_spell, string link) :
+            this(id, title, text, objectives, level, bonus_spell, link)
+        {
             for (int i = 0; i < det_qty.Length; i++)
             {
                 if (det_qty[i] > 0)
@@ -512,7 +517,7 @@ namespace BabBot.Wow
             if (!string.IsNullOrEmpty(objs))
                 ObjList = new QuestObjectives(objs);
 
-            BonusSpell = bonus_spell;
+            
         }
 
         public override bool Equals(object obj)
@@ -637,11 +642,14 @@ namespace BabBot.Wow
         }
     }
 
-    // Base class
+    /// <summary>
+    /// Base class for any NPC service
+    /// </summary>
     [XmlInclude(typeof(ClassTrainingService))]
     [XmlInclude(typeof(TradeSkillTrainingService))]
     [XmlInclude(typeof(TradeSkillTrainingService))]
     [XmlInclude(typeof(VendorService))]
+    [XmlInclude(typeof(ZoneNpcService))]
     public class NPCService : CommonItem
     {
         /// <summary>
@@ -661,9 +669,7 @@ namespace BabBot.Wow
                 switch (SType)
                 {
                     case "banker": return DataManager.ServiceTypes.BANKER;
-                    case "taxi": return DataManager.ServiceTypes.TAXI;
                     case "battlemaster": return DataManager.ServiceTypes.BATTLEMASTER;
-                    case "inn": return DataManager.ServiceTypes.INN;
                     default:
                         throw new ServiceNotFound(SType);
                 }
@@ -673,6 +679,36 @@ namespace BabBot.Wow
         public NPCService() : base() { }
 
         public NPCService(string stype) : base(stype) {}
+    }
+
+    /// <summary>
+    /// NPC service related to local zone as inn or taxi. 
+    /// It requires know the NPC subzone to local final destination point
+    /// </summary>
+    public class ZoneNpcService : NPCService
+    {
+        [XmlAttribute("sub_zone")]
+        public string SubZone;
+
+        internal override DataManager.ServiceTypes SrvType
+        {
+            get
+            {
+                switch (SType)
+                {
+                    case "taxi": return DataManager.ServiceTypes.TAXI;
+                    case "inn": return DataManager.ServiceTypes.INN;
+                    default: return base.SrvType;
+                }
+            }
+        }
+
+        public ZoneNpcService() { }
+
+        public ZoneNpcService(string stype, string subzone) : base(stype) 
+        {
+            SubZone = subzone;
+        }
     }
 
     public class ClassTrainingService : NPCService

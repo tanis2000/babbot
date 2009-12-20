@@ -550,5 +550,13 @@ namespace BabBot.Forms
         {
             RegisterChange();
         }
+
+        private void TalentsForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (((e.Modifiers & Keys.Shift) == Keys.Shift) && 
+                (e.KeyCode == Keys.S) &&
+                btnSave.Enabled)
+            btnSave_Click(sender,e);
+        }
     }
 }

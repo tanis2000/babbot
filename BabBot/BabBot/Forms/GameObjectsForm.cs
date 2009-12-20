@@ -79,13 +79,12 @@ namespace BabBot.Forms
         {
             // TODO load file from Data\Import directory
             var dlg = new OpenFileDialog { RestoreDirectory = true, Multiselect = true, 
-                Filter = "NPC data files (*.npc)|*.npc" };
+                Filter = "Game Object data files (*.obj)|*.obj" };
             dlg.InitialDirectory = "Data" + Path.DirectorySeparatorChar + "Import";
 
             if (dlg.ShowDialog() != DialogResult.OK)
                 return;
 
-            bool f = false;
             foreach (string fname in dlg.FileNames)
             {
                 try
@@ -310,8 +309,6 @@ namespace BabBot.Forms
             try
             {
                 // Save data on the disk
-                // TODO
-
                 DataManager.SaveGameObjRow(row);
                 DataManager.GameData.AcceptChanges();
 
@@ -319,9 +316,10 @@ namespace BabBot.Forms
 
                 IsChanged = false;
             }
-            catch
+            catch (Exception ex)
             {
                 // Keep edit state
+                ShowErrorMessage(ex.Message);
             }
         }
 
@@ -364,17 +362,30 @@ namespace BabBot.Forms
             if (MessageBox.Show(this, "Are you sure to delete " + obj_name + "?",
                     "Confirmation", MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
-                // Delete from all version or it will merge again
             {
-                    obj.Delete();
-                    IsChanged = true;
+                // Delete from all version or it will merge again
+                obj.Delete();
+                IsChanged = true;
             }
         }
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO
-            ShowErrorMessage("Not implemented yet");
+            if (btnSave.Enabled)
+            {
+                ShowErrorMessage("Game Object in Edit Mode. Save data and try again");
+                return;
+            }
+
+            BotDataSet.GameObjectsRow row = GetCurrentRow();
+            GameObject obj = DataManager.CurWoWVersion.GameObjData.STable[row.NAME];
+            if (obj == null)
+            {
+                ShowErrorMessage("Game Object not found. Restart Bot and try again");
+                return;
+            }
+
+            DataManager.ExportGameObj(obj);
         }
 
         #endregion
@@ -399,7 +410,16 @@ namespace BabBot.Forms
 
         private void deleteQuestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DeleteSelectedObject();
+            DeleteSelectedQuest();
+        }
+
+        private void lbQuestList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                DeleteSelectedQuest();
+                e.Handled = true;
+            }
         }
 
         public void DeleteSelectedQuest()
@@ -580,8 +600,9 @@ namespace BabBot.Forms
                 }
             }
 
+            // TODO
             DataManager.GameData.Coordinates.AddCoordinatesRow(
-                GetCurrentRow(), x, y, z, null);
+                GetCurrentRow(), "", x, y, z);
 
 
             // Select last row

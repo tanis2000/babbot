@@ -26,6 +26,13 @@ namespace BabBot.Manager
                 " found in GameObjectData.xml but is not defined internally.") { }
     }
 
+    public class DataSynchException : Exception
+    {
+        public DataSynchException()
+            : base("Data between xml source and screen forms non-synchronized." + 
+                " Restart bot and try again.") { }
+    }
+
     public class DataManager
     {
         /// <summary>
@@ -34,7 +41,7 @@ namespace BabBot.Manager
         private static WoWData wdata;
         
         /// <summary>
-        /// Reference the whole NPCData
+        /// Reference the whole GameObject Data
         /// </summary>
         private static GameObjectData gdata;
 
@@ -350,10 +357,14 @@ namespace BabBot.Manager
             if (z == null)
                 throw new ZoneNotFoundException(g.ZoneText);
 
+            string faction = null;
+            if (g.GetObjType() == GameObjectTypes.NPC)
+                faction = ((NPC) g).Faction;
+
             BotDataSet.GameObjectsRow gobj_row = GameData.
                         GameObjects.AddGameObjectsRow(
                             GameData.GameObjectTypes.FindByID((int)
-                                            g.GetObjType()), g.Name, z);
+                                    g.GetObjType()), g.Name, z, faction);
 
             // Add base coordinates
             GameData.Coordinates.Rows.Add(gobj_row.ID, g.X, g.Y, g.Z);
@@ -363,7 +374,8 @@ namespace BabBot.Manager
             {
                 BotDataSet.QuestListRow qrow = GameData.QuestList.
                     AddQuestListRow(q.Id, gobj_row, q.Name,
-                    q.GreetingText, q.ObjectivesText, g.Name, q.DestName);
+                    q.GreetingText, q.ObjectivesText, g.Name, 
+                    q.DestName, q.Level, q.Link, q.BonusSpell);
 
                 // Add quest items
                 for (int i = 0; i < q.QuestItems.Length; i++)
@@ -431,12 +443,12 @@ namespace BabBot.Manager
         private static object LoadXmlData(string fname, Type t)
         {
             object res = null;
-
+            TextReader r = null;
             XmlSerializer s = new XmlSerializer(t);
-            TextReader r = new StreamReader(fname);
 
             try
             {
+                r = new StreamReader(fname);
                 res = s.Deserialize(r);
             }
             catch (Exception e)
@@ -523,28 +535,101 @@ namespace BabBot.Manager
         public static void SaveGameObjRow(BotDataSet.GameObjectsRow row)
         {
             // Delete Game Object data
+            GameObject obj_old = CurWoWVersion.GameObjData.STable[row.NAME];
+            if (obj_old == null)
+                throw new DataSynchException();
 
-            // Add Game Object from dataset
+            // Mak new Game Object from dataset
+            GameObject obj_new = GetGameObj(row);
 
-            // Save data
+            CurWoWVersion.GameObjData.STable.Remove(row.NAME);
+            CurWoWVersion.GameObjData.STable.Add(row.NAME, obj_new);
+
+            // Finally Save data
+            SaveGameObjData();
         }
 
-        #region Load/Save npc file
-
-        public static NPC LoadXml(string fname)
+        private static GameObject GetGameObj(BotDataSet.GameObjectsRow row)
         {
-            Serializer<NPC> s = new Serializer<NPC>();
+            // Pull coordinates
+            DataRow[] coords = GameData.Coordinates.Select("GID=" + row.ID);
+            if (coords.Length == 0)
+                throw new Exception("Game object required at least one base coordinates");
+
+            BotDataSet.CoordinatesRow first_coord = (BotDataSet.CoordinatesRow) coords[0];
+            GameObject obj = null;
+
+            Vector3D v = new Vector3D((float)first_coord.X, 
+                            (float)first_coord.Y, (float)first_coord.Z);
+
+            switch(row.TYPE_ID)
+            {
+                case (int)GameObjectTypes.ITEM :
+                    obj = new GameObject(row.NAME, row.ZONE_NAME, v);
+                    break;
+
+                case (int)GameObjectTypes.NPC:
+                    obj = new NPC(row.NAME, row.ZONE_NAME, v, row.FACTION);
+                    break;
+
+                default:
+                    throw new Exception("Unknown Game Object Type :" + row.TYPE_ID);
+            }
+
+            if (row.TYPE_ID == (int) (int)GameObjectTypes.NPC)
+            {
+                NPC npc = (NPC) obj;
+
+                // NPC can have extra coordinates and services
+                // Add other coordinates
+                for (int i = 1; i < coords.Length; i++)
+                {
+                    // TODO
+                    // BotDataSet.CoordinatesRow coord = (BotDataSet.CoordinatesRow) coords[i];
+                    // npc.Coordinates.Table[npc.ZoneText];
+                }
+            }
+
+            // Pull quest list with items
+            DataRow[] qrows = GameData.QuestList.Select("GID=" + row.ID);
+            foreach (BotDataSet.QuestListRow qrow in qrows)
+            {
+                Quest q = new Quest(qrow.ID, qrow.NAME, qrow.GREETING_TEXT,
+                        qrow.OBJECTIVES_TEXT, qrow.LEVEL, qrow.BONUS_SPELL, qrow.LINK);
+
+                for (int i = 0; i < q.QuestItemSeq.Length; i++)
+                {
+                    QuestItemTypes qi = q.QuestItemSeq[i];
+
+                    DataRow[] item_rows = GameData.QuestItems.
+                        Select("QID=" + qrow.ID + " AND ITEM_TYPE_ID=" + (int)qi);
+                    foreach (BotDataSet.QuestItemsRow item_row in item_rows)
+                        q.QuestItems[i].List.Add(new CommonQty(item_row.NAME, item_row.QTY));
+                }
+
+                DataRow[] rows_objective = GameData.QuestItems.Select("QID=" + qrow.ID +
+                    " AND ITEM_TYPE_ID=" + (int)QuestItemTypes.OBJECTIVES);
+            }
+
+            return obj;
+        }
+
+        #region Load/Save single Game Object
+
+        public static GameObject LoadXml(string fname)
+        {
+            Serializer<GameObject> s = new Serializer<GameObject>();
             return s.Load(fname);
         }
 
-        public static void SaveXml(string fname, NPC npc)
+        public static void SaveXml(string fname, GameObject obj)
         {
-            Serializer<NPC> s = new Serializer<NPC>();
-            s.Save(fname, npc);
+            Serializer<GameObject> s = new Serializer<GameObject>();
+            s.Save(fname, obj);
         }
 
         /// <summary>
-        /// Save NPC data in xml format
+        /// Save All Game Object data in xml format
         /// </summary>
         public static bool SaveGameObjData()
         {
@@ -578,14 +663,14 @@ namespace BabBot.Manager
                 Output.Instance.Log("npc", "File " + GameObjDataFileName +
                                                             " successfully saved.");
 
-            // Index NPC Data
+            // Index GameObject Data
             IndexData();
 
             // Check all list and generate chanded data for export
 
-            foreach (NPC npc in CurWoWVersion.GameObjData.STable.Values)
-                if (npc.Changed)
-                    ExportNPC(npc);
+            foreach (GameObject obj in CurWoWVersion.GameObjData.STable.Values)
+                if (obj.Changed)
+                    ExportGameObj(obj);
 
             // Reset Changed flag
             ResetChanged();
@@ -597,15 +682,16 @@ namespace BabBot.Manager
         /// Serialize the given NPC in Export directory
         /// </summary>
         /// <param name="npc"></param>
-        private static void ExportNPC(NPC npc)
+        public static void ExportGameObj(GameObject obj)
         {
+            string name = obj.Name;
             try
             {
-                Output.Instance.Log("npc", "Exporting NPC: " + npc.Name +
+                Output.Instance.Log("npc", "Exporting Game Object: " + name +
                                                 " to Data\\Export subdirectory");
                 SaveXmlData("Data" + System.IO.Path.DirectorySeparatorChar +
-                    "Export" + System.IO.Path.DirectorySeparatorChar + npc.Name + ".npc",
-                    typeof(NPC), npc);
+                    "Export" + System.IO.Path.DirectorySeparatorChar + name + ".obj",
+                    typeof(GameObject), obj);
                 Output.Instance.Log("npc", "Export successfull!!! Don't forget upload updated data to " +
                                         "BabBot forum https://sourceforge.net/apps/phpbb/babbot/");
             }

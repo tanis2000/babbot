@@ -492,6 +492,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Talents";
             this.Load += new System.EventHandler(this.TalentsForm_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TalentsForm_KeyDown);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnHelp, 0);

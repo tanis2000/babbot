@@ -65,6 +65,7 @@
             this.gbQuestList = new System.Windows.Forms.GroupBox();
             this.lbQuestList = new System.Windows.Forms.ListBox();
             this.popQuestActions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.acceptQuestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteQuestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bsFKGameObjectsQuestList = new System.Windows.Forms.BindingSource(this.components);
             this.btnAddQuest = new System.Windows.Forms.Button();
@@ -83,8 +84,6 @@
             this.cbItemList = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnEditObject = new System.Windows.Forms.Button();
-            this.acceptQuestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deliverQuestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.popGameObject.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).BeginInit();
@@ -432,22 +431,29 @@
             this.lbQuestList.Size = new System.Drawing.Size(213, 121);
             this.lbQuestList.TabIndex = 45;
             this.lbQuestList.DoubleClick += new System.EventHandler(this.lbQuestList_DoubleClick);
+            this.lbQuestList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbQuestList_KeyDown);
             // 
             // popQuestActions
             // 
             this.popQuestActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.acceptQuestToolStripMenuItem,
-            this.deliverQuestToolStripMenuItem,
             this.deleteQuestToolStripMenuItem});
             this.popQuestActions.Name = "popQuestActions";
-            this.popQuestActions.Size = new System.Drawing.Size(153, 92);
+            this.popQuestActions.Size = new System.Drawing.Size(151, 48);
             this.popQuestActions.Text = "1";
             this.popQuestActions.Opening += new System.ComponentModel.CancelEventHandler(this.popQuestActions_Opening);
+            // 
+            // acceptQuestToolStripMenuItem
+            // 
+            this.acceptQuestToolStripMenuItem.Name = "acceptQuestToolStripMenuItem";
+            this.acceptQuestToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.acceptQuestToolStripMenuItem.Text = "Accept Quest";
+            this.acceptQuestToolStripMenuItem.Click += new System.EventHandler(this.acceptQuestToolStripMenuItem_Click);
             // 
             // deleteQuestToolStripMenuItem
             // 
             this.deleteQuestToolStripMenuItem.Name = "deleteQuestToolStripMenuItem";
-            this.deleteQuestToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteQuestToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.deleteQuestToolStripMenuItem.Text = "Delete Quest";
             this.deleteQuestToolStripMenuItem.Click += new System.EventHandler(this.deleteQuestToolStripMenuItem_Click);
             // 
@@ -486,7 +492,7 @@
             this.cbServiceList.DisplayMember = "NAME";
             this.cbServiceList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbServiceList.FormattingEnabled = true;
-            this.cbServiceList.Location = new System.Drawing.Point(6, 78);
+            this.cbServiceList.Location = new System.Drawing.Point(6, 56);
             this.cbServiceList.Name = "cbServiceList";
             this.cbServiceList.Size = new System.Drawing.Size(102, 21);
             this.cbServiceList.TabIndex = 65;
@@ -500,7 +506,7 @@
             // btnMoveToNearest
             // 
             this.btnMoveToNearest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnMoveToNearest.Location = new System.Drawing.Point(6, 105);
+            this.btnMoveToNearest.Location = new System.Drawing.Point(6, 83);
             this.btnMoveToNearest.Name = "btnMoveToNearest";
             this.btnMoveToNearest.Size = new System.Drawing.Size(102, 23);
             this.btnMoveToNearest.TabIndex = 66;
@@ -512,7 +518,7 @@
             // 
             this.labelServices.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelServices.AutoSize = true;
-            this.labelServices.Location = new System.Drawing.Point(6, 62);
+            this.labelServices.Location = new System.Drawing.Point(6, 40);
             this.labelServices.Name = "labelServices";
             this.labelServices.Size = new System.Drawing.Size(43, 13);
             this.labelServices.TabIndex = 67;
@@ -537,11 +543,11 @@
             // cbLearnSkills
             // 
             this.cbLearnSkills.AutoSize = true;
-            this.cbLearnSkills.Location = new System.Drawing.Point(6, 42);
+            this.cbLearnSkills.Location = new System.Drawing.Point(9, 112);
             this.cbLearnSkills.Name = "cbLearnSkills";
-            this.cbLearnSkills.Size = new System.Drawing.Size(77, 17);
+            this.cbLearnSkills.Size = new System.Drawing.Size(102, 17);
             this.cbLearnSkills.TabIndex = 72;
-            this.cbLearnSkills.Text = "LearnSkills";
+            this.cbLearnSkills.Text = "And Learn Skills";
             this.cbLearnSkills.UseVisualStyleBackColor = true;
             // 
             // cbUseState
@@ -633,20 +639,6 @@
             this.btnEditObject.Text = "Edit";
             this.btnEditObject.UseVisualStyleBackColor = true;
             this.btnEditObject.Click += new System.EventHandler(this.btnEditObject_Click);
-            // 
-            // acceptQuestToolStripMenuItem
-            // 
-            this.acceptQuestToolStripMenuItem.Name = "acceptQuestToolStripMenuItem";
-            this.acceptQuestToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.acceptQuestToolStripMenuItem.Text = "Accept Quest";
-            this.acceptQuestToolStripMenuItem.Click += new System.EventHandler(this.acceptQuestToolStripMenuItem_Click);
-            // 
-            // deliverQuestToolStripMenuItem
-            // 
-            this.deliverQuestToolStripMenuItem.Name = "deliverQuestToolStripMenuItem";
-            this.deliverQuestToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.deliverQuestToolStripMenuItem.Text = "Deliver Quest";
-            this.deliverQuestToolStripMenuItem.Click += new System.EventHandler(this.deliverQuestToolStripMenuItem_Click);
             // 
             // GameObjectsForm
             // 
@@ -769,6 +761,5 @@
         private System.Windows.Forms.BindingSource bsFKGameObjectsQuestList;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem acceptQuestToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deliverQuestToolStripMenuItem;
     }
 }

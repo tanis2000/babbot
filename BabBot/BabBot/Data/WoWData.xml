@@ -34,19 +34,25 @@ Lots of credits to http://wowprogramming.com/
         <class armory_id="11" name="DRUID" long_name="Druid" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
     </classes>
     
-    <!-- List of characters (not NPC) races -->
+    <!-- List of major toon's factions -->
+    <factions>
+      <faction name="Alliance" />
+      <faction name="Horde" />
+    </factions>
+    
+    <!-- List of toon's (not NPC) races -->
     <races>
       <race name="NONE" long_name="" id="0" />
-      <race name="BLOODELF" long_name="Blood Elf" id="10" />
-      <race name="DRAENEI" long_name="Dranei" id="11" />
-      <race name="DWARF" long_name="Dwarf" id="3" />
-      <race name="GNOME" long_name="Gnome" id="7" />
-      <race name="HUMAN" long_name="Human" id="1" />
+      <race name="BLOODELF" faction="Horde" long_name="Blood Elf" id="10" />
+      <race name="DRAENEI" faction="Alliance" long_name="Dranei" id="11" />
+      <race name="DWARF" faction="Alliance" long_name="Dwarf" id="3" />
+      <race name="GNOME" faction="Alliance" long_name="Gnome" id="7" />
+      <race name="HUMAN" faction="Alliance" long_name="Human" id="1" />
       <race name="NIGHTELF" long_name="Night Elf" id="4" />
-      <race name="ORC" long_name="Orc" id="2" />
-      <race name="SCOURGE" long_name="Scourge" id="5" />
-      <race name="TAUREN" long_name="Tauren" id="6" />
-      <race name="TROLL" long_name="Trol" id="8" />
+      <race name="ORC" faction="Horde" long_name="Orc" id="2" />
+      <race name="SCOURGE" faction="Horde" long_name="Scourge" id="5" />
+      <race name="TAUREN" faction="Horde" long_name="Tauren" id="6" />
+      <race name="TROLL" faction="Horde" long_name="Trol" id="8" />
     </races>
     
     <!-- List of World Continents -->

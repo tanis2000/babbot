@@ -31,6 +31,9 @@ namespace BabBot.Wow
 {
     public class WowPlayer : WowUnit
     {
+        /// <summary>
+        /// Toon state machine
+        /// </summary>
         public StateMachine<WowPlayer> StateMachine { get; protected set; }
 
         private const int MAX_REACHTIME = 5000; // Milliseconds to reach the waypoint
@@ -43,16 +46,35 @@ namespace BabBot.Wow
         private bool StopMovement;
         public int TravelTime;
         public readonly List<WowUnit> MobBlackList;
-        // The continent id currently player in
+        /// <summary>
+        /// The continent id currently player in.
+        /// -1 is undefined
+        /// </summary>
         private int _continent = -1;
-        // Player class
+        /// <summary>
+        /// Toon's class (English)
+        /// </summary>
         string _class;
-        // Player race
-        string _race;
-        // Player sex
+        /// <summary>
+        /// Toon race. Race define's the faction as well
+        /// </summary>
+        Race _race;
+        /// <summary>
+        /// Toon sex
+        /// </summary>
         int _sex;
-        // Zone text where currently player in
+        /// <summary>
+        /// Zone text where currently toon in
+        /// </summary>
         string _zone;
+
+        /// <summary>
+        /// Get toon's faction.
+        /// </summary>
+        public string Faction
+        {
+            get { return _race.Faction; }
+        }
 
         /// <summary>
         /// Constructor
@@ -71,7 +93,7 @@ namespace BabBot.Wow
             //isMoving = false;
             MobBlackList = new List<WowUnit>();
 
-            //create state machine for player
+            //create toon's state machine
             StateMachine = new StateMachine<WowPlayer>(this);
         }
 
@@ -1471,8 +1493,11 @@ end)()");
                 throw new Exception("Unable retrieve character's class");
 
             _class = s[1];
-            _race = s[3];
             _sex = Convert.ToInt32(s[4]);
+
+            // Lookup race
+            _race = DataManager.CurWoWVersion.Races.FindRaceByName(s[3]);
+
         }
 
         public void AttackTarget()
