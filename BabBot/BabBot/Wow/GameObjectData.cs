@@ -129,6 +129,11 @@ namespace BabBot.Wow
             get { return "Item: " + Name; }
         }
 
+        public virtual DataManager.GameObjectTypes ObjType
+        {
+            get { return DataManager.GameObjectTypes.ITEM; }
+        }
+
         public GameObject()
             : base()
         {
@@ -141,11 +146,6 @@ namespace BabBot.Wow
         {
             ZoneText = zone;
             BasePosition = (Vector3D)wp.Clone();
-        }
-
-        public virtual DataManager.GameObjectTypes GetObjType()
-        {
-            return DataManager.GameObjectTypes.ITEM;
         }
 
         public void AddQuest(Quest qh)
@@ -166,8 +166,7 @@ namespace BabBot.Wow
             GameObject g_obj = (GameObject) obj;
 
             return ZoneText.Equals(g_obj.ZoneText) &&
-                // Service.Equals(g_obj.Service) &&
-                BasePosition.Equals(g_obj.BasePosition);
+                (BasePosition.GetDistanceTo(g_obj.BasePosition) < 5F);
         }
 
         public override int GetHashCode()
@@ -215,6 +214,11 @@ namespace BabBot.Wow
             get { return Services.Table.ContainsKey("vendor"); }
         }
 
+        public override DataManager.GameObjectTypes ObjType
+        {
+            get { return DataManager.GameObjectTypes.NPC; }
+        }
+        
         public NPC()
             : base()
         {
@@ -271,11 +275,6 @@ namespace BabBot.Wow
         public override int GetHashCode()
         {
             return base.GetHashCode();
-        }
-
-        public override DataManager.GameObjectTypes GetObjType()
-        {
-            return DataManager.GameObjectTypes.NPC;
         }
     }
 
@@ -784,7 +783,7 @@ namespace BabBot.Wow
             get 
             {
                 if (CanRepair)
-                    return DataManager.ServiceTypes.VENDOR_REPEAR;
+                    return DataManager.ServiceTypes.VENDOR_REPAIR;
                 else if (HasFood || HasDrink)
                     return DataManager.ServiceTypes.VENDOR_GROSSERY;
                 else
@@ -813,7 +812,7 @@ namespace BabBot.Wow
     #region Waypoints
 
 
-    public class WpZones : CommonIdMergeTable<ZoneWp>
+    public class WpZones : CommonTable<ZoneWp>
     {
         [XmlElement("zone")]
         public ZoneWp[] ZoneList
@@ -822,7 +821,7 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
-        public WpZones() { }
+        public WpZones() : base() { }
 
         public ZoneWp FindZoneWpByName(string name)
         {

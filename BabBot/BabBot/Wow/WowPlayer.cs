@@ -67,7 +67,10 @@ namespace BabBot.Wow
         /// Zone text where currently toon in
         /// </summary>
         string _zone;
-
+        /// <summary>
+        /// Zone text where currently toon in
+        /// </summary>
+        string _subzone;
         /// <summary>
         /// Get toon's faction.
         /// </summary>
@@ -136,6 +139,10 @@ namespace BabBot.Wow
             get { return _zone; }
         }
 
+        public string SubZoneText
+        {
+            get { return _subzone; }
+        }
 
         #region Target stats
         public uint TargetHp
@@ -1477,6 +1484,7 @@ end)()");
             {
                 _continent = Convert.ToInt32(lret[0]);
                 _zone = lret[1];
+                _subzone = lret[2];
             }
             catch
             {

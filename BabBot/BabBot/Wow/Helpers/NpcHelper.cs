@@ -24,10 +24,16 @@ namespace BabBot.Wow.Helpers
 
     }
 
-    public class NPCNotFountException : Exception
+    public class ServiceNotFountException : Exception
     {
-        public NPCNotFountException(string service)
+        public ServiceNotFountException(string service)
             : base("In toon's area no NPC found for service: " + service) {}
+    }
+
+    public class GameObjectNotFountException : Exception
+    {
+        public GameObjectNotFountException(string name)
+            : base("No Game Object found for name : " + name) {}
     }
 
     public class CantReachNpcException : Exception
@@ -187,16 +193,25 @@ namespace BabBot.Wow.Helpers
             return fparams;
         }
 
-        public static void MoveToNPC(GameObject g_obj, string lfs)
+        public static void MoveToGameObjByName(string name, string lfs)
+        {
+            GameObject obj = DataManager.CurWoWVersion.GameObjData.FindGameObjByName(name);
+            if (obj == null)
+                throw new GameObjectNotFountException(name);
+
+            MoveToGameObj(obj, lfs);
+        }
+
+        public static void MoveToGameObj(GameObject obj, string lfs)
         {
             WowPlayer player = ProcessManager.Player;
 
             Output.Instance.Debug(lfs, "Checking coordinates for Game Object. " +
-                g_obj.Name + " ...");
+                obj.Name + " ...");
 
             // Check if NPC located in the same zone
             int cid = 0;
-            string zone_text = g_obj.ZoneText;
+            string zone_text = obj.ZoneText;
             try
             {
                 cid = DataManager.ZoneList[zone_text].ContinentId;
@@ -208,22 +223,22 @@ namespace BabBot.Wow.Helpers
 
             // Check if NPC has coordinates in the same continent
             if (cid != player.ContinentID)
-                throw new CantReachNpcException(g_obj.Name, 
+                throw new CantReachNpcException(obj.Name, 
                         "NPC located on different continent.");
             else if (!zone_text.Equals(player.ZoneText))
                 new MultiZoneNotSupportedException();
 
             // Check if NPC has any waypoints assigned
-            if (!g_obj.BasePosition.IsValid())
-                throw new CantReachNpcException(g_obj.Name, 
+            if (!obj.BasePosition.IsValid())
+                throw new CantReachNpcException(obj.Name, 
                     "NPC doesn't have any waypoints assigned. " +
                     "Check NPCData.xml and try again.");
 
             // By default check the base position
-            Output.Instance.Debug(lfs, "Usning NPC waypoint: " + g_obj.BasePosition);
+            Output.Instance.Debug(lfs, "Usning NPC waypoint: " + obj.BasePosition);
 
-            if (!MoveToDest(g_obj.BasePosition, lfs))
-                throw new CantReachNpcException(g_obj.Name, "NPC still away after " +
+            if (!MoveToDest(obj.BasePosition, lfs))
+                throw new CantReachNpcException(obj.Name, "NPC still away after " +
                     (ProcessManager.AppConfig.MaxTargetGetRetries + 1) + " tries");
         }
 
@@ -754,7 +769,7 @@ namespace BabBot.Wow.Helpers
         {
             NpcDest dest = FindNearestService(service);
             if (dest == null)
-                throw new NPCNotFountException(service);
+                throw new ServiceNotFountException(service);
 
             // Move to NPC
             // If it failed it throw exception. I know :)
@@ -775,9 +790,37 @@ namespace BabBot.Wow.Helpers
             string player_zone = (string) ProcessManager.Player.ZoneText;
             Vector3D loc = (Vector3D) ProcessManager.Player.Location.Clone();
 
-            foreach (NPC npc in DataManager.CurWoWVersion.GameObjData.STable.Values)
-                if (npc.Services.Table.ContainsKey(service))
-                    list.Add(npc);
+            // First check if service local
+            try
+            {
+                ZoneServices local_srv = DataManager.ZoneList[player_zone];
+
+                if (local_srv != null)
+                {
+                    // Now check if service local
+                    list = local_srv.LocalServices[service];
+                }
+            } catch 
+            {
+                // Its not local service
+            }
+
+            
+            
+            if (list == null)
+            {
+                // Otherwise look the whole list
+                foreach (GameObject obj in DataManager.CurWoWVersion.GameObjData.STable.Values)
+                {
+                    if (obj.ObjType == DataManager.GameObjectTypes.ITEM)
+                        continue;
+
+                    NPC npc = (NPC)obj;
+
+                    if (npc.Services.Table.ContainsKey(service))
+                        list.Add(npc);
+                }
+            }
 
             if (list.Count == 0)
                 return null;
@@ -802,7 +845,7 @@ namespace BabBot.Wow.Helpers
                     dist = d1;
                 } 
 
-                foreach (ZoneWp z in npc.Coordinates.Items)
+                foreach (ZoneWp z in npc.Coordinates.Table.Values)
                 {
                     if (!z.Name.Equals(player_zone))
                         continue;

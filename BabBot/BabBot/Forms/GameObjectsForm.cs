@@ -56,6 +56,7 @@ namespace BabBot.Forms
             bsGameObjects.DataSource = DataManager.GameData;
             bsServiceTypesFull.DataSource = DataManager.GameData;
             bsServiceTypesFiltered.DataSource = DataManager.GameData;
+            bsZoneList.DataSource = DataManager.GameData;
 
 #if DEBUG
             if (ProcessManager.Config.Test == 1)
@@ -169,7 +170,14 @@ namespace BabBot.Forms
             {
                 NPC npc = NpcHelper.AddNpc("npc");
                 if (npc != null)
+                {
+                    // Check for duplication
+                    int idx = bsGameObjects.Find("NAME", npc.Name);
+                    if (idx >= 0)
+                        ((DataView)((DataRowView)bsGameObjects.Current).DataView).Delete(idx);
                     DataManager.AddGameObject(npc);
+                    SelectGameObj(npc);
+                }
             }
             catch (Exception ex)
             {
@@ -177,23 +185,66 @@ namespace BabBot.Forms
             }
         }
 
+        private void SelectGameObj(GameObject obj)
+        {
+            lbGameObjList.SelectedIndex = bsGameObjects.Find("NAME", obj.Name);
+        }
+
+        private bool CheckGameObjSelected()
+        {
+            if (lbGameObjList.SelectedItem == null)
+            {
+                ShowErrorMessage("No NPC Selected");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void moveToObjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!CheckGameObjSelected())
+                return;
+            
+            if (!CheckInGame())
+                return;
+
+            try
+            {
+                NpcHelper.MoveToGameObjByName(GetCurrentRow().NAME, "npc");
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex);
+            }
+        }
+
         private void btnMoveToNearest_Click(object sender, EventArgs e)
         {
-            if (!CheckBeforeNpcTest())
+            if (!CheckInGame())
                 return;
+
+            if (cbServiceList.SelectedItem == null)
+            {
+                ShowErrorMessage("No services selected");
+                return;
+            }
 
             // Find nearest class trainer
             try
             {
+                BotDataSet.ServiceTypesRow srv_row = (BotDataSet.ServiceTypesRow)
+                                            ((DataRowView)cbServiceList.SelectedItem).Row;
                 btnMoveToNearest.Enabled = false;
-                NPC npc = NpcHelper.MoveInteractService(cbServiceList.SelectedItem.ToString(), "npc");
-                // TODO Flash found npc
-                // labelNPC.Tag = npc;
-                // labelNPC.Text = "NPC: " + npc.Name;
+                NPC npc = NpcHelper.MoveInteractService(srv_row.NAME, "npc");
+
+                // Select found npc
+                if (npc != null)
+                    SelectGameObj(npc);
             }
             catch (Exception ex)
             {
-                ShowErrorMessage("Service Move Error: " + ex.Message);
+                ShowErrorMessage(ex);
             }
             finally
             {
@@ -283,7 +334,7 @@ namespace BabBot.Forms
             if (lbActiveServices.SelectedItem == null)
                 return;
 
-            ((DataRowView)bsFKGameObjectsNpcServices.Current).Delete();
+            ((DataRowView)fkGameObjectsNpcServices.Current).Delete();
 
             IsChanged = true;
         }
@@ -319,7 +370,7 @@ namespace BabBot.Forms
             catch (Exception ex)
             {
                 // Keep edit state
-                ShowErrorMessage(ex.Message);
+                ShowErrorMessage(ex);
             }
         }
 
@@ -331,10 +382,16 @@ namespace BabBot.Forms
             if (row == null)
                 return;
 
-            int type = row.TYPE_ID;
+            if (btnSave.Enabled)
+            {
+                // we are in edit mode
+                if (MessageBox.Show("Are you sure cancel changes ?",
+                    "Confirmation", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Exclamation) == DialogResult.No) { }
+                    // Select previous record
+            }
 
-            btnAddAsTargetCoord.Enabled = type == (int) DataManager.GameObjectTypes.NPC;
-            btnAddAsPlayerCoord.Enabled = type == (int) DataManager.GameObjectTypes.ITEM;
+            cbPlayerTarget.SelectedIndex = row.TYPE_ID;
         }
 
         private void lbGameObjectList_KeyDown(object sender, KeyEventArgs e)
@@ -353,7 +410,7 @@ namespace BabBot.Forms
 
         private void DeleteSelectedObject()
         {
-            if (lbGameObjList.SelectedItem == null)
+            if (!CheckGameObjSelected())
                 return;
 
             // Possible multi selection
@@ -427,7 +484,7 @@ namespace BabBot.Forms
             if (lbQuestList.SelectedItem == null)
                 return;
 
-            ((DataRowView)bsFKGameObjectsQuestList.Current).Delete();
+            ((DataRowView)fkGameObjectsQuestList.Current).Delete();
 
             IsChanged = true;
         }
@@ -463,7 +520,7 @@ namespace BabBot.Forms
 
             if (q == null)
             {
-                ShowErrorMessage("Quest '" + qrow.NAME + "' not found");
+                ShowErrorMessage("Quest '" + qrow.TITLE + "' not found");
                 return null;
             }
 
@@ -486,11 +543,11 @@ namespace BabBot.Forms
             }
             catch (QuestProcessingException qe)
             {
-                ShowErrorMessage("Quest processing error - " + qe.Message);
+                ShowErrorMessage("Quest processing error: " + qe.Message);
             }
             catch (Exception ex)
             {
-                ShowErrorMessage("Exception: " + ex.Message);
+                ShowErrorMessage(ex);
             }
         }
 
@@ -521,13 +578,19 @@ namespace BabBot.Forms
         {
             if (lbCoordinates.SelectedItem == null)
                 return;
-            else if (lbCoordinates.Items.Count == 1)
+            else if ((cbCoordZone.Items.Count == 1) && (lbCoordinates.Items.Count == 1))
             {
                 ShowErrorMessage("The base object coordinates cannot be deleted");
                 return;
             }
 
-            ((DataRowView)bsFKGameObjectsCoordinates.Current).Delete();
+            ((DataRowView)fKCoordinatesZoneCoordinates.Current).Delete();
+            
+            // If no other coordinates delete zone too
+            BotDataSet.CoordinatesDataTable coord_table = 
+                (BotDataSet.CoordinatesDataTable) fKCoordinatesZoneCoordinates.DataSource;
+
+            // TODO
 
             IsChanged = true;
         }
@@ -538,27 +601,45 @@ namespace BabBot.Forms
                             (lbCoordinates.SelectedItem != null);
         }
 
-        private void btnAddAsPlayerCoord_Click(object sender, EventArgs e)
+        private void btnAddPlayerTargetCoord_Click(object sender, EventArgs e)
+        {
+            if (cbPlayerTarget.SelectedIndex == 0)
+                // Add player coord
+                AddAsPlayerCoord();
+            else if (cbPlayerTarget.SelectedIndex == 1)
+                AddAsTargetCoord();
+
+        }
+
+        private void AddAsPlayerCoord()
         {
             if (!CheckInGame())
                 return;
 
-            AddGameObjCoord(ProcessManager.Player.Location);
+            AddGameObjCoord(ProcessManager.Player.ZoneText, 
+                                            ProcessManager.Player.Location);
         }
 
-        private void btnAddAsTargetCoord_Click(object sender, EventArgs e)
+        private void AddAsTargetCoord()
         {
             if (!CheckTarget())
                 return;
 
-            AddGameObjCoord(ProcessManager.Player.CurTarget.Location);
+            AddGameObjCoord(ProcessManager.Player.ZoneText, 
+                                    ProcessManager.Player.CurTarget.Location);
         }
 
         private void btnAddCoord_Click(object sender, EventArgs e)
         {
+            if (cbAllZones.SelectedItem == null)
+            {
+                ShowErrorMessage("Zone not selected");
+                return;
+            }
+
             try
             {
-                AddGameObjCoord(Convert.ToDecimal(tbX.Text),
+                AddGameObjCoord(cbAllZones.Text, Convert.ToDecimal(tbX.Text),
                     Convert.ToDecimal(tbY.Text), Convert.ToDecimal(tbZ.Text));
 
                 tbX.Text = String.Empty;
@@ -575,16 +656,16 @@ namespace BabBot.Forms
             }
             catch (Exception ex)
             {
-                ShowErrorMessage(ex.Message);
+                ShowErrorMessage(ex);
             }
         }
 
-        private void AddGameObjCoord(Vector3D v)
+        private void AddGameObjCoord(string zone, Vector3D v)
         {
-            AddGameObjCoord((decimal)v.X, (decimal)v.Y, (decimal)v.Z);
+            AddGameObjCoord(zone, (decimal)v.X, (decimal)v.Y, (decimal)v.Z);
         }
 
-        private void AddGameObjCoord(decimal x, decimal y, decimal z)
+        private void AddGameObjCoord(string zone, decimal x, decimal y, decimal z)
         {
             // Check if new coord not too close
             foreach (DataRowView c in lbCoordinates.Items)
@@ -600,9 +681,20 @@ namespace BabBot.Forms
                 }
             }
 
-            // TODO
-            DataManager.GameData.Coordinates.AddCoordinatesRow(
-                GetCurrentRow(), "", x, y, z);
+            // Check if zone exists
+            object zx = cbCoordZone.Items;
+            DataView view = ((DataRowView)fKGameObjectsCoordinatesZone.Current).DataView;
+            
+            DataRowView[] rows = view.FindRows(zone);
+
+            BotDataSet.CoordinatesZoneRow zone_row = null;
+            if (rows.Length == 0)
+                zone_row = DataManager.GameData.CoordinatesZone.
+                    AddCoordinatesZoneRow(GetCurrentRow(), zone);
+            else
+                zone_row = (BotDataSet.CoordinatesZoneRow) rows[0].Row;
+
+            DataManager.GameData.Coordinates.AddCoordinatesRow(zone_row, x, y, z);
 
 
             // Select last row
@@ -615,6 +707,9 @@ namespace BabBot.Forms
 
         private void btnEditObject_Click(object sender, EventArgs e)
         {
+            if (!CheckGameObjSelected())
+                return;
+
             SetEditControls(true);
             btnClose.Text = "Cancel";
             tbName.TextChanged += tbName_TextChanged;
@@ -630,6 +725,8 @@ namespace BabBot.Forms
             // Group Boxes
             gbQuestList.Enabled = !enabled;
             gbCoordinates.Enabled = !enabled;
+            gbAddCoord.Enabled = !enabled;
+            gbAutoAdd.Enabled = !enabled;
 
             // Combo Boxes
             cbItemList.Enabled = !enabled;
@@ -641,7 +738,6 @@ namespace BabBot.Forms
             btnAddNPC.Enabled = !enabled;
             btnAddItem.Enabled = !enabled;
             btnAddService.Enabled = !enabled;
-            btnAddAsPlayerCoord.Enabled = !enabled;
             btnEditObject.Enabled = !enabled;
 
             // ListBoxes
@@ -671,7 +767,7 @@ namespace BabBot.Forms
         {
             // Set filter on available services
             BotDataSet.GameObjectsRow current = GetCurrentRow();
-            DataRowView srv = (DataRowView)bsFKGameObjectsNpcServices.Current;
+            DataRowView srv = (DataRowView)fkGameObjectsNpcServices.Current;
             bsServiceTypesFiltered.Filter = "";
 
             if (srv == null)
@@ -694,6 +790,36 @@ namespace BabBot.Forms
         private void btnAddItem_Click(object sender, EventArgs e)
         {
             ShowErrorMessage("Not implemented yet");
+        }
+
+        private void GameObjectsForm_Activated(object sender, EventArgs e)
+        {
+            SetControls(lbGameObjList.Items.Count > 0);
+        }
+
+        private void SetControls(bool enabled)
+        {
+            gbAddCoord.Enabled = enabled;
+            gbCoordinates.Enabled = enabled;
+            gbDescription.Enabled = enabled;
+            gbQuestList.Enabled = enabled;
+            gbAutoAdd.Enabled = enabled;
+        }
+
+        private void cbCoordZone_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cbAllZones.Text = cbCoordZone.Text;
+        }
+
+        private void popGameObject_Opening(object sender, CancelEventArgs e)
+        {
+            moveToObjectToolStripMenuItem.Text = "Move To"; 
+
+            if (!CheckGameObjSelected())
+                return;
+
+            moveToObjectToolStripMenuItem.Text += " '" + GetCurrentRow().NAME + "'"; 
+
         }
     }
 }

@@ -167,7 +167,7 @@ namespace BabBot.Manager
             TRADE_SKILL_TRAINER = 5,
             VENDOR_REGULAR = 6,
             VENDOR_GROSSERY = 7,
-            VENDOR_REPEAR = 8,
+            VENDOR_REPAIR = 8,
             WEP_SKILL_TRAINER = 9,
         }
 
@@ -358,22 +358,25 @@ namespace BabBot.Manager
                 throw new ZoneNotFoundException(g.ZoneText);
 
             string faction = null;
-            if (g.GetObjType() == GameObjectTypes.NPC)
+            if (g.ObjType == GameObjectTypes.NPC)
                 faction = ((NPC) g).Faction;
 
-            BotDataSet.GameObjectsRow gobj_row = GameData.
+            BotDataSet.GameObjectsRow obj_row = GameData.
                         GameObjects.AddGameObjectsRow(
                             GameData.GameObjectTypes.FindByID((int)
-                                    g.GetObjType()), g.Name, z, faction);
+                                    g.ObjType), g.Name, z, faction);
 
             // Add base coordinates
-            GameData.Coordinates.Rows.Add(gobj_row.ID, g.X, g.Y, g.Z);
+            BotDataSet.CoordinatesZoneRow cz_row = GameData.CoordinatesZone.
+                AddCoordinatesZoneRow(obj_row, g.ZoneText);
+
+            GameData.Coordinates.AddCoordinatesRow(cz_row, (decimal)g.X, (decimal)g.Y, (decimal)g.Z);
 
             // Add quests
             foreach (Quest q in g.QuestList.Table.Values)
             {
                 BotDataSet.QuestListRow qrow = GameData.QuestList.
-                    AddQuestListRow(q.Id, gobj_row, q.Name,
+                    AddQuestListRow(q.Id, obj_row, q.Title,
                     q.GreetingText, q.ObjectivesText, g.Name, 
                     q.DestName, q.Level, q.Link, q.BonusSpell);
 
@@ -411,14 +414,20 @@ namespace BabBot.Manager
             }
 
 
-            if (g.GetObjType() == GameObjectTypes.NPC)
+            if (g.ObjType == GameObjectTypes.NPC)
             {
                 NPC npc = (NPC)g;
 
                 // Add other coordinates
                 foreach (ZoneWp coord in npc.Coordinates.Table.Values)
+                {
+                    cz_row = GameData.CoordinatesZone.
+                        AddCoordinatesZoneRow(obj_row, coord.Name);
+
                     foreach (Vector3D v in coord.List)
-                        GameData.Coordinates.Rows.Add(gobj_row.ID, v.X, v.Y, v.Z);
+                        GameData.Coordinates.AddCoordinatesRow(cz_row, 
+                                        (decimal)v.X, (decimal)v.Y, (decimal)v.Z);
+                }
 
                 // Add Services
                 foreach (NPCService srv in npc.Services.Table.Values)
@@ -427,11 +436,11 @@ namespace BabBot.Manager
                     BotDataSet.ServiceTypesRow srv_row =
                         GameData.ServiceTypes.FindByID((int)srv.SrvType);
 
-                    GameData.NpcServices.AddNpcServicesRow(gobj_row, srv_row, srv_row.NAME);
+                    GameData.NpcServices.AddNpcServicesRow(obj_row, srv_row, srv_row.NAME);
                 }
             }
 
-            return gobj_row;
+            return obj_row;
         }
 
         internal static void ClearXml()
@@ -594,7 +603,7 @@ namespace BabBot.Manager
             DataRow[] qrows = GameData.QuestList.Select("GID=" + row.ID);
             foreach (BotDataSet.QuestListRow qrow in qrows)
             {
-                Quest q = new Quest(qrow.ID, qrow.NAME, qrow.GREETING_TEXT,
+                Quest q = new Quest(qrow.ID, qrow.TITLE, qrow.GREETING_TEXT,
                         qrow.OBJECTIVES_TEXT, qrow.LEVEL, qrow.BONUS_SPELL, qrow.LINK);
 
                 for (int i = 0; i < q.QuestItemSeq.Length; i++)
@@ -743,6 +752,11 @@ namespace BabBot.Manager
     {
         public readonly int ContinentId;
 
+        /// <summary>
+        /// List of all local (zone) services
+        /// </summary>
+        public readonly Dictionary<string, List<NPC>> LocalServices =
+                                new Dictionary<string, List<NPC>>();
         public readonly List<NPC> TaxiServices;
         public readonly List<NPC> InnServices;
         public readonly List<NPC> RepairServices;
@@ -759,6 +773,17 @@ namespace BabBot.Manager
             RepairServices = new List<NPC>();
             GrosseryServices = new List<NPC>();
             VendorServices = new List<NPC>();
+
+            LocalServices.Add(Enum.GetName(typeof(DataManager.ServiceTypes), 
+                DataManager.ServiceTypes.TAXI).ToLower(), TaxiServices);
+            LocalServices.Add(Enum.GetName(typeof(DataManager.ServiceTypes),
+                DataManager.ServiceTypes.INN).ToLower(), InnServices);
+            LocalServices.Add(Enum.GetName(typeof(DataManager.ServiceTypes),
+                 DataManager.ServiceTypes.VENDOR_REPAIR).ToLower(), RepairServices);
+            LocalServices.Add(Enum.GetName(typeof(DataManager.ServiceTypes),
+                DataManager.ServiceTypes.VENDOR_GROSSERY).ToLower(), GrosseryServices);
+            LocalServices.Add(Enum.GetName(typeof(DataManager.ServiceTypes),
+                DataManager.ServiceTypes.VENDOR_REGULAR).ToLower(), VendorServices);
         }
 
         public void AddService(NPC npc)

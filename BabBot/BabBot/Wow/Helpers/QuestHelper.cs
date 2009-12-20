@@ -108,19 +108,19 @@ namespace BabBot.Wow.Helpers
             string qt = q.Title;
 
             // Get quest npc
-            GameObject g_obj = q.GameObjList[req.NpcId];
-            if (g_obj == null)
+            GameObject obj = q.GameObjList[req.NpcId];
+            if (obj == null)
                 throw new QuestSkipException(
                     "Quest " + req.NpcDestText + " NPC not found for quest '" + qt);
 
-            Output.Instance.Log(lfs, "Located NPC '" + g_obj.Name +
+            Output.Instance.Log(lfs, "Located NPC '" + obj.Name +
                 "' as quest " + req.NpcDestText + " for quest '" + qt + "'");
 
             try
             {
                 Output.Instance.Log(lfs, "Moving to quest " +
                                     req.NpcDestText + " ... ");
-                NpcHelper.MoveToNPC(g_obj, lfs);
+                NpcHelper.MoveToGameObj(obj, lfs);
             }
             catch (CantReachNpcException e1)
             {
@@ -133,13 +133,13 @@ namespace BabBot.Wow.Helpers
 
             Output.Instance.Debug(lfs, "Reached the quest " +
                                             req.NpcDestText + ".");
-            if (!LuaHelper.TargetUnitByName(g_obj.Name))
+            if (!LuaHelper.TargetUnitByName(obj.Name))
                 throw new QuestSkipException("Unable target NPC");
 
             string[] dinfo;
             try
             {
-                dinfo = NpcHelper.InteractNpc(g_obj.Name, false, lfs);
+                dinfo = NpcHelper.InteractNpc(obj.Name, false, lfs);
             }
             catch (NpcInteractException ne)
             {
@@ -245,7 +245,7 @@ namespace BabBot.Wow.Helpers
                 string[] headers = dinfo[1].Split(new string[] { 
                                         "::" }, StringSplitOptions.None);
 
-                string title = headers[1];
+                string title = headers[0];
                 return (!string.IsNullOrEmpty(title) && title.Equals(q.Title));
             }
             else if (cur_service.Equals("quest_progress"))

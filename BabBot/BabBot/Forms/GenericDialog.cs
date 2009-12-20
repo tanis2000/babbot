@@ -101,6 +101,12 @@ namespace BabBot.Forms
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        protected void ShowErrorMessage(Exception e)
+        {
+            MessageBox.Show(this, "Caught exception " + e.GetType() + ": " + e.Message, 
+                "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         protected void ShowInfoMessage(string info)
         {
             MessageBox.Show(this, info, "INFO",

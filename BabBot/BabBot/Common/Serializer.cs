@@ -629,34 +629,6 @@ namespace BabBot.Common
     }
 
     /// <summary>
-    /// Class with internal hashtable that needs to be serialized and have a unique id
-    /// </summary>
-    /// <typeparam name="T">Type of elements in the table</typeparam>
-    public abstract class CommonIdMergeTable<T> : CommonTable<T> where T : IMergeable
-    {
-        [XmlAttribute("id")]
-        public int Id;
-
-        public CommonIdMergeTable() { }
-
-        public CommonIdMergeTable(int id)
-            : base()
-        {
-            Id = id;
-        }
-
-        public override string ToString()
-        {
-            return Id.ToString();
-        }
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj) && (((CommonIdMergeTable<T>)obj).Id == Id);
-        }
-    }
-
-    /// <summary>
     /// Class with internal list (sorted or not) that needs to be serialized
     /// Used for elements like list of zones or waypoints 
     /// Used by: Continent, Zone

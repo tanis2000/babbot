@@ -1,5 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <game_object_data version="0">
-  <wow_version name="3.2.2.10505" />
+  <wow_version name="3.2.2.10505">
+    <game_object d3p1:type="NPC" name="Alyissia" zone="Teldrassil" x="10526.6" y="778.086" z="1329.59937" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Andiss" zone="Teldrassil" x="10479.2" y="826.638" z="1322.74512" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
+      </services>
+    </game_object>
+    <game_object d3p1:type="NPC" name="Ayanna Everstride" zone="Teldrassil" x="10458.5" y="827.868" z="1380.93921" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Conservator Ilthalaine" zone="Teldrassil" x="10328.9" y="826.052" z="1326.38" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests>
+        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" idx="0" dest_name="">
+          <text><![CDATA[Greetings, Fediia.  I am Conservator Ilthalaine.  My purpose in Shadowglen is to ensure that the balance of nature is maintained.
+
+The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
+
+Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young priest, and thin the boar and saber populations so that nature's harmony will be preserved.]]></text>
+          <objectives>
+            <objective d3p1:type="MonsterQuestObjective" type="monster" name="Young Nightsaber slain" qty="7" />
+            <objective d3p1:type="MonsterQuestObjective" type="monster" name="Young Thistle Boar slain" qty="4" />
+          </objectives>
+          <choice_items>
+            <item name="Archery Training Gloves" qty="1" />
+            <item name="Stemleaf Bracers" qty="1" />
+          </choice_items>
+          <objectives_text><![CDATA[Kill 7 Young Nightsabers and 4 Young Thistle Boars and return to Conservator Ilthalaine.]]></objectives_text>
+        </quest>
+      </quests>
+      <coordinates />
+      <services />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Dellylah" zone="Teldrassil" x="10450.2" y="779.858" z="1322.67" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="false" has_drink="true" has_food="true" />
+      </services>
+    </game_object>
+    <game_object d3p1:type="NPC" name="Frahun Shadewhisper" zone="Teldrassil" x="10519.1" y="778.014" z="1329.59924" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Freja Nightwing" zone="Teldrassil" x="10485.9" y="811.184" z="1322.74512" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
+      </services>
+    </game_object>
+    <game_object d3p1:type="NPC" name="Janna Brightmoon" zone="Teldrassil" x="10438.1" y="787.295" z="1337.286" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
+      </services>
+    </game_object>
+    <game_object d3p1:type="NPC" name="Keina" zone="Teldrassil" x="10436.7" y="794.837" z="1322.70386" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
+      </services>
+    </game_object>
+    <game_object d3p1:type="NPC" name="Khardan Proudblade" zone="Teldrassil" x="10485" y="824.842" z="1322.74463" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
+      </services>
+    </game_object>
+    <game_object d3p1:type="NPC" name="Lyrai" zone="Teldrassil" x="10442.9" y="783.989" z="1337.28577" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="false" has_drink="true" has_food="true" />
+      </services>
+    </game_object>
+    <game_object d3p1:type="NPC" name="Mardant Strongoak" zone="Teldrassil" x="10464" y="829.538" z="1380.93945" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Melithar Staghelm" zone="Teldrassil" x="10389.8" y="763.477" z="1319.95337" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests>
+        <quest name="The Woodland Protector" id="458" link="|cffffff00|Hquest:458:1|h[The Woodland Protector]|h|r" level="1" bonus_spell="" idx="0" dest_name="">
+          <text><![CDATA[Thank goodness you are here, priest. Strange news has traveled to me through the whisperings of the forest spirits.
+
+The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
+
+Seek out Tarindrella and see what business she tends to in our grove. One of the Sentinels reported seeing her to the southwest of Aldrassil.]]></text>
+          <objectives_text><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives_text>
+        </quest>
+      </quests>
+      <coordinates />
+      <services />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Shanda" zone="Teldrassil" x="10458.8" y="801.623" z="1346.75476" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="ClassTrainingService" name="class_trainer" class="PRIEST" />
+      </services>
+    </game_object>
+  </wow_version>
   <wow_version name="3.3.0.11159" />
 </game_object_data>

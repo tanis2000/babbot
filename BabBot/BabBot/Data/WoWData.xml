@@ -61,9 +61,13 @@ Lots of credits to http://wowprogramming.com/
       <continent id="1" name="Kalimdor">
         <zone name="Teldrassil" />  
       </continent>
-      <continent id="2" name="Azeroth" />
-      <continent id="3" name="Expansion01" />
-      <continent id="4" name="Northrend" />
+      <continent id="2" name="Azeroth">
+        <zone name="Elwynn Forest" />
+      </continent>
+      <continent id="3" name="Expansion01">
+      </continent>
+      <continent id="4" name="Northrend">
+      </continent>
     </continents>
 
     <!-- Lua Functions -->
@@ -974,17 +978,18 @@ end)()]]>
       <!-- GetCurrentMapInfo -->
       <function name="GetCurrentMapInfo">
         <parameters />
-        <return size="2">
+        <return size="3">
           0 - Continent ID
-          1 - zoneName
-          String - zone name (localized).
+          1 - zoneName - String - zone name (localized).
+          2 - subzone name (might be empty
         </return>
         <text>
           <![CDATA[(function()
 	SetMapToCurrentZone()
 	local continent = GetCurrentMapContinent()
   local zone = GetZoneText()
-	return continent, zone
+  local subzone = GetSubZoneText();
+	return continent, zone, subzone
 end)()]]>
         </text>
       </function>
