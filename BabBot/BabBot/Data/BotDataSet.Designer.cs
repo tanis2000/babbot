@@ -53,15 +53,13 @@ namespace BabBot.Data {
         
         private global::System.Data.DataRelation relationFK_QuestList_QuestItems;
         
-        private global::System.Data.DataRelation relationFK_QuestItems_QuestItemType;
+        private global::System.Data.DataRelation relationFK_ZoneList_GameObjects;
         
         private global::System.Data.DataRelation relationFK_GameObjectTypes_GameObjects;
         
-        private global::System.Data.DataRelation relationFK_ZoneList_GameObjects;
+        private global::System.Data.DataRelation relationFK_ServiceTypes_NpcServices;
         
         private global::System.Data.DataRelation relationFK_GameObjects_NpcServices;
-        
-        private global::System.Data.DataRelation relationFK_ServiceTypes_NpcServices;
         
         private global::System.Data.DataRelation relationFK_GameObjects_Coordinates;
         
@@ -438,11 +436,10 @@ namespace BabBot.Data {
             this.relationFK_ZoneList_ZoneServices = this.Relations["FK_ZoneList_ZoneServices"];
             this.relationFK_GameObjects_QuestList = this.Relations["FK_GameObjects_QuestList"];
             this.relationFK_QuestList_QuestItems = this.Relations["FK_QuestList_QuestItems"];
-            this.relationFK_QuestItems_QuestItemType = this.Relations["FK_QuestItems_QuestItemType"];
-            this.relationFK_GameObjectTypes_GameObjects = this.Relations["FK_GameObjectTypes_GameObjects"];
             this.relationFK_ZoneList_GameObjects = this.Relations["FK_ZoneList_GameObjects"];
-            this.relationFK_GameObjects_NpcServices = this.Relations["FK_GameObjects_NpcServices"];
+            this.relationFK_GameObjectTypes_GameObjects = this.Relations["FK_GameObjectTypes_GameObjects"];
             this.relationFK_ServiceTypes_NpcServices = this.Relations["FK_ServiceTypes_NpcServices"];
+            this.relationFK_GameObjects_NpcServices = this.Relations["FK_GameObjects_NpcServices"];
             this.relationFK_GameObjects_Coordinates = this.Relations["FK_GameObjects_Coordinates"];
         }
         
@@ -483,16 +480,16 @@ namespace BabBot.Data {
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneServices_ServiceTypes", new global::System.Data.DataColumn[] {
-                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableZoneServices.SERVICE_IDColumn});
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneList_ZoneServices", new global::System.Data.DataColumn[] {
+                        this.tableZoneList.NAMEColumn}, new global::System.Data.DataColumn[] {
+                        this.tableZoneServices.ZONE_NAMEColumn});
             this.tableZoneServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneList_ZoneServices", new global::System.Data.DataColumn[] {
-                        this.tableZoneList.NAMEColumn}, new global::System.Data.DataColumn[] {
-                        this.tableZoneServices.ZONE_NAMEColumn});
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneServices_ServiceTypes", new global::System.Data.DataColumn[] {
+                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableZoneServices.SERVICE_IDColumn});
             this.tableZoneServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
@@ -504,17 +501,24 @@ namespace BabBot.Data {
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.Cascade;
             fkc.DeleteRule = global::System.Data.Rule.Cascade;
             fkc.UpdateRule = global::System.Data.Rule.None;
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_QuestItemType_QuestItems", new global::System.Data.DataColumn[] {
+                        this.tableQuestItemType.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableQuestItems.ITEM_TYPE_IDColumn});
+            this.tableQuestItems.Constraints.Add(fkc);
+            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
+            fkc.DeleteRule = global::System.Data.Rule.None;
+            fkc.UpdateRule = global::System.Data.Rule.None;
             fkc = new global::System.Data.ForeignKeyConstraint("FK_QuestList_QuestItems", new global::System.Data.DataColumn[] {
                         this.tableQuestList.IDColumn}, new global::System.Data.DataColumn[] {
                         this.tableQuestItems.QIDColumn});
             this.tableQuestItems.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
-            fkc.DeleteRule = global::System.Data.Rule.None;
+            fkc.DeleteRule = global::System.Data.Rule.Cascade;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_QuestItems_QuestItemType", new global::System.Data.DataColumn[] {
-                        this.tableQuestItemType.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableQuestItems.ITEM_TYPE_IDColumn});
-            this.tableQuestItems.Constraints.Add(fkc);
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneList_GameObjects", new global::System.Data.DataColumn[] {
+                        this.tableZoneList.NAMEColumn}, new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.ZONE_NAMEColumn});
+            this.tableGameObjects.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
@@ -525,23 +529,16 @@ namespace BabBot.Data {
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.None;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ZoneList_GameObjects", new global::System.Data.DataColumn[] {
-                        this.tableZoneList.NAMEColumn}, new global::System.Data.DataColumn[] {
-                        this.tableGameObjects.ZONE_NAMEColumn});
-            this.tableGameObjects.Constraints.Add(fkc);
-            fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
-            fkc.DeleteRule = global::System.Data.Rule.None;
-            fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_GameObjects_NpcServices", new global::System.Data.DataColumn[] {
-                        this.tableGameObjects.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableNpcServices.GIDColumn});
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_ServiceTypes_NpcServices", new global::System.Data.DataColumn[] {
+                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableNpcServices.SERVICE_IDColumn});
             this.tableNpcServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.Cascade;
             fkc.UpdateRule = global::System.Data.Rule.None;
-            fkc = new global::System.Data.ForeignKeyConstraint("FK_ServiceTypes_NpcServices", new global::System.Data.DataColumn[] {
-                        this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableNpcServices.SERVICE_IDColumn});
+            fkc = new global::System.Data.ForeignKeyConstraint("FK_GameObjects_NpcServices", new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableNpcServices.GIDColumn});
             this.tableNpcServices.Constraints.Add(fkc);
             fkc.AcceptRejectRule = global::System.Data.AcceptRejectRule.None;
             fkc.DeleteRule = global::System.Data.Rule.Cascade;
@@ -565,26 +562,22 @@ namespace BabBot.Data {
                         this.tableQuestList.IDColumn}, new global::System.Data.DataColumn[] {
                         this.tableQuestItems.QIDColumn}, false);
             this.Relations.Add(this.relationFK_QuestList_QuestItems);
-            this.relationFK_QuestItems_QuestItemType = new global::System.Data.DataRelation("FK_QuestItems_QuestItemType", new global::System.Data.DataColumn[] {
-                        this.tableQuestItemType.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableQuestItems.ITEM_TYPE_IDColumn}, false);
-            this.Relations.Add(this.relationFK_QuestItems_QuestItemType);
-            this.relationFK_GameObjectTypes_GameObjects = new global::System.Data.DataRelation("FK_GameObjectTypes_GameObjects", new global::System.Data.DataColumn[] {
-                        this.tableGameObjectTypes.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableGameObjects.TYPE_IDColumn}, false);
-            this.Relations.Add(this.relationFK_GameObjectTypes_GameObjects);
             this.relationFK_ZoneList_GameObjects = new global::System.Data.DataRelation("FK_ZoneList_GameObjects", new global::System.Data.DataColumn[] {
                         this.tableZoneList.NAMEColumn}, new global::System.Data.DataColumn[] {
                         this.tableGameObjects.ZONE_NAMEColumn}, false);
             this.Relations.Add(this.relationFK_ZoneList_GameObjects);
-            this.relationFK_GameObjects_NpcServices = new global::System.Data.DataRelation("FK_GameObjects_NpcServices", new global::System.Data.DataColumn[] {
-                        this.tableGameObjects.IDColumn}, new global::System.Data.DataColumn[] {
-                        this.tableNpcServices.GIDColumn}, false);
-            this.Relations.Add(this.relationFK_GameObjects_NpcServices);
+            this.relationFK_GameObjectTypes_GameObjects = new global::System.Data.DataRelation("FK_GameObjectTypes_GameObjects", new global::System.Data.DataColumn[] {
+                        this.tableGameObjectTypes.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.TYPE_IDColumn}, false);
+            this.Relations.Add(this.relationFK_GameObjectTypes_GameObjects);
             this.relationFK_ServiceTypes_NpcServices = new global::System.Data.DataRelation("FK_ServiceTypes_NpcServices", new global::System.Data.DataColumn[] {
                         this.tableServiceTypes.IDColumn}, new global::System.Data.DataColumn[] {
                         this.tableNpcServices.SERVICE_IDColumn}, false);
             this.Relations.Add(this.relationFK_ServiceTypes_NpcServices);
+            this.relationFK_GameObjects_NpcServices = new global::System.Data.DataRelation("FK_GameObjects_NpcServices", new global::System.Data.DataColumn[] {
+                        this.tableGameObjects.IDColumn}, new global::System.Data.DataColumn[] {
+                        this.tableNpcServices.GIDColumn}, false);
+            this.Relations.Add(this.relationFK_GameObjects_NpcServices);
             this.relationFK_GameObjects_Coordinates = new global::System.Data.DataRelation("FK_GameObjects_Coordinates", new global::System.Data.DataColumn[] {
                         this.tableGameObjects.IDColumn}, new global::System.Data.DataColumn[] {
                         this.tableCoordinates.GIDColumn}, false);
@@ -2059,6 +2052,8 @@ namespace BabBot.Data {
             
             private global::System.Data.DataColumn columnQID;
             
+            private global::System.Data.DataColumn columnIDX;
+            
             private global::System.Data.DataColumn columnITEM_TYPE_ID;
             
             private global::System.Data.DataColumn columnNAME;
@@ -2101,6 +2096,13 @@ namespace BabBot.Data {
             public global::System.Data.DataColumn QIDColumn {
                 get {
                     return this.columnQID;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public global::System.Data.DataColumn IDXColumn {
+                get {
+                    return this.columnIDX;
                 }
             }
             
@@ -2161,23 +2163,29 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public QuestItemsRow AddQuestItemsRow(QuestListRow parentQuestListRowByFK_QuestList_QuestItems, QuestItemTypeRow parentQuestItemTypeRowByFK_QuestItems_QuestItemType, string NAME, string QTY, string FULL_NAME) {
+            public QuestItemsRow AddQuestItemsRow(QuestListRow parentQuestListRowByFK_QuestList_QuestItems, int IDX, int ITEM_TYPE_ID, string NAME, int QTY, string FULL_NAME) {
                 QuestItemsRow rowQuestItemsRow = ((QuestItemsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         null,
-                        null,
+                        IDX,
+                        ITEM_TYPE_ID,
                         NAME,
                         QTY,
                         FULL_NAME};
                 if ((parentQuestListRowByFK_QuestList_QuestItems != null)) {
                     columnValuesArray[0] = parentQuestListRowByFK_QuestList_QuestItems[0];
                 }
-                if ((parentQuestItemTypeRowByFK_QuestItems_QuestItemType != null)) {
-                    columnValuesArray[1] = parentQuestItemTypeRowByFK_QuestItems_QuestItemType[0];
-                }
                 rowQuestItemsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowQuestItemsRow);
                 return rowQuestItemsRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public QuestItemsRow FindByITEM_TYPE_IDIDXQID(int ITEM_TYPE_ID, int IDX, int QID) {
+                return ((QuestItemsRow)(this.Rows.Find(new object[] {
+                            ITEM_TYPE_ID,
+                            IDX,
+                            QID})));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2195,6 +2203,7 @@ namespace BabBot.Data {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             internal void InitVars() {
                 this.columnQID = base.Columns["QID"];
+                this.columnIDX = base.Columns["IDX"];
                 this.columnITEM_TYPE_ID = base.Columns["ITEM_TYPE_ID"];
                 this.columnNAME = base.Columns["NAME"];
                 this.columnQTY = base.Columns["QTY"];
@@ -2205,17 +2214,23 @@ namespace BabBot.Data {
             private void InitClass() {
                 this.columnQID = new global::System.Data.DataColumn("QID", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnQID);
-                this.columnITEM_TYPE_ID = new global::System.Data.DataColumn("ITEM_TYPE_ID", typeof(string), null, global::System.Data.MappingType.Element);
+                this.columnIDX = new global::System.Data.DataColumn("IDX", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnIDX);
+                this.columnITEM_TYPE_ID = new global::System.Data.DataColumn("ITEM_TYPE_ID", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnITEM_TYPE_ID);
                 this.columnNAME = new global::System.Data.DataColumn("NAME", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnNAME);
-                this.columnQTY = new global::System.Data.DataColumn("QTY", typeof(string), null, global::System.Data.MappingType.Element);
+                this.columnQTY = new global::System.Data.DataColumn("QTY", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnQTY);
                 this.columnFULL_NAME = new global::System.Data.DataColumn("FULL_NAME", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnFULL_NAME);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
-                                this.columnITEM_TYPE_ID}, false));
-                this.columnITEM_TYPE_ID.Unique = true;
+                                this.columnITEM_TYPE_ID,
+                                this.columnIDX,
+                                this.columnQID}, true));
+                this.columnQID.AllowDBNull = false;
+                this.columnIDX.AllowDBNull = false;
+                this.columnITEM_TYPE_ID.AllowDBNull = false;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2418,7 +2433,7 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public QuestItemTypeRow AddQuestItemTypeRow(string ID, string TYPE) {
+            public QuestItemTypeRow AddQuestItemTypeRow(int ID, string TYPE) {
                 QuestItemTypeRow rowQuestItemTypeRow = ((QuestItemTypeRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         ID,
@@ -2429,7 +2444,7 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public QuestItemTypeRow FindByID(string ID) {
+            public QuestItemTypeRow FindByID(int ID) {
                 return ((QuestItemTypeRow)(this.Rows.Find(new object[] {
                             ID})));
             }
@@ -2454,7 +2469,7 @@ namespace BabBot.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             private void InitClass() {
-                this.columnID = new global::System.Data.DataColumn("ID", typeof(string), null, global::System.Data.MappingType.Element);
+                this.columnID = new global::System.Data.DataColumn("ID", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnID);
                 this.columnTYPE = new global::System.Data.DataColumn("TYPE", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnTYPE);
@@ -4156,12 +4171,7 @@ namespace BabBot.Data {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public int QID {
                 get {
-                    try {
-                        return ((int)(this[this.tableQuestItems.QIDColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'QID\' in table \'QuestItems\' is DBNull.", e);
-                    }
+                    return ((int)(this[this.tableQuestItems.QIDColumn]));
                 }
                 set {
                     this[this.tableQuestItems.QIDColumn] = value;
@@ -4169,14 +4179,19 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public string ITEM_TYPE_ID {
+            public int IDX {
                 get {
-                    try {
-                        return ((string)(this[this.tableQuestItems.ITEM_TYPE_IDColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'ITEM_TYPE_ID\' in table \'QuestItems\' is DBNull.", e);
-                    }
+                    return ((int)(this[this.tableQuestItems.IDXColumn]));
+                }
+                set {
+                    this[this.tableQuestItems.IDXColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public int ITEM_TYPE_ID {
+                get {
+                    return ((int)(this[this.tableQuestItems.ITEM_TYPE_IDColumn]));
                 }
                 set {
                     this[this.tableQuestItems.ITEM_TYPE_IDColumn] = value;
@@ -4199,10 +4214,10 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public string QTY {
+            public int QTY {
                 get {
                     try {
-                        return ((string)(this[this.tableQuestItems.QTYColumn]));
+                        return ((int)(this[this.tableQuestItems.QTYColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
                         throw new global::System.Data.StrongTypingException("The value for column \'QTY\' in table \'QuestItems\' is DBNull.", e);
@@ -4236,36 +4251,6 @@ namespace BabBot.Data {
                 set {
                     this.SetParentRow(value, this.Table.ParentRelations["FK_QuestList_QuestItems"]);
                 }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public QuestItemTypeRow QuestItemTypeRow {
-                get {
-                    return ((QuestItemTypeRow)(this.GetParentRow(this.Table.ParentRelations["FK_QuestItems_QuestItemType"])));
-                }
-                set {
-                    this.SetParentRow(value, this.Table.ParentRelations["FK_QuestItems_QuestItemType"]);
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsQIDNull() {
-                return this.IsNull(this.tableQuestItems.QIDColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetQIDNull() {
-                this[this.tableQuestItems.QIDColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public bool IsITEM_TYPE_IDNull() {
-                return this.IsNull(this.tableQuestItems.ITEM_TYPE_IDColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public void SetITEM_TYPE_IDNull() {
-                this[this.tableQuestItems.ITEM_TYPE_IDColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4314,9 +4299,9 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public string ID {
+            public int ID {
                 get {
-                    return ((string)(this[this.tableQuestItemType.IDColumn]));
+                    return ((int)(this[this.tableQuestItemType.IDColumn]));
                 }
                 set {
                     this[this.tableQuestItemType.IDColumn] = value;
@@ -4346,16 +4331,6 @@ namespace BabBot.Data {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public void SetTYPENull() {
                 this[this.tableQuestItemType.TYPEColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public QuestItemsRow[] GetQuestItemsRows() {
-                if ((this.Table.ChildRelations["FK_QuestItems_QuestItemType"] == null)) {
-                    return new QuestItemsRow[0];
-                }
-                else {
-                    return ((QuestItemsRow[])(base.GetChildRows(this.Table.ChildRelations["FK_QuestItems_QuestItemType"])));
-                }
             }
         }
         
@@ -4429,22 +4404,22 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public GameObjectTypesRow GameObjectTypesRow {
-                get {
-                    return ((GameObjectTypesRow)(this.GetParentRow(this.Table.ParentRelations["FK_GameObjectTypes_GameObjects"])));
-                }
-                set {
-                    this.SetParentRow(value, this.Table.ParentRelations["FK_GameObjectTypes_GameObjects"]);
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public ZoneListRow ZoneListRow {
                 get {
                     return ((ZoneListRow)(this.GetParentRow(this.Table.ParentRelations["FK_ZoneList_GameObjects"])));
                 }
                 set {
                     this.SetParentRow(value, this.Table.ParentRelations["FK_ZoneList_GameObjects"]);
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectTypesRow GameObjectTypesRow {
+                get {
+                    return ((GameObjectTypesRow)(this.GetParentRow(this.Table.ParentRelations["FK_GameObjectTypes_GameObjects"])));
+                }
+                set {
+                    this.SetParentRow(value, this.Table.ParentRelations["FK_GameObjectTypes_GameObjects"]);
                 }
             }
             
@@ -4614,22 +4589,22 @@ namespace BabBot.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            public GameObjectsRow GameObjectsRow {
-                get {
-                    return ((GameObjectsRow)(this.GetParentRow(this.Table.ParentRelations["FK_GameObjects_NpcServices"])));
-                }
-                set {
-                    this.SetParentRow(value, this.Table.ParentRelations["FK_GameObjects_NpcServices"]);
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public ServiceTypesRow ServiceTypesRow {
                 get {
                     return ((ServiceTypesRow)(this.GetParentRow(this.Table.ParentRelations["FK_ServiceTypes_NpcServices"])));
                 }
                 set {
                     this.SetParentRow(value, this.Table.ParentRelations["FK_ServiceTypes_NpcServices"]);
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public GameObjectsRow GameObjectsRow {
+                get {
+                    return ((GameObjectsRow)(this.GetParentRow(this.Table.ParentRelations["FK_GameObjects_NpcServices"])));
+                }
+                set {
+                    this.SetParentRow(value, this.Table.ParentRelations["FK_GameObjects_NpcServices"]);
                 }
             }
             

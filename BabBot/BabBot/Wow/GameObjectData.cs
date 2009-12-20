@@ -53,7 +53,7 @@ namespace BabBot.Wow
     public class GameDataVersion : CommonNameTable<GameObject>
     {
         [XmlElement("npc")]
-        public GameObject[] NPCList
+        public GameObject[] GameObjList
         {
             get { return Items; }
             set { Items = value; }
@@ -64,17 +64,15 @@ namespace BabBot.Wow
             return FindItemByName(name);
         }
 
-        
-
         public Quest FindMaxQuestByTitle(string title)
         {
             int max = -1;
             Quest res = null;
 
-            foreach (NPC npc in Items)
+            foreach (GameObject obj in STable.Values)
             {
-                if (npc.FindQuestQtyByTitle(title) > 0)
-                    foreach (Quest q in npc.QuestList.Table.Values)
+                if (obj.FindQuestQtyByTitle(title) > 0)
+                    foreach (Quest q in obj.QuestList.Table.Values)
                         if ((q.Title.Equals(title)) && (q.QIdx > max))
                             res = q;
 
@@ -151,6 +149,16 @@ namespace BabBot.Wow
         public virtual DataManager.GameObjectTypes GetObjType()
         {
             return DataManager.GameObjectTypes.ITEM;
+        }
+
+        public void AddQuest(Quest qh)
+        {
+            QuestList.Add(qh);
+        }
+
+        public int FindQuestQtyByTitle(string title)
+        {
+            return QuestList.FindQuestQtyByTitle(title);
         }
 
         public override bool Equals(object obj)
@@ -240,10 +248,7 @@ namespace BabBot.Wow
             Services.Add(service);
         }
 
-        public void AddQuest(Quest qh)
-        {
-            QuestList.Add(qh);
-        }
+        
         
         public override bool Equals(object obj)
         {
@@ -267,11 +272,6 @@ namespace BabBot.Wow
         public override int GetHashCode()
         {
             return base.GetHashCode();
-        }
-
-        public int FindQuestQtyByTitle(string title)
-        {
-            return QuestList.FindQuestQtyByTitle(title);
         }
 
         public override DataManager.GameObjectTypes GetObjType()
@@ -385,6 +385,16 @@ namespace BabBot.Wow
         internal QuestRelations Relations = new QuestRelations();
 
         internal QuestItem[] QuestItems = new QuestItem[3];
+        internal DataManager.QuestItemTypes[] QuestItemSeq
+        {
+            get
+            {
+                return new DataManager.QuestItemTypes[] {
+                DataManager.QuestItemTypes.REQUIRED,
+                DataManager.QuestItemTypes.REWARD,
+                DataManager.QuestItemTypes.CHOICE };
+            }
+        }
 
         internal GameObject Src
         {
@@ -403,22 +413,46 @@ namespace BabBot.Wow
         [XmlElement("req_items")]
         public QuestItem ReqItems
         {
-            get { return QuestItems[0]; }
-            set { QuestItems[0] = value; }
+            get 
+            { 
+                return QuestItems[Array.IndexOf(QuestItemSeq, 
+                            DataManager.QuestItemTypes.REQUIRED)];
+            }
+            set
+            {
+                QuestItems[Array.IndexOf(QuestItemSeq,
+                          DataManager.QuestItemTypes.REQUIRED)] = value;
+            }
         }
 
         [XmlElement("reward_items")]
         public QuestItem RewardItems
         {
-            get { return QuestItems[1]; }
-            set { QuestItems[1] = value; }
+            get
+            {
+                return QuestItems[Array.IndexOf(QuestItemSeq,
+                          DataManager.QuestItemTypes.REWARD)];
+            }
+            set
+            {
+                QuestItems[Array.IndexOf(QuestItemSeq,
+                        DataManager.QuestItemTypes.REWARD)] = value;
+            }
         }
         
         [XmlElement("choice_items")]
         public QuestItem ChoiceItems
         {
-            get { return QuestItems[2]; }
-            set { QuestItems[2] = value; }
+            get
+            {
+                return QuestItems[Array.IndexOf(QuestItemSeq,
+                        DataManager.QuestItemTypes.CHOICE)];
+            }
+            set
+            {
+                QuestItems[Array.IndexOf(QuestItemSeq,
+                      DataManager.QuestItemTypes.CHOICE)] = value;
+            }
         }
 
         internal string GreetingText
@@ -491,15 +525,14 @@ namespace BabBot.Wow
 
         public bool Equals(Quest q)
         {
-            bool f = q.Title.Equals(Title) &&
-                q.GreetingText.Equals(GreetingText) &&
-                (q.Level == Level) &&
-                q.ObjectivesText.Equals(ObjectivesText) &&
-                q.BonusSpell.Equals(BonusSpell) &&
-                q.Id == Id &&
-                q.DestName.Equals(DestName) &&
-                q.Link.Equals(Link);
-                
+            bool f = Title.Equals(q.Title) &&
+                GreetingText.Equals(q.GreetingText) &&
+                (Level == q.Level) &&
+                ObjectivesText.Equals(q.ObjectivesText) &&
+                BonusSpell.Equals(q.BonusSpell) &&
+                (Id == q.Id) &&
+                DestName.Equals(q.DestName) &&
+                Link.Equals(q.Link);
 
             if (!f)
                 return false;
@@ -921,7 +954,17 @@ namespace BabBot.Wow
         [XmlElement("wp_list")]
         public WpZones Waypoints;
 
+        internal virtual string FullName
+        {
+            get { return Name; }
+        }
+
         internal bool Finished = false;
+
+        internal virtual bool HasQty
+        {
+            get { return false; }
+        }
 
         public AbstractQuestObjective(string type)
         {
@@ -939,9 +982,17 @@ namespace BabBot.Wow
     /// <summary>
     /// Abstract class for quest objective that have item -> qty assignment
     /// </summary>
-    public abstract class AbstractQuestObjectiveWithQty : AbstractQuestObjective
+    public abstract class AbstractQtyQuestObjective : AbstractQuestObjective
     {
+        [XmlAttribute("qty")]
+        public int ReqQty;
+
         internal readonly int BagQty = 0;
+
+        internal override bool HasQty
+        {
+            get { return true; }
+        }
 
         internal string ItemName
         {
@@ -949,13 +1000,15 @@ namespace BabBot.Wow
             set { Name = value; }
         }
 
-        [XmlAttribute("qty")]
-        public int ReqQty;
+        internal virtual string FullName
+        {
+            get { return ItemName + ": 0/" + ReqQty; }
+        }
 
-        public AbstractQuestObjectiveWithQty(string stype)
+        public AbstractQtyQuestObjective(string stype)
             : base(stype) { }
 
-        public AbstractQuestObjectiveWithQty(string type, string item_str, bool is_finished)
+        public AbstractQtyQuestObjective(string type, string item_str, bool is_finished)
             : base(type)
         {
             Regex r = DataManager.CurWoWVersion.QuestConfig.ObjectiveRx;
@@ -997,7 +1050,7 @@ namespace BabBot.Wow
     /// <summary>
     /// Class for quest objectives that requires collecting a number of items
     /// </summary>
-    public class ItemQuestObjective : AbstractQuestObjectiveWithQty
+    public class ItemQuestObjective : AbstractQtyQuestObjective
     {
         public ItemQuestObjective()
             : base("item") {}
@@ -1009,7 +1062,7 @@ namespace BabBot.Wow
     /// <summary>
     /// Class for quest objectives that requires slaying a number of NPCs
     /// </summary>
-    public class MonsterQuestObjective : AbstractQuestObjectiveWithQty
+    public class MonsterQuestObjective : AbstractQtyQuestObjective
     {
         public MonsterQuestObjective()
             : base("monster") {}
@@ -1041,6 +1094,68 @@ namespace BabBot.Wow
 
         public ReputationQuestObjective(string text, bool is_finished)
             : base("reputation", text, is_finished) { }
+    }
+
+    #endregion
+
+    #region Route
+
+    public enum EndpointTypes : byte
+    {
+        UNDEF = 0,
+        NPC = 1,
+        QUEST_OBJ = 2,
+        HOST_SPOT = 3,
+        GHOST = 4
+    }
+
+    public class Endpoint : CommonItem
+    {
+        [XmlAttribute("type")]
+        string TypeStr
+        {
+            get { return Enum.GetName(typeof(EndpointTypes), PType).ToLower(); }
+            set { PType = DataManager.EndpointsSet[value]; }
+        }
+
+        internal EndpointTypes PType;
+
+        public Endpoint() { }
+
+        public Endpoint(EndpointTypes type, string name)
+            : base(name)
+        {
+            PType = type;
+        }
+    }
+
+    public class Route : CommonList<Vector3D>
+    {
+        [XmlElement("point_a")]
+        Endpoint PointA;
+
+        [XmlElement("point_b")]
+        Endpoint PointB;
+
+        [XmlElement("descr")]
+        string Description;
+
+        public Route() : base()
+        {
+            PointA = new Endpoint();
+            PointB = new Endpoint();
+        }
+
+        public Route(Endpoint point_a, Endpoint point_b, string descr, List<Vector3D> route) 
+        {
+            PointA = point_a;
+            PointB = point_b;
+            Description = descr;
+
+            foreach(Vector3D v in route)
+                List.Add(v);
+        }
+
     }
 
     #endregion

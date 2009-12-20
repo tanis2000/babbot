@@ -1000,6 +1000,10 @@ namespace BabBot.Forms
                     case 2:
                         questListToolStripMenuItem_Click(sender, e);
                         break;
+
+                    case 3:
+                        new RouteRecorderForm().Show();
+                        break;
                 }
             }
 #endif

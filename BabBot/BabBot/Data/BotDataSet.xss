@@ -11,12 +11,12 @@
     <Shape ID="DesignTable:ZoneServices" ZOrder="21" X="25" Y="383" Height="78" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="74" />
     <Shape ID="DesignTable:ServiceTypes" ZOrder="20" X="409" Y="370" Height="61" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="57" />
     <Shape ID="DesignTable:QuestList" ZOrder="19" X="16" Y="20" Height="146" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="142" />
-    <Shape ID="DesignTable:QuestItems" ZOrder="18" X="226" Y="19" Height="112" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="22" SplitterPosition="92" />
+    <Shape ID="DesignTable:QuestItems" ZOrder="18" X="226" Y="19" Height="129" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="22" SplitterPosition="125" />
     <Shape ID="DesignTable:QuestItemType" ZOrder="17" X="464" Y="20" Height="62" Width="153" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="22" SplitterPosition="58" />
-    <Shape ID="DesignTable:GameObjects" ZOrder="9" X="410" Y="160" Height="95" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="91" />
-    <Shape ID="DesignTable:GameObjectTypes" ZOrder="4" X="654" Y="223" Height="61" Width="168" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="57" />
+    <Shape ID="DesignTable:GameObjects" ZOrder="11" X="410" Y="160" Height="95" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="91" />
+    <Shape ID="DesignTable:GameObjectTypes" ZOrder="6" X="654" Y="223" Height="61" Width="168" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="57" />
     <Shape ID="DesignTable:NpcServices" ZOrder="13" X="656" Y="349" Height="78" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="74" />
-    <Shape ID="DesignTable:Coordinates" ZOrder="8" X="662" Y="61" Height="112" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="108" />
+    <Shape ID="DesignTable:Coordinates" ZOrder="10" X="662" Y="61" Height="112" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="108" />
   </Shapes>
   <Connectors>
     <Connector ID="DesignRelation:FK_ContinentList_ZoneList" ZOrder="16" LineWidth="11">
@@ -31,18 +31,6 @@
         </Point>
       </RoutePoints>
     </Connector>
-    <Connector ID="DesignRelation:FK_ZoneList_ZoneServices" ZOrder="5" LineWidth="11">
-      <RoutePoints>
-        <Point>
-          <X>99</X>
-          <Y>327</Y>
-        </Point>
-        <Point>
-          <X>99</X>
-          <Y>383</Y>
-        </Point>
-      </RoutePoints>
-    </Connector>
     <Connector ID="DesignRelation:FK_ZoneServices_ServiceTypes" ZOrder="22" LineWidth="11">
       <RoutePoints>
         <Point>
@@ -52,6 +40,18 @@
         <Point>
           <X>175</X>
           <Y>407</Y>
+        </Point>
+      </RoutePoints>
+    </Connector>
+    <Connector ID="DesignRelation:FK_ZoneList_ZoneServices" ZOrder="7" LineWidth="11">
+      <RoutePoints>
+        <Point>
+          <X>99</X>
+          <Y>327</Y>
+        </Point>
+        <Point>
+          <X>99</X>
+          <Y>383</Y>
         </Point>
       </RoutePoints>
     </Connector>
@@ -71,19 +71,7 @@
         </Point>
       </RoutePoints>
     </Connector>
-    <Connector ID="DesignRelation:FK_QuestItems_QuestItemType" ZOrder="10" LineWidth="11">
-      <RoutePoints>
-        <Point>
-          <X>464</X>
-          <Y>35</Y>
-        </Point>
-        <Point>
-          <X>376</X>
-          <Y>35</Y>
-        </Point>
-      </RoutePoints>
-    </Connector>
-    <Connector ID="DesignRelation:FK_QuestList_QuestItems" ZOrder="11" LineWidth="11">
+    <Connector ID="DesignRelation:FK_QuestList_QuestItems" ZOrder="1" LineWidth="11">
       <RoutePoints>
         <Point>
           <X>166</X>
@@ -95,7 +83,31 @@
         </Point>
       </RoutePoints>
     </Connector>
-    <Connector ID="DesignRelation:FK_ZoneList_GameObjects" ZOrder="6" LineWidth="11">
+    <Connector ID="DesignRelation:FK_QuestItemType_QuestItems" ZOrder="2" LineWidth="11">
+      <RoutePoints>
+        <Point>
+          <X>464</X>
+          <Y>51</Y>
+        </Point>
+        <Point>
+          <X>376</X>
+          <Y>51</Y>
+        </Point>
+      </RoutePoints>
+    </Connector>
+    <Connector ID="DesignRelation:FK_GameObjectTypes_GameObjects" ZOrder="5" LineWidth="11">
+      <RoutePoints>
+        <Point>
+          <X>654</X>
+          <Y>246</Y>
+        </Point>
+        <Point>
+          <X>560</X>
+          <Y>246</Y>
+        </Point>
+      </RoutePoints>
+    </Connector>
+    <Connector ID="DesignRelation:FK_ZoneList_GameObjects" ZOrder="8" LineWidth="11">
       <RoutePoints>
         <Point>
           <X>141</X>
@@ -111,31 +123,7 @@
         </Point>
       </RoutePoints>
     </Connector>
-    <Connector ID="DesignRelation:FK_GameObjectTypes_GameObjects" ZOrder="3" LineWidth="11">
-      <RoutePoints>
-        <Point>
-          <X>654</X>
-          <Y>246</Y>
-        </Point>
-        <Point>
-          <X>560</X>
-          <Y>246</Y>
-        </Point>
-      </RoutePoints>
-    </Connector>
-    <Connector ID="DesignRelation:FK_ServiceTypes_NpcServices" ZOrder="1" LineWidth="11">
-      <RoutePoints>
-        <Point>
-          <X>559</X>
-          <Y>395</Y>
-        </Point>
-        <Point>
-          <X>656</X>
-          <Y>395</Y>
-        </Point>
-      </RoutePoints>
-    </Connector>
-    <Connector ID="DesignRelation:FK_GameObjects_NpcServices" ZOrder="2" LineWidth="11">
+    <Connector ID="DesignRelation:FK_GameObjects_NpcServices" ZOrder="4" LineWidth="11">
       <RoutePoints>
         <Point>
           <X>543</X>
@@ -151,7 +139,19 @@
         </Point>
       </RoutePoints>
     </Connector>
-    <Connector ID="DesignRelation:FK_GameObjects_Coordinates" ZOrder="7" LineWidth="11">
+    <Connector ID="DesignRelation:FK_ServiceTypes_NpcServices" ZOrder="3" LineWidth="11">
+      <RoutePoints>
+        <Point>
+          <X>559</X>
+          <Y>395</Y>
+        </Point>
+        <Point>
+          <X>656</X>
+          <Y>395</Y>
+        </Point>
+      </RoutePoints>
+    </Connector>
+    <Connector ID="DesignRelation:FK_GameObjects_Coordinates" ZOrder="9" LineWidth="11">
       <RoutePoints>
         <Point>
           <X>535</X>

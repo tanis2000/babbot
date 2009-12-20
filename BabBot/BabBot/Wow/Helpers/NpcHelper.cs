@@ -459,7 +459,7 @@ namespace BabBot.Wow.Helpers
 
             }
 
-            if (f && (DataManager.SaveNpcData()))
+            if (f && (DataManager.SaveGameObjData()))
                 Output.Instance.Log(lfs, "NPC '" + npc_name +
                     "' successfully added to NPCData.xml");
 

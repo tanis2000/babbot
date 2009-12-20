@@ -199,6 +199,12 @@
     <Compile Include="Forms\TalentsForm.Designer.cs">
       <DependentUpon>TalentsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\RouteRecorderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\RouteRecorderForm.Designer.cs">
+      <DependentUpon>RouteRecorderForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Manager\BotManager.cs" />
     <Compile Include="Manager\CommandManager.cs" />
     <Compile Include="Manager\DataManager.cs" />
@@ -246,6 +252,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TalentsForm.resx">
       <DependentUpon>TalentsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RouteRecorderForm.resx">
+      <DependentUpon>RouteRecorderForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

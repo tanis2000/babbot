@@ -33,6 +33,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.lbGameObjList = new System.Windows.Forms.ListBox();
             this.popGameObject = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteGameObjectToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.bsGameObjects = new System.Windows.Forms.BindingSource(this.components);
             this.botDataSet = new BabBot.Data.BotDataSet();
@@ -82,6 +83,8 @@
             this.cbItemList = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnEditObject = new System.Windows.Forms.Button();
+            this.acceptQuestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deliverQuestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.popGameObject.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).BeginInit();
@@ -151,9 +154,17 @@
             // popGameObject
             // 
             this.popGameObject.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportToolStripMenuItem,
             this.deleteGameObjectToolStripMenuItem1});
             this.popGameObject.Name = "popNpc";
-            this.popGameObject.Size = new System.Drawing.Size(182, 26);
+            this.popGameObject.Size = new System.Drawing.Size(182, 48);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.exportToolStripMenuItem.Text = "Export to XML";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
             // deleteGameObjectToolStripMenuItem1
             // 
@@ -420,20 +431,23 @@
             this.lbQuestList.Name = "lbQuestList";
             this.lbQuestList.Size = new System.Drawing.Size(213, 121);
             this.lbQuestList.TabIndex = 45;
+            this.lbQuestList.DoubleClick += new System.EventHandler(this.lbQuestList_DoubleClick);
             // 
             // popQuestActions
             // 
             this.popQuestActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.acceptQuestToolStripMenuItem,
+            this.deliverQuestToolStripMenuItem,
             this.deleteQuestToolStripMenuItem});
             this.popQuestActions.Name = "popQuestActions";
-            this.popQuestActions.Size = new System.Drawing.Size(149, 26);
+            this.popQuestActions.Size = new System.Drawing.Size(153, 92);
             this.popQuestActions.Text = "1";
             this.popQuestActions.Opening += new System.ComponentModel.CancelEventHandler(this.popQuestActions_Opening);
             // 
             // deleteQuestToolStripMenuItem
             // 
             this.deleteQuestToolStripMenuItem.Name = "deleteQuestToolStripMenuItem";
-            this.deleteQuestToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.deleteQuestToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteQuestToolStripMenuItem.Text = "Delete Quest";
             this.deleteQuestToolStripMenuItem.Click += new System.EventHandler(this.deleteQuestToolStripMenuItem_Click);
             // 
@@ -620,6 +634,20 @@
             this.btnEditObject.UseVisualStyleBackColor = true;
             this.btnEditObject.Click += new System.EventHandler(this.btnEditObject_Click);
             // 
+            // acceptQuestToolStripMenuItem
+            // 
+            this.acceptQuestToolStripMenuItem.Name = "acceptQuestToolStripMenuItem";
+            this.acceptQuestToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.acceptQuestToolStripMenuItem.Text = "Accept Quest";
+            this.acceptQuestToolStripMenuItem.Click += new System.EventHandler(this.acceptQuestToolStripMenuItem_Click);
+            // 
+            // deliverQuestToolStripMenuItem
+            // 
+            this.deliverQuestToolStripMenuItem.Name = "deliverQuestToolStripMenuItem";
+            this.deliverQuestToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deliverQuestToolStripMenuItem.Text = "Deliver Quest";
+            this.deliverQuestToolStripMenuItem.Click += new System.EventHandler(this.deliverQuestToolStripMenuItem_Click);
+            // 
             // GameObjectsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -642,7 +670,7 @@
             this.MinimumSize = new System.Drawing.Size(625, 490);
             this.Name = "GameObjectsForm";
             this.Text = "NPC List";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NPCListForm_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
             this.Controls.SetChildIndex(this.btnAddItem, 0);
             this.Controls.SetChildIndex(this.btnAddNPC, 0);
             this.Controls.SetChildIndex(this.label2, 0);
@@ -739,5 +767,8 @@
         private System.Windows.Forms.Button btnEditObject;
         private System.Windows.Forms.ListBox lbQuestList;
         private System.Windows.Forms.BindingSource bsFKGameObjectsQuestList;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem acceptQuestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deliverQuestToolStripMenuItem;
     }
 }

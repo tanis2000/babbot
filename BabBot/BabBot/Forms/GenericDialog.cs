@@ -144,7 +144,8 @@ namespace BabBot.Forms
             OpenURL(url);
         }
 
-        private void GenericDialog_FormClosing(object sender, FormClosingEventArgs e)
+        protected virtual void OnFormClosing(
+                            object sender, FormClosingEventArgs e)
         {
             e.Cancel = (IsChanged &&
                 (MessageBox.Show(this, "Are you sure you want close and cancel changes ?",

@@ -25,6 +25,9 @@ using BabBot.Common;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 
+// TODO Add alliance and assign alliance to races
+// Define player alliance based on race
+
 namespace BabBot.Wow
 {
     [XmlRoot("wow_data")]

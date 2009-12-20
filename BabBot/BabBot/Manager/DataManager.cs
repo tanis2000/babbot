@@ -54,6 +54,12 @@ namespace BabBot.Manager
         private static bool _gui = false;
 
         /// <summary>
+        /// Initialization flag. 
+        /// Set to true after internal dataset populated with GameObject data
+        /// </summary>
+        private static bool _populated = false;
+
+        /// <summary>
         /// Current WoW version loaded
         /// </summary>
         public static WoWVersion CurWoWVersion
@@ -77,6 +83,15 @@ namespace BabBot.Manager
             "..\\..\\Data\\" +
 #endif
             "GameObjectData.xml";
+
+        /// <summary>
+        /// Waypoints xml file name
+        /// </summary>
+        private static string RoutesFileName =
+#if DEBUG
+ "..\\..\\Data\\" +
+#endif
+ "Routes.xml";
 
         /// <summary>
         /// Application configuration tag from WoWData.xml
@@ -173,11 +188,22 @@ namespace BabBot.Manager
 
         #endregion
 
+        #region Routes
+
+        public static SortedDictionary<string, EndpointTypes> EndpointsSet =
+                                new SortedDictionary<string, EndpointTypes>();
+
+        #endregion
+
         /// <summary>
         /// Data Manager class
         /// </summary>
         static DataManager()
         {
+            foreach (EndpointTypes ept in Enum.GetValues(typeof(EndpointTypes)))
+                EndpointsSet.Add(Enum.GetName(typeof(EndpointTypes), 
+                                                    ept).ToLower(), ept);
+
             // TEST
             /*
             FileStream fs = new FileStream("test.bin", FileMode.Create);
@@ -290,19 +316,18 @@ namespace BabBot.Manager
                 }
 
                 // Fill dataset if we running in GUI mode
-                if (Program.mainForm != null)
-                    PopulateDataSet();
+                PopulateDataSet();
             }
         }
 
         private static void PopulateDataSet()
         {
-            if (!_gui)
+            if (!_gui || _populated)
                 return;
 
-            // Should invoke cascading deleting
-            GameData.GameObjects.Clear();
-            GameData.ContinentList.Clear();
+            // Should invoke cascading deleting but raise FK exception
+            // GameData.GameObjects.Clear();
+            // GameData.ContinentList.Clear();
 
             foreach (Continent c in CurWoWVersion.Continents.Table.Values)
             {
@@ -312,45 +337,89 @@ namespace BabBot.Manager
             }
 
             foreach (GameObject g in CurWoWVersion.GameObjData.STable.Values)
+                AddGameObject(g);
+
+            GameData.AcceptChanges();
+            _populated = true;
+        }
+
+        public static BotDataSet.GameObjectsRow AddGameObject(GameObject g)
+        {
+            BotDataSet.ZoneListRow z = GameData.ZoneList.FindByNAME(g.ZoneText);
+
+            if (z == null)
+                throw new ZoneNotFoundException(g.ZoneText);
+
+            BotDataSet.GameObjectsRow gobj_row = GameData.
+                        GameObjects.AddGameObjectsRow(
+                            GameData.GameObjectTypes.FindByID((int)
+                                            g.GetObjType()), g.Name, z);
+
+            // Add base coordinates
+            GameData.Coordinates.Rows.Add(gobj_row.ID, g.X, g.Y, g.Z);
+
+            // Add quests
+            foreach (Quest q in g.QuestList.Table.Values)
             {
-                BotDataSet.ZoneListRow z = GameData.ZoneList.FindByNAME(g.ZoneText);
+                BotDataSet.QuestListRow qrow = GameData.QuestList.
+                    AddQuestListRow(q.Id, gobj_row, q.Name,
+                    q.GreetingText, q.ObjectivesText, g.Name, q.DestName);
 
-                if (z == null)
-                    throw new ZoneNotFoundException(g.ZoneText);
-
-                BotDataSet.GameObjectsRow gobj_row = GameData.
-                            GameObjects.AddGameObjectsRow(
-                                GameData.GameObjectTypes.FindByID((int) 
-                                                g.GetObjType()), g.Name, z);
-
-                // Add base coordinates
-                GameData.Coordinates.Rows.Add(gobj_row.ID, g.X, g.Y, g.Z);
-
-                // Add quests
-
-                
-                if (g.GetObjType() == GameObjectTypes.NPC)
+                // Add quest items
+                for (int i = 0; i < q.QuestItems.Length; i++)
                 {
-                    NPC npc = (NPC) g;
+                    if (q.QuestItems[i] == null)
+                        continue;
 
-                    // Add other coordinates
-                    foreach (ZoneWp coord in npc.Coordinates.Table.Values)
-                        foreach (Vector3D v in coord.List)
-                            GameData.Coordinates.Rows.Add(gobj_row.ID, v.X, v.Y, v.Z);
-
-                    // Add Services
-                    foreach (NPCService srv in npc.Services.Table.Values)
+                    for (int j = 0; j < q.QuestItems[i].List.Count; j++)
                     {
-                        // Locate service
-                        BotDataSet.ServiceTypesRow srv_row = 
-                            GameData.ServiceTypes.FindByID((int) srv.SrvType);
+                        CommonQty qi = q.QuestItems[i].List[j];
+                        // Locate type
+                        GameData.QuestItems.AddQuestItemsRow(qrow, j,
+                            (int)q.QuestItemSeq[i],qi.Name, qi.Qty, qi.Name);
+                    }
+                }
 
-                        GameData.NpcServices.AddNpcServicesRow(gobj_row, srv_row, srv_row.NAME);
+                if (q.ObjList != null)
+                {
+                    // Add quest objectives
+                    for (int i = 0; i < q.ObjList.List.Count; i++)
+                    {
+                        AbstractQuestObjective qobj = q.ObjList.List[i];
+
+                        int qty = 0;
+                        if (qobj.HasQty)
+                            qty = ((AbstractQtyQuestObjective)qobj).ReqQty;
+
+                        GameData.QuestItems.AddQuestItemsRow(qrow, i,
+                                (int)DataManager.QuestItemTypes.OBJECTIVES,
+                                qobj.Name, qty, qobj.FullName);
                     }
                 }
             }
 
-            GameData.AcceptChanges();
+
+            if (g.GetObjType() == GameObjectTypes.NPC)
+            {
+                NPC npc = (NPC)g;
+
+                // Add other coordinates
+                foreach (ZoneWp coord in npc.Coordinates.Table.Values)
+                    foreach (Vector3D v in coord.List)
+                        GameData.Coordinates.Rows.Add(gobj_row.ID, v.X, v.Y, v.Z);
+
+                // Add Services
+                foreach (NPCService srv in npc.Services.Table.Values)
+                {
+                    // Locate service
+                    BotDataSet.ServiceTypesRow srv_row =
+                        GameData.ServiceTypes.FindByID((int)srv.SrvType);
+
+                    GameData.NpcServices.AddNpcServicesRow(gobj_row, srv_row, srv_row.NAME);
+                }
+            }
+
+            return gobj_row;
         }
 
         internal static void ClearXml()
@@ -477,7 +546,7 @@ namespace BabBot.Manager
         /// <summary>
         /// Save NPC data in xml format
         /// </summary>
-        public static bool SaveNpcData()
+        public static bool SaveGameObjData()
         {
             // Backup old NPC data before save
             string bf = System.IO.Path.GetDirectoryName(GameObjDataFileName) +

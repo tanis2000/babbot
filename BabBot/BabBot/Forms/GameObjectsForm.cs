@@ -90,12 +90,15 @@ namespace BabBot.Forms
             {
                 try
                 {
-                    NPC npc = DataManager.LoadXml(fname);
-                    npc.Changed = false;
-                    DataManager.CurWoWVersion.GameObjData.Add(npc);
+                    GameObject g = DataManager.LoadXml(fname);
+                    g.Changed = false;
+                    DataManager.CurWoWVersion.GameObjData.Add(g);
 
                     // Save & Index data
-                    DataManager.SaveNpcData();
+                    DataManager.SaveGameObjData();
+
+                    // Add npc to dataset
+                    DataManager.AddGameObject(g);
                 }
                 catch
                 {
@@ -105,10 +108,25 @@ namespace BabBot.Forms
             }
         }
 
-        private void NPCListForm_FormClosing(object sender, FormClosingEventArgs e)
+        protected override void OnFormClosing(
+                        object sender, FormClosingEventArgs e)
         {
-            this.Hide();
-            e.Cancel = true; // this cancels the close event.
+            // For some reason called twice
+            if (!e.Cancel)
+                base.OnFormClosing(sender, e);
+
+            if (!e.Cancel)
+            {
+                if (!btnClose.Text.Equals("Close"))
+                {
+                    DataManager.GameData.RejectChanges();
+                    btnClose.Text = "Close";
+                }
+
+                e.Cancel = true; // this cancels the close event.
+                Visible = false;
+                // Hide();
+            }
         }
 
         void SetFormControls(bool Enabled)
@@ -148,24 +166,11 @@ namespace BabBot.Forms
                 }
 #endif
 
-            // Check if npc selected
-            if (!ProcessManager.Player.HasTarget)
-            {
-                ShowErrorMessage("NPC is not selected");
-                return;
-            }
-
             try
             {
                 NPC npc = NpcHelper.AddNpc("npc");
                 if (npc != null)
-                {
-                    // Unselect all
-                    foreach (int idx in lbGameObjList.SelectedIndices)
-                        lbGameObjList.SetSelected(idx, false);
-                    // Highlight new npc on the listbox
-                    lbGameObjList.SelectedItem = npc;
-                }
+                    DataManager.AddGameObject(npc);
             }
             catch (Exception ex)
             {
@@ -324,7 +329,14 @@ namespace BabBot.Forms
 
         private void gameObjectsBindingSource_CurrentChanged(object sender, EventArgs e)
         {
-            
+            BotDataSet.GameObjectsRow row = GetCurrentRow();
+            if (row == null)
+                return;
+
+            int type = row.TYPE_ID;
+
+            btnAddAsTargetCoord.Enabled = type == (int) DataManager.GameObjectTypes.NPC;
+            btnAddAsPlayerCoord.Enabled = type == (int) DataManager.GameObjectTypes.ITEM;
         }
 
         private void lbGameObjectList_KeyDown(object sender, KeyEventArgs e)
@@ -343,20 +355,26 @@ namespace BabBot.Forms
 
         private void DeleteSelectedObject()
         {
+            if (lbGameObjList.SelectedItem == null)
+                return;
+
             // Possible multi selection
-            foreach (object obj in lbGameObjList.SelectedItems)
-            {
-                string npc_name = ((NPC)obj).Name;
-                if (MessageBox.Show(this, "Are you sure to delete " + npc_name + "?",
+            DataRowView obj = (DataRowView)lbGameObjList.SelectedItem;
+            string obj_name = obj.Row["NAME"].ToString();
+            if (MessageBox.Show(this, "Are you sure to delete " + obj_name + "?",
                     "Confirmation", MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
-                    // Delete from all version or it will merge again
-                    foreach (GameDataVersion v in DataManager.GameObjList.Table.Values)
-                        v.STable.Remove(npc_name);
+                // Delete from all version or it will merge again
+            {
+                    obj.Delete();
+                    IsChanged = true;
             }
+        }
 
-            // Now we need save & reindex data
-            DataManager.SaveNpcData();
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO
+            ShowErrorMessage("Not implemented yet");
         }
 
         #endregion
@@ -379,12 +397,6 @@ namespace BabBot.Forms
                     (lbQuestList.SelectedItems.Count > 0);
         }
 
-        private void btnAddQuest_Click(object sender, EventArgs e)
-        {
-            // TODO
-            ShowErrorMessage("Not implemented yet");
-        }
-
         private void deleteQuestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DeleteSelectedObject();
@@ -398,6 +410,73 @@ namespace BabBot.Forms
             ((DataRowView)bsFKGameObjectsQuestList.Current).Delete();
 
             IsChanged = true;
+        }
+
+        private void lbQuestList_DoubleClick(object sender, EventArgs e)
+        {
+            // TODO
+            ShowErrorMessage("Not implemented yet");
+        }
+
+        private void btnAddQuest_Click(object sender, EventArgs e)
+        {
+            // TODO
+            ShowErrorMessage("Not implemented yet");
+        }
+
+        private Quest CheckBeforeQuestTest()
+        {
+            if (!CheckInGame())
+                return null;
+
+            if (lbQuestList.SelectedItem == null)
+            {
+                ShowErrorMessage("No quest selected");
+                return null;
+            }
+
+            BotDataSet.QuestListRow qrow = (BotDataSet.QuestListRow)
+                                ((DataRowView)lbQuestList.SelectedItem).Row;
+            int qid = qrow.ID;
+
+            Quest q = DataManager.QuestList[qid];
+
+            if (q == null)
+            {
+                ShowErrorMessage("Quest '" + qrow.NAME + "' not found");
+                return null;
+            }
+
+            // Start NPC channel and switch to main form
+            Output.Instance.Log("quest_test", "Starting quest test ...");
+            Program.mainForm.SelectLogTab("quest_test");
+
+            return q;
+        }
+
+        private void acceptQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Quest q = CheckBeforeQuestTest();
+            if (q == null)
+                return;
+
+            try
+            {
+                QuestHelper.AcceptQuest(q, "quest_test");
+            }
+            catch (QuestProcessingException qe)
+            {
+                ShowErrorMessage("Quest processing error - " + qe.Message);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("Exception: " + ex.Message);
+            }
+        }
+
+        private void deliverQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         #endregion
@@ -487,8 +566,23 @@ namespace BabBot.Forms
 
         private void AddGameObjCoord(decimal x, decimal y, decimal z)
         {
+            // Check if new coord not too close
+            foreach (DataRowView c in lbCoordinates.Items)
+            {
+                BotDataSet.CoordinatesRow row = (BotDataSet.CoordinatesRow)c.Row;
+                if (Math.Sqrt(Math.Pow((double)(row.X - x), 2) + 
+                        Math.Pow((double)(row.Y - y), 2) +
+                        Math.Pow((double)(row.Z - z), 2)) < 5)
+                {
+                    ShowErrorMessage("New coordinates located in less than 5 yards with [" +
+                        row.COORD + "]");
+                    return;
+                }
+            }
+
             DataManager.GameData.Coordinates.AddCoordinatesRow(
                 GetCurrentRow(), x, y, z, null);
+
 
             // Select last row
             lbCoordinates.SelectedIndex = lbCoordinates.Items.Count - 1;

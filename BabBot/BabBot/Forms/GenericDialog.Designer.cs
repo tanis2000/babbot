@@ -80,7 +80,7 @@
             this.Name = "GenericDialog";
             this.Text = "Dialog";
             this.Load += new System.EventHandler(this.GenericDialog_Load);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GenericDialog_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
             this.ResumeLayout(false);
 
         }
