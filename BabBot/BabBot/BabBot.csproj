@@ -187,10 +187,10 @@
     <Compile Include="Forms\Radar\RadarItem.cs" />
     <Compile Include="Forms\Radar\RadarItems\CircleRadarItem.cs" />
     <Compile Include="Forms\Radar\RadarItems\TriangleRadarItem.cs" />
-    <Compile Include="Forms\Radar\QuestInfo.cs">
+    <Compile Include="Forms\Shared\QuestInfo.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Radar\QuestInfo.Designer.cs">
+    <Compile Include="Forms\Shared\QuestInfo.Designer.cs">
       <DependentUpon>QuestInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TalentsForm.cs">
@@ -246,7 +246,7 @@
       <DependentUpon>QuestList.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Radar\QuestInfo.resx">
+    <EmbeddedResource Include="Forms\Shared\QuestInfo.resx">
       <DependentUpon>QuestInfo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -448,7 +448,6 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Forms\Shared\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
