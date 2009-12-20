@@ -16,6 +16,12 @@
   
     Copyright 2009 BabBot Team
 */
+
+// TODO
+// Finish Global Save
+// Test Export -> Delete ->Import
+// Test delete coordinates does delete empty zone too
+// Add new form to add new npc/object with min parameters
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -78,7 +84,6 @@ namespace BabBot.Forms
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            // TODO load file from Data\Import directory
             var dlg = new OpenFileDialog { RestoreDirectory = true, Multiselect = true, 
                 Filter = "Game Object data files (*.obj)|*.obj" };
             dlg.InitialDirectory = "Data" + Path.DirectorySeparatorChar + "Import";
@@ -492,13 +497,13 @@ namespace BabBot.Forms
         private void lbQuestList_DoubleClick(object sender, EventArgs e)
         {
             // TODO
-            ShowErrorMessage("Not implemented yet");
+            ShowErrorMessage("Quest Form not implemented yet");
         }
 
         private void btnAddQuest_Click(object sender, EventArgs e)
         {
             // TODO
-            ShowErrorMessage("Not implemented yet");
+            ShowErrorMessage("Quest Form not implemented yet");
         }
 
         private Quest CheckBeforeQuestTest()
