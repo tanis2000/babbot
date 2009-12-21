@@ -114,6 +114,7 @@
             this.lbLevelList.Size = new System.Drawing.Size(481, 277);
             this.lbLevelList.TabIndex = 3;
             this.lbLevelList.SelectedIndexChanged += new System.EventHandler(this.lbLevelList_SelectedIndexChanged);
+            this.lbLevelList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbLevelList_KeyDown);
             // 
             // labelLevel
             // 
@@ -487,6 +488,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbTalentTemplates);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(300, 470);
             this.Name = "TalentsForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

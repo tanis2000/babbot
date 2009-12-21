@@ -30,10 +30,7 @@ using BabBot.Manager;
 using System.Xml.Serialization;
 
 // TODO 
-// 1 - Add Ctrl-S to save talent
-// 2 - Extract Talent Name from armory URL and use it instead of Talent ID
-// 3 - Add Ctrl-Up/Ctrl-Down to move talents
-
+// 1 - Extract Talent Name from armory URL and use it instead of Talent ID
 namespace BabBot.Forms
 {
     public partial class TalentsForm : GenericDialog
@@ -553,10 +550,35 @@ namespace BabBot.Forms
 
         private void TalentsForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (((e.Modifiers & Keys.Shift) == Keys.Shift) && 
+            if (((e.Modifiers & Keys.Control) == Keys.Control) &&
                 (e.KeyCode == Keys.S) &&
                 btnSave.Enabled)
-            btnSave_Click(sender,e);
+            {
+                btnSave_Click(sender, e);
+                e.Handled = true;
+            }
+        }
+
+        private void lbLevelList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.Modifiers & Keys.Control) == Keys.Control)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Up:
+                        btnUp_Click(sender, e);
+                        e.Handled = true;
+
+                        break;
+
+                    case Keys.Down:
+                        btnDown_Click(sender, e);
+                        e.Handled = true;
+
+                        break;
+                }
+            }
+
         }
     }
 }
