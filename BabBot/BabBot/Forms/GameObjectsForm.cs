@@ -41,6 +41,8 @@ namespace BabBot.Forms
         private readonly string[] ReqSrvDescr = new string[] {
             "inn", "taxi", "class_trainer", "trade_skill_trainer", "wep_skill_trainer" };
 
+        private string LogFacility = "game_objects";
+
         protected override bool IsChanged
         {
             set
@@ -48,7 +50,13 @@ namespace BabBot.Forms
                 base.IsChanged = value;
 
                 if (value)
+                {
+                    // Change button text
                     btnClose.Text = "Cancel";
+
+                    // Mark current record as changed
+                    SetCurrentRowModified();
+                }
                 else
                     btnClose.Text = "Close";
             }
@@ -58,10 +66,13 @@ namespace BabBot.Forms
         {
             InitializeComponent();
 
-            bsGameObjects.DataSource = DataManager.GameData;
-            bsServiceTypesFull.DataSource = DataManager.GameData;
-            bsServiceTypesFiltered.DataSource = DataManager.GameData;
+            // Dictionary tables first
             bsZoneList.DataSource = DataManager.GameData;
+            bsServiceTypesFull.DataSource = DataManager.GameData;
+            bsCoordTypes.DataSource = DataManager.GameData;
+
+            bsGameObjects.DataSource = DataManager.GameData;
+            bsServiceTypesFiltered.DataSource = DataManager.GameData;
 
 #if DEBUG
             if (ProcessManager.Config.Test == 1)
@@ -92,18 +103,20 @@ namespace BabBot.Forms
             if (dlg.ShowDialog() != DialogResult.OK)
                 return;
 
+            // Start NPC channel and switch to main form
+            Output.Instance.Log(LogFacility, "Starting data import ...");
+            Program.mainForm.SelectLogTab(LogFacility);
+            List<GameObject> list = new List<GameObject>();
             foreach (string fname in dlg.FileNames)
             {
                 try
                 {
                     GameObject g = DataManager.LoadXml(fname);
                     g.Changed = false;
-                    DataManager.CurWoWVersion.GameObjData.Add(g);
 
-                    // Save & Index data
-                    DataManager.SaveGameObjData();
+                    list.Add(g);
 
-                    // Add npc to dataset
+                    // Add game object to dataset
                     DataManager.AddGameObject(g);
 
                     // Select new data
@@ -115,6 +128,13 @@ namespace BabBot.Forms
                                             ". Check format and try again");
                 }
             }
+
+            // Save & Index data after all imports done
+            // Export not required since it's already external files
+            if ((list.Count > 0) && 
+                DataManager.MergeGameObjData(list, false, LogFacility))
+                    DataManager.GameData.AcceptChanges();
+                    
         }
 
         protected override void OnFormClosing(
@@ -177,7 +197,7 @@ namespace BabBot.Forms
 
             try
             {
-                NPC npc = NpcHelper.AddNpc("npc");
+                GameObject npc = NpcHelper.AddNpc("npc");
                 if (npc != null)
                 {
                     // Check for duplication
@@ -298,17 +318,10 @@ namespace BabBot.Forms
                 BotDataSet.GameObjectsRow row = GetCurrentRow();
                 // row.CancelEdit();
                 DataManager.GameData.RejectChanges();
-                tbName.Text = row.NAME;
             }
 
             if (btnClose.Text.Equals("Close"))
                 Hide();
-            else
-            {
-                tbName.TextChanged -= tbName_TextChanged;
-
-                SetEditControls(false);
-            }
 
             IsChanged = false;
         }
@@ -331,7 +344,6 @@ namespace BabBot.Forms
             BotDataSet.GameObjectsRow cur_row = GetCurrentRow();
 
             DataManager.GameData.NpcServices.AddNpcServicesRow(cur_row, srow, srow.NAME, tbDescr.Text);
-            SetCurrentModified(cur_row);
 
             IsChanged = true;
         }
@@ -340,8 +352,10 @@ namespace BabBot.Forms
         /// Change state of current GameObject Row to modified
         /// </summary>
         /// <param name="row">Current GameObject row</param>
-        private void SetCurrentModified(BotDataSet.GameObjectsRow row)
+        private void SetCurrentRowModified()
         {
+            BotDataSet.GameObjectsRow row = GetCurrentRow();
+
             if (row.RowState == DataRowState.Unchanged)
                 row.SetModified();
         }
@@ -378,10 +392,6 @@ namespace BabBot.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            GetCurrentRow().EndEdit();
-
-            tbName.TextChanged -= tbName_TextChanged;
-
             try
             {
                 // Process new rows
@@ -391,6 +401,13 @@ namespace BabBot.Forms
                     foreach (BotDataSet.GameObjectsRow row in tbl.Rows)
                         DataManager.AddGameObjectRow(row);
 
+                // Process changed rows
+                tbl = DataManager.GameData.GameObjects.GetChanges(DataRowState.Modified);
+                if (tbl != null)
+                    foreach (BotDataSet.GameObjectsRow row in tbl.Rows)
+                        DataManager.SaveGameObjRow(row);
+
+                // Processed deleted rows
                 tbl = DataManager.GameData.GameObjects.GetChanges(DataRowState.Deleted);
                 if (tbl != null)
                 {
@@ -399,21 +416,14 @@ namespace BabBot.Forms
                     //The new DataTable (dt) now contains the original versions of the deleted rows.
                     tbl = dv.ToTable();
                     foreach (DataRow row in tbl.Rows)
-                        DataManager.DeleteGameObjRow(row);
+                        DataManager.DeleteGameObjRow(row["NAME"].ToString());
                 }
 
-                tbl = DataManager.GameData.GameObjects.GetChanges(DataRowState.Modified);
-                if (tbl != null)
-                    foreach (BotDataSet.GameObjectsRow row in tbl.Rows)
-                        DataManager.SaveGameObjRow(row);
-
                 // Save data on the disk
-                if (DataManager.SaveGameObjData())
+                if (DataManager.SaveGameObjData(LogFacility))
                 {
                     // Than accept changes
                     DataManager.GameData.AcceptChanges();
-
-                    SetEditControls(false);
 
                     IsChanged = false;
 
@@ -436,6 +446,9 @@ namespace BabBot.Forms
                 return;
 
             cbPlayerTarget.SelectedIndex = row.TYPE_ID;
+
+            // Clear description
+            tbDescr.Text = "";
         }
 
         private void lbGameObjectList_KeyDown(object sender, KeyEventArgs e)
@@ -642,7 +655,6 @@ namespace BabBot.Forms
             // If no other coordinates delete zone too
             if (fKCoordinatesZoneCoordinates.Count == 0)
                 ((DataRowView)((BindingSource)fKCoordinatesZoneCoordinates.DataSource).Current).Delete();
-            // TODO
 
             IsChanged = true;
         }
@@ -689,10 +701,19 @@ namespace BabBot.Forms
                 return;
             }
 
+            // Remember new zone name
+            string zone_name = cbAllZones.Text;
             try
             {
-                AddGameObjCoord(cbAllZones.Text, Convert.ToDecimal(tbX.Text),
-                    Convert.ToDecimal(tbY.Text), Convert.ToDecimal(tbZ.Text));
+                AddGameObjCoord(cbAllZones.Text, Convert.ToDouble(tbX.Text),
+                    Convert.ToDouble(tbY.Text), Convert.ToDouble(tbZ.Text), 
+                    ((BotDataSet.CoordTypesRow) ((DataRowView)cbCoordType.SelectedItem).Row).ID);
+
+                // Set GameObject Zone List to new added zone coordinates
+                DataView view = ((DataRowView)fKGameObjectsCoordinatesZone.Current).DataView;
+
+                // Set Zone List to same zone as current GameObject coordinates
+                cbCoordZone.SelectedItem = view[view.Find(zone_name)];
 
                 tbX.Text = String.Empty;
                 tbY.Text = String.Empty;
@@ -714,10 +735,10 @@ namespace BabBot.Forms
 
         private void AddGameObjCoord(string zone, Vector3D v)
         {
-            AddGameObjCoord(zone, (decimal)v.X, (decimal)v.Y, (decimal)v.Z);
+            AddGameObjCoord(zone, v.X, v.Y, v.Z, v.Type);
         }
 
-        private void AddGameObjCoord(string zone, decimal x, decimal y, decimal z)
+        private void AddGameObjCoord(string zone, double x, double y, double z, int type)
         {
             BotDataSet.GameObjectsRow cur_row = GetCurrentRow();
 
@@ -758,8 +779,7 @@ namespace BabBot.Forms
             else
                 zone_row = (BotDataSet.CoordinatesZoneRow) rows[0].Row;
 
-            DataManager.GameData.Coordinates.AddCoordinatesRow(zone_row, x, y, z);
-            SetCurrentModified(cur_row);
+            DataManager.GameData.Coordinates.AddCoordinatesRow(zone_row, x, y, z, type);
 
             // Select last row
             lbCoordinates.SelectedIndex = lbCoordinates.Items.Count - 1;
@@ -768,54 +788,6 @@ namespace BabBot.Forms
         }
 
         #endregion
-
-        private void btnEditObject_Click(object sender, EventArgs e)
-        {
-            if (!CheckGameObjSelected())
-                return;
-
-            SetEditControls(true);
-            btnClose.Text = "Cancel";
-            tbName.TextChanged += tbName_TextChanged;
-
-            ((DataRowView)bsGameObjects.Current).Row.BeginEdit();
-        }
-
-        private void SetEditControls(bool enabled)
-        {
-#if DEBUG
-            gbDebug.Enabled = !enabled;
-#endif
-            // Group Boxes
-            gbQuestList.Enabled = !enabled;
-            gbCoordinates.Enabled = !enabled;
-            gbAddCoord.Enabled = !enabled;
-            gbAutoAdd.Enabled = !enabled;
-
-            // Combo Boxes
-            cbItemList.Enabled = !enabled;
-            cbAvailServices.Enabled = !enabled;
-
-            // Buttons
-            btnAddNewObj.Enabled = !enabled;
-            btnImport.Enabled = !enabled;
-            btnAddNPC.Enabled = !enabled;
-            btnAddItem.Enabled = !enabled;
-            btnAddService.Enabled = !enabled;
-            btnEditObject.Enabled = !enabled;
-
-            // ListBoxes
-            lbGameObjList.Enabled = !enabled;
-            lbActiveServices.Enabled = !enabled;
-
-            // Enable name editing
-            tbName.ReadOnly = !enabled;
-        }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            RegisterChange(sender, e);
-        }
 
         private BotDataSet.GameObjectsRow GetCurrentRow()
         {
@@ -872,7 +844,7 @@ namespace BabBot.Forms
 
         private void cbCoordZone_SelectedIndexChanged(object sender, EventArgs e)
         {
-            cbAllZones.Text = cbCoordZone.Text;
+            // cbAllZones.Text = cbCoordZone.Text;
         }
 
         private void popGameObject_Opening(object sender, CancelEventArgs e)
@@ -887,9 +859,43 @@ namespace BabBot.Forms
             deleteGameObjectToolStripMenuItem.Text += " '" + GetCurrentRow().NAME + "'";
         }
 
-        private void cbAvailServices_SelectedIndexChanged(object sender, EventArgs e)
+        private void bsCoordTypes_CurrentChanged(object sender, EventArgs e)
         {
-            tbDescr.Enabled = (Array.IndexOf(ReqSrvDescr, cbAvailServices.Text) >= 0);
+            if (((BotDataSet.CoordTypesRow) ((DataRowView)bsCoordTypes.Current).Row).ID != 0)
+            {
+                ShowErrorMessage("Relative coordinates not supported yet.");
+                cbCoordType.SelectedItem = ((DataRowView)bsCoordTypes.Current).DataView[0];
+                // bsCoordTypes.Current =
+            }
+        }
+
+        private void fKGameObjectsCoordinatesZone_CurrentChanged(object sender, EventArgs e)
+        {
+            if ((fKGameObjectsCoordinatesZone.Current == null) || (bsZoneList.Current == null))
+                return;
+
+            // Get current row
+            BotDataSet.CoordinatesZoneRow row = (BotDataSet.CoordinatesZoneRow)
+                                ((DataRowView)fKGameObjectsCoordinatesZone.Current).Row;
+
+            // Get Zone List Data View
+            DataView view = ((DataRowView)bsZoneList.Current).DataView;
+
+            // Set Zone List to same zone as current GameObject coordinates
+            cbAllZones.SelectedItem = view[view.Find(row.ZONE_NAME)];
+        }
+
+        private void bsServiceTypesFiltered_CurrentChanged(object sender, EventArgs e)
+        {
+            BotDataSet.ServiceTypesRow row = null;
+            if (bsServiceTypesFiltered.Current != null)
+                row = (BotDataSet.ServiceTypesRow)((DataRowView)bsServiceTypesFiltered.Current).Row;
+
+            tbDescr.Enabled = ((row != null) &&
+                Array.IndexOf(ReqSrvDescr, row.NAME) >= 0);
+
+            // Clear description
+            tbDescr.Text = "";
         }
     }
 }

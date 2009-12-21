@@ -1,10 +1,4 @@
 ﻿namespace BabBot.Data {
-    
-    
-    public partial class BotDataSet {
 
-        partial class GameObjectsDataTable
-        {
-      }
-    }
+    public partial class BotDataSet {}
 }

@@ -87,7 +87,7 @@ namespace BabBot.Wow.Helpers
         // For test use
         public static bool UseState;
 
-        static List<NPC> SaveList = new List<NPC>();
+        static List<GameObject> SaveList = new List<GameObject>();
 
         internal static Dictionary<string, string> 
             ServiceFrameTable = new Dictionary<string, string>();
@@ -403,7 +403,7 @@ namespace BabBot.Wow.Helpers
 
         #region Add NPC
 
-        public static NPC AddNpc(string lfs)
+        public static GameObject AddNpc(string lfs)
         {
             // Initialize parameters
             SaveList.Clear();
@@ -422,58 +422,15 @@ namespace BabBot.Wow.Helpers
 
             SaveList.Add(npc);
 
-            bool f = false;
-            NPC check = null;
-            foreach (NPC cur_npc in SaveList)
+            if (DataManager.MergeGameObjData(SaveList, true, "npc"))
             {
-                // Check if NPC already exists
+                Output.Instance.Log(lfs, "NPC '" + npc.Name +
+                    "' successfully added to " + DataManager.GameObjDataFileName);
 
-                try
-                {
-                    // If null it produces exception
-                    check = (NPC) DataManager.CurWoWVersion.
-                        GameObjData.FindGameObjByName(cur_npc.Name);
-                } 
-                catch { }
-
-                if ((check != null))
-                {
-                    if (cur_npc.Equals(check))
-                    {
-                        Output.Instance.LogError(lfs, "NPC '" + cur_npc.Name +
-                            "' already added with identicall parameters");
-                        continue;
-                    }
-                    else
-                    {
-                        // NPC in database but with different parameters
-                        Output.Instance.Debug(lfs, "NPC '" + cur_npc.Name +
-                            "' data merged with currently configured");
-                        check.MergeWith(npc);
-
-                        f = true;
-                    }
-                }
-                else
-                {
-                    Output.Instance.Debug(lfs, "Adding new NPC '" + cur_npc.Name +
-                            "' into NPCData.xml");
-
-                    check = cur_npc;
-                    check.Changed = true;
-                    DataManager.CurWoWVersion.GameObjData.Add(cur_npc);
-
-                    f = true;
-                }
-
+                return DataManager.CurWoWVersion.GameObjData.FindGameObjByName(npc.Name);
             }
 
-            if (f && (DataManager.SaveGameObjData(lfs)))
-                Output.Instance.Log(lfs, "NPC '" + npc_name +
-                    "' successfully added to NPCData.xml");
-
-            return check;
-
+            return null;
         }
 
         /// <summary>

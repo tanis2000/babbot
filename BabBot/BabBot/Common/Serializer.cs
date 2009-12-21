@@ -121,7 +121,7 @@ namespace BabBot.Common
         [XmlAttribute("name")]
         public string Name { get; set; }
 
-        public CommonItem() { }
+        protected CommonItem() { }
 
         public CommonItem(string name)
             : this()

@@ -84,39 +84,29 @@ namespace BabBot.Wow
 
     /// <summary>
     /// Base class for all In-Game clickable objects
-    /// That can own quests
+    /// It can own quests but doesn't allow interact with (target)
+    /// GameObject can't move, have services or belong to faction
     /// </summary>
     [XmlInclude(typeof(NPC))]
     public class GameObject : CommonMergeListItem
     {
-        internal Vector3D BasePosition;
+        /// <summary>
+        /// Base object coordinates
+        /// </summary>
+        [XmlElement("base_position")]
+        public Vector3D BasePosition;
 
-        [XmlAttribute("x")]
-        public float X {
-            get { return BasePosition.X; }
-            set { BasePosition.X = value; }
-        }
-
-        [XmlAttribute("y")]
-        public float Y {
-            get { return BasePosition.Y; }
-            set { BasePosition.Y = value; }
-        }
-        
-        [XmlAttribute("z")]
-        public float Z {
-            get { return BasePosition.Z; }
-            set { BasePosition.Z = value; }
-        }
-
+        /// <summary>
+        /// Zone name where game object located
+        /// for ex. "Teldrassil
+        /// </summary>
         [XmlAttribute("zone")]
         public string ZoneText;
 
-        /*
-        [XmlAttribute("service")]
-        public string Service;
-        */
-
+        /// <summary>
+        /// List of quests related to this game object
+        /// Includes only quests where it's act as quest giver
+        /// </summary>
         [XmlElement("quests")]
         public Quests QuestList
         {
@@ -124,49 +114,101 @@ namespace BabBot.Wow
             set { MergeList[0] = value; }
         }
 
+        internal double X
+        {
+            get { return BasePosition.X; }
+        }
+
+        internal double Y
+        {
+            get { return BasePosition.Y; }
+        }
+
+        internal double Z
+        {
+            get { return BasePosition.Z; }
+        }
+
+        /// <summary>
+        /// Full GameObject name include title
+        /// i.e Item/Npc
+        /// </summary>
         internal virtual string FullName
         {
             get { return "Item: " + Name; }
         }
 
+        /// <summary>
+        /// Object type according enum GameObjectTypes
+        /// </summary>
         public virtual DataManager.GameObjectTypes ObjType
         {
             get { return DataManager.GameObjectTypes.ITEM; }
         }
 
+        /// <summary>
+        /// Base class constructor
+        /// </summary>
         public GameObject()
             : base()
         {
-            MergeList = new IMergeable[1];
             BasePosition = new Vector3D();
+
+            Init();
         }
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="name">GameObject name</param>
+        /// <param name="zone">Zone name where object located</param>
+        /// <param name="wp">Base coordinate</param>
         public GameObject(string name, string zone, Vector3D wp)
             : base(name)
         {
             ZoneText = zone;
             BasePosition = (Vector3D)wp.Clone();
+
+            Init();
         }
 
+        protected virtual void Init()
+        {
+            MergeList = new IMergeable[1];
+            QuestList = new Quests();
+        }
+
+        /// <summary>
+        /// Add quest related to object
+        /// </summary>
+        /// <param name="qh">Quest object</param>
         public void AddQuest(Quest qh)
         {
             QuestList.Add(qh);
         }
 
+        /// <summary>
+        /// Find Number of quest with same title 
+        /// related to this GameObject
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
         public int FindQuestQtyByTitle(string title)
         {
             return QuestList.FindQuestQtyByTitle(title);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object arg)
         {
-            if (!base.Equals(obj))
+            if (!base.Equals(arg))
                 return false;
 
-            GameObject g_obj = (GameObject) obj;
+            GameObject obj = (GameObject) arg;
 
-            return ZoneText.Equals(g_obj.ZoneText) &&
-                (BasePosition.GetDistanceTo(g_obj.BasePosition) < 5F);
+            return ZoneText.Equals(obj.ZoneText) &&
+                (ObjType == obj.ObjType) &&
+                (BasePosition.GetDistanceTo(obj.BasePosition) < 5F) && 
+                QuestList.Equals(obj.QuestList);
         }
 
         public override int GetHashCode()
@@ -175,11 +217,26 @@ namespace BabBot.Wow
         }
     }
 
+    /// <summary>
+    /// NPC class. Inherited from GameObject
+    /// In addition: 
+    ///   - it can be interacted with,
+    ///   - belong to faction (Alliance/Horde or be neuteral)
+    ///   - have multiple services (for ex. vendor, inn),
+    ///   - can be mobile (have multiple coordinates)
+    /// </summary>
     public class NPC : GameObject
     {
+        /// <summary>
+        /// NPC faction (Alliance/Horde)
+        /// If null/empty might be Neuteral. Not tested
+        /// </summary>
         [XmlAttribute("faction")]
         public string Faction;
 
+        /// <summary>
+        /// List of NPC coordinates other than base coordinate
+        /// </summary>
         [XmlElement("coordinates")]
         public WpZones Coordinates
         {
@@ -187,11 +244,22 @@ namespace BabBot.Wow
             set { MergeList[1] = value; }
         }
 
+        /// <summary>
+        /// List of NPC services
+        /// </summary>
         [XmlElement("services")]
         public NPCServices Services
         {
             get { return (NPCServices)MergeList[2]; }
             set { MergeList[2] = value; }
+        }
+
+        /// <summary>
+        /// Is NPC moving i.e has additional coordinates other than base coordinate
+        /// </summary>
+        internal bool Mobile
+        {
+            get { return Coordinates.Table.Count > 0; }
         }
 
         internal override string FullName
@@ -219,25 +287,23 @@ namespace BabBot.Wow
             get { return DataManager.GameObjectTypes.NPC; }
         }
         
-        public NPC()
-            : base()
-        {
-            // Increase mergeable array
-            Array.Resize<IMergeable>(ref MergeList, 3);
-        }
+        public NPC() : base() { }
 
         public NPC(string name, string zone, Vector3D wp, string faction)
             : base(name, zone, wp)
         {
             Faction = faction;
+        }
+
+        protected override void Init()
+        {
+            base.Init();
 
             Array.Resize<IMergeable>(ref MergeList, 3);
 
             Coordinates = new WpZones();
             Services = new NPCServices();
-            QuestList = new Quests();
         }
-
 
         public NPC(WowPlayer player, string faction)
             : this(player.CurTarget.Name, player.ZoneText, player.CurTarget.Location, faction) { }
@@ -262,14 +328,13 @@ namespace BabBot.Wow
             NPC npc = (NPC)obj;
 
             return
+                // Faction can be null
                 MergeHelper.Compare(Faction, npc.Faction) &&
 
                 // Service list
                 Services.Equals(npc.Services) &&
                 // Waypoints
-                Coordinates.Equals(npc.Coordinates) &&
-                // Quest List
-                QuestList.Equals(npc.QuestList);
+                Coordinates.Equals(npc.Coordinates);
         }
 
         public override int GetHashCode()
@@ -697,6 +762,11 @@ namespace BabBot.Wow
     {
         [XmlAttribute("sub_zone")]
         public string SubZone;
+
+        internal override string Descr
+        {
+            get { return SubZone; }
+        }
 
         internal override DataManager.ServiceTypes SrvType
         {

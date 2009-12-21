@@ -21,6 +21,17 @@ using System.Xml.Serialization;
 
 namespace BabBot.Wow
 {
+    /// <summary>
+    /// 3D position type
+    /// ABSOLUTE is position on the continent map
+    /// RELATIVE is position on zone map inside continent
+    /// </summary>
+    public enum VectorTypes : int
+    {
+        ABSOLUTE = 0,
+        RELATIVE = 1
+    }
+
     public class Vector3D : ICloneable
     {
         [XmlAttribute("x")]
@@ -32,25 +43,64 @@ namespace BabBot.Wow
         [XmlAttribute("z")]
         public float Z;
 
+        [XmlAttribute("type")]
+        public int Type
+        {
+            set { VType = (VectorTypes)value; }
+            get { return (int) VType; }
+        }
+
+        /// <summary>
+        /// Vector type (ABSOLUTE or RELATIVE)
+        /// For now by default is ABSOLUTE until coordinates converter will be completed
+        /// </summary>
+        internal VectorTypes VType = VectorTypes.ABSOLUTE;
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public Vector3D() : this(0, 0, 0) { }
+
+        /// <summary>
+        /// Create 3D vector with given coordinates
+        /// </summary>
+        /// <param name="x">X axiz coordinate</param>
+        /// <param name="y">Y axiz coordinate</param>
+        /// <param name="z">Z axiz coordinate</param>
         public Vector3D(float x, float y, float z)
+            : this (x, y, z, VectorTypes.ABSOLUTE) { }
+
+        /// <summary>
+        /// Create 3D vector with given coordinates
+        /// </summary>
+        /// <param name="x">X axiz coordinate</param>
+        /// <param name="y">Y axiz coordinate</param>
+        /// <param name="z">Z axiz coordinate</param>
+        /// <param name="type">Vector type (absolute or relative)</param>
+        public Vector3D(float x, float y, float z, VectorTypes type)
         {
-            X = x;
-            Y = y;
-            Z = z;
+            // Keep 2 float digits
+            X = (float)Math.Round(x, 2);
+            Y = (float)Math.Round(y, 2);
+            Z = (float)Math.Round(z, 2);
+            VType = type;
         }
 
-        public Vector3D()
-        {
-            X = 0;
-            Y = 0;
-            Z = 0;
-        }
-
+        /// <summary>
+        /// Is vector not zero length
+        /// However zero length might be valid if object located exactly in the center point
+        /// </summary>
+        /// <returns></returns>
         public bool IsValid()
         {
             return ((X == 0) && (Y == 0) && (Z == 0)) ? false : true;
         }
 
+        /// <summary>
+        /// Normalize vector i.e divide each coordinate on vector length (from center)
+        /// so lenth of new vector is always 1
+        /// </summary>
+        /// <returns>Normalized vector</returns>
         public Vector3D Normalize()
         {
             double length = Math.Sqrt(X*X + Y*Y + Z*Z);
@@ -70,18 +120,14 @@ namespace BabBot.Wow
         {
             // If both are null, or both are same instance, return true.
             if (ReferenceEquals(v1, v2))
-            {
                 return true;
-            }
 
             // If one is null, but not both, return false.
             if (((object)v1 == null) || ((object)v2 == null))
-            {
                 return false;
-            }
 
-            // Return true if the fields match:
-            return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z;
+            // Return true if the all fields match:
+            return v1.IsEqualTo(v2);
         }
 
         public static bool operator !=(Vector3D v1, Vector3D v2)
@@ -115,31 +161,31 @@ namespace BabBot.Wow
         public bool Equals(Vector3D obj)
         {
             if (ReferenceEquals(null, obj))
-            {
                 return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            return obj.X == X && obj.Y == Y && obj.Z == Z;
+
+            return IsEqualTo(obj);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            if (obj.GetType() != typeof (Vector3D))
-            {
-                return false;
-            }
-            return Equals((Vector3D) obj);
+            if (ReferenceEquals(null, obj) || 
+                (obj.GetType() != typeof (Vector3D)))
+                    return false;
+
+            return IsEqualTo((Vector3D)obj);
+        }
+
+        /// <summary>
+        /// Compare itself with destination vector
+        /// Used stricly internally assumed all verification done and
+        /// destination vector not null and the same object type
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        private bool IsEqualTo(Vector3D v)
+        {
+            return (ReferenceEquals(this, v) ||
+               v.X == X && v.Y == Y && v.Z == Z && v.VType == VType);
         }
 
         public override int GetHashCode()
@@ -153,6 +199,11 @@ namespace BabBot.Wow
             }
         }
 
+        /// <summary>
+        /// Get distance to destination vector
+        /// </summary>
+        /// <param name="l">Destination vector</param>
+        /// <returns>Distance to destination</returns>
         public float GetDistanceTo(Vector3D l)
         {
             float dx = X - l.X;
@@ -161,6 +212,34 @@ namespace BabBot.Wow
             return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
+        /// <summary>
+        /// Check if 2 vectors located in 5 yards distance from each other
+        /// </summary>
+        /// <param name="v">Destination vector</param>
+        /// <returns>TRUE if 2 vectors located in 5 yards range between each other
+        /// and FALSE if not</returns>
+        public bool IsClose(Vector3D v)
+        {
+            return IsClose(v, 5F);
+        }
+
+        /// <summary>
+        /// Check if 2 vectors located close to each other
+        /// </summary>
+        /// <param name="v">Destination vector</param>
+        /// <param name="distance">Distance between vectors 
+        /// that considered to be "close distance"</param>
+        /// <returns>TRUE if 2 vectors located in given distance between each other
+        /// and FALSE if not</returns>
+        public bool IsClose(Vector3D v, float distance)
+        {
+            return (GetDistanceTo(v) <= distance);
+        }
+
+        /// <summary>
+        /// Clone itself
+        /// </summary>
+        /// <returns>Cloned vector</returns>
         public object Clone()
         {
             return this.MemberwiseClone();

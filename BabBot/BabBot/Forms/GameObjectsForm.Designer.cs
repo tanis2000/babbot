@@ -49,6 +49,8 @@
             this.popServiceActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fkGameObjectsNpcServices = new System.Windows.Forms.BindingSource(this.components);
+            this.tbFaction = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.tbDescr = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cbAvailServices = new System.Windows.Forms.ComboBox();
@@ -89,10 +91,11 @@
             this.btnAddItem = new System.Windows.Forms.Button();
             this.cbItemList = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.btnEditObject = new System.Windows.Forms.Button();
             this.cbAllZones = new System.Windows.Forms.ComboBox();
             this.bsZoneList = new System.Windows.Forms.BindingSource(this.components);
             this.gbAddCoord = new System.Windows.Forms.GroupBox();
+            this.cbCoordType = new System.Windows.Forms.ComboBox();
+            this.bsCoordTypes = new System.Windows.Forms.BindingSource(this.components);
             this.gbAutoAdd = new System.Windows.Forms.GroupBox();
             this.popGameObject.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects)).BeginInit();
@@ -112,6 +115,7 @@
             this.gbCoordinates.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bsZoneList)).BeginInit();
             this.gbAddCoord.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bsCoordTypes)).BeginInit();
             this.gbAutoAdd.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -256,6 +260,8 @@
             this.gbDescription.Controls.Add(this.btnAddService);
             this.gbDescription.Controls.Add(this.tbName);
             this.gbDescription.Controls.Add(this.lbActiveServices);
+            this.gbDescription.Controls.Add(this.tbFaction);
+            this.gbDescription.Controls.Add(this.label4);
             this.gbDescription.Controls.Add(this.tbDescr);
             this.gbDescription.Controls.Add(this.label1);
             this.gbDescription.Controls.Add(this.cbAvailServices);
@@ -269,7 +275,7 @@
             // 
             // btnAddService
             // 
-            this.btnAddService.Location = new System.Drawing.Point(120, 61);
+            this.btnAddService.Location = new System.Drawing.Point(120, 83);
             this.btnAddService.Name = "btnAddService";
             this.btnAddService.Size = new System.Drawing.Size(35, 23);
             this.btnAddService.TabIndex = 42;
@@ -283,10 +289,10 @@
             this.lbActiveServices.DataSource = this.fkGameObjectsNpcServices;
             this.lbActiveServices.DisplayMember = "FULL_NAME";
             this.lbActiveServices.FormattingEnabled = true;
-            this.lbActiveServices.Location = new System.Drawing.Point(9, 117);
+            this.lbActiveServices.Location = new System.Drawing.Point(9, 138);
             this.lbActiveServices.Name = "lbActiveServices";
             this.lbActiveServices.ScrollAlwaysVisible = true;
-            this.lbActiveServices.Size = new System.Drawing.Size(145, 69);
+            this.lbActiveServices.Size = new System.Drawing.Size(145, 43);
             this.lbActiveServices.TabIndex = 39;
             this.lbActiveServices.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbActiveServices_KeyDown);
             // 
@@ -311,9 +317,27 @@
             this.fkGameObjectsNpcServices.DataSource = this.bsGameObjects;
             this.fkGameObjectsNpcServices.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.bsFKGameObjectsNpcServices_ListChanged);
             // 
+            // tbFaction
+            // 
+            this.tbFaction.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bsGameObjects, "FACTION", true));
+            this.tbFaction.Location = new System.Drawing.Point(55, 56);
+            this.tbFaction.Name = "tbFaction";
+            this.tbFaction.ReadOnly = true;
+            this.tbFaction.Size = new System.Drawing.Size(100, 20);
+            this.tbFaction.TabIndex = 77;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 59);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(42, 13);
+            this.label4.TabIndex = 77;
+            this.label4.Text = "Faction";
+            // 
             // tbDescr
             // 
-            this.tbDescr.Location = new System.Drawing.Point(55, 88);
+            this.tbDescr.Location = new System.Drawing.Point(55, 112);
             this.tbDescr.Name = "tbDescr";
             this.tbDescr.Size = new System.Drawing.Size(100, 20);
             this.tbDescr.TabIndex = 77;
@@ -321,7 +345,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 91);
+            this.label1.Location = new System.Drawing.Point(6, 115);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 77;
@@ -333,35 +357,35 @@
             this.cbAvailServices.DisplayMember = "NAME";
             this.cbAvailServices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbAvailServices.FormattingEnabled = true;
-            this.cbAvailServices.Location = new System.Drawing.Point(9, 63);
+            this.cbAvailServices.Location = new System.Drawing.Point(9, 85);
             this.cbAvailServices.Name = "cbAvailServices";
             this.cbAvailServices.Size = new System.Drawing.Size(104, 21);
             this.cbAvailServices.TabIndex = 41;
-            this.cbAvailServices.SelectedIndexChanged += new System.EventHandler(this.cbAvailServices_SelectedIndexChanged);
             // 
             // bsServiceTypesFiltered
             // 
             this.bsServiceTypesFiltered.DataMember = "ServiceTypes";
             this.bsServiceTypesFiltered.DataSource = this.botDataSet;
+            this.bsServiceTypesFiltered.CurrentChanged += new System.EventHandler(this.bsServiceTypesFiltered_CurrentChanged);
             // 
             // tbZ
             // 
-            this.tbZ.Location = new System.Drawing.Point(26, 95);
+            this.tbZ.Location = new System.Drawing.Point(23, 125);
             this.tbZ.Name = "tbZ";
-            this.tbZ.Size = new System.Drawing.Size(68, 20);
+            this.tbZ.Size = new System.Drawing.Size(71, 20);
             this.tbZ.TabIndex = 78;
             // 
             // tbY
             // 
-            this.tbY.Location = new System.Drawing.Point(26, 69);
+            this.tbY.Location = new System.Drawing.Point(23, 99);
             this.tbY.Name = "tbY";
-            this.tbY.Size = new System.Drawing.Size(68, 20);
+            this.tbY.Size = new System.Drawing.Size(71, 20);
             this.tbY.TabIndex = 77;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(9, 98);
+            this.label8.Location = new System.Drawing.Point(3, 128);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(14, 13);
             this.label8.TabIndex = 76;
@@ -370,7 +394,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 72);
+            this.label7.Location = new System.Drawing.Point(3, 102);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(14, 13);
             this.label7.TabIndex = 75;
@@ -378,15 +402,15 @@
             // 
             // tbX
             // 
-            this.tbX.Location = new System.Drawing.Point(26, 43);
+            this.tbX.Location = new System.Drawing.Point(23, 73);
             this.tbX.Name = "tbX";
-            this.tbX.Size = new System.Drawing.Size(68, 20);
+            this.tbX.Size = new System.Drawing.Size(71, 20);
             this.tbX.TabIndex = 74;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 46);
+            this.label6.Location = new System.Drawing.Point(3, 76);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(14, 13);
             this.label6.TabIndex = 74;
@@ -394,7 +418,7 @@
             // 
             // btnAddCoord
             // 
-            this.btnAddCoord.Location = new System.Drawing.Point(57, 121);
+            this.btnAddCoord.Location = new System.Drawing.Point(57, 163);
             this.btnAddCoord.Name = "btnAddCoord";
             this.btnAddCoord.Size = new System.Drawing.Size(37, 23);
             this.btnAddCoord.TabIndex = 70;
@@ -404,6 +428,8 @@
             // 
             // lbCoordinates
             // 
+            this.lbCoordinates.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.lbCoordinates.ContextMenuStrip = this.popCoordinates;
             this.lbCoordinates.DataSource = this.fKCoordinatesZoneCoordinates;
             this.lbCoordinates.DisplayMember = "COORD";
@@ -411,7 +437,7 @@
             this.lbCoordinates.Location = new System.Drawing.Point(6, 49);
             this.lbCoordinates.Name = "lbCoordinates";
             this.lbCoordinates.ScrollAlwaysVisible = true;
-            this.lbCoordinates.Size = new System.Drawing.Size(173, 160);
+            this.lbCoordinates.Size = new System.Drawing.Size(173, 121);
             this.lbCoordinates.TabIndex = 70;
             this.lbCoordinates.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbCoordinates_KeyDown);
             // 
@@ -440,6 +466,7 @@
             this.fKGameObjectsCoordinatesZone.DataMember = "FK_GameObjects_CoordinatesZone";
             this.fKGameObjectsCoordinatesZone.DataSource = this.bsGameObjects;
             this.fKGameObjectsCoordinatesZone.Sort = "ZONE_NAME";
+            this.fKGameObjectsCoordinatesZone.CurrentChanged += new System.EventHandler(this.fKGameObjectsCoordinatesZone_CurrentChanged);
             // 
             // gbQuestList
             // 
@@ -601,7 +628,7 @@
             this.gbCoordinates.Controls.Add(this.lbCoordinates);
             this.gbCoordinates.Location = new System.Drawing.Point(179, 260);
             this.gbCoordinates.Name = "gbCoordinates";
-            this.gbCoordinates.Size = new System.Drawing.Size(189, 221);
+            this.gbCoordinates.Size = new System.Drawing.Size(189, 174);
             this.gbCoordinates.TabIndex = 69;
             this.gbCoordinates.TabStop = false;
             this.gbCoordinates.Text = "Coordinates";
@@ -621,7 +648,7 @@
             // btnAddPlayerTargetCoord
             // 
             this.btnAddPlayerTargetCoord.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAddPlayerTargetCoord.Location = new System.Drawing.Point(57, 42);
+            this.btnAddPlayerTargetCoord.Location = new System.Drawing.Point(147, 15);
             this.btnAddPlayerTargetCoord.Name = "btnAddPlayerTargetCoord";
             this.btnAddPlayerTargetCoord.Size = new System.Drawing.Size(36, 23);
             this.btnAddPlayerTargetCoord.TabIndex = 82;
@@ -632,12 +659,12 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(6, 47);
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(100, 20);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(53, 12);
+            this.label9.Size = new System.Drawing.Size(37, 13);
             this.label9.TabIndex = 81;
-            this.label9.Text = "coordinates";
+            this.label9.Text = "coord.";
             // 
             // cbPlayerTarget
             // 
@@ -646,7 +673,7 @@
             this.cbPlayerTarget.Items.AddRange(new object[] {
             "Player",
             "Target"});
-            this.cbPlayerTarget.Location = new System.Drawing.Point(6, 18);
+            this.cbPlayerTarget.Location = new System.Drawing.Point(6, 17);
             this.cbPlayerTarget.Name = "cbPlayerTarget";
             this.cbPlayerTarget.Size = new System.Drawing.Size(88, 21);
             this.cbPlayerTarget.TabIndex = 80;
@@ -654,7 +681,7 @@
             // btnAddNewObj
             // 
             this.btnAddNewObj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddNewObj.Location = new System.Drawing.Point(544, 229);
+            this.btnAddNewObj.Location = new System.Drawing.Point(612, 231);
             this.btnAddNewObj.Name = "btnAddNewObj";
             this.btnAddNewObj.Size = new System.Drawing.Size(94, 23);
             this.btnAddNewObj.TabIndex = 70;
@@ -693,24 +720,13 @@
             this.label5.TabIndex = 73;
             this.label5.Text = "Object";
             // 
-            // btnEditObject
-            // 
-            this.btnEditObject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEditObject.Location = new System.Drawing.Point(644, 229);
-            this.btnEditObject.Name = "btnEditObject";
-            this.btnEditObject.Size = new System.Drawing.Size(62, 23);
-            this.btnEditObject.TabIndex = 74;
-            this.btnEditObject.Text = "Edit";
-            this.btnEditObject.UseVisualStyleBackColor = true;
-            this.btnEditObject.Click += new System.EventHandler(this.btnEditObject_Click);
-            // 
             // cbAllZones
             // 
             this.cbAllZones.DataSource = this.bsZoneList;
             this.cbAllZones.DisplayMember = "NAME";
             this.cbAllZones.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbAllZones.FormattingEnabled = true;
-            this.cbAllZones.Location = new System.Drawing.Point(6, 16);
+            this.cbAllZones.Location = new System.Drawing.Point(6, 19);
             this.cbAllZones.Name = "cbAllZones";
             this.cbAllZones.Size = new System.Drawing.Size(88, 21);
             this.cbAllZones.TabIndex = 80;
@@ -723,6 +739,7 @@
             // 
             // gbAddCoord
             // 
+            this.gbAddCoord.Controls.Add(this.cbCoordType);
             this.gbAddCoord.Controls.Add(this.tbY);
             this.gbAddCoord.Controls.Add(this.cbAllZones);
             this.gbAddCoord.Controls.Add(this.label6);
@@ -733,19 +750,36 @@
             this.gbAddCoord.Controls.Add(this.label7);
             this.gbAddCoord.Location = new System.Drawing.Point(374, 260);
             this.gbAddCoord.Name = "gbAddCoord";
-            this.gbAddCoord.Size = new System.Drawing.Size(100, 147);
+            this.gbAddCoord.Size = new System.Drawing.Size(100, 192);
             this.gbAddCoord.TabIndex = 75;
             this.gbAddCoord.TabStop = false;
             this.gbAddCoord.Text = "Add Coordinates";
+            // 
+            // cbCoordType
+            // 
+            this.cbCoordType.DataSource = this.bsCoordTypes;
+            this.cbCoordType.DisplayMember = "TYPE";
+            this.cbCoordType.FormattingEnabled = true;
+            this.cbCoordType.Location = new System.Drawing.Point(6, 46);
+            this.cbCoordType.Name = "cbCoordType";
+            this.cbCoordType.Size = new System.Drawing.Size(88, 21);
+            this.cbCoordType.TabIndex = 81;
+            this.cbCoordType.ValueMember = "ID";
+            // 
+            // bsCoordTypes
+            // 
+            this.bsCoordTypes.DataMember = "CoordTypes";
+            this.bsCoordTypes.DataSource = this.botDataSet;
+            this.bsCoordTypes.CurrentChanged += new System.EventHandler(this.bsCoordTypes_CurrentChanged);
             // 
             // gbAutoAdd
             // 
             this.gbAutoAdd.Controls.Add(this.cbPlayerTarget);
             this.gbAutoAdd.Controls.Add(this.btnAddPlayerTargetCoord);
             this.gbAutoAdd.Controls.Add(this.label9);
-            this.gbAutoAdd.Location = new System.Drawing.Point(374, 413);
+            this.gbAutoAdd.Location = new System.Drawing.Point(179, 440);
             this.gbAutoAdd.Name = "gbAutoAdd";
-            this.gbAutoAdd.Size = new System.Drawing.Size(100, 68);
+            this.gbAutoAdd.Size = new System.Drawing.Size(189, 47);
             this.gbAutoAdd.TabIndex = 76;
             this.gbAutoAdd.TabStop = false;
             this.gbAutoAdd.Text = "Auto Add";
@@ -757,15 +791,14 @@
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.labelWoWVersion);
             this.Controls.Add(this.gbDescription);
-            this.Controls.Add(this.gbAutoAdd);
             this.Controls.Add(this.gbDebug);
-            this.Controls.Add(this.gbCoordinates);
-            this.Controls.Add(this.btnEditObject);
+            this.Controls.Add(this.gbAutoAdd);
             this.Controls.Add(this.gbAddCoord);
-            this.Controls.Add(this.btnAddNewObj);
+            this.Controls.Add(this.gbCoordinates);
             this.Controls.Add(this.lbGameObjList);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
+            this.Controls.Add(this.btnAddNewObj);
             this.Controls.Add(this.cbItemList);
             this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.gbQuestList);
@@ -781,15 +814,14 @@
             this.Controls.SetChildIndex(this.gbQuestList, 0);
             this.Controls.SetChildIndex(this.labelTitle, 0);
             this.Controls.SetChildIndex(this.cbItemList, 0);
+            this.Controls.SetChildIndex(this.btnAddNewObj, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.lbGameObjList, 0);
-            this.Controls.SetChildIndex(this.btnAddNewObj, 0);
-            this.Controls.SetChildIndex(this.gbAddCoord, 0);
-            this.Controls.SetChildIndex(this.btnEditObject, 0);
             this.Controls.SetChildIndex(this.gbCoordinates, 0);
-            this.Controls.SetChildIndex(this.gbDebug, 0);
+            this.Controls.SetChildIndex(this.gbAddCoord, 0);
             this.Controls.SetChildIndex(this.gbAutoAdd, 0);
+            this.Controls.SetChildIndex(this.gbDebug, 0);
             this.Controls.SetChildIndex(this.gbDescription, 0);
             this.Controls.SetChildIndex(this.labelWoWVersion, 0);
             this.Controls.SetChildIndex(this.btnImport, 0);
@@ -817,6 +849,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bsZoneList)).EndInit();
             this.gbAddCoord.ResumeLayout(false);
             this.gbAddCoord.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bsCoordTypes)).EndInit();
             this.gbAutoAdd.ResumeLayout(false);
             this.gbAutoAdd.PerformLayout();
             this.ResumeLayout(false);
@@ -872,7 +905,6 @@
         private System.Windows.Forms.ContextMenuStrip popCoordinates;
         private System.Windows.Forms.ToolStripMenuItem deleteCoordinatesToolStripMenuItem;
         private System.Windows.Forms.BindingSource bsServiceTypesFull;
-        private System.Windows.Forms.Button btnEditObject;
         private System.Windows.Forms.ListBox lbQuestList;
         private System.Windows.Forms.BindingSource fkGameObjectsQuestList;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
@@ -891,5 +923,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TextBox tbDescr;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox cbCoordType;
+        private System.Windows.Forms.BindingSource bsCoordTypes;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbFaction;
     }
 }

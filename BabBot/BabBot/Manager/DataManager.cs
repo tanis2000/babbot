@@ -96,7 +96,7 @@ namespace BabBot.Manager
         /// <summary>
         /// GameObjectData xml file name
         /// </summary>
-        private static string GameObjDataFileName =
+        public static string GameObjDataFileName =
 #if DEBUG
             "..\\..\\Data\\" +
 #endif
@@ -105,7 +105,7 @@ namespace BabBot.Manager
         /// <summary>
         /// Waypoints xml file name
         /// </summary>
-        private static string RoutesFileName =
+        public static string RoutesFileName =
 #if DEBUG
  "..\\..\\Data\\" +
 #endif
@@ -243,26 +243,30 @@ namespace BabBot.Manager
             GameData = new BotDataSet();
 
             // Add game object types
-            foreach (GameObjectTypes z in Enum.GetValues(typeof(GameObjectTypes)))
-                GameData.GameObjectTypes.AddGameObjectTypesRow((int) z, Enum.GetName(
-                                            typeof(GameObjectTypes), z).ToLower());
+            foreach (GameObjectTypes id in Enum.GetValues(typeof(GameObjectTypes)))
+                GameData.GameObjectTypes.AddGameObjectTypesRow((int) id, Enum.GetName(
+                                            typeof(GameObjectTypes), id).ToLower());
 
             // Add service types
-            foreach (ServiceTypes z in Enum.GetValues(typeof(ServiceTypes)))
-                GameData.ServiceTypes.Rows.Add(z, Enum.GetName(
-                                            typeof(ServiceTypes), z).ToLower());
+            foreach (ServiceTypes id in Enum.GetValues(typeof(ServiceTypes)))
+                GameData.ServiceTypes.AddServiceTypesRow((int)id, Enum.GetName(
+                                            typeof(ServiceTypes), id).ToLower());
 
             // Add Quest Item Types
-            foreach (QuestItemTypes qi in Enum.GetValues(typeof(QuestItemTypes)))
-                GameData.QuestItemType.Rows.Add(qi, Enum.GetName(
-                                            typeof(QuestItemTypes), qi).ToLower());
+            foreach (QuestItemTypes id in Enum.GetValues(typeof(QuestItemTypes)))
+                GameData.QuestItemType.AddQuestItemTypeRow((int)id, Enum.GetName(
+                                            typeof(QuestItemTypes), id).ToLower());
+
+            // Add coordinate types
+            foreach (VectorTypes id in Enum.GetValues(typeof(VectorTypes)))
+                GameData.CoordTypes.AddCoordTypesRow((int)id, Enum.GetName(
+                                            typeof(VectorTypes), id).ToLower());
 
             // Create other empty tables
             GameData.AcceptChanges();
 
-            //\\ TEST
+            // Populate DataSet with data
             PopulateDataSet();
-
         }
 
         private static void ShowErrorMessage(string err)
@@ -361,6 +365,11 @@ namespace BabBot.Manager
             _populated = true;
         }
 
+        /// <summary>
+        /// Add new game object to internal dataset
+        /// </summary>
+        /// <param name="g"></param>
+        /// <returns></returns>
         public static BotDataSet.GameObjectsRow AddGameObject(GameObject g)
         {
             BotDataSet.ZoneListRow z = GameData.ZoneList.FindByNAME(g.ZoneText);
@@ -368,7 +377,7 @@ namespace BabBot.Manager
             if (z == null)
                 throw new ZoneNotFoundException(g.ZoneText);
 
-            string faction = null;
+            string faction = "";
             if (g.ObjType == GameObjectTypes.NPC)
                 faction = ((NPC) g).Faction;
 
@@ -381,7 +390,8 @@ namespace BabBot.Manager
             BotDataSet.CoordinatesZoneRow cz_row = GameData.CoordinatesZone.
                 AddCoordinatesZoneRow(obj_row, g.ZoneText);
 
-            GameData.Coordinates.AddCoordinatesRow(cz_row, (decimal)g.X, (decimal)g.Y, (decimal)g.Z);
+            GameData.Coordinates.AddCoordinatesRow(cz_row, 
+                                g.X, g.Y, g.Z, g.BasePosition.Type);
 
             // Add quests
             foreach (Quest q in g.QuestList.Table.Values)
@@ -432,12 +442,18 @@ namespace BabBot.Manager
                 // Add other coordinates
                 foreach (ZoneWp coord in npc.Coordinates.Table.Values)
                 {
-                    cz_row = GameData.CoordinatesZone.
-                        AddCoordinatesZoneRow(obj_row, coord.Name);
+                    // Check if row exists
+                    DataRow[] cz_check = GameData.CoordinatesZone.
+                            Select("ZONE_NAME='" + coord.Name + "' AND GID=" + obj_row.ID);
+                    if (cz_check.Length > 0)
+                        cz_row = (BotDataSet.CoordinatesZoneRow) cz_check[0];
+                    else
+                        cz_row = GameData.CoordinatesZone.
+                            AddCoordinatesZoneRow(obj_row, coord.Name);
 
                     foreach (Vector3D v in coord.List)
                         GameData.Coordinates.AddCoordinatesRow(cz_row, 
-                                        (decimal)v.X, (decimal)v.Y, (decimal)v.Z);
+                                                    v.X, v.Y, v.Z, v.Type);
                 }
 
                 // Add Services
@@ -552,9 +568,8 @@ namespace BabBot.Manager
                 npc.Changed = false;
         }
 
-        public static void DeleteGameObjRow(DataRow row)
+        public static void DeleteGameObjRow(string name)
         {
-            string name = row["NAME"].ToString();
             CurWoWVersion.GameObjData.STable.Remove(name);
         }
 
@@ -564,24 +579,27 @@ namespace BabBot.Manager
         /// <param name="row">row from GameObject table</param>
         public static void AddGameObjectRow(BotDataSet.GameObjectsRow row)
         {
-            CurWoWVersion.GameObjData.Add(GetGameObj(row));
+            CurWoWVersion.GameObjData.Add(MakeGameObj(row));
         }
 
         public static void SaveGameObjRow(BotDataSet.GameObjectsRow row)
         {
+            // Remember name
+            string name = row.NAME;
+
             // Delete Game Object data
-            GameObject obj = CurWoWVersion.GameObjData.STable[row.NAME];
-            if (obj == null)
+            if (!CurWoWVersion.GameObjData.STable.ContainsKey(name))
                 throw new DataSynchException();
 
+            
             // Make new Game Object from dataset
-            obj = GetGameObj(row);
+            GameObject obj = MakeGameObj(row);
 
-            DeleteGameObjRow(row);
+            DeleteGameObjRow(name);
             CurWoWVersion.GameObjData.Add(obj);
         }
 
-        private static GameObject GetGameObj(BotDataSet.GameObjectsRow row)
+        private static GameObject MakeGameObj(BotDataSet.GameObjectsRow row)
         {
             // Pull coordinates
             Dictionary<string, DataRow[]> zone_wp = null;
@@ -597,7 +615,7 @@ namespace BabBot.Manager
                 if (vfirst == null)
                 {
                     BotDataSet.CoordinatesRow first_coord = (BotDataSet.CoordinatesRow)coords[0];
-                    vfirst = new Vector3D((float)first_coord.X,
+                    vfirst = new Vector3D((float)first_coord.X ,
                            (float)first_coord.Y, (float)first_coord.Z);
 
                     zone_wp = new Dictionary<string, DataRow[]>();
@@ -640,7 +658,12 @@ namespace BabBot.Manager
                     DataRow[] item_rows = GameData.QuestItems.
                         Select("QID=" + qrow.ID + " AND ITEM_TYPE_ID=" + (int)qi);
                     foreach (BotDataSet.QuestItemsRow item_row in item_rows)
+                    {
+                        // Quest item by default null
+                        if (q.QuestItems[i] == null)
+                            q.QuestItems[i] = new QuestItem();
                         q.QuestItems[i].List.Add(new CommonQty(item_row.NAME, item_row.QTY));
+                    }
                 }
 
                 DataRow[] rows_objective = GameData.QuestItems.Select("QID=" + qrow.ID +
@@ -650,6 +673,8 @@ namespace BabBot.Manager
             if (row.TYPE_ID == (int) (int)GameObjectTypes.NPC)
             {
                 NPC npc = (NPC) obj;
+
+                npc.Faction = row.FACTION;
 
                 // NPC can have extra coordinates and services
                 // Add other coordinates
@@ -736,20 +761,73 @@ namespace BabBot.Manager
             s.Save(fname, obj);
         }
 
-        /// <summary>
-        /// Save All Game Object data in xml format
-        /// </summary>
-        public static bool SaveGameObjData()
+        public static bool MergeGameObjData(List<GameObject> list, bool export, string lfs)
         {
-            return SaveGameObjData(null);
+            bool f = false;
+            GameObject check = null;
+            foreach (GameObject obj in list)
+            {
+                // Check if GameObject already exists
+
+                try
+                {
+                    // If null it produces exception
+                    check = DataManager.CurWoWVersion.
+                        GameObjData.FindGameObjByName(obj.Name);
+                }
+                catch { }
+
+                if ((check != null))
+                {
+                    if (obj.Equals(check))
+                    {
+                        Output.Instance.LogError(lfs, "GameObject '" + obj.Name +
+                            "' already added with identicall parameters");
+                        continue;
+                    }
+                    else
+                    {
+                        // NPC in database but with different parameters
+                        Output.Instance.Debug(lfs, "'" + obj.Name +
+                            "' data merged with currently configured");
+                        check.MergeWith(obj);
+
+                        f = true;
+                    }
+                }
+                else
+                {
+                    Output.Instance.Debug(lfs, "Adding new GameObject '" + obj.Name +
+                            "' into " + GameObjDataFileName);
+
+                    obj.Changed = true;
+                    DataManager.CurWoWVersion.GameObjData.Add(obj);
+
+                    f = true;
+                }
+
+            }
+
+            return (!f || (f && (DataManager.SaveGameObjData(lfs, export))));
         }
 
         /// <summary>
         /// Save All Game Object data in xml format
         /// </summary>
         /// <param name="lfs">Name of logging facility</param>
-        /// <returns></returns>
+        /// <returns>True if data successfully saved and False if not</returns>
         public static bool SaveGameObjData(string lfs)
+        {
+            return SaveGameObjData(lfs, true);
+        }
+
+        /// <summary>
+        /// Save All Game Object data in xml format
+        /// </summary>
+        /// <param name="lfs">Name of logging facility</param>
+        /// <param name="export">Is export required for changed object</param>
+        /// <returns>True if data successfully saved and False if not</returns>
+        public static bool SaveGameObjData(string lfs, bool export)
         {
             // Backup old NPC data before save
             string bf = System.IO.Path.GetDirectoryName(GameObjDataFileName) +
