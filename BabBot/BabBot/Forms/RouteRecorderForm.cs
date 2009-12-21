@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using BabBot.Common;
 using BabBot.Wow;
 using BabBot.Manager;
+using BabBot.States.Common;
 
 namespace BabBot.Forms
 {
@@ -17,7 +18,7 @@ namespace BabBot.Forms
     public partial class RouteRecorderForm : BabBot.Forms.GenericDialog
     {
         private string[] EndpointList;
-        private Route route = new Route();
+        private Route _route = new Route();
 
         public RouteRecorderForm()
             : base ("route_mgr")
@@ -33,14 +34,28 @@ namespace BabBot.Forms
             cbTypeB.DataSource = EndpointList;
             cbTypeB.SelectedIndex = idx;
 
-            dataGridView1.DataSource = route.List;
+            dataGridView1.DataSource = _route.List;
+#if DEBUG
+            if (ProcessManager.Config.Test == 3)
+                for (int i = 1; i <= 5; i++)
+                    _route.List.Add(new Vector3D(i, i, i));
+#endif
         }
 
         private void btnControl_Click(object sender, EventArgs e)
         {
             if (btnControl.Text.Equals("Start"))
             {
-                // Start recordint
+                if (!CheckInGame())
+                    return;
+
+                // Start recording
+                _route.List.Clear();
+
+                ProcessManager.Player.StateMachine.ChangeState(
+                        new RouteRecordingState(RecordWp, numRecDistance.Value), false, true);
+                ProcessManager.Player.StateMachine.IsRunning = true;
+
                 // TODO
                 btnControl.Text.Equals("Stop");
             }
@@ -49,6 +64,20 @@ namespace BabBot.Forms
                 // Start recordint
                 // TODO
                 btnControl.Text.Equals("Start");
+            }
+        }
+
+        public void RecordWp(Vector3D wp)
+        {
+            if (InvokeRequired)
+            {
+                RouteRecordingState.WaypointRecordingHandler del = RecordWp;
+                object[] parameters = { wp };
+                Invoke(del, parameters);
+            }
+            else
+            {
+                _route.List.Add(wp);
             }
         }
 

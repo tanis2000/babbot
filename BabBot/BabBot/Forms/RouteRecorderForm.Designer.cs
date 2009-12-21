@@ -44,31 +44,37 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnControl = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.numRecDistance = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).BeginInit();
             this.SuspendLayout();
             // 
             // btnHelp
             // 
-            this.btnHelp.Location = new System.Drawing.Point(12, 357);
+            this.btnHelp.Location = new System.Drawing.Point(12, 383);
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(365, 357);
+            this.btnClose.Location = new System.Drawing.Point(365, 383);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(284, 357);
+            this.btnSave.Location = new System.Drawing.Point(284, 383);
             // 
             // dataGridView1
             // 
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(12, 12);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(237, 323);
+            this.dataGridView1.Size = new System.Drawing.Size(237, 356);
             this.dataGridView1.TabIndex = 3;
             // 
             // groupBox1
@@ -201,7 +207,7 @@
             // 
             // btnControl
             // 
-            this.btnControl.Location = new System.Drawing.Point(365, 296);
+            this.btnControl.Location = new System.Drawing.Point(365, 336);
             this.btnControl.Name = "btnControl";
             this.btnControl.Size = new System.Drawing.Size(75, 23);
             this.btnControl.TabIndex = 6;
@@ -212,25 +218,71 @@
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(284, 296);
+            this.btnReset.Location = new System.Drawing.Point(284, 336);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(75, 23);
             this.btnReset.TabIndex = 7;
             this.btnReset.Text = "Reset";
             this.btnReset.UseVisualStyleBackColor = true;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(265, 293);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(175, 13);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "Record coordinates on turn or each";
+            // 
+            // numRecDistance
+            // 
+            this.numRecDistance.Location = new System.Drawing.Point(363, 309);
+            this.numRecDistance.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.numRecDistance.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numRecDistance.Name = "numRecDistance";
+            this.numRecDistance.Size = new System.Drawing.Size(39, 20);
+            this.numRecDistance.TabIndex = 9;
+            this.numRecDistance.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(408, 311);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(32, 13);
+            this.label9.TabIndex = 10;
+            this.label9.Text = "yards";
+            // 
             // RouteRecorderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(452, 392);
+            this.ClientSize = new System.Drawing.Size(452, 418);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.btnControl);
+            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.numRecDistance);
             this.Name = "RouteRecorderForm";
             this.Text = "Route Recorder";
-            this.Controls.SetChildIndex(this.btnControl, 0);
+            this.Controls.SetChildIndex(this.numRecDistance, 0);
+            this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.btnReset, 0);
+            this.Controls.SetChildIndex(this.btnControl, 0);
+            this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.dataGridView1, 0);
             this.Controls.SetChildIndex(this.btnHelp, 0);
@@ -239,7 +291,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -261,5 +315,8 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.NumericUpDown numRecDistance;
+        private System.Windows.Forms.Label label9;
     }
 }

@@ -327,6 +327,7 @@
     <Compile Include="States\Common\AttackNearMobState.cs" />
     <Compile Include="States\Common\DeadState.cs" />
     <Compile Include="States\Common\GlobalBaseBotState.cs" />
+    <Compile Include="States\Common\RouteRecordingState.cs" />
     <Compile Include="States\Samples\HangingAroundState.cs" />
     <Compile Include="States\Common\MoveToState.cs" />
     <Compile Include="States\StateEventArgs.cs" />
