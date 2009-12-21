@@ -675,6 +675,15 @@ namespace BabBot.Wow
             }
         }
 
+        /// <summary>
+        /// Retrieve service specific description
+        /// i.e class name for class trainers and so on
+        /// </summary>
+        internal virtual string Descr
+        {
+            get { return ""; }
+        }
+
         public NPCService() : base() { }
 
         public NPCService(string stype) : base(stype) {}
@@ -713,11 +722,16 @@ namespace BabBot.Wow
     public class ClassTrainingService : NPCService
     {
         [XmlAttribute("class")]
-        public string CharClass;
+        public string ClassName;
 
         internal override DataManager.ServiceTypes SrvType
         {
             get { return DataManager.ServiceTypes.CLASS_TRAINER; }
+        }
+
+        internal override string Descr
+        {
+            get { return ClassName.ToLower(); }
         }
 
         public ClassTrainingService() : base() { }
@@ -725,7 +739,7 @@ namespace BabBot.Wow
         public ClassTrainingService(string class_name)
             : base("class_trainer")
         {
-            CharClass = class_name;
+            ClassName = class_name;
         }
     }
 
@@ -737,6 +751,11 @@ namespace BabBot.Wow
         internal override DataManager.ServiceTypes SrvType
         {
             get { return DataManager.ServiceTypes.WEP_SKILL_TRAINER; }
+        }
+
+        internal override string Descr
+        {
+            get { return WepSkills; }
         }
 
         public WepSkillService() : base() { }
@@ -756,6 +775,11 @@ namespace BabBot.Wow
         internal override DataManager.ServiceTypes SrvType
         {
             get { return DataManager.ServiceTypes.TRADE_SKILL_TRAINER; }
+        }
+
+        internal override string Descr
+        {
+            get { return TradeSkill; }
         }
 
         public TradeSkillTrainingService() : base() { }

@@ -9,9 +9,12 @@ using BabBot.Common;
 using BabBot.Wow;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-
+// TODO
+// Replace with reflection adding NPC services
 namespace BabBot.Manager
 {
+    #region Exceptions
+
     public class ZoneNotFoundException : Exception
     {
         public ZoneNotFoundException(string zone_name)
@@ -32,6 +35,14 @@ namespace BabBot.Manager
             : base("Data between xml source and screen forms non-synchronized." + 
                 " Restart bot and try again.") { }
     }
+
+        public class ServiceNotFountException : Exception
+    {
+        public ServiceNotFountException(string service)
+            : base("In toon's area no NPC found for service: " + service) {}
+    }
+
+    #endregion
 
     public class DataManager
     {
@@ -436,7 +447,7 @@ namespace BabBot.Manager
                     BotDataSet.ServiceTypesRow srv_row =
                         GameData.ServiceTypes.FindByID((int)srv.SrvType);
 
-                    GameData.NpcServices.AddNpcServicesRow(obj_row, srv_row, srv_row.NAME);
+                    GameData.NpcServices.AddNpcServicesRow(obj_row, srv_row, srv_row.NAME, srv.Descr);
                 }
             }
 
@@ -541,62 +552,78 @@ namespace BabBot.Manager
                 npc.Changed = false;
         }
 
+        public static void DeleteGameObjRow(DataRow row)
+        {
+            string name = row["NAME"].ToString();
+            CurWoWVersion.GameObjData.STable.Remove(name);
+        }
+
+        /// <summary>
+        /// Add new GameObject from DataSet information
+        /// </summary>
+        /// <param name="row">row from GameObject table</param>
+        public static void AddGameObjectRow(BotDataSet.GameObjectsRow row)
+        {
+            CurWoWVersion.GameObjData.Add(GetGameObj(row));
+        }
+
         public static void SaveGameObjRow(BotDataSet.GameObjectsRow row)
         {
             // Delete Game Object data
-            GameObject obj_old = CurWoWVersion.GameObjData.STable[row.NAME];
-            if (obj_old == null)
+            GameObject obj = CurWoWVersion.GameObjData.STable[row.NAME];
+            if (obj == null)
                 throw new DataSynchException();
 
-            // Mak new Game Object from dataset
-            GameObject obj_new = GetGameObj(row);
+            // Make new Game Object from dataset
+            obj = GetGameObj(row);
 
-            CurWoWVersion.GameObjData.STable.Remove(row.NAME);
-            CurWoWVersion.GameObjData.STable.Add(row.NAME, obj_new);
-
-            // Finally Save data
-            SaveGameObjData();
+            DeleteGameObjRow(row);
+            CurWoWVersion.GameObjData.Add(obj);
         }
 
         private static GameObject GetGameObj(BotDataSet.GameObjectsRow row)
         {
             // Pull coordinates
-            DataRow[] coords = GameData.Coordinates.Select("GID=" + row.ID);
-            if (coords.Length == 0)
+            Dictionary<string, DataRow[]> zone_wp = null;
+            Vector3D vfirst = null;
+
+            DataRow[] zrows = DataManager.GameData.CoordinatesZone.Select("GID=" + row.ID);
+            foreach (BotDataSet.CoordinatesZoneRow zrow in zrows)
+            {
+                DataRow[] coords = DataManager.GameData.Coordinates.Select("ZONE_ID=" + zrow.ID);
+                if (coords == null)
+                    continue;
+
+                if (vfirst == null)
+                {
+                    BotDataSet.CoordinatesRow first_coord = (BotDataSet.CoordinatesRow)coords[0];
+                    vfirst = new Vector3D((float)first_coord.X,
+                           (float)first_coord.Y, (float)first_coord.Z);
+
+                    zone_wp = new Dictionary<string, DataRow[]>();
+                }
+
+                zone_wp.Add(zrow.ZONE_NAME, coords);
+            }
+
+            if (vfirst == null)
                 throw new Exception("Game object required at least one base coordinates");
 
-            BotDataSet.CoordinatesRow first_coord = (BotDataSet.CoordinatesRow) coords[0];
+            
             GameObject obj = null;
-
-            Vector3D v = new Vector3D((float)first_coord.X, 
-                            (float)first_coord.Y, (float)first_coord.Z);
 
             switch(row.TYPE_ID)
             {
                 case (int)GameObjectTypes.ITEM :
-                    obj = new GameObject(row.NAME, row.ZONE_NAME, v);
+                    obj = new GameObject(row.NAME, row.ZONE_NAME, vfirst);
                     break;
 
                 case (int)GameObjectTypes.NPC:
-                    obj = new NPC(row.NAME, row.ZONE_NAME, v, row.FACTION);
+                    obj = new NPC(row.NAME, row.ZONE_NAME, vfirst, row.FACTION);
                     break;
 
                 default:
                     throw new Exception("Unknown Game Object Type :" + row.TYPE_ID);
-            }
-
-            if (row.TYPE_ID == (int) (int)GameObjectTypes.NPC)
-            {
-                NPC npc = (NPC) obj;
-
-                // NPC can have extra coordinates and services
-                // Add other coordinates
-                for (int i = 1; i < coords.Length; i++)
-                {
-                    // TODO
-                    // BotDataSet.CoordinatesRow coord = (BotDataSet.CoordinatesRow) coords[i];
-                    // npc.Coordinates.Table[npc.ZoneText];
-                }
             }
 
             // Pull quest list with items
@@ -620,6 +647,78 @@ namespace BabBot.Manager
                     " AND ITEM_TYPE_ID=" + (int)QuestItemTypes.OBJECTIVES);
             }
 
+            if (row.TYPE_ID == (int) (int)GameObjectTypes.NPC)
+            {
+                NPC npc = (NPC) obj;
+
+                // NPC can have extra coordinates and services
+                // Add other coordinates
+                if (zone_wp != null)
+                {
+                    foreach (KeyValuePair<string, DataRow[]> item in zone_wp)
+                    {
+                        ZoneWp zone = new ZoneWp(item.Key);
+                        foreach (BotDataSet.CoordinatesRow crow in item.Value)
+                        {
+                            Vector3D v = new Vector3D((float)crow.X, 
+                                        (float)crow.Y, (float)crow.Z);
+                            if (!v.Equals(vfirst)) 
+                                zone.Add(v);
+                        }
+
+                        if (zone.List.Count > 0)
+                            npc.Coordinates.Add(zone);
+                    }
+                }
+
+                // Extra services
+                DataRow[] srows = GameData.NpcServices.Select("GID=" + row.ID);
+                foreach (BotDataSet.NpcServicesRow srow in srows)
+                {
+                    // TODO Replace with reflection
+                    NPCService srv = null;
+
+                    switch (srow.SERVICE_NAME)
+                    {
+                        case "inn":
+                        case "taxi":
+                            srv = new ZoneNpcService(srow.SERVICE_NAME, srow.DESCR);
+                            break;
+
+                        case "banker":
+                        case "battlemaster":
+                            srv = new NPCService(srow.SERVICE_NAME);
+                            break;
+
+                        case "class_trainer":
+                            srv = new ClassTrainingService(srow.DESCR.ToUpper());
+                            break;
+
+                        case "trade_skill_trainer":
+                            srv = new TradeSkillTrainingService(srow.DESCR);
+                            break;
+
+                        case "vendor_regular":
+                        case "vendor_grossery":
+                        case "vendor_repair":
+                            bool has_grossery = srow.SERVICE_NAME.Equals("vendor_grossery");
+                            srv = new VendorService(srow.SERVICE_NAME.
+                                Equals("vendor_repair"), has_grossery, has_grossery);
+                            break;
+
+                        case "wep_skill_trainer":
+                            srv = new WepSkillService(srow.DESCR);
+                            break;
+
+                        default:
+                            throw new ServiceNotFountException(srow.SERVICE_NAME);
+                    }
+
+                    npc.Services.Add(srv);
+                }
+            }
+
+
             return obj;
         }
 
@@ -642,12 +741,24 @@ namespace BabBot.Manager
         /// </summary>
         public static bool SaveGameObjData()
         {
+            return SaveGameObjData(null);
+        }
+
+        /// <summary>
+        /// Save All Game Object data in xml format
+        /// </summary>
+        /// <param name="lfs">Name of logging facility</param>
+        /// <returns></returns>
+        public static bool SaveGameObjData(string lfs)
+        {
             // Backup old NPC data before save
             string bf = System.IO.Path.GetDirectoryName(GameObjDataFileName) +
                 System.IO.Path.DirectorySeparatorChar +
                 System.IO.Path.GetFileNameWithoutExtension(GameObjDataFileName) + ".bak";
-            Output.Instance.Log("npc", "Saving " + GameObjDataFileName +
-                " before serializing to " + bf);
+
+            if (!string.IsNullOrEmpty(lfs))
+                Output.Instance.Log(lfs, "Saving " + GameObjDataFileName +
+                    " before serializing to " + bf);
 
             try
             {
@@ -663,13 +774,15 @@ namespace BabBot.Manager
 
             if (!SaveXmlData(GameObjDataFileName, typeof(GameObjectData), gdata))
             {
-                Output.Instance.Log("npc", "Recovering " + GameObjDataFileName +
-                    " after error from " + bf);
+                if (!string.IsNullOrEmpty(lfs))
+                    Output.Instance.Log(lfs, "Recovering " + GameObjDataFileName +
+                        " after error from " + bf);
                 File.Copy(bf, GameObjDataFileName);
                 return false;
             }
-            else
-                Output.Instance.Log("npc", "File " + GameObjDataFileName +
+
+            if (!string.IsNullOrEmpty(lfs))
+                    Output.Instance.Log(lfs, "File " + GameObjDataFileName +
                                                             " successfully saved.");
 
             // Index GameObject Data
@@ -679,7 +792,7 @@ namespace BabBot.Manager
 
             foreach (GameObject obj in CurWoWVersion.GameObjData.STable.Values)
                 if (obj.Changed)
-                    ExportGameObj(obj);
+                    ExportGameObj(obj, lfs);
 
             // Reset Changed flag
             ResetChanged();
@@ -691,23 +804,29 @@ namespace BabBot.Manager
         /// Serialize the given NPC in Export directory
         /// </summary>
         /// <param name="npc"></param>
-        public static void ExportGameObj(GameObject obj)
+        public static string ExportGameObj(GameObject obj, string lfs)
         {
             string name = obj.Name;
+            string fname = "Data" + System.IO.Path.DirectorySeparatorChar +
+                    "Export" + System.IO.Path.DirectorySeparatorChar + name + ".obj";
             try
             {
-                Output.Instance.Log("npc", "Exporting Game Object: " + name +
+                if (!string.IsNullOrEmpty(lfs))
+                    Output.Instance.Log("npc", "Exporting Game Object: " + name +
                                                 " to Data\\Export subdirectory");
-                SaveXmlData("Data" + System.IO.Path.DirectorySeparatorChar +
-                    "Export" + System.IO.Path.DirectorySeparatorChar + name + ".obj",
-                    typeof(GameObject), obj);
-                Output.Instance.Log("npc", "Export successfull!!! Don't forget upload updated data to " +
+                SaveXmlData(fname, typeof(GameObject), obj);
+
+                if (!string.IsNullOrEmpty(lfs))
+                    Output.Instance.Log("npc", "Export successfull!!! Don't forget upload updated data to " +
                                         "BabBot forum https://sourceforge.net/apps/phpbb/babbot/");
             }
             catch (Exception e)
             {
                 ShowErrorMessage("Unable generate export data. " + e.Message);
+                return null;
             }
+
+            return fname;
         }
 
         /// <summary>

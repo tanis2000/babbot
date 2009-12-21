@@ -24,12 +24,6 @@ namespace BabBot.Wow.Helpers
 
     }
 
-    public class ServiceNotFountException : Exception
-    {
-        public ServiceNotFountException(string service)
-            : base("In toon's area no NPC found for service: " + service) {}
-    }
-
     public class GameObjectNotFountException : Exception
     {
         public GameObjectNotFountException(string name)
@@ -474,7 +468,7 @@ namespace BabBot.Wow.Helpers
 
             }
 
-            if (f && (DataManager.SaveGameObjData()))
+            if (f && (DataManager.SaveGameObjData(lfs)))
                 Output.Instance.Log(lfs, "NPC '" + npc_name +
                     "' successfully added to NPCData.xml");
 

@@ -30,12 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelTitle = new System.Windows.Forms.Label();
             this.lbGameObjList = new System.Windows.Forms.ListBox();
             this.popGameObject = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moveToObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteGameObjectToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.deleteGameObjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bsGameObjects = new System.Windows.Forms.BindingSource(this.components);
             this.botDataSet = new BabBot.Data.BotDataSet();
             this.labelWoWVersion = new System.Windows.Forms.Label();
@@ -48,6 +49,8 @@
             this.popServiceActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fkGameObjectsNpcServices = new System.Windows.Forms.BindingSource(this.components);
+            this.tbDescr = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.cbAvailServices = new System.Windows.Forms.ComboBox();
             this.bsServiceTypesFiltered = new System.Windows.Forms.BindingSource(this.components);
             this.tbZ = new System.Windows.Forms.TextBox();
@@ -135,15 +138,15 @@
             this.label2.TabIndex = 32;
             this.label2.Text = "WoW Version:";
             // 
-            // label1
+            // labelTitle
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(203, 6);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(130, 18);
-            this.label1.TabIndex = 33;
-            this.label1.Text = "Game Object List";
+            this.labelTitle.AutoSize = true;
+            this.labelTitle.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTitle.Location = new System.Drawing.Point(238, 6);
+            this.labelTitle.Name = "labelTitle";
+            this.labelTitle.Size = new System.Drawing.Size(130, 18);
+            this.labelTitle.TabIndex = 33;
+            this.labelTitle.Text = "Game Object List";
             // 
             // lbGameObjList
             // 
@@ -166,31 +169,37 @@
             this.popGameObject.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exportToolStripMenuItem,
             this.moveToObjectToolStripMenuItem,
-            this.deleteGameObjectToolStripMenuItem1});
+            this.toolStripSeparator1,
+            this.deleteGameObjectToolStripMenuItem});
             this.popGameObject.Name = "popNpc";
-            this.popGameObject.Size = new System.Drawing.Size(182, 92);
+            this.popGameObject.Size = new System.Drawing.Size(153, 76);
             this.popGameObject.Opening += new System.ComponentModel.CancelEventHandler(this.popGameObject_Opening);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exportToolStripMenuItem.Text = "Export to XML";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
             // moveToObjectToolStripMenuItem
             // 
             this.moveToObjectToolStripMenuItem.Name = "moveToObjectToolStripMenuItem";
-            this.moveToObjectToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.moveToObjectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.moveToObjectToolStripMenuItem.Text = "Move To ";
             this.moveToObjectToolStripMenuItem.Click += new System.EventHandler(this.moveToObjectToolStripMenuItem_Click);
             // 
-            // deleteGameObjectToolStripMenuItem1
+            // toolStripSeparator1
             // 
-            this.deleteGameObjectToolStripMenuItem1.Name = "deleteGameObjectToolStripMenuItem1";
-            this.deleteGameObjectToolStripMenuItem1.Size = new System.Drawing.Size(181, 22);
-            this.deleteGameObjectToolStripMenuItem1.Text = "Delete Game Object";
-            this.deleteGameObjectToolStripMenuItem1.Click += new System.EventHandler(this.deleteGameObjectToolStripMenuItem_Click);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            // 
+            // deleteGameObjectToolStripMenuItem
+            // 
+            this.deleteGameObjectToolStripMenuItem.Name = "deleteGameObjectToolStripMenuItem";
+            this.deleteGameObjectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteGameObjectToolStripMenuItem.Text = "Delete";
+            this.deleteGameObjectToolStripMenuItem.Click += new System.EventHandler(this.deleteGameObjectToolStripMenuItem_Click);
             // 
             // bsGameObjects
             // 
@@ -247,6 +256,8 @@
             this.gbDescription.Controls.Add(this.btnAddService);
             this.gbDescription.Controls.Add(this.tbName);
             this.gbDescription.Controls.Add(this.lbActiveServices);
+            this.gbDescription.Controls.Add(this.tbDescr);
+            this.gbDescription.Controls.Add(this.label1);
             this.gbDescription.Controls.Add(this.cbAvailServices);
             this.gbDescription.Controls.Add(this.label3);
             this.gbDescription.Location = new System.Drawing.Point(12, 260);
@@ -270,12 +281,12 @@
             // 
             this.lbActiveServices.ContextMenuStrip = this.popServiceActions;
             this.lbActiveServices.DataSource = this.fkGameObjectsNpcServices;
-            this.lbActiveServices.DisplayMember = "SERVICE_NAME";
+            this.lbActiveServices.DisplayMember = "FULL_NAME";
             this.lbActiveServices.FormattingEnabled = true;
-            this.lbActiveServices.Location = new System.Drawing.Point(10, 90);
+            this.lbActiveServices.Location = new System.Drawing.Point(9, 117);
             this.lbActiveServices.Name = "lbActiveServices";
             this.lbActiveServices.ScrollAlwaysVisible = true;
-            this.lbActiveServices.Size = new System.Drawing.Size(145, 95);
+            this.lbActiveServices.Size = new System.Drawing.Size(145, 69);
             this.lbActiveServices.TabIndex = 39;
             this.lbActiveServices.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbActiveServices_KeyDown);
             // 
@@ -300,6 +311,22 @@
             this.fkGameObjectsNpcServices.DataSource = this.bsGameObjects;
             this.fkGameObjectsNpcServices.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.bsFKGameObjectsNpcServices_ListChanged);
             // 
+            // tbDescr
+            // 
+            this.tbDescr.Location = new System.Drawing.Point(55, 88);
+            this.tbDescr.Name = "tbDescr";
+            this.tbDescr.Size = new System.Drawing.Size(100, 20);
+            this.tbDescr.TabIndex = 77;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 91);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 77;
+            this.label1.Text = "Descr";
+            // 
             // cbAvailServices
             // 
             this.cbAvailServices.DataSource = this.bsServiceTypesFiltered;
@@ -310,6 +337,7 @@
             this.cbAvailServices.Name = "cbAvailServices";
             this.cbAvailServices.Size = new System.Drawing.Size(104, 21);
             this.cbAvailServices.TabIndex = 41;
+            this.cbAvailServices.SelectedIndexChanged += new System.EventHandler(this.cbAvailServices_SelectedIndexChanged);
             // 
             // bsServiceTypesFiltered
             // 
@@ -604,11 +632,12 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 50);
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(6, 47);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(34, 13);
+            this.label9.Size = new System.Drawing.Size(53, 12);
             this.label9.TabIndex = 81;
-            this.label9.Text = "coord";
+            this.label9.Text = "coordinates";
             // 
             // cbPlayerTarget
             // 
@@ -735,10 +764,10 @@
             this.Controls.Add(this.gbAddCoord);
             this.Controls.Add(this.btnAddNewObj);
             this.Controls.Add(this.lbGameObjList);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cbItemList);
+            this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.gbQuestList);
             this.Controls.Add(this.btnAddNPC);
             this.Controls.Add(this.btnAddItem);
@@ -750,10 +779,10 @@
             this.Controls.SetChildIndex(this.btnAddItem, 0);
             this.Controls.SetChildIndex(this.btnAddNPC, 0);
             this.Controls.SetChildIndex(this.gbQuestList, 0);
+            this.Controls.SetChildIndex(this.labelTitle, 0);
             this.Controls.SetChildIndex(this.cbItemList, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.lbGameObjList, 0);
             this.Controls.SetChildIndex(this.btnAddNewObj, 0);
             this.Controls.SetChildIndex(this.gbAddCoord, 0);
@@ -798,7 +827,7 @@
         #endregion
 
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.ListBox lbGameObjList;
         private System.Windows.Forms.Label labelWoWVersion;
         private System.Windows.Forms.Button btnImport;
@@ -816,7 +845,7 @@
         private System.Windows.Forms.ContextMenuStrip popQuestActions;
         private System.Windows.Forms.ToolStripMenuItem deleteQuestToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip popGameObject;
-        private System.Windows.Forms.ToolStripMenuItem deleteGameObjectToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem deleteGameObjectToolStripMenuItem;
         private System.Windows.Forms.GroupBox gbDebug;
         private System.Windows.Forms.CheckBox cbUseState;
         private System.Windows.Forms.CheckBox cbLearnSkills;
@@ -859,5 +888,8 @@
         private System.Windows.Forms.BindingSource fKCoordinatesZoneCoordinates;
         private System.Windows.Forms.GroupBox gbAutoAdd;
         private System.Windows.Forms.ToolStripMenuItem moveToObjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.TextBox tbDescr;
+        private System.Windows.Forms.Label label1;
     }
 }

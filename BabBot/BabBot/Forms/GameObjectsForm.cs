@@ -18,9 +18,7 @@
 */
 
 // TODO
-// Finish Global Save
-// Test Export -> Delete ->Import
-// Test delete coordinates does delete empty zone too
+// Test Global Save with quests added
 // Add new form to add new npc/object with min parameters
 using System;
 using System.Collections.Generic;
@@ -40,7 +38,8 @@ namespace BabBot.Forms
 {
     public partial class GameObjectsForm : BabBot.Forms.GenericDialog
     {
-        private DataTable CurServiceList;
+        private readonly string[] ReqSrvDescr = new string[] {
+            "inn", "taxi", "class_trainer", "trade_skill_trainer", "wep_skill_trainer" };
 
         protected override bool IsChanged
         {
@@ -67,6 +66,8 @@ namespace BabBot.Forms
 #if DEBUG
             if (ProcessManager.Config.Test == 1)
             {
+                labelTitle.Visible = false;
+
                 tbX.Text = "1.1";
                 tbY.Text = "2.2";
                 tbZ.Text = "3.3";
@@ -104,6 +105,9 @@ namespace BabBot.Forms
 
                     // Add npc to dataset
                     DataManager.AddGameObject(g);
+
+                    // Select new data
+                    SelectGameObj(g);
                 }
                 catch
                 {
@@ -311,18 +315,35 @@ namespace BabBot.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            if ((tbDescr.Enabled) && tbDescr.Text.Equals(""))
+            {
+                ShowErrorMessage("Description is required for selected service\n" +
+                    "i.e class name for class_trainer and so on");
+                return;
+            }
 
             DataRowView srv_row = (DataRowView)bsServiceTypesFiltered.Current;
 
             if (srv_row == null)
                 return;
 
-            BotDataSet.ServiceTypesRow srow = (BotDataSet.ServiceTypesRow) srv_row.Row; 
-            BotDataSet.GameObjectsRow mrow = GetCurrentRow();
+            BotDataSet.ServiceTypesRow srow = (BotDataSet.ServiceTypesRow) srv_row.Row;
+            BotDataSet.GameObjectsRow cur_row = GetCurrentRow();
 
-            DataManager.GameData.NpcServices.AddNpcServicesRow(mrow, srow, srow.NAME);
+            DataManager.GameData.NpcServices.AddNpcServicesRow(cur_row, srow, srow.NAME, tbDescr.Text);
+            SetCurrentModified(cur_row);
 
             IsChanged = true;
+        }
+
+        /// <summary>
+        /// Change state of current GameObject Row to modified
+        /// </summary>
+        /// <param name="row">Current GameObject row</param>
+        private void SetCurrentModified(BotDataSet.GameObjectsRow row)
+        {
+            if (row.RowState == DataRowState.Unchanged)
+                row.SetModified();
         }
 
         private void lbActiveServices_KeyDown(object sender, KeyEventArgs e)
@@ -352,25 +373,52 @@ namespace BabBot.Forms
         private void btnAddNewObj_Click(object sender, EventArgs e)
         {
             // TODO
-            ShowErrorMessage("Not implemented yet");
+            ShowErrorMessage("Currently supported only in-game adding of new NPC/Game Object");
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            BotDataSet.GameObjectsRow row = GetCurrentRow();
-            row.EndEdit();
+            GetCurrentRow().EndEdit();
 
             tbName.TextChanged -= tbName_TextChanged;
 
             try
             {
+                // Process new rows
+                DataTable tbl = DataManager.GameData.GameObjects.
+                                            GetChanges(DataRowState.Added);
+                if (tbl != null)
+                    foreach (BotDataSet.GameObjectsRow row in tbl.Rows)
+                        DataManager.AddGameObjectRow(row);
+
+                tbl = DataManager.GameData.GameObjects.GetChanges(DataRowState.Deleted);
+                if (tbl != null)
+                {
+                    // A bit tricky with deleted rows
+                    DataView dv = new DataView(tbl, null, null, DataViewRowState.Deleted);
+                    //The new DataTable (dt) now contains the original versions of the deleted rows.
+                    tbl = dv.ToTable();
+                    foreach (DataRow row in tbl.Rows)
+                        DataManager.DeleteGameObjRow(row);
+                }
+
+                tbl = DataManager.GameData.GameObjects.GetChanges(DataRowState.Modified);
+                if (tbl != null)
+                    foreach (BotDataSet.GameObjectsRow row in tbl.Rows)
+                        DataManager.SaveGameObjRow(row);
+
                 // Save data on the disk
-                DataManager.SaveGameObjRow(row);
-                DataManager.GameData.AcceptChanges();
+                if (DataManager.SaveGameObjData())
+                {
+                    // Than accept changes
+                    DataManager.GameData.AcceptChanges();
 
-                SetEditControls(false);
+                    SetEditControls(false);
 
-                IsChanged = false;
+                    IsChanged = false;
+
+                    ShowInfoMessage("Game Object Data successfully saved !!!");
+                }
             }
             catch (Exception ex)
             {
@@ -386,15 +434,6 @@ namespace BabBot.Forms
             BotDataSet.GameObjectsRow row = GetCurrentRow();
             if (row == null)
                 return;
-
-            if (btnSave.Enabled)
-            {
-                // we are in edit mode
-                if (MessageBox.Show("Are you sure cancel changes ?",
-                    "Confirmation", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Exclamation) == DialogResult.No) { }
-                    // Select previous record
-            }
 
             cbPlayerTarget.SelectedIndex = row.TYPE_ID;
         }
@@ -447,7 +486,12 @@ namespace BabBot.Forms
                 return;
             }
 
-            DataManager.ExportGameObj(obj);
+            string res = DataManager.ExportGameObj(obj, null);
+            if (res != null)
+                ShowInfoMessage("Game Object successfully exported to file '" + res +
+                    "'.\nDon't forget submit updated data (if any) to " +
+                        "BabBot forum https://sourceforge.net/apps/phpbb/babbot/");
+
         }
 
         #endregion
@@ -504,6 +548,10 @@ namespace BabBot.Forms
         {
             // TODO
             ShowErrorMessage("Quest Form not implemented yet");
+
+            // Dont forget set parent row modified
+            // BotDataSet.GameObjectsRow cur_row = GetCurrentRow();
+            // SetCurrentModified(cur_row);
         }
 
         private Quest CheckBeforeQuestTest()
@@ -592,9 +640,8 @@ namespace BabBot.Forms
             ((DataRowView)fKCoordinatesZoneCoordinates.Current).Delete();
             
             // If no other coordinates delete zone too
-            BotDataSet.CoordinatesDataTable coord_table = 
-                (BotDataSet.CoordinatesDataTable) fKCoordinatesZoneCoordinates.DataSource;
-
+            if (fKCoordinatesZoneCoordinates.Count == 0)
+                ((DataRowView)((BindingSource)fKCoordinatesZoneCoordinates.DataSource).Current).Delete();
             // TODO
 
             IsChanged = true;
@@ -672,10 +719,22 @@ namespace BabBot.Forms
 
         private void AddGameObjCoord(string zone, decimal x, decimal y, decimal z)
         {
+            BotDataSet.GameObjectsRow cur_row = GetCurrentRow();
+
             // Check if new coord not too close
-            foreach (DataRowView c in lbCoordinates.Items)
+            DataRow[] crows = new DataRow[0];
+
+            DataRow[] zrows = DataManager.GameData.CoordinatesZone.Select("GID=" + cur_row.ID);
+            foreach (BotDataSet.CoordinatesZoneRow zrow in zrows)
             {
-                BotDataSet.CoordinatesRow row = (BotDataSet.CoordinatesRow)c.Row;
+                DataRow[] coords = DataManager.GameData.Coordinates.Select("ZONE_ID=" + zrow.ID);
+                int old_idx = crows.Length;
+                Array.Resize<DataRow>(ref crows, crows.Length + coords.Length);
+                coords.CopyTo(crows, old_idx);
+            }
+
+            foreach (BotDataSet.CoordinatesRow row in crows)
+            {
                 if (Math.Sqrt(Math.Pow((double)(row.X - x), 2) + 
                         Math.Pow((double)(row.Y - y), 2) +
                         Math.Pow((double)(row.Z - z), 2)) < 5)
@@ -700,7 +759,7 @@ namespace BabBot.Forms
                 zone_row = (BotDataSet.CoordinatesZoneRow) rows[0].Row;
 
             DataManager.GameData.Coordinates.AddCoordinatesRow(zone_row, x, y, z);
-
+            SetCurrentModified(cur_row);
 
             // Select last row
             lbCoordinates.SelectedIndex = lbCoordinates.Items.Count - 1;
@@ -818,13 +877,19 @@ namespace BabBot.Forms
 
         private void popGameObject_Opening(object sender, CancelEventArgs e)
         {
-            moveToObjectToolStripMenuItem.Text = "Move To"; 
+            moveToObjectToolStripMenuItem.Text = "Move To";
+            deleteGameObjectToolStripMenuItem.Text = "Delete";
 
             if (!CheckGameObjSelected())
                 return;
 
-            moveToObjectToolStripMenuItem.Text += " '" + GetCurrentRow().NAME + "'"; 
+            moveToObjectToolStripMenuItem.Text += " '" + GetCurrentRow().NAME + "'";
+            deleteGameObjectToolStripMenuItem.Text += " '" + GetCurrentRow().NAME + "'";
+        }
 
+        private void cbAvailServices_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            tbDescr.Enabled = (Array.IndexOf(ReqSrvDescr, cbAvailServices.Text) >= 0);
         }
     }
 }
