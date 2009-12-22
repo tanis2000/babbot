@@ -18,7 +18,7 @@ namespace BabBot.Forms
     public partial class RouteRecorderForm : BabBot.Forms.GenericDialog
     {
         private string[] EndpointList;
-        private Route _route = new Route();
+        private Route _route;
 
         public RouteRecorderForm()
             : base ("route_mgr")
@@ -34,11 +34,10 @@ namespace BabBot.Forms
             cbTypeB.DataSource = EndpointList;
             cbTypeB.SelectedIndex = idx;
 
-            dataGridView1.DataSource = _route.List;
 #if DEBUG
             if (ProcessManager.Config.Test == 3)
-                for (int i = 1; i <= 5; i++)
-                    _route.List.Add(new Vector3D(i, i, i));
+                for (int i = 1; i <= 55; i++)
+                    dgWaypoints.Rows.Add(i + 0.11, i + 0.11, i + 0.11);
 #endif
         }
 
@@ -85,6 +84,18 @@ namespace BabBot.Forms
                                     EndpointTypes type_b, string name_b)
         {
             return null;
+        }
+
+        private void goToToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Move To
+            // TODO
+        }
+
+        private void popWaypoints_Opening(object sender, CancelEventArgs e)
+        {
+            // Disable when multiselected
+            // TODO
         }
     }
 }
