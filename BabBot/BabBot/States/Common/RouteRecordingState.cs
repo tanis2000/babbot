@@ -14,7 +14,7 @@ namespace BabBot.States.Common
     /// </summary>
     class RouteRecordingState : State<WowPlayer>
     {
-        public delegate void WaypointRecordingHandler(Vector3D wp);
+        public delegate void WaypointRecordingHandler(Vector3D v);
 
         public event WaypointRecordingHandler OnWaypointRecording;
 

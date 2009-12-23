@@ -74,7 +74,9 @@ namespace BabBot.Forms
             ProcessManager.WoWGameLoaded += wo_GameLoaded;
 
             // Starts the bot thread
-            ProcessManager.PlayerUpdate += PlayerUpdate;
+            // Main form update temporarily disabled to avoid constant exception
+            // from BlackMagic concurrent memory read
+            // ProcessManager.PlayerUpdate += PlayerUpdate;
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
             ProcessManager.UpdateAppStatus += UpdateAppStatus;
             ProcessManager.UpdateGameStatus += UpdateGameStatus;

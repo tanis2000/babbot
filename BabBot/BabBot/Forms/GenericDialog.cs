@@ -66,6 +66,10 @@ namespace BabBot.Forms
 
         protected bool CheckInGame()
         {
+#if DEBUG
+            if (ProcessManager.Config.Test == 3)
+                return true;
+#endif
             // Check if InGame
             if (!ProcessManager.InGame)
             {

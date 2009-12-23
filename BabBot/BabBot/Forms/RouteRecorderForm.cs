@@ -19,6 +19,7 @@ namespace BabBot.Forms
     {
         private string[] EndpointList;
         private Route _route;
+        bool _rec_state = false;
 
         public RouteRecorderForm()
             : base ("route_mgr")
@@ -33,11 +34,17 @@ namespace BabBot.Forms
             cbTypeA.SelectedIndex = idx;
             cbTypeB.DataSource = EndpointList;
             cbTypeB.SelectedIndex = idx;
+            dgWaypoints.Rows.Clear();
 
 #if DEBUG
             if (ProcessManager.Config.Test == 3)
+            {
                 for (int i = 1; i <= 55; i++)
-                    dgWaypoints.Rows.Add(i + 0.11, i + 0.11, i + 0.11);
+                {
+                    float v = (float)(i + 0.11);
+                        RecordWp(new Vector3D(v, v, v));
+                }
+            }
 #endif
         }
 
@@ -45,38 +52,59 @@ namespace BabBot.Forms
         {
             if (btnControl.Text.Equals("Start"))
             {
-                if (!CheckInGame())
+                if (!(CheckInGame() && ResetRoute()))
                     return;
 
                 // Start recording
-                _route.List.Clear();
+                dgWaypoints.Rows.Clear();
 
                 ProcessManager.Player.StateMachine.ChangeState(
                         new RouteRecordingState(RecordWp, numRecDistance.Value), false, true);
                 ProcessManager.Player.StateMachine.IsRunning = true;
 
-                // TODO
-                btnControl.Text.Equals("Stop");
+                SetRecordingState();
+                btnControl.Text = "Stop";
+                btnReset.Text = "Suspend";
             }
             else
             {
-                // Start recordint
-                // TODO
-                btnControl.Text.Equals("Start");
+                // Stop recordint
+                SetRecordingState();
+                btnControl.Text = "Start";
+                btnReset.Text = "Reset";
             }
         }
 
-        public void RecordWp(Vector3D wp)
+        private void SetRecordingState()
+        {
+            _rec_state = !_rec_state;
+
+            gbRouteDetails.Enabled = !_rec_state;
+            lblRecDescr.Enabled = !_rec_state;
+            lblRecDistance.Enabled = !_rec_state;
+            numRecDistance.Enabled = !_rec_state;
+        }
+
+        public void RecordWp(Vector3D v)
         {
             if (InvokeRequired)
             {
                 RouteRecordingState.WaypointRecordingHandler del = RecordWp;
-                object[] parameters = { wp };
+                object[] parameters = { v };
                 Invoke(del, parameters);
             }
             else
             {
-                _route.List.Add(wp);
+                // Add row
+                dgWaypoints.Rows.Add(v.X, v.Y, v.Z);
+                int idx = dgWaypoints.Rows.Count - 1;
+
+                // Unselect previous row
+                dgWaypoints.Rows[idx - 1].Selected = false;
+
+                // Auto Select last waypoint
+                dgWaypoints.Rows[idx].Selected = true;
+                dgWaypoints.FirstDisplayedScrollingRowIndex = idx;
             }
         }
 
@@ -96,6 +124,41 @@ namespace BabBot.Forms
         {
             // Disable when multiselected
             // TODO
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            if (_rec_state)
+            {
+                // TODO
+                // Suspend/Resume recordint
+
+                if (btnReset.Text.Equals("Suspend"))
+                    btnReset.Text = "Resume";
+                else
+                    btnReset.Text = "Resume";
+            }
+            else
+                ResetRoute();
+        }
+
+        private bool ResetRoute()
+        {
+            if ((dgWaypoints.Rows.Count > 1) &&
+                (MessageBox.Show(this, "Are you sure clear all waypoints ?",
+                    "Clear Confirmation", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Exclamation,
+                    MessageBoxDefaultButton.Button2) != DialogResult.Yes))
+                return false;
+
+            dgWaypoints.Rows.Clear();
+            return true;
+        }
+
+        private void RouteRecorderForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // TODO
+            // Add confirmation and stop Recording state if running
         }
     }
 }
