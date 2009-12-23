@@ -50,18 +50,23 @@ namespace BabBot.States.Common
 
         protected override void DoExecute(WowPlayer player)
         {
+            Vector3D cur_loc = player.Location;
+
             if (player.Orientation != _angle)
             {
                 // Remember new angle and record coord
                 _angle = player.Orientation;
                 // Check if we not rotating
-                if (player.Location.GetDistanceTo(_coord) >= _min_dist)
-                    OnWaypointRecording((Vector3D)player.Location.Clone());
+                if (cur_loc.GetDistanceTo(_coord) >= _min_dist)
+                {
+                    _coord = cur_loc;
+                    OnWaypointRecording(_coord.CloneVector());
+                }
             }
             else if (player.Location.GetDistanceTo(_coord) >= _rec_dist)
             {
-                _coord = (Vector3D)player.Location.Clone();
-                OnWaypointRecording(_coord);
+                _coord = cur_loc;
+                OnWaypointRecording(_coord.CloneVector());
             }
         }
 

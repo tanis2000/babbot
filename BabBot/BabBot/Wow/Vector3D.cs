@@ -244,5 +244,14 @@ namespace BabBot.Wow
         {
             return this.MemberwiseClone();
         }
+
+        /// <summary>
+        /// Clone itself
+        /// </summary>
+        /// <returns>Cloned vector as Vector3D class </returns>
+        public Vector3D CloneVector()
+        {
+            return (Vector3D)this.Clone();
+        }
     }
 }
