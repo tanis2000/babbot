@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Text;
+using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
-using BabBot.Common;
+using System.ComponentModel;
+using System.Collections.Generic;
 using BabBot.Wow;
-using BabBot.Wow.Helpers;
 using BabBot.Manager;
+using BabBot.Common;
+using BabBot.Wow.Helpers;
 using BabBot.States.Common;
 
 namespace BabBot.Forms
@@ -22,7 +23,7 @@ namespace BabBot.Forms
 
     public partial class RouteRecorderForm : BabBot.Forms.GenericDialog
     {
-        private string[] EndpointList;
+        
         private Route _route;
         RecStates _rec_state = RecStates.IDLE;
         private ComboBox[][] _pcontrols;
@@ -36,15 +37,29 @@ namespace BabBot.Forms
             ComboBox[] cb = new ComboBox[] { cbTypeB, cbObjB };
             _pcontrols = new ComboBox[][] { ca, cb };
 
-            EndpointList = new string[DataManager.EndpointsSet.Count];
-            DataManager.EndpointsSet.Keys.CopyTo(EndpointList, 0);
+            List<UndefEndpoint> ListA = new List<UndefEndpoint>();
+            List<UndefEndpoint> ListB = new List<UndefEndpoint>();
 
-            int idx = Array.IndexOf(EndpointList, "undef");
-            cbTypeA.DataSource = EndpointList.Clone();
+            int idx = -1;
+            foreach (EndpointTypes ept in Enum.GetValues(typeof(EndpointTypes)))
+            {
+                string class_name = Output.GetLogNameByLfs(
+                    Enum.GetName(typeof(EndpointTypes), ept).ToLower(), "") + "Endpoint";
+
+                Type reflect_class = Type.GetType("BabBot.Forms." + class_name);
+
+                ConstructorInfo[] ci = reflect_class.GetConstructors();
+
+                UndefEndpoint xa = (UndefEndpoint) Activator.
+                    CreateInstance(reflect_class, new object[] { this, cbObjA, 'A' });
+                UndefEndpoint xb = (UndefEndpoint) Activator.
+                    CreateInstance(reflect_class, new object[] { this, cbObjB, 'B' });
+            }
+
+            
             cbTypeA.SelectedIndex = idx;
             cbTypeA.Tag = 0;
 
-            cbTypeB.DataSource = EndpointList.Clone();
             cbTypeB.SelectedIndex = idx;
             cbTypeB.Tag = 1;
 
@@ -347,4 +362,105 @@ namespace BabBot.Forms
             bsGameObjects2.Filter = "ID <>" + ((DataRowView)cbObjA.SelectedItem).Row["ID"].ToString();
         }
     }
+
+    #region Classes for Reflection
+
+    public class UndefEndpoint {
+        protected char C;
+        public ComboBox Target;
+        protected IWin32Window Owner;
+
+        public virtual string Name
+        {
+            get { return "undef"; }
+        }
+
+        public UndefEndpoint() { }
+
+        public UndefEndpoint(IWin32Window owner, ComboBox target, char a_b)
+        {
+            C = a_b;
+            Owner = owner;
+            Target = target;
+        }
+
+        public virtual void OnSelection()
+        {
+            Target.Enabled = false;
+        }
+
+        public virtual bool Check
+        {
+            get { return GenericDialog.GetConfirmation(Owner, 
+                    "Continue with undefined Endpoint " + C + " ?"); }
+        }
+    }
+
+    public abstract class AbstractDefEndpoint : UndefEndpoint
+    {
+        public AbstractDefEndpoint() : base() { }
+
+        public AbstractDefEndpoint(IWin32Window owner, ComboBox target, char a_b)
+            : base(owner, target, a_b) { }
+
+        public override bool Check
+        {
+            get
+            {
+                if (Target.SelectedItem == null)
+                {
+                    GenericDialog.ShowErrorMessage(Owner, "Select Object for Point " + C);
+                    return false;
+                }
+
+                return true;
+            }
+        }
+    }
+
+    public class GameObjEndpoint : AbstractDefEndpoint
+    {
+        public GameObjEndpoint(IWin32Window owner, ComboBox target, char a_b)
+            : base(owner, target, a_b) { }
+
+        public override string Name
+        {
+            get { return "game_object"; }
+        }
+    }
+
+    public class QuestObjEndpoint : AbstractDefEndpoint
+    {
+        public QuestObjEndpoint(IWin32Window owner, ComboBox target, char a_b)
+            : base(owner, target, a_b) { }
+
+        public override string Name
+        {
+            get { return "quest_objective"; }
+        }
+    }
+
+    public class HotSpotEndpoint : UndefEndpoint
+    {
+        public HotSpotEndpoint(IWin32Window owner, ComboBox target, char a_b)
+            : base(owner, target, a_b) { }
+
+        public override string Name
+        {
+            get { return "hot_spot"; }
+        }
+    }
+
+    public class GraveyardEndpoint : UndefEndpoint
+    {
+        public GraveyardEndpoint(IWin32Window owner, ComboBox target, char a_b)
+            : base(owner, target, a_b) { }
+
+        public override string Name
+        {
+            get { return "graveyard"; }
+        }
+    }
+    
+    #endregion
 }

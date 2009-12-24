@@ -1229,10 +1229,13 @@ namespace BabBot.Wow
 
     #region Route
 
+    /// <summary>
+    /// Type of route Endpoints
+    /// </summary>
     public enum EndpointTypes : byte
     {
         UNDEF = 0,
-        NPC = 1,
+        GAME_OBJ = 1,
         QUEST_OBJ = 2,
         HOT_SPOT = 3,
         GRAVEYARD = 4

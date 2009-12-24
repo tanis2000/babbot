@@ -101,7 +101,12 @@ namespace BabBot.Forms
 
         protected void ShowErrorMessage(string err)
         {
-            MessageBox.Show(this, err, "ERROR",
+            ShowErrorMessage(this, err);
+        }
+
+        public static void ShowErrorMessage(IWin32Window owner, string err)
+        {
+            MessageBox.Show(owner, err, "ERROR",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
@@ -119,10 +124,17 @@ namespace BabBot.Forms
 
         protected bool GetConfirmation(string question)
         {
-            return (MessageBox.Show(this, question, "Confirmation", 
+            return GetConfirmation(this, question);
+        }
+
+        public static bool GetConfirmation(IWin32Window owner, string question)
+        {
+            return (MessageBox.Show(owner, question, "Confirmation", 
                 MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
                     MessageBoxDefaultButton.Button2) == DialogResult.Yes);
         }
+
+
         protected virtual void GenericDialog_Load(object sender, EventArgs e)
         {
             _changed = false;

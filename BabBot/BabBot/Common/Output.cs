@@ -58,10 +58,15 @@ namespace BabBot.Common
         /// <returns>String used to create logging file name</returns>
         public static string GetLogNameByLfs(string lfs)
         {
+            return GetLogNameByLfs(lfs, " ");
+        }
+
+        public static string GetLogNameByLfs(string lfs, string separator)
+        {
             string[] ss = lfs.Replace('_', ' ').Split(' ');
             for (int i = 0; i < ss.Length; i++)
                 ss[i] = char.ToUpper(ss[i][0]) + ss[i].Substring(1);
-            return string.Join(" ", ss);
+            return string.Join(separator, ss);
         }
 
         /// <summary>

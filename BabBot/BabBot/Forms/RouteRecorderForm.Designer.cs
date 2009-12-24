@@ -48,11 +48,14 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.cbObjB = new System.Windows.Forms.ComboBox();
+            this.bsGameObjects2 = new System.Windows.Forms.BindingSource(this.components);
+            this.botDataSet = new BabBot.Data.BotDataSet();
             this.label5 = new System.Windows.Forms.Label();
             this.cbReverseable = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.cbObjA = new System.Windows.Forms.ComboBox();
+            this.bsGameObjects1 = new System.Windows.Forms.BindingSource(this.components);
             this.cbTypeA = new System.Windows.Forms.ComboBox();
             this.cbTypeB = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -62,17 +65,14 @@
             this.numRecDistance = new System.Windows.Forms.NumericUpDown();
             this.lblRecDistance = new System.Windows.Forms.Label();
             this.gbRecOptions = new System.Windows.Forms.GroupBox();
-            this.botDataSet = new BabBot.Data.BotDataSet();
-            this.bsGameObjects1 = new System.Windows.Forms.BindingSource(this.components);
-            this.bsGameObjects2 = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dgWaypoints)).BeginInit();
             this.popWaypoints.SuspendLayout();
             this.gbRouteDetails.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).BeginInit();
-            this.gbRecOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).BeginInit();
+            this.gbRecOptions.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnHelp
@@ -283,6 +283,7 @@
             // 
             this.cbObjB.DataSource = this.bsGameObjects2;
             this.cbObjB.DisplayMember = "NAME";
+            this.cbObjB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjB.FormattingEnabled = true;
             this.cbObjB.Location = new System.Drawing.Point(58, 195);
             this.cbObjB.Name = "cbObjB";
@@ -290,6 +291,16 @@
             this.cbObjB.TabIndex = 8;
             this.cbObjB.ValueMember = "ID";
             this.cbObjB.Visible = false;
+            // 
+            // bsGameObjects2
+            // 
+            this.bsGameObjects2.DataMember = "GameObjects";
+            this.bsGameObjects2.DataSource = this.botDataSet;
+            // 
+            // botDataSet
+            // 
+            this.botDataSet.DataSetName = "BotDataSet";
+            this.botDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
             // 
             // label5
             // 
@@ -332,6 +343,7 @@
             // 
             this.cbObjA.DataSource = this.bsGameObjects1;
             this.cbObjA.DisplayMember = "NAME";
+            this.cbObjA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjA.FormattingEnabled = true;
             this.cbObjA.Location = new System.Drawing.Point(58, 88);
             this.cbObjA.Name = "cbObjA";
@@ -340,8 +352,15 @@
             this.cbObjA.ValueMember = "ID";
             this.cbObjA.Visible = false;
             // 
+            // bsGameObjects1
+            // 
+            this.bsGameObjects1.DataMember = "GameObjects";
+            this.bsGameObjects1.DataSource = this.botDataSet;
+            this.bsGameObjects1.CurrentChanged += new System.EventHandler(this.bsGameObjects1_CurrentChanged);
+            // 
             // cbTypeA
             // 
+            this.cbTypeA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTypeA.FormattingEnabled = true;
             this.cbTypeA.Location = new System.Drawing.Point(58, 61);
             this.cbTypeA.Name = "cbTypeA";
@@ -351,6 +370,7 @@
             // 
             // cbTypeB
             // 
+            this.cbTypeB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTypeB.FormattingEnabled = true;
             this.cbTypeB.Location = new System.Drawing.Point(58, 168);
             this.cbTypeB.Name = "cbTypeB";
@@ -449,22 +469,6 @@
             this.gbRecOptions.TabStop = false;
             this.gbRecOptions.Text = "Recording Options";
             // 
-            // botDataSet
-            // 
-            this.botDataSet.DataSetName = "BotDataSet";
-            this.botDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
-            // 
-            // bsGameObjects1
-            // 
-            this.bsGameObjects1.DataMember = "GameObjects";
-            this.bsGameObjects1.DataSource = this.botDataSet;
-            this.bsGameObjects1.CurrentChanged += new System.EventHandler(this.bsGameObjects1_CurrentChanged);
-            // 
-            // bsGameObjects2
-            // 
-            this.bsGameObjects2.DataMember = "GameObjects";
-            this.bsGameObjects2.DataSource = this.botDataSet;
-            // 
             // RouteRecorderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -485,12 +489,12 @@
             this.popWaypoints.ResumeLayout(false);
             this.gbRouteDetails.ResumeLayout(false);
             this.gbRouteDetails.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).EndInit();
             this.gbRecOptions.ResumeLayout(false);
             this.gbRecOptions.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects2)).EndInit();
             this.ResumeLayout(false);
 
         }
