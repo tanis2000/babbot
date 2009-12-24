@@ -117,6 +117,12 @@ namespace BabBot.Forms
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        protected bool GetConfirmation(string question)
+        {
+            return (MessageBox.Show(this, question, "Confirmation", 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
+                    MessageBoxDefaultButton.Button2) == DialogResult.Yes);
+        }
         protected virtual void GenericDialog_Load(object sender, EventArgs e)
         {
             _changed = false;

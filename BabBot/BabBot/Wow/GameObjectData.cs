@@ -1234,8 +1234,8 @@ namespace BabBot.Wow
         UNDEF = 0,
         NPC = 1,
         QUEST_OBJ = 2,
-        HOST_SPOT = 3,
-        GHOST = 4
+        HOT_SPOT = 3,
+        GRAVEYARD = 4
     }
 
     public class Endpoint : CommonItem

@@ -240,7 +240,7 @@ namespace BabBot.Wow.Helpers
         /// Move character to destination
         /// </summary>
         /// <param name="dest"></param>
-        private static bool MoveToDest(Vector3D dest, string lfs)
+        public static bool MoveToDest(Vector3D dest, string lfs)
         {
             WowPlayer player = ProcessManager.Player;
 

@@ -67,6 +67,15 @@ namespace BabBot.Wow
         /// <param name="x">X axiz coordinate</param>
         /// <param name="y">Y axiz coordinate</param>
         /// <param name="z">Z axiz coordinate</param>
+        public Vector3D(double x, double y, double z)
+            : this((float)x, (float)y, (float)z) { }
+
+        /// <summary>
+        /// Create 3D vector with given coordinates
+        /// </summary>
+        /// <param name="x">X axiz coordinate</param>
+        /// <param name="y">Y axiz coordinate</param>
+        /// <param name="z">Z axiz coordinate</param>
         public Vector3D(float x, float y, float z)
             : this (x, y, z, VectorTypes.ABSOLUTE) { }
 

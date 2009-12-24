@@ -37,6 +37,7 @@
             this.Z = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.popWaypoints = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.goToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearEverythingAfterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gbRouteDetails = new System.Windows.Forms.GroupBox();
             this.tbZoneB = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -61,11 +62,17 @@
             this.numRecDistance = new System.Windows.Forms.NumericUpDown();
             this.lblRecDistance = new System.Windows.Forms.Label();
             this.gbRecOptions = new System.Windows.Forms.GroupBox();
+            this.botDataSet = new BabBot.Data.BotDataSet();
+            this.bsGameObjects1 = new System.Windows.Forms.BindingSource(this.components);
+            this.bsGameObjects2 = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dgWaypoints)).BeginInit();
             this.popWaypoints.SuspendLayout();
             this.gbRouteDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).BeginInit();
             this.gbRecOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects2)).BeginInit();
             this.SuspendLayout();
             // 
             // btnHelp
@@ -75,10 +82,12 @@
             // btnClose
             // 
             this.btnClose.Location = new System.Drawing.Point(310, 478);
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(229, 478);
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // dgWaypoints
             // 
@@ -122,6 +131,9 @@
             this.dgWaypoints.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgWaypoints.Size = new System.Drawing.Size(184, 451);
             this.dgWaypoints.TabIndex = 3;
+            this.dgWaypoints.DoubleClick += new System.EventHandler(this.dgWaypoints_DoubleClick);
+            this.dgWaypoints.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgWaypoints_RowsAdded);
+            this.dgWaypoints.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dgWaypoints_RowsRemoved);
             // 
             // X
             // 
@@ -148,17 +160,25 @@
             // popWaypoints
             // 
             this.popWaypoints.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.goToToolStripMenuItem});
+            this.goToToolStripMenuItem,
+            this.clearEverythingAfterToolStripMenuItem});
             this.popWaypoints.Name = "popWaypoints";
-            this.popWaypoints.Size = new System.Drawing.Size(181, 26);
+            this.popWaypoints.Size = new System.Drawing.Size(193, 48);
             this.popWaypoints.Opening += new System.ComponentModel.CancelEventHandler(this.popWaypoints_Opening);
             // 
             // goToToolStripMenuItem
             // 
             this.goToToolStripMenuItem.Name = "goToToolStripMenuItem";
-            this.goToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.goToToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.goToToolStripMenuItem.Text = "Go To this waypoint";
             this.goToToolStripMenuItem.Click += new System.EventHandler(this.goToToolStripMenuItem_Click);
+            // 
+            // clearEverythingAfterToolStripMenuItem
+            // 
+            this.clearEverythingAfterToolStripMenuItem.Name = "clearEverythingAfterToolStripMenuItem";
+            this.clearEverythingAfterToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.clearEverythingAfterToolStripMenuItem.Text = "Clear everything after";
+            this.clearEverythingAfterToolStripMenuItem.Click += new System.EventHandler(this.clearEverythingAfterToolStripMenuItem_Click);
             // 
             // gbRouteDetails
             // 
@@ -261,11 +281,15 @@
             // 
             // cbObjB
             // 
+            this.cbObjB.DataSource = this.bsGameObjects2;
+            this.cbObjB.DisplayMember = "NAME";
             this.cbObjB.FormattingEnabled = true;
             this.cbObjB.Location = new System.Drawing.Point(58, 195);
             this.cbObjB.Name = "cbObjB";
             this.cbObjB.Size = new System.Drawing.Size(121, 21);
             this.cbObjB.TabIndex = 8;
+            this.cbObjB.ValueMember = "ID";
+            this.cbObjB.Visible = false;
             // 
             // label5
             // 
@@ -306,11 +330,15 @@
             // 
             // cbObjA
             // 
+            this.cbObjA.DataSource = this.bsGameObjects1;
+            this.cbObjA.DisplayMember = "NAME";
             this.cbObjA.FormattingEnabled = true;
             this.cbObjA.Location = new System.Drawing.Point(58, 88);
             this.cbObjA.Name = "cbObjA";
             this.cbObjA.Size = new System.Drawing.Size(121, 21);
             this.cbObjA.TabIndex = 4;
+            this.cbObjA.ValueMember = "ID";
+            this.cbObjA.Visible = false;
             // 
             // cbTypeA
             // 
@@ -319,6 +347,7 @@
             this.cbTypeA.Name = "cbTypeA";
             this.cbTypeA.Size = new System.Drawing.Size(121, 21);
             this.cbTypeA.TabIndex = 1;
+            this.cbTypeA.SelectedIndexChanged += new System.EventHandler(this.cbType_SelectedIndexChanged);
             // 
             // cbTypeB
             // 
@@ -327,6 +356,7 @@
             this.cbTypeB.Name = "cbTypeB";
             this.cbTypeB.Size = new System.Drawing.Size(121, 21);
             this.cbTypeB.TabIndex = 7;
+            this.cbTypeB.SelectedIndexChanged += new System.EventHandler(this.cbType_SelectedIndexChanged);
             // 
             // label2
             // 
@@ -419,6 +449,22 @@
             this.gbRecOptions.TabStop = false;
             this.gbRecOptions.Text = "Recording Options";
             // 
+            // botDataSet
+            // 
+            this.botDataSet.DataSetName = "BotDataSet";
+            this.botDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
+            // 
+            // bsGameObjects1
+            // 
+            this.bsGameObjects1.DataMember = "GameObjects";
+            this.bsGameObjects1.DataSource = this.botDataSet;
+            this.bsGameObjects1.CurrentChanged += new System.EventHandler(this.bsGameObjects1_CurrentChanged);
+            // 
+            // bsGameObjects2
+            // 
+            this.bsGameObjects2.DataMember = "GameObjects";
+            this.bsGameObjects2.DataSource = this.botDataSet;
+            // 
             // RouteRecorderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -429,7 +475,6 @@
             this.Name = "RouteRecorderForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Route Recorder";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RouteRecorderForm_FormClosing);
             this.Controls.SetChildIndex(this.gbRecOptions, 0);
             this.Controls.SetChildIndex(this.gbRouteDetails, 0);
             this.Controls.SetChildIndex(this.dgWaypoints, 0);
@@ -443,6 +488,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).EndInit();
             this.gbRecOptions.ResumeLayout(false);
             this.gbRecOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -479,5 +527,9 @@
         private System.Windows.Forms.TextBox tbZoneA;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.DataGridView dgWaypoints;
+        private System.Windows.Forms.ToolStripMenuItem clearEverythingAfterToolStripMenuItem;
+        private System.Windows.Forms.BindingSource bsGameObjects1;
+        private BabBot.Data.BotDataSet botDataSet;
+        private System.Windows.Forms.BindingSource bsGameObjects2;
     }
 }
