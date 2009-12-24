@@ -33,14 +33,15 @@ namespace BabBot.Forms
         {
             InitializeComponent();
 
-            ComboBox[] ca = new ComboBox[] { cbTypeA, cbObjA };
-            ComboBox[] cb = new ComboBox[] { cbTypeB, cbObjB };
-            _pcontrols = new ComboBox[][] { ca, cb };
+            lblObjA.Tag = cbObjA;
+            lblObjB.Tag = cbObjB;
 
-            List<UndefEndpoint> ListA = new List<UndefEndpoint>();
-            List<UndefEndpoint> ListB = new List<UndefEndpoint>();
+            ComboBox[] type_cb = new ComboBox[] { cbTypeA, cbTypeB };
+            Label[] obj_cb = new Label[] { lblObjA, lblObjB };
 
-            int idx = -1;
+            List<AbstractEndpoint>[] obj_list = new List<AbstractEndpoint>[] {
+                new List<AbstractEndpoint>(), new List<AbstractEndpoint>() };
+
             foreach (EndpointTypes ept in Enum.GetValues(typeof(EndpointTypes)))
             {
                 string class_name = Output.GetLogNameByLfs(
@@ -50,23 +51,26 @@ namespace BabBot.Forms
 
                 ConstructorInfo[] ci = reflect_class.GetConstructors();
 
-                UndefEndpoint xa = (UndefEndpoint) Activator.
-                    CreateInstance(reflect_class, new object[] { this, cbObjA, 'A' });
-                UndefEndpoint xb = (UndefEndpoint) Activator.
-                    CreateInstance(reflect_class, new object[] { this, cbObjB, 'B' });
+                for (int i = 0; i < 2; i++)
+                    obj_list[i].Add(Activator.CreateInstance(
+                        reflect_class, new object[] { this, 
+                            obj_cb[i], (char) (65 + i) }) as AbstractEndpoint);
             }
 
-            
-            cbTypeA.SelectedIndex = idx;
-            cbTypeA.Tag = 0;
-
-            cbTypeB.SelectedIndex = idx;
-            cbTypeB.Tag = 1;
+            for (int i = 0; i < 2; i++) {
+                type_cb[i].Tag = i;
+                type_cb[i].DataSource = obj_list[i];
+                type_cb[i].DisplayMember = "Name";
+                type_cb[i].SelectedIndex = 0;
+            }
 
             dgWaypoints.Rows.Clear();
 
-            bsGameObjects1.DataSource = DataManager.GameData;
-            bsGameObjects2.DataSource = DataManager.GameData;
+            bsGameObjectsA.DataSource = DataManager.GameData;
+            bsGameObjectsB.DataSource = DataManager.GameData;
+
+            bsQuestListA.DataSource = DataManager.GameData;
+            bsQuestListB.DataSource = DataManager.GameData;
 #if DEBUG
             if (ProcessManager.Config.Test == 3)
             {
@@ -323,8 +327,11 @@ namespace BabBot.Forms
             Close();
         }
 
+        
         private bool CheckPoint(int idx)
         {
+            return true;
+            /*
             char p = (char)(65 + idx);
             ComboBox[] cb = _pcontrols[idx];
 
@@ -340,10 +347,18 @@ namespace BabBot.Forms
             }
 
             return true;
-        }
+            */
+        } 
 
         private void cbType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            ComboBox cbs = (ComboBox)sender;
+            if (cbs.SelectedItem == null)
+                return;
+
+            ((AbstractEndpoint)cbs.SelectedItem).OnSelection();
+
+            /*
             ComboBox cbs = (ComboBox) sender;
             if ((cbs.Tag == null) || (cbs.SelectedItem == null))
                 return;
@@ -352,6 +367,7 @@ namespace BabBot.Forms
             string s = cbs.SelectedItem.ToString();
 
             obj.Visible = s.Equals("npc") || s.Equals("quest_obj");
+             */
         }
 
         private void bsGameObjects1_CurrentChanged(object sender, EventArgs e)
@@ -359,55 +375,98 @@ namespace BabBot.Forms
             if (cbObjA.SelectedItem == null)
                 return;
 
-            bsGameObjects2.Filter = "ID <>" + ((DataRowView)cbObjA.SelectedItem).Row["ID"].ToString();
+            bsGameObjectsB.Filter = "ID <>" + ((DataRowView)cbObjA.SelectedItem).Row["ID"].ToString();
         }
     }
 
     #region Classes for Reflection
 
-    public class UndefEndpoint {
-        protected char C;
-        public ComboBox Target;
-        protected IWin32Window Owner;
+    public abstract class AbstractEndpoint
+    {
+        public virtual bool Check
+        {
+            get { return true; }
+        }
+        public abstract string Name{ get; }
 
-        public virtual string Name
+        public abstract void OnSelection();
+    }
+
+    public class UndefEndpoint : AbstractEndpoint
+    {
+        protected char C;
+        public Label TargetLabel;
+        protected ComboBox TargetList;
+        protected RouteRecorderForm Owner;
+
+        public override string Name
         {
             get { return "undef"; }
         }
 
         public UndefEndpoint() { }
 
-        public UndefEndpoint(IWin32Window owner, ComboBox target, char a_b)
+        public UndefEndpoint(RouteRecorderForm owner, Label target, char a_b)
         {
             C = a_b;
             Owner = owner;
-            Target = target;
+            TargetLabel = target;
+            TargetList = (ComboBox)target.Tag;
         }
-
-        public virtual void OnSelection()
-        {
-            Target.Enabled = false;
-        }
-
-        public virtual bool Check
-        {
-            get { return GenericDialog.GetConfirmation(Owner, 
-                    "Continue with undefined Endpoint " + C + " ?"); }
-        }
-    }
-
-    public abstract class AbstractDefEndpoint : UndefEndpoint
-    {
-        public AbstractDefEndpoint() : base() { }
-
-        public AbstractDefEndpoint(IWin32Window owner, ComboBox target, char a_b)
-            : base(owner, target, a_b) { }
 
         public override bool Check
         {
             get
             {
-                if (Target.SelectedItem == null)
+                return GenericDialog.GetConfirmation(Owner,
+                  "Continue with undefined Endpoint " + C + " ?");
+            }
+        }
+
+        public override void OnSelection()
+        {
+            SetControls(false);
+            TargetList.DataSource = null;
+        }
+
+        protected void SetControls(bool enabled)
+        {
+            TargetLabel.Enabled = enabled;
+            TargetList.Enabled = enabled;
+        }
+    }
+
+    public abstract class AbstractDefEndpoint : UndefEndpoint
+    {
+        protected readonly BindingSource bs;
+        protected abstract string DisplayMember { get; }
+
+        public AbstractDefEndpoint(string bs_name) : base() {}
+
+        public AbstractDefEndpoint(RouteRecorderForm owner, 
+                        Label target, char a_b, string bs_name)
+            : base(owner, target, a_b) 
+        { 
+            bs = FindBindingSource(bs_name);    
+        }
+
+        private BindingSource FindBindingSource(string name)
+        {
+            // Check for binding source
+            FieldInfo[] fi = Owner.GetType().GetFields();
+
+            foreach (FieldInfo f in fi)
+                if (f.Name.Equals(name + C))
+                    return (BindingSource) f.GetValue(Owner);
+
+            return null;
+        }
+
+        public override bool Check
+        {
+            get
+            {
+                if (TargetList.SelectedItem == null)
                 {
                     GenericDialog.ShowErrorMessage(Owner, "Select Object for Point " + C);
                     return false;
@@ -416,33 +475,52 @@ namespace BabBot.Forms
                 return true;
             }
         }
+
+        public override void OnSelection()
+        {
+            SetControls(true);
+
+            TargetList.DataSource = bs;
+            TargetList.DisplayMember = DisplayMember;
+        }
     }
 
     public class GameObjEndpoint : AbstractDefEndpoint
     {
-        public GameObjEndpoint(IWin32Window owner, ComboBox target, char a_b)
-            : base(owner, target, a_b) { }
+        public GameObjEndpoint(RouteRecorderForm owner, Label target, char a_b)
+            : base(owner, target, a_b, "bsGameObjects") {}
 
         public override string Name
         {
             get { return "game_object"; }
         }
+
+        protected override string DisplayMember
+        {
+            get { return "NAME"; }
+        }
+
     }
 
     public class QuestObjEndpoint : AbstractDefEndpoint
     {
-        public QuestObjEndpoint(IWin32Window owner, ComboBox target, char a_b)
-            : base(owner, target, a_b) { }
+        public QuestObjEndpoint(RouteRecorderForm owner, Label target, char a_b)
+            : base(owner, target, a_b, "bsQuestList") {}
 
         public override string Name
         {
             get { return "quest_objective"; }
         }
+
+        protected override string DisplayMember
+        {
+            get { return "TITLE"; }
+        }
     }
 
     public class HotSpotEndpoint : UndefEndpoint
     {
-        public HotSpotEndpoint(IWin32Window owner, ComboBox target, char a_b)
+        public HotSpotEndpoint(RouteRecorderForm owner, Label target, char a_b)
             : base(owner, target, a_b) { }
 
         public override string Name
@@ -453,7 +531,7 @@ namespace BabBot.Forms
 
     public class GraveyardEndpoint : UndefEndpoint
     {
-        public GraveyardEndpoint(IWin32Window owner, ComboBox target, char a_b)
+        public GraveyardEndpoint(RouteRecorderForm owner, Label target, char a_b)
             : base(owner, target, a_b) { }
 
         public override string Name

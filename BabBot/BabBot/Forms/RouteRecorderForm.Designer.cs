@@ -46,33 +46,37 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblObjB = new System.Windows.Forms.Label();
             this.cbObjB = new System.Windows.Forms.ComboBox();
-            this.bsGameObjects2 = new System.Windows.Forms.BindingSource(this.components);
-            this.botDataSet = new BabBot.Data.BotDataSet();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblObjA = new System.Windows.Forms.Label();
             this.cbReverseable = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.cbObjA = new System.Windows.Forms.ComboBox();
-            this.bsGameObjects1 = new System.Windows.Forms.BindingSource(this.components);
             this.cbTypeA = new System.Windows.Forms.ComboBox();
             this.cbTypeB = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.bsGameObjectsB = new System.Windows.Forms.BindingSource(this.components);
+            this.botDataSet = new BabBot.Data.BotDataSet();
+            this.bsGameObjectsA = new System.Windows.Forms.BindingSource(this.components);
             this.btnControl = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.lblRecDescr = new System.Windows.Forms.Label();
             this.numRecDistance = new System.Windows.Forms.NumericUpDown();
             this.lblRecDistance = new System.Windows.Forms.Label();
             this.gbRecOptions = new System.Windows.Forms.GroupBox();
+            this.bsQuestListA = new System.Windows.Forms.BindingSource(this.components);
+            this.bsQuestListB = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dgWaypoints)).BeginInit();
             this.popWaypoints.SuspendLayout();
             this.gbRouteDetails.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjectsB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjectsA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).BeginInit();
             this.gbRecOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bsQuestListA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsQuestListB)).BeginInit();
             this.SuspendLayout();
             // 
             // btnHelp
@@ -190,9 +194,9 @@
             this.gbRouteDetails.Controls.Add(this.textBox1);
             this.gbRouteDetails.Controls.Add(this.label1);
             this.gbRouteDetails.Controls.Add(this.label7);
-            this.gbRouteDetails.Controls.Add(this.label3);
+            this.gbRouteDetails.Controls.Add(this.lblObjB);
             this.gbRouteDetails.Controls.Add(this.cbObjB);
-            this.gbRouteDetails.Controls.Add(this.label5);
+            this.gbRouteDetails.Controls.Add(this.lblObjA);
             this.gbRouteDetails.Controls.Add(this.cbReverseable);
             this.gbRouteDetails.Controls.Add(this.label4);
             this.gbRouteDetails.Controls.Add(this.label6);
@@ -270,19 +274,18 @@
             this.label7.TabIndex = 11;
             this.label7.Text = "Endpoint B:";
             // 
-            // label3
+            // lblObjB
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 198);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 13);
-            this.label3.TabIndex = 10;
-            this.label3.Text = "Object:";
+            this.lblObjB.AutoSize = true;
+            this.lblObjB.Location = new System.Drawing.Point(6, 198);
+            this.lblObjB.Name = "lblObjB";
+            this.lblObjB.Size = new System.Drawing.Size(41, 13);
+            this.lblObjB.TabIndex = 10;
+            this.lblObjB.Text = "Object:";
             // 
             // cbObjB
             // 
-            this.cbObjB.DataSource = this.bsGameObjects2;
-            this.cbObjB.DisplayMember = "NAME";
+            this.cbObjB.DisplayMember = "ID";
             this.cbObjB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjB.FormattingEnabled = true;
             this.cbObjB.Location = new System.Drawing.Point(58, 195);
@@ -290,26 +293,15 @@
             this.cbObjB.Size = new System.Drawing.Size(121, 21);
             this.cbObjB.TabIndex = 8;
             this.cbObjB.ValueMember = "ID";
-            this.cbObjB.Visible = false;
             // 
-            // bsGameObjects2
+            // lblObjA
             // 
-            this.bsGameObjects2.DataMember = "GameObjects";
-            this.bsGameObjects2.DataSource = this.botDataSet;
-            // 
-            // botDataSet
-            // 
-            this.botDataSet.DataSetName = "BotDataSet";
-            this.botDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 91);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(41, 13);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Object:";
+            this.lblObjA.AutoSize = true;
+            this.lblObjA.Location = new System.Drawing.Point(6, 91);
+            this.lblObjA.Name = "lblObjA";
+            this.lblObjA.Size = new System.Drawing.Size(41, 13);
+            this.lblObjA.TabIndex = 6;
+            this.lblObjA.Text = "Object:";
             // 
             // cbReverseable
             // 
@@ -341,8 +333,7 @@
             // 
             // cbObjA
             // 
-            this.cbObjA.DataSource = this.bsGameObjects1;
-            this.cbObjA.DisplayMember = "NAME";
+            this.cbObjA.DisplayMember = "ID";
             this.cbObjA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjA.FormattingEnabled = true;
             this.cbObjA.Location = new System.Drawing.Point(58, 88);
@@ -350,13 +341,6 @@
             this.cbObjA.Size = new System.Drawing.Size(121, 21);
             this.cbObjA.TabIndex = 4;
             this.cbObjA.ValueMember = "ID";
-            this.cbObjA.Visible = false;
-            // 
-            // bsGameObjects1
-            // 
-            this.bsGameObjects1.DataMember = "GameObjects";
-            this.bsGameObjects1.DataSource = this.botDataSet;
-            this.bsGameObjects1.CurrentChanged += new System.EventHandler(this.bsGameObjects1_CurrentChanged);
             // 
             // cbTypeA
             // 
@@ -387,6 +371,24 @@
             this.label2.Size = new System.Drawing.Size(73, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Endpoint A:";
+            // 
+            // bsGameObjectsB
+            // 
+            this.bsGameObjectsB.DataMember = "GameObjects";
+            this.bsGameObjectsB.DataSource = this.botDataSet;
+            this.bsGameObjectsB.Sort = "NAME";
+            // 
+            // botDataSet
+            // 
+            this.botDataSet.DataSetName = "BotDataSet";
+            this.botDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
+            // 
+            // bsGameObjectsA
+            // 
+            this.bsGameObjectsA.DataMember = "GameObjects";
+            this.bsGameObjectsA.DataSource = this.botDataSet;
+            this.bsGameObjectsA.Sort = "NAME";
+            this.bsGameObjectsA.CurrentChanged += new System.EventHandler(this.bsGameObjects1_CurrentChanged);
             // 
             // btnControl
             // 
@@ -469,19 +471,31 @@
             this.gbRecOptions.TabStop = false;
             this.gbRecOptions.Text = "Recording Options";
             // 
+            // bsQuestListA
+            // 
+            this.bsQuestListA.DataMember = "QuestList";
+            this.bsQuestListA.DataSource = this.botDataSet;
+            this.bsQuestListA.Sort = "TITLE";
+            // 
+            // bsQuestListB
+            // 
+            this.bsQuestListB.DataMember = "QuestList";
+            this.bsQuestListB.DataSource = this.botDataSet;
+            this.bsQuestListB.Sort = "TITLE";
+            // 
             // RouteRecorderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(397, 513);
-            this.Controls.Add(this.dgWaypoints);
             this.Controls.Add(this.gbRouteDetails);
             this.Controls.Add(this.gbRecOptions);
+            this.Controls.Add(this.dgWaypoints);
             this.Name = "RouteRecorderForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Route Recorder";
+            this.Controls.SetChildIndex(this.dgWaypoints, 0);
             this.Controls.SetChildIndex(this.gbRecOptions, 0);
             this.Controls.SetChildIndex(this.gbRouteDetails, 0);
-            this.Controls.SetChildIndex(this.dgWaypoints, 0);
             this.Controls.SetChildIndex(this.btnHelp, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
@@ -489,12 +503,14 @@
             this.popWaypoints.ResumeLayout(false);
             this.gbRouteDetails.ResumeLayout(false);
             this.gbRouteDetails.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjectsB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.botDataSet)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjects1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsGameObjectsA)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).EndInit();
             this.gbRecOptions.ResumeLayout(false);
             this.gbRecOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bsQuestListA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bsQuestListB)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -504,9 +520,9 @@
         private System.Windows.Forms.GroupBox gbRouteDetails;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblObjB;
         private System.Windows.Forms.ComboBox cbObjB;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblObjA;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox cbObjA;
@@ -532,8 +548,10 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.DataGridView dgWaypoints;
         private System.Windows.Forms.ToolStripMenuItem clearEverythingAfterToolStripMenuItem;
-        private System.Windows.Forms.BindingSource bsGameObjects1;
         private BabBot.Data.BotDataSet botDataSet;
-        private System.Windows.Forms.BindingSource bsGameObjects2;
+        public System.Windows.Forms.BindingSource bsGameObjectsA;
+        public System.Windows.Forms.BindingSource bsGameObjectsB;
+        public System.Windows.Forms.BindingSource bsQuestListA;
+        public System.Windows.Forms.BindingSource bsQuestListB;
     }
 }
