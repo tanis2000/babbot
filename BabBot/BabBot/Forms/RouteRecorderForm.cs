@@ -26,18 +26,25 @@ namespace BabBot.Forms
         
         private Route _route;
         RecStates _rec_state = RecStates.IDLE;
-        private ComboBox[][] _pcontrols;
+        ComboBox[] type_cb;
 
         public RouteRecorderForm()
             : base ("route_mgr")
         {
             InitializeComponent();
 
-            lblObjA.Tag = cbObjA;
-            lblObjB.Tag = cbObjB;
+            pOptA.Tag = pObjA;
+            pObjA.Tag = pSubObjA;
+            cbObjA0.Tag = lblObjA0;
+            cbObjA1.Tag = lblObjA1;
 
-            ComboBox[] type_cb = new ComboBox[] { cbTypeA, cbTypeB };
-            Label[] obj_cb = new Label[] { lblObjA, lblObjB };
+            pOptB.Tag = pObjB;
+            pObjB.Tag = pSubObjB;
+            cbObjB0.Tag = lblObjB0;
+            cbObjB1.Tag = lblObjB1;
+
+            type_cb = new ComboBox[] { cbTypeA, cbTypeB };
+            Panel[] obj_p = new Panel[] { pOptA, pOptB };
 
             List<AbstractEndpoint>[] obj_list = new List<AbstractEndpoint>[] {
                 new List<AbstractEndpoint>(), new List<AbstractEndpoint>() };
@@ -54,7 +61,7 @@ namespace BabBot.Forms
                 for (int i = 0; i < 2; i++)
                     obj_list[i].Add(Activator.CreateInstance(
                         reflect_class, new object[] { this, 
-                            obj_cb[i], (char) (65 + i) }) as AbstractEndpoint);
+                            obj_p[i], (char) (65 + i) }) as AbstractEndpoint);
             }
 
             for (int i = 0; i < 2; i++) {
@@ -85,11 +92,29 @@ namespace BabBot.Forms
 #endif
         }
 
+        private bool CheckEndpoints()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                ComboBox cb = type_cb[i];
+                if (cb.SelectedItem == null)
+                {
+                    ShowErrorMessage("Type for Endpoint " + (char)(65 + i) + " not selected");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private void btnControl_Click(object sender, EventArgs e)
         {
+            if (!CheckEndpoints())
+                return;
+
             if (_rec_state == RecStates.IDLE)
             {
-                if (!CheckPoint(0) ||
+                if (!((AbstractEndpoint) cbTypeA.SelectedItem).Check ||
                     (!(CheckInGame() && ResetRoute())))
                     return;
 
@@ -159,6 +184,8 @@ namespace BabBot.Forms
             lblRecDistance.Enabled = !start_state;
             numRecDistance.Enabled = !start_state;
             dgWaypoints.Enabled = !rec_state;
+
+            btnSave.Enabled = !start_state && IsChanged;
         }
 
         public void RecordWp(Vector3D v)
@@ -288,7 +315,7 @@ namespace BabBot.Forms
         private void btnSave_Click(object sender, EventArgs e)
         {
             // Check if B is set
-            if (!CheckPoint(1))
+            if (!(CheckEndpoints() && ((AbstractEndpoint) cbTypeB.SelectedItem).Check))
                 return;
 
             // Save route
@@ -327,29 +354,6 @@ namespace BabBot.Forms
             Close();
         }
 
-        
-        private bool CheckPoint(int idx)
-        {
-            return true;
-            /*
-            char p = (char)(65 + idx);
-            ComboBox[] cb = _pcontrols[idx];
-
-            if ((cb[0].SelectedItem.ToString().Equals("undef") &&
-                 !GetConfirmation("Continue with undefined Destination " + p + " ?")))
-                        return false;
-            else if ((cb[0].SelectedItem.ToString().Equals("npc") ||
-                      cb[0].SelectedItem.ToString().Equals("quest_obj")) &&
-                    (cb[1].SelectedIndex == -1))
-            {
-                ShowErrorMessage("Select Object for Point " + p);
-                return false;
-            }
-
-            return true;
-            */
-        } 
-
         private void cbType_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cbs = (ComboBox)sender;
@@ -357,25 +361,14 @@ namespace BabBot.Forms
                 return;
 
             ((AbstractEndpoint)cbs.SelectedItem).OnSelection();
-
-            /*
-            ComboBox cbs = (ComboBox) sender;
-            if ((cbs.Tag == null) || (cbs.SelectedItem == null))
-                return;
-
-            ComboBox obj = _pcontrols[(int)cbs.Tag][1];
-            string s = cbs.SelectedItem.ToString();
-
-            obj.Visible = s.Equals("npc") || s.Equals("quest_obj");
-             */
         }
 
         private void bsGameObjects1_CurrentChanged(object sender, EventArgs e)
         {
-            if (cbObjA.SelectedItem == null)
+            if (cbObjA0.SelectedItem == null)
                 return;
 
-            bsGameObjectsB.Filter = "ID <>" + ((DataRowView)cbObjA.SelectedItem).Row["ID"].ToString();
+            bsGameObjectsB.Filter = "ID <>" + ((DataRowView)cbObjA0.SelectedItem).Row["ID"].ToString();
         }
     }
 
@@ -395,9 +388,10 @@ namespace BabBot.Forms
     public class UndefEndpoint : AbstractEndpoint
     {
         protected char C;
-        public Label TargetLabel;
-        protected ComboBox TargetList;
+        protected Panel[] PTargets = new Panel[3];
+
         protected RouteRecorderForm Owner;
+        protected ComboBox[] cb_list = new ComboBox[2];
 
         public override string Name
         {
@@ -406,12 +400,16 @@ namespace BabBot.Forms
 
         public UndefEndpoint() { }
 
-        public UndefEndpoint(RouteRecorderForm owner, Label target, char a_b)
+        public UndefEndpoint(RouteRecorderForm owner, Panel target, char a_b)
         {
             C = a_b;
             Owner = owner;
-            TargetLabel = target;
-            TargetList = (ComboBox)target.Tag;
+            PTargets[0] = target;
+            for (int i = 0; i < 2; i++)
+            {
+                PTargets[i + 1] = (Panel)PTargets[i].Tag;
+                cb_list[i] = (ComboBox)PTargets[i + 1].Controls["cbObj" + C + i];
+            }
         }
 
         public override bool Check
@@ -425,29 +423,37 @@ namespace BabBot.Forms
 
         public override void OnSelection()
         {
-            SetControls(false);
-            TargetList.DataSource = null;
+            SetControls(false, 2);
+            foreach (ComboBox cb in cb_list)
+                cb.DataSource = null;
         }
 
-        protected void SetControls(bool enabled)
+        protected void SetControls(bool enabled, int cnt)
         {
-            TargetLabel.Enabled = enabled;
-            TargetList.Enabled = enabled;
+            for (int i = 0; i < cnt; i++)
+                PTargets[i + 1].Visible = enabled;
         }
     }
 
     public abstract class AbstractDefEndpoint : UndefEndpoint
     {
-        protected readonly BindingSource bs;
-        protected abstract string DisplayMember { get; }
+        protected readonly BindingSource[] bs;
+        private string[] DisplayMembers;
+        private int _bs_cnt;
+        protected abstract string TypeStr { get; }
 
         public AbstractDefEndpoint(string bs_name) : base() {}
 
-        public AbstractDefEndpoint(RouteRecorderForm owner, 
-                        Label target, char a_b, string bs_name)
+        public AbstractDefEndpoint(RouteRecorderForm owner,
+                        Panel target, char a_b, string[] bs_list, string[] members)
             : base(owner, target, a_b) 
-        { 
-            bs = FindBindingSource(bs_name);    
+        {
+            _bs_cnt = bs_list.Length;
+            DisplayMembers = members;
+            bs = new BindingSource[_bs_cnt];
+
+            for (int i = 0; i < bs_list.Length; i++)
+                bs[i] = FindBindingSource(bs_list[i]);    
         }
 
         private BindingSource FindBindingSource(string name)
@@ -466,9 +472,10 @@ namespace BabBot.Forms
         {
             get
             {
-                if (TargetList.SelectedItem == null)
+                if (cb_list[0].SelectedItem == null)
                 {
-                    GenericDialog.ShowErrorMessage(Owner, "Select Object for Point " + C);
+                    GenericDialog.ShowErrorMessage(Owner, 
+                        "Select " + TypeStr + " for Point " + C);
                     return false;
                 }
 
@@ -478,49 +485,75 @@ namespace BabBot.Forms
 
         public override void OnSelection()
         {
-            SetControls(true);
+            base.OnSelection();
+            SetControls(true, _bs_cnt);
 
-            TargetList.DataSource = bs;
-            TargetList.DisplayMember = DisplayMember;
+            for (int i = 0; i < _bs_cnt; i++)
+                SetBindingSource(cb_list[i], i, DisplayMembers[i]);
+        }
+
+        protected void SetBindingSource(ComboBox cb, int idx, string member)
+        {
+            cb.DataSource = bs[idx];
+            cb.DisplayMember = member;
+            ((Label)cb.Tag).Text = DisplayMembers[idx][0] + 
+                    DisplayMembers[idx].Substring(1).ToLower();
         }
     }
 
     public class GameObjEndpoint : AbstractDefEndpoint
     {
-        public GameObjEndpoint(RouteRecorderForm owner, Label target, char a_b)
-            : base(owner, target, a_b, "bsGameObjects") {}
+        public GameObjEndpoint(RouteRecorderForm owner, Panel target, char a_b)
+            : base(owner, target, a_b, new string[] { "bsGameObjects" }, 
+                                                new string[] { "NAME" } ) {}
 
         public override string Name
         {
             get { return "game_object"; }
         }
 
-        protected override string DisplayMember
+        protected override string TypeStr
         {
-            get { return "NAME"; }
+            get { return "Game Object"; }
         }
-
     }
 
     public class QuestObjEndpoint : AbstractDefEndpoint
     {
-        public QuestObjEndpoint(RouteRecorderForm owner, Label target, char a_b)
-            : base(owner, target, a_b, "bsQuestList") {}
+        public QuestObjEndpoint(RouteRecorderForm owner, Panel target, char a_b)
+            : base(owner, target, a_b,
+                new string[] { "bsQuestList", "fkQuestItems" },
+                            new string[] { "TITLE", "NAME" }) { }
 
         public override string Name
         {
             get { return "quest_objective"; }
         }
 
-        protected override string DisplayMember
+        public override bool Check
         {
-            get { return "TITLE"; }
+            get
+            {
+                if (!base.Check || (cb_list[1].SelectedItem == null))
+                {
+                    GenericDialog.ShowErrorMessage(Owner,
+                        "Select Quest Objective for Point " + C);
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        protected override string TypeStr
+        {
+            get { return "Quest"; }
         }
     }
 
     public class HotSpotEndpoint : UndefEndpoint
     {
-        public HotSpotEndpoint(RouteRecorderForm owner, Label target, char a_b)
+        public HotSpotEndpoint(RouteRecorderForm owner, Panel target, char a_b)
             : base(owner, target, a_b) { }
 
         public override string Name
@@ -531,7 +564,7 @@ namespace BabBot.Forms
 
     public class GraveyardEndpoint : UndefEndpoint
     {
-        public GraveyardEndpoint(RouteRecorderForm owner, Label target, char a_b)
+        public GraveyardEndpoint(RouteRecorderForm owner, Panel target, char a_b)
             : base(owner, target, a_b) { }
 
         public override string Name
