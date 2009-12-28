@@ -44,27 +44,273 @@ namespace BabBot.Manager
 
     #endregion
 
+    #region Xml
+
+    public class XmlManager
+    {
+
+        /// <summary>
+        /// Directory with data files
+        /// </summary>
+        private static string DataDir = "Data" + Path.DirectorySeparatorChar;
+
+        // Debug
+        internal static string DataDirEx =
+#if DEBUG
+            "..\\..\\" +
+#endif
+            DataDir;
+
+
+        /// <summary>
+        /// Export Data Directory
+        /// </summary>
+        public static string ExportDataDir = DataDir + "Export";
+
+        /// <summary>
+        /// Export Data Directory with DirectorySeparatorChar attached
+        /// </summary>
+        public static string ExportDataDirFull = DataDir + "Export" + Path.DirectorySeparatorChar;
+
+        /// <summary>
+        /// Current version of GameObjectData and RouteListVersion
+        /// </summary>
+        internal static readonly int[] Versions = new int[] { 0, 0 };
+
+        /// <summary>
+        /// List of datafiles has to be loaded on application startup
+        /// </summary>
+        internal static string[] DataFiles = new string[2] {DataDirEx + "GameObjectData.xml", 
+            DataDirEx + "RouteList.xml" };
+
+        internal static void Init()
+        {
+            // data first
+            int[] versions = new int[2];
+            DataManager.wdata = (WoWData)XmlManager.Load("Data\\WoWData.xml", typeof(WoWData));
+            DataManager.gdata = (GameObjectData)XmlManager.Load(
+                    DataManager.GameObjDataFileName, typeof(GameObjectData));
+            RouteListManager.rdata = (RouteList) XmlManager.Load(
+                    RouteListManager.RouteListFileName, typeof(RouteList));
+
+            versions[0] = DataManager.gdata.Version;
+            versions[1] = RouteListManager.rdata.Version;
+
+            // Check if GameObjData and RouteList versions the same
+            for (int i = 0; i < versions.Length; i++)
+            {
+                if (versions[i] != Versions[i])
+                {
+                    // TODO Migrate data from old format to new and save
+                    // Show message for now
+                    ShowErrorMessage(DataFiles[i] + " is in old format. It has version " +
+                        versions[i] + " that different from supported " + Versions[i]);
+                }
+            }
+        }
+
+        internal static void AfterInit()
+        {
+            // Attach GameObj data and Route List to selected WoW version
+            DataManager.wversion.GameObjData = DataManager.gdata.
+                                FindVersion(DataManager.wversion.Build);
+            DataManager.wversion.Routes = RouteListManager.rdata.
+                                FindVersion(DataManager.wversion.Build);
+
+            // Index Game Object data for future use
+            DataManager.IndexData();
+
+            // Index Routes
+            RouteListManager.IndexData();
+
+            // Reset changed flag
+            DataManager.ResetChanged();
+        }
+
+        internal static void Merge(string wow_version)
+        {
+            // Auto Merge data from earlier version with latest one
+            WoWVersion wprev = (WoWVersion)DataManager.wdata.STable.Values[0];
+            int i = 1;
+            while ((i < DataManager.wdata.STable.Count) &&
+                !wprev.Build.Equals(wow_version))
+            {
+                WoWVersion wnew = (WoWVersion)DataManager.wdata.STable.Values[i];
+
+                // Merge WoW data
+                wnew.MergeWith(wprev);
+
+                // Merge GameObj and RouteList. Ordering is not an issues since it defined in 
+                // WoWData already
+                // Ignore all exceptions
+                try
+                {
+                    DataManager.gdata.FindVersion(wnew.Build).MergeWith(
+                                    DataManager.gdata.FindVersion(wprev.Build));
+                    RouteListManager.rdata.FindVersion(wnew.Build).MergeWith(
+                                    RouteListManager.rdata.FindVersion(wprev.Build));
+                }
+                catch { }
+
+                wprev = wnew;
+                i++;
+            }
+        }
+
+        internal static void Clear()
+        {
+            DataManager.gdata = null;
+            DataManager.wdata = null;
+            RouteListManager.rdata = null;
+        }
+
+        private static object Load(string fname, Type t)
+        {
+            object res = null;
+            TextReader r = null;
+            XmlSerializer s = new XmlSerializer(t);
+
+            try
+            {
+                r = new StreamReader(fname);
+                res = s.Deserialize(r);
+            }
+            catch (Exception e)
+            {
+                ProcessManager.TerminateOnInternalBug(ProcessManager.Bugs.XML_ERROR,
+                    "Unable load " + fname + " : " +
+                    e.Message + Environment.NewLine + e.InnerException);
+            }
+            finally
+            {
+                r.Close();
+            }
+
+            return res;
+        }
+
+        public static bool SaveDataFile(string lfs, bool export, int idx, Type T, object data)
+        {
+            string fname = XmlManager.DataFiles[idx];
+
+            // Backup old GameObj data before save
+            string bf = Path.GetDirectoryName(fname) +
+                Path.DirectorySeparatorChar +
+                Path.GetFileNameWithoutExtension(fname) + ".bak";
+
+            if (!string.IsNullOrEmpty(lfs))
+                Output.Instance.Log(lfs, "Saving " + fname +
+                    " before serializing to " + bf);
+
+            try
+            {
+                File.Copy(fname, bf, true);
+            }
+            catch (Exception e)
+            {
+                ShowErrorMessage("Failed update NPC Data. Unable copy file " + fname +
+                            "  to " + bf + ". " + e.Message);
+
+                return false;
+            }
+
+            if (!Save(fname, T, data))
+            {
+                if (!string.IsNullOrEmpty(lfs))
+                    Output.Instance.Log(lfs, "Recovering " + fname +
+                        " after error from " + bf);
+                File.Copy(bf, XmlManager.DataFiles[idx]);
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(lfs))
+                Output.Instance.Log(lfs, "File " + fname + " successfully saved.");
+
+            // Index GameObject Data
+            if (idx == 0)
+                DataManager.IndexData();
+            else if (idx == 1)
+                RouteListManager.IndexData();
+
+            // Check all list and generate chanded data for export
+
+            if (export)
+                foreach (GameObject obj in DataManager.CurWoWVersion.GameObjData.STable.Values)
+                    if (obj.Changed)
+                        DataManager.ExportGameObj(obj, lfs);
+
+            // Reset Changed flag
+            if (idx == 0)
+                DataManager.ResetChanged();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Serialize object in xml format
+        /// </summary>
+        /// <param name="fname">Output File Name</param>
+        /// <param name="t">Type of object</param>
+        /// <param name="obj">Object itself</param>
+        public static bool Save(string fname, Type t, object obj)
+        {
+            bool res = false;
+            TextWriter w = null;
+            try
+            {
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                ns.Add("", ""); // Remove  xmlns: parameters
+
+                XmlSerializer s = new XmlSerializer(t);
+                w = new StreamWriter(fname);
+
+                s.Serialize(w, obj, ns);
+                res = true;
+            }
+            catch (Exception e)
+            {
+                ShowErrorMessage("Failed save " + fname + ". " +
+                            e.Message + ". " + e.InnerException);
+            }
+            finally
+            {
+                if (w != null)
+                    w.Close();
+            }
+
+            return res;
+        }
+
+        private static void ShowErrorMessage(string err)
+        {
+            ProcessManager.ShowError(err);
+        }
+    }
+
+    #endregion
+
     public class DataManager
     {
         /// <summary>
         /// Reference the whole WoWData
         /// </summary>
-        private static WoWData wdata;
+        internal static WoWData wdata;
         
         /// <summary>
         /// Reference the whole GameObject Data
         /// </summary>
-        private static GameObjectData gdata;
+        internal static GameObjectData gdata;
 
         /// <summary>
         /// Reference the current WoW Version from WoWData
         /// </summary>
-        private static WoWVersion wversion;
+        internal static WoWVersion wversion;
+
 
         /// <summary>
-        /// Current version of GameObjectData
+        /// Supported version of GameObject
         /// </summary>
-        private static readonly int GameObjDataVersion = 0;
+        private static readonly int  GameObjectVersion = XmlManager.Versions[0];
 
         /// <summary>
         /// Gui mode
@@ -93,23 +339,12 @@ namespace BabBot.Manager
             get { return gdata; }
         }
 
+        
+
         /// <summary>
         /// GameObjectData xml file name
         /// </summary>
-        public static string GameObjDataFileName =
-#if DEBUG
-            "..\\..\\Data\\" +
-#endif
-            "GameObjectData.xml";
-
-        /// <summary>
-        /// Waypoints xml file name
-        /// </summary>
-        public static string RoutesFileName =
-#if DEBUG
- "..\\..\\Data\\" +
-#endif
- "Routes.xml";
+        public static string GameObjDataFileName = XmlManager.DataFiles[0];
 
         /// <summary>
         /// Application configuration tag from WoWData.xml
@@ -162,9 +397,13 @@ namespace BabBot.Manager
 
         #region Bot DataSet
 
+        /// <summary>
+        /// BotDataSet filled with data
+        /// </summary>
         public static BotDataSet GameData { get; private set; }
 
         #region Nested: Enumerates
+
         /// <summary>
         /// List of services provided by NPC 
         /// </summary>
@@ -208,6 +447,9 @@ namespace BabBot.Manager
 
         #region Routes
 
+        /// <summary>
+        /// Sorted list with existing set of EndpointTypes
+        /// </summary>
         public static SortedDictionary<string, EndpointTypes> EndpointsSet =
                                 new SortedDictionary<string, EndpointTypes>();
 
@@ -310,8 +552,6 @@ namespace BabBot.Manager
 
             foreach (GameObject g_obj in CurWoWVersion.GameObjData.STable.Values)
             {
-                ZoneServices zs = null;
-
                 if (!string.IsNullOrEmpty(g_obj.ZoneText) && 
                                             g_obj.GetType().Equals(typeof(NPC)))
                 {
@@ -470,102 +710,13 @@ namespace BabBot.Manager
             return obj_row;
         }
 
-        internal static void ClearXml()
-        {
-            gdata = null;
-            wdata = null;
-        }
-
-        private static object LoadXmlData(string fname, Type t)
-        {
-            object res = null;
-            TextReader r = null;
-            XmlSerializer s = new XmlSerializer(t);
-
-            try
-            {
-                r = new StreamReader(fname);
-                res = s.Deserialize(r);
-            }
-            catch (Exception e)
-            {
-                ProcessManager.TerminateOnInternalBug(ProcessManager.Bugs.XML_ERROR,
-                    "Unable load " + fname + " : " +
-                    e.Message + Environment.NewLine + e.InnerException);
-            }
-            finally
-            {
-                r.Close();
-            }
-
-            return res;
-        }
-
-        internal static void InitXmlData()
-        {
-            // data first
-            wdata = (WoWData)LoadXmlData("Data\\WoWData.xml", typeof(WoWData));
-            gdata = (GameObjectData)LoadXmlData(
-                                GameObjDataFileName, typeof(GameObjectData));
-
-            // Check if NPC data version the same
-            if (gdata.Version != GameObjDataVersion)
-            {
-                // TODO Migrate data from old format to new and save
-                // Show message for now
-                ShowErrorMessage("NPCData.xml is in old format. It has version " +
-                    gdata.Version + " that different from supported " + 
-                                        GameObjDataVersion);
-            }
-        }
-
-        internal static void MergeXml(string wow_version)
-        {
-            // Auto Merge data from earlier version with latest one
-            WoWVersion wprev = (WoWVersion)wdata.STable.Values[0];
-            int i = 1;
-            while ((i < wdata.STable.Count) &&
-                !wprev.Build.Equals(wow_version))
-            {
-                WoWVersion wnew = (WoWVersion)wdata.STable.Values[i];
-
-                // Merge WoW data
-                wnew.MergeWith(wprev);
-
-                // Merge NPCData. Ordering is not an issues since it defined in 
-                // WoWData already
-                // Ignore all exceptions
-                try
-                {
-                    gdata.FindVersion(wnew.Build).MergeWith(
-                                    gdata.FindVersion(wprev.Build));
-                }
-                catch { }
-
-                wprev = wnew;
-                i++;
-            }
-        }
-
-        internal static void AfterXmlInit()
-        {
-            // Attach NPC data to selected WoW version
-            wversion.GameObjData = gdata.FindVersion(wversion.Build);
-
-            // Index NPC data for future use
-            DataManager.IndexData();
-
-            // Reset changed flag
-            ResetChanged();
-        }
-
         /// <summary>
         /// Reset Changed flag on the whole NPC database
         /// </summary>
-        private static void ResetChanged()
+        internal static void ResetChanged()
         {
-            foreach (NPC npc in CurWoWVersion.GameObjData.STable.Values)
-                npc.Changed = false;
+            foreach (GameObject obj in CurWoWVersion.GameObjData.STable.Values)
+                obj.Changed = false;
         }
 
         public static void DeleteGameObjRow(string name)
@@ -749,16 +900,10 @@ namespace BabBot.Manager
 
         #region Load/Save single Game Object
 
-        public static GameObject LoadXml(string fname)
+        public static GameObject LoadGameObj(string fname)
         {
             Serializer<GameObject> s = new Serializer<GameObject>();
             return s.Load(fname);
-        }
-
-        public static void SaveXml(string fname, GameObject obj)
-        {
-            Serializer<GameObject> s = new Serializer<GameObject>();
-            s.Save(fname, obj);
         }
 
         public static bool MergeGameObjData(List<GameObject> list, bool export, string lfs)
@@ -829,54 +974,10 @@ namespace BabBot.Manager
         /// <returns>True if data successfully saved and False if not</returns>
         public static bool SaveGameObjData(string lfs, bool export)
         {
-            // Backup old NPC data before save
-            string bf = System.IO.Path.GetDirectoryName(GameObjDataFileName) +
-                System.IO.Path.DirectorySeparatorChar +
-                System.IO.Path.GetFileNameWithoutExtension(GameObjDataFileName) + ".bak";
-
-            if (!string.IsNullOrEmpty(lfs))
-                Output.Instance.Log(lfs, "Saving " + GameObjDataFileName +
-                    " before serializing to " + bf);
-
-            try
-            {
-                File.Copy(GameObjDataFileName, bf, true);
-            }
-            catch (Exception e)
-            {
-                ShowErrorMessage("Failed update NPC Data. Unable copy file " + GameObjDataFileName +
-                            "  to " + bf + ". " + e.Message);
-
-                return false;
-            }
-
-            if (!SaveXmlData(GameObjDataFileName, typeof(GameObjectData), gdata))
-            {
-                if (!string.IsNullOrEmpty(lfs))
-                    Output.Instance.Log(lfs, "Recovering " + GameObjDataFileName +
-                        " after error from " + bf);
-                File.Copy(bf, GameObjDataFileName);
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(lfs))
-                    Output.Instance.Log(lfs, "File " + GameObjDataFileName +
-                                                            " successfully saved.");
-
-            // Index GameObject Data
-            IndexData();
-
-            // Check all list and generate chanded data for export
-
-            foreach (GameObject obj in CurWoWVersion.GameObjData.STable.Values)
-                if (obj.Changed)
-                    ExportGameObj(obj, lfs);
-
-            // Reset Changed flag
-            ResetChanged();
-
-            return true;
+            return XmlManager.SaveDataFile(lfs, export, 0, typeof(GameObjectData), gdata);
         }
+
+        
 
         /// <summary>
         /// Serialize the given NPC in Export directory
@@ -885,17 +986,18 @@ namespace BabBot.Manager
         public static string ExportGameObj(GameObject obj, string lfs)
         {
             string name = obj.Name;
-            string fname = "Data" + System.IO.Path.DirectorySeparatorChar +
-                    "Export" + System.IO.Path.DirectorySeparatorChar + name + ".obj";
+            string fname = XmlManager.ExportDataDir + Path.DirectorySeparatorChar + name + ".obj";
             try
             {
                 if (!string.IsNullOrEmpty(lfs))
                     Output.Instance.Log("npc", "Exporting Game Object: " + name +
-                                                " to Data\\Export subdirectory");
-                SaveXmlData(fname, typeof(GameObject), obj);
+                                                " to " + XmlManager.ExportDataDir + " subdirectory");
+
+                XmlManager.Save(fname, typeof(GameObject), obj);
 
                 if (!string.IsNullOrEmpty(lfs))
-                    Output.Instance.Log("npc", "Export successfull!!! Don't forget upload updated data to " +
+                    Output.Instance.Log("npc", 
+                        "Export successfull!!! Don't forget upload updated data to " +
                                         "BabBot forum https://sourceforge.net/apps/phpbb/babbot/");
             }
             catch (Exception e)
@@ -907,40 +1009,6 @@ namespace BabBot.Manager
             return fname;
         }
 
-        /// <summary>
-        /// Serialize object in xml format
-        /// </summary>
-        /// <param name="fname">Output File Name</param>
-        /// <param name="t">Type of object</param>
-        /// <param name="obj">Object itself</param>
-        public static bool SaveXmlData(string fname, Type t, object obj)
-        {
-            bool res = false;
-            TextWriter w = null;
-            try
-            {
-                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-                ns.Add("", ""); // Remove  xmlns: parameters
-
-                XmlSerializer s = new XmlSerializer(t);
-                w = new StreamWriter(fname);
-
-                s.Serialize(w, obj, ns);
-                res = true;
-            }
-            catch (Exception e)
-            {
-                ShowErrorMessage("Failed save " + fname + ". " +
-                            e.Message + ". " + e.InnerException);
-            }
-            finally
-            {
-                if (w != null)
-                    w.Close();
-            }
-
-            return res;
-        }
 
         #endregion
     }
@@ -1003,5 +1071,182 @@ namespace BabBot.Manager
                     GrosseryServices.Add(npc);
             }
         }
+
+    }
+
+    
+    
+    #region Routes
+
+    public class WaypointsNotFoundException : Exception
+    {
+        public WaypointsNotFoundException(string fname)
+            : base("File with waypoints '" + fname + " not found.") {}
+    }
+
+    public static class RouteListManager
+    {
+        /// <summary>
+        /// Supported version of RouteList
+        /// </summary>
+        private static readonly int RouteListVersion = XmlManager.Versions[1];
+
+        /// <summary>
+        /// Directory with waypoints
+        /// </summary>
+        public static string RoutesDirFull = XmlManager.DataDirEx + "Routes" + Path.DirectorySeparatorChar;
+
+        /// <summary>
+        /// Reference on all Routes
+        /// </summary>
+        public static RouteList rdata;
+
+        /// <summary>
+        /// Waypoints xml file name
+        /// </summary>
+        public static string RouteListFileName = XmlManager.DataFiles[1];
+
+        /// <summary>
+        /// Indexed table of all undef endpoints A and endpoints B for reversible routes
+        /// Used to quickly locate waypoints available from current one
+        /// </summary>
+        public static Dictionary<string, List<Route>> Endpoints = 
+                                new Dictionary<string, List<Route>>();
+
+        public static Dictionary<string, List<Route>> Routes =
+                                new Dictionary<string, List<Route>>();
+
+        /// <summary>
+        /// Save All Routes data in xml format
+        /// </summary>
+        /// <param name="lfs">Name of logging facility</param>
+        /// <param name="export">Is export required for changed object</param>
+        /// <returns>True if data successfully saved and False if not</returns>
+        public static bool SaveRouteList(string lfs)
+        {
+            return XmlManager.SaveDataFile(lfs, false, 1, typeof(RouteList), rdata);
+        }
+
+        public static bool SaveRoute(Route route, Waypoints waypoints)
+        {
+            // Make sure file name for waypoints is unique
+            do
+            {
+                route.MakeWaypointFileName();
+            } while (DataManager.CurWoWVersion.Routes.STable.ContainsKey(route.WaypointFileName));
+
+            // Save waypoints first
+            waypoints.Name = route.WaypointFileName;
+            if (!XmlManager.Save(RouteListManager.RoutesDirFull + waypoints.Name +
+                        ".route", typeof(Waypoints), waypoints))
+                return false;
+
+            DataManager.CurWoWVersion.Routes.Add(route);
+            SaveRouteList("routes");
+
+            string fname = route.MakeFileName();
+            if (fname != null) 
+            {
+                route.FileName = fname + ".route";
+
+                // Check for existing routes between 2 endpoints
+                route.idx = 0;
+                if (Routes.ContainsKey(fname))
+                    route.idx = Routes[fname].Count;
+
+                // Attach waypoints
+                route.WpList = waypoints;
+
+                // Set version
+                route.Version = RouteListVersion.ToString();
+
+                // Create Export file
+                if (!XmlManager.Save(XmlManager.ExportDataDirFull + 
+                                    route.FileName, typeof(Route), route))
+                    route.FileName = null;
+
+                // Detach waypoints
+                route.WpList = null;
+                route.Version = null;
+            }
+            else route.FileName = null;
+
+            return true;
+        }
+
+        public static Route FindRoute(Endpoint a, Endpoint b)
+        {
+            // TODO
+            return null;
+        }
+
+        public static Waypoints LoadWaypoints(string id)
+        {
+            // Check if file exists
+            string fname = RoutesDirFull + id + ".route";
+            if (!File.Exists(fname))
+                throw new WaypointsNotFoundException(fname);
+
+            Serializer<Waypoints> s = new Serializer<Waypoints>();
+            return s.Load(fname);
+        }
+
+        public static Route ImportRoute(string fname)
+        {
+            if (!File.Exists(fname))
+            {
+                ProcessManager.ShowError("Route file '" + fname + "' not found");
+                return null;
+            }
+
+            Serializer<Route> s = new Serializer<Route>();
+            return s.Load(fname);
+        }
+
+        public static void IndexData()
+        {
+            Routes.Clear();
+            Endpoints.Clear();
+
+            foreach (Route r in DataManager.CurWoWVersion.Routes.STable.Values)
+            {
+                r.FileName = r.MakeFileName();
+
+                if (r.FileName != null)
+                {
+                    if (Routes.ContainsKey(r.FileName))
+                        Routes[r.FileName].Add(r);
+                    else
+                    {
+                        List<Route> l = new List<Route>();
+                        l.Add(r);
+                        Routes.Add(r.FileName, l);
+                    }
+                }
+
+                foreach (char c in new char[] { 'a', 'b' } )
+                {
+                    Endpoint e = r[c];
+                    if ((e.PType == EndpointTypes.UNDEF) || 
+                            (c.Equals("b") && !r.Reversible))
+                        continue;
+
+                    string ename = e.ToString();
+                    if (!Endpoints.ContainsKey(ename))
+                    {
+                        List<Route> rlist = new List<Route>();
+                        rlist.Add(r);
+                        Endpoints.Add(ename, rlist);
+                    }
+                    else
+                    {
+                        List<Route> rlist = Endpoints[ename];
+                        rlist.Add(r);
+                    }
+                }
+            }
+        }
     }
 }
+
+#endregion
