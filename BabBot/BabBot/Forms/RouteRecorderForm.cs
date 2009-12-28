@@ -11,6 +11,7 @@ using BabBot.Manager;
 using BabBot.Common;
 using BabBot.Wow.Helpers;
 using BabBot.States.Common;
+using BabBot.Data;
 
 namespace BabBot.Forms
 {
@@ -23,10 +24,8 @@ namespace BabBot.Forms
 
     public partial class RouteRecorderForm : BabBot.Forms.GenericDialog
     {
-        
-        private Route _route;
-        RecStates _rec_state = RecStates.IDLE;
         ComboBox[] type_cb;
+        RecStates _rec_state = RecStates.IDLE;
 
         public RouteRecorderForm()
             : base ("route_mgr")
@@ -46,22 +45,20 @@ namespace BabBot.Forms
             type_cb = new ComboBox[] { cbTypeA, cbTypeB };
             Panel[] obj_p = new Panel[] { pOptA, pOptB };
 
-            List<AbstractEndpoint>[] obj_list = new List<AbstractEndpoint>[] {
-                new List<AbstractEndpoint>(), new List<AbstractEndpoint>() };
+            List<AbstractListEndpoint>[] obj_list = new List<AbstractListEndpoint>[] {
+                new List<AbstractListEndpoint>(), new List<AbstractListEndpoint>() };
 
             foreach (EndpointTypes ept in Enum.GetValues(typeof(EndpointTypes)))
             {
                 string class_name = Output.GetLogNameByLfs(
-                    Enum.GetName(typeof(EndpointTypes), ept).ToLower(), "") + "Endpoint";
+                    Enum.GetName(typeof(EndpointTypes), ept).ToLower(), "") + "ListEndpoint";
 
                 Type reflect_class = Type.GetType("BabBot.Forms." + class_name);
-
-                ConstructorInfo[] ci = reflect_class.GetConstructors();
 
                 for (int i = 0; i < 2; i++)
                     obj_list[i].Add(Activator.CreateInstance(
                         reflect_class, new object[] { this, 
-                            obj_p[i], (char) (65 + i) }) as AbstractEndpoint);
+                            obj_p[i], (char) (65 + i) }) as AbstractListEndpoint);
             }
 
             for (int i = 0; i < 2; i++) {
@@ -81,6 +78,9 @@ namespace BabBot.Forms
 #if DEBUG
             if (ProcessManager.Config.Test == 3)
             {
+                tbZoneA.Text = "Teldrassil";
+                tbZoneB.Text = "Teldrassil";
+
                 _rec_state = RecStates.RECORDING;
                 for (int i = 1; i <= 55; i++)
                 {
@@ -114,20 +114,10 @@ namespace BabBot.Forms
 
             if (_rec_state == RecStates.IDLE)
             {
-                if (!((AbstractEndpoint) cbTypeA.SelectedItem).Check ||
+                if (!((AbstractListEndpoint) cbTypeA.SelectedItem).Check ||
                     (!(CheckInGame() && ResetRoute())))
                     return;
-
                 
-                // Set from zone
-#if DEBUG
-                if (ProcessManager.Config.Test == 3)
-                    tbZoneA.Text = "Teldrassil";
-                else
-#endif
-                tbZoneA.Text = ProcessManager.Player.ZoneText;
-
-
 #if DEBUG
                 if (ProcessManager.Player != null)
                 {
@@ -138,11 +128,16 @@ namespace BabBot.Forms
                         return;
                     }
 
+                    // Set from zone
+                    ProcessManager.Player.setCurrentMapInfo();
+                    tbZoneA.Text = ProcessManager.Player.ZoneText;
+
+                    // Load RouteRecordingState and start
                     ProcessManager.Player.StateMachine.ChangeState(
                                 new RouteRecordingState(RecordWp, numRecDistance.Value), false, true);
                     ProcessManager.Player.StateMachine.IsRunning = true;
 #if DEBUG
-                }
+                } else tbZoneA.Text = "Teldrassil";
 #endif
                 
                 btnControl.Text = "Stop";
@@ -158,15 +153,19 @@ namespace BabBot.Forms
                 SetControls(RecStates.IDLE);
 
 #if DEBUG
+                tbZoneB.Text = "Teldrassil";
                 if (ProcessManager.Player != null)
                 {
 #endif
                 // Put state machine back in idle status
                 ProcessManager.Player.StateMachine.IsRunning = false;
                 ProcessManager.Player.StateMachine.ChangeState(null, false, true);
+                ProcessManager.Player.setCurrentMapInfo();
+                tbZoneB.Text = ProcessManager.Player.ZoneText;
 #if DEBUG
                 }
 #endif
+
                 btnControl.Text = "Start";
                 btnReset.Text = "Reset";
             }
@@ -257,8 +256,14 @@ namespace BabBot.Forms
             if (ProcessManager.Player != null)
 #endif
             // Move To
-            NpcHelper.MoveToDest(new Vector3D(Convert.ToDouble(row.Cells[0]),
-                Convert.ToDouble(row.Cells[1]), Convert.ToDouble(row.Cells[2])), "record");
+                NpcHelper.MoveToDest(MakeVector(row), "record");
+        }
+
+        private Vector3D MakeVector(DataGridViewRow row)
+        {
+            return new Vector3D(Convert.ToDouble(row.Cells[0].Value),
+                                    Convert.ToDouble(row.Cells[1].Value),
+                                        Convert.ToDouble(row.Cells[2].Value));
         }
 
         private void popWaypoints_Opening(object sender, CancelEventArgs e)
@@ -315,13 +320,33 @@ namespace BabBot.Forms
         private void btnSave_Click(object sender, EventArgs e)
         {
             // Check if B is set
-            if (!(CheckEndpoints() && ((AbstractEndpoint) cbTypeB.SelectedItem).Check))
+            if (!(CheckEndpoints() && ((AbstractListEndpoint) cbTypeB.SelectedItem).Check))
                 return;
 
-            // Save route
-            // TODO
+            // Make route
+            AbstractListEndpoint point_a = cbTypeA.SelectedItem as AbstractListEndpoint;
+            AbstractListEndpoint point_b = cbTypeB.SelectedItem as AbstractListEndpoint;
+            Route route = new Route(point_a.GetEndpoint(tbZoneA.Text), 
+                point_b.GetEndpoint(tbZoneB.Text), tbDescr.Text, cbReversible.Checked);
 
-            IsChanged = false;
+            // Add waypoints except  last empty line
+            Waypoints waypoints = new Waypoints(route.WaypointFileName);
+            for (int i = 0; i < dgWaypoints.Rows.Count - 1; i++)
+                waypoints.List.Add(MakeVector(dgWaypoints.Rows[i]));
+
+            // Save route
+            if (RouteListManager.SaveRoute(route, waypoints))
+            {
+                string s = "Route successfully saved";
+
+                if (route.FileName == null)
+                    s += ". No export file generated.";
+                else
+                    s += ".\nExport data located in the file '" + route.FileName + "'";
+                
+                ShowSuccessMessage(s);
+                IsChanged = false;
+            }
         }
 
         private void clearEverythingAfterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -360,32 +385,52 @@ namespace BabBot.Forms
             if (cbs.SelectedItem == null)
                 return;
 
-            ((AbstractEndpoint)cbs.SelectedItem).OnSelection();
+            ((AbstractListEndpoint)cbs.SelectedItem).OnSelection();
+
+            IsChanged = true;
         }
 
-        private void bsGameObjects1_CurrentChanged(object sender, EventArgs e)
+        private void bsGameObjectsA_CurrentChanged(object sender, EventArgs e)
         {
-            if (cbObjA0.SelectedItem == null)
+            if (bsGameObjectsA.Current == null)
                 return;
 
-            bsGameObjectsB.Filter = "ID <>" + ((DataRowView)cbObjA0.SelectedItem).Row["ID"].ToString();
+            bsGameObjectsB.Filter = "ID <> " + ((DataRowView)bsGameObjectsA.Current).Row["ID"].ToString();
+        }
+
+        private void RegisterChanges(object sender, EventArgs e)
+        {
+            IsChanged = true;
+        }
+
+        private void cbObjA0_DataSourceChanged(object sender, EventArgs e)
+        {
+            if (cbObjA0.DataSource != bsGameObjectsA)
+                bsGameObjectsB.Filter = null;
+            else
+                bsGameObjectsA_CurrentChanged(sender, e);
         }
     }
 
     #region Classes for Reflection
 
-    public abstract class AbstractEndpoint
+    public abstract class AbstractListEndpoint
     {
         public virtual bool Check
         {
             get { return true; }
         }
+
+        public abstract EndpointTypes Type { get; }
+
         public abstract string Name{ get; }
 
         public abstract void OnSelection();
+
+        public abstract Endpoint GetEndpoint(string ZoneText);
     }
 
-    public class UndefEndpoint : AbstractEndpoint
+    public class UndefListEndpoint : AbstractListEndpoint
     {
         protected char C;
         protected Panel[] PTargets = new Panel[3];
@@ -398,9 +443,14 @@ namespace BabBot.Forms
             get { return "undef"; }
         }
 
-        public UndefEndpoint() { }
+        public override EndpointTypes Type
+        {
+            get { return EndpointTypes.UNDEF; }
+        }
 
-        public UndefEndpoint(RouteRecorderForm owner, Panel target, char a_b)
+        public UndefListEndpoint() { }
+
+        public UndefListEndpoint(RouteRecorderForm owner, Panel target, char a_b)
         {
             C = a_b;
             Owner = owner;
@@ -433,18 +483,23 @@ namespace BabBot.Forms
             for (int i = 0; i < cnt; i++)
                 PTargets[i + 1].Visible = enabled;
         }
+
+        public override Endpoint GetEndpoint(string ZoneText)
+        {
+            return new Endpoint(Type, ZoneText);
+        }
     }
 
-    public abstract class AbstractDefEndpoint : UndefEndpoint
+    public abstract class AbstractDefListEndpoint : UndefListEndpoint
     {
         protected readonly BindingSource[] bs;
         private string[] DisplayMembers;
         private int _bs_cnt;
         protected abstract string TypeStr { get; }
 
-        public AbstractDefEndpoint(string bs_name) : base() {}
+        public AbstractDefListEndpoint(string bs_name) : base() {}
 
-        public AbstractDefEndpoint(RouteRecorderForm owner,
+        public AbstractDefListEndpoint(RouteRecorderForm owner,
                         Panel target, char a_b, string[] bs_list, string[] members)
             : base(owner, target, a_b) 
         {
@@ -501,9 +556,9 @@ namespace BabBot.Forms
         }
     }
 
-    public class GameObjEndpoint : AbstractDefEndpoint
+    public class GameObjListEndpoint : AbstractDefListEndpoint
     {
-        public GameObjEndpoint(RouteRecorderForm owner, Panel target, char a_b)
+        public GameObjListEndpoint(RouteRecorderForm owner, Panel target, char a_b)
             : base(owner, target, a_b, new string[] { "bsGameObjects" }, 
                                                 new string[] { "NAME" } ) {}
 
@@ -512,15 +567,25 @@ namespace BabBot.Forms
             get { return "game_object"; }
         }
 
+        public override EndpointTypes Type
+        {
+            get { return EndpointTypes.GAME_OBJ; }
+        }
+
+        public override Endpoint GetEndpoint(string ZoneText)
+        {
+            return new GameObjEndpoint(Type, cb_list[0].Text, ZoneText);
+        }
+
         protected override string TypeStr
         {
             get { return "Game Object"; }
         }
     }
 
-    public class QuestObjEndpoint : AbstractDefEndpoint
+    public class QuestObjListEndpoint : AbstractDefListEndpoint
     {
-        public QuestObjEndpoint(RouteRecorderForm owner, Panel target, char a_b)
+        public QuestObjListEndpoint(RouteRecorderForm owner, Panel target, char a_b)
             : base(owner, target, a_b,
                 new string[] { "bsQuestList", "fkQuestItems" },
                             new string[] { "TITLE", "NAME" }) { }
@@ -549,27 +614,46 @@ namespace BabBot.Forms
         {
             get { return "Quest"; }
         }
+
+        public override Endpoint GetEndpoint(string ZoneText)
+        {
+            BotDataSet.QuestListRow row = (BotDataSet.QuestListRow) ((DataRowView) 
+                ((BindingSource)cb_list[0].DataSource).Current).Row;
+            return new QuestItemEndpoint(Type, row.ID, cb_list[1].Text, ZoneText);
+        }
+
+
     }
 
-    public class HotSpotEndpoint : UndefEndpoint
+    public class HotSpotListEndpoint : UndefListEndpoint
     {
-        public HotSpotEndpoint(RouteRecorderForm owner, Panel target, char a_b)
+        public HotSpotListEndpoint(RouteRecorderForm owner, Panel target, char a_b)
             : base(owner, target, a_b) { }
 
         public override string Name
         {
             get { return "hot_spot"; }
         }
+
+        public override EndpointTypes Type
+        {
+            get { return EndpointTypes.HOT_SPOT; }
+        }
     }
 
-    public class GraveyardEndpoint : UndefEndpoint
+    public class GraveyardListEndpoint : UndefListEndpoint
     {
-        public GraveyardEndpoint(RouteRecorderForm owner, Panel target, char a_b)
+        public GraveyardListEndpoint(RouteRecorderForm owner, Panel target, char a_b)
             : base(owner, target, a_b) { }
 
         public override string Name
         {
             get { return "graveyard"; }
+        }
+
+        public override EndpointTypes Type
+        {
+            get { return EndpointTypes.GRAVEYARD; }
         }
     }
     

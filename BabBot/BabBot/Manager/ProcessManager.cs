@@ -527,15 +527,15 @@ namespace BabBot.Manager
             ConfigFileChanged += OnConfigFileChanged;
             ShowErrorMessage += OnShowErrorMessage;
 
-            DataManager.InitXmlData();
+            XmlManager.Init();
 
             //\\ TEST
             // SaveNpcData();
 
             // Everything else after
             LoadConfig();
-            DataManager.MergeXml(config.WoWInfo.Version);
-            DataManager.AfterXmlInit();
+            XmlManager.Merge(config.WoWInfo.Version);
+            XmlManager.AfterInit();
 
 #if DEBUG
             //\\ Test
@@ -1085,7 +1085,7 @@ namespace BabBot.Manager
             {
                 // Remember current config version
                 config.Version = ConfigVersion;
-                DataManager.SaveXmlData(ConfigFileName, typeof(Config), config);
+                XmlManager.Save(ConfigFileName, typeof(Config), config);
                 // serializer.Save(ConfigFileName, config);
                 OnConfigurationChanged();
 

@@ -485,6 +485,31 @@ namespace BabBot.Common
     }
 
     /// <summary>
+    /// Class with internal hashtable that needs to be serialized
+    /// and have version number for saved metadata
+    /// and have internal data split by wow versions
+    /// Used by: RoutesList, GameObjectData
+    /// </summary>
+    /// <typeparam name="T">Type of elements in the table</typeparam>
+    public abstract class CommonVersionTable<T> : CommonTable<T>
+    {
+        [XmlAttribute("version")]
+        public int Version;
+
+        [XmlElement("wow_version")]
+        public T[] Versions
+        {
+            get { return (T[])Items; }
+            set { Items = value; }
+        }
+
+        public T FindVersion(string version)
+        {
+            return FindItemByName(version);
+        }
+    }
+
+    /// <summary>
     /// Class with internal sorted table that needs to be serialized
     /// Used by: WoWData
     /// </summary>
@@ -774,7 +799,7 @@ namespace BabBot.Common
         [XmlAttribute("name")]
         public string Name;
 
-        public CommonNameList() {}
+        public CommonNameList() : base() {}
 
         public CommonNameList(string name) :
             base()

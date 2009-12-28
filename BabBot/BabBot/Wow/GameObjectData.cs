@@ -32,23 +32,8 @@ namespace BabBot.Wow
     #region Game Objects
 
     [XmlRoot("game_object_data")]
-    public class GameObjectData : CommonTable<GameDataVersion>
-    {
-        [XmlAttribute("version")]
-        public int Version;
+    public class GameObjectData : CommonVersionTable<GameDataVersion> {}
 
-        [XmlElement("wow_version")]
-        public GameDataVersion[] Versions
-        {
-            get { return (GameDataVersion[])Items; }
-            set { Items = value; }
-        }
-
-        public GameDataVersion FindVersion(string version)
-        {
-            return FindItemByName(version);
-        }
-    }
     [Serializable]
     public class GameDataVersion : CommonNameTable<GameObject>
     {
@@ -87,6 +72,7 @@ namespace BabBot.Wow
     /// It can own quests but doesn't allow interact with (target)
     /// GameObject can't move, have services or belong to faction
     /// </summary>
+    [XmlRoot("game_object")]
     [XmlInclude(typeof(NPC))]
     public class GameObject : CommonMergeListItem
     {
@@ -1229,6 +1215,19 @@ namespace BabBot.Wow
 
     #region Route
 
+    [XmlRoot("route_list")]
+    public class RouteList : CommonVersionTable<RouteListVersion>  {}
+
+    public class RouteListVersion : CommonNameTable<Route>
+    {
+        [XmlElement("route")]
+        public Route[] Routes
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+    }
+
     /// <summary>
     /// Type of route Endpoints
     /// </summary>
@@ -1241,53 +1240,281 @@ namespace BabBot.Wow
         GRAVEYARD = 4
     }
 
-    public class Endpoint : CommonItem
+    /// <summary>
+    /// Route Endpoint class
+    /// </summary>
+    [XmlInclude(typeof(GameObjEndpoint))]
+    [XmlInclude(typeof(QuestItemEndpoint))]
+    public class Endpoint
     {
         [XmlAttribute("type")]
-        string TypeStr
+        public string TypeStr
         {
             get { return Enum.GetName(typeof(EndpointTypes), PType).ToLower(); }
             set { PType = DataManager.EndpointsSet[value]; }
         }
 
+        [XmlAttribute("zone")]
+        public string ZoneText;
+
         internal EndpointTypes PType;
+
+        internal virtual string Descr
+        {
+            get { return Enum.GetName(typeof(EndpointTypes), PType); }
+        }
 
         public Endpoint() { }
 
-        public Endpoint(EndpointTypes type, string name)
-            : base(name)
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="type">Endpoint type. See EndpointTypes</param>
+        /// <param name="zone_text">Endpoint zone name</param>
+        public Endpoint(EndpointTypes type, string zone_text)
         {
             PType = type;
+            ZoneText = zone_text;
+        }
+
+        public override bool  Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            Endpoint e = (Endpoint) obj;
+
+            return (PType == e.PType) && 
+                   (ZoneText == e.ZoneText);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return Descr;
+        }
+
+    }
+
+    public class GameObjEndpoint : Endpoint
+    {
+        [XmlAttribute("game_obj_name")]
+        public string GameObjName;
+
+        public GameObjEndpoint() : base() { }
+
+        public GameObjEndpoint(EndpointTypes type, string name, string zone_text)
+            : base(EndpointTypes.GAME_OBJ, zone_text)
+        {
+            GameObjName = name;
+        }
+
+        internal override string Descr
+        {
+            get { return GameObjName.ToString().ToLower().Replace(' ', '_'); }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!base.Equals(obj))
+                return false;
+
+            return GameObjName.Equals(((GameObjEndpoint)obj).GameObjName);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 
-    public class Route : CommonList<Vector3D>
+    public class QuestItemEndpoint : Endpoint
     {
-        [XmlElement("point_a")]
-        Endpoint PointA;
+        [XmlAttribute("quest_id")]
+        public int QuestId;
 
-        [XmlElement("point_b")]
-        Endpoint PointB;
+        [XmlAttribute("item_name")]
+        public string ItemName;
 
-        [XmlElement("descr")]
-        string Description;
-
-        public Route() : base()
+        internal override string Descr
         {
-            PointA = new Endpoint();
-            PointB = new Endpoint();
+            get
+            {
+                return QuestId + "#" + ItemName.ToString().ToLower().Replace(' ', '_'); ;
+            }
         }
 
-        public Route(Endpoint point_a, Endpoint point_b, string descr, List<Vector3D> route) 
+        public QuestItemEndpoint() : base() { }
+
+        public QuestItemEndpoint(EndpointTypes type,
+                        int quest_id, string item_name, string zone_text)
+            : base(EndpointTypes.QUEST_OBJ, zone_text)
+        {
+            QuestId = quest_id;
+            ItemName = item_name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!base.Equals(obj))
+                return false;
+
+            QuestItemEndpoint qie = (QuestItemEndpoint)obj;
+            return (QuestId == qie.QuestId) &&
+                ItemName.Equals(qie.ItemName);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+    }
+
+    /// <summary>
+    /// Route Class.
+    /// Set of pre-recordered waypoints for route from A to B
+    /// </summary>
+    [XmlRoot("route")]
+    public class Route
+    {
+        /// <summary>
+        /// Starting point
+        /// </summary>
+        [XmlElement("point_a")]
+        public Endpoint PointA;
+
+        /// <summary>
+        /// Ending point
+        /// </summary>
+        [XmlElement("point_b")]
+        public Endpoint PointB;
+
+        /// <summary>
+        /// Route Description
+        /// </summary>
+        [XmlElement("descr")]
+        public string Description;
+
+        /// <summary>
+        /// Name of external file used for saving/loading waypoints
+        /// </summary>
+        [XmlAttribute("ref_name")]
+        public string WaypointFileName;
+
+        /// <summary>
+        /// Is route can be reversed (i.e go from B to A)
+        /// In most cases yes unless toon jumps down
+        /// </summary>
+        [XmlAttribute("reversible")]
+        public bool Reversible;
+
+        /// <summary>
+        /// Route index in case route already exists between same endpoints
+        /// </summary>
+        [XmlAttribute("idx")]
+        public int idx = 0;
+
+        /// <summary>
+        /// Version of xml. Used for export
+        /// </summary>
+        [XmlAttribute("version")]
+        public string Version = null;
+
+        /// <summary>
+        /// List of waypoints. Used for export.
+        /// </summary>
+        [XmlElement("waypoints")]
+        public Waypoints WpList = null;
+
+        internal string FileName;
+        
+        internal Endpoint this[char idx]
+        {
+            get 
+            { 
+                if (idx.Equals('a') || idx.Equals("A"))
+                    return PointA;
+                else if (idx.Equals('b') || idx.Equals("B"))
+                    return PointB;
+                else
+                    throw new Exception("Unknown Endpoint " + idx);
+            }
+        }
+
+        /// <summary>
+        /// Class contstructor
+        /// </summary>
+        public Route() : base() { }
+
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="point_a">Starting point A</param>
+        /// <param name="point_b">Ending point B</param>
+        /// <param name="descr">Route description</param>
+        /// <param name="reversible">Reversible flag</param>
+        public Route(Endpoint point_a, Endpoint point_b, 
+                                string descr, bool reversible)
         {
             PointA = point_a;
             PointB = point_b;
             Description = descr;
-
-            foreach(Vector3D v in route)
-                List.Add(v);
+            Reversible = reversible;
         }
 
+        /// <summary>
+        /// Make waypoint file name
+        /// </summary>
+        /// <returns>Waypoint file name based on System.Guid function</returns>
+        public string MakeWaypointFileName()
+        {
+            byte[] guid = Guid.NewGuid().ToByteArray();
+            WaypointFileName = Convert.ToString(guid[0], 16).ToUpper();
+            for (int i = 1; i < 8; i++)
+                WaypointFileName += Convert.ToString(guid[i], 16).ToUpper();
+            return WaypointFileName;
+        }
+
+        /// <summary>
+        /// Make File Name based on PointA and PointB types
+        /// </summary>
+        /// <returns>Route file name based on PointA and PointB types.
+        /// Null if PointA or PointB are undef</returns>
+        public string MakeFileName()
+        {
+            if ((PointA.PType == EndpointTypes.UNDEF) ||
+                    (PointB.PType == EndpointTypes.UNDEF))
+                return null;
+
+            return PointA.Descr + "-" + PointB.Descr;
+        }
+
+        public override string ToString()
+        {
+            return WaypointFileName;
+        }
+    }
+
+    /// <summary>
+    /// List of waypoints
+    /// </summary>
+    [XmlRoot("waypoints")]
+    public class Waypoints : CommonNameList<Vector3D>
+    {
+        [XmlElement("waypoint")]
+        public Vector3D[] WpList
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+
+        public Waypoints() : base() { }
+
+        public Waypoints(string name) : base(name) { }
     }
 
     #endregion

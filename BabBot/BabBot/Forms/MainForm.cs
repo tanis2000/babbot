@@ -1795,10 +1795,10 @@ namespace BabBot.Forms
 
         private void btnReloadXmlData_Click(object sender, EventArgs e)
         {
-            DataManager.ClearXml();
+            XmlManager.Clear();
 
-            DataManager.InitXmlData();
-            DataManager.AfterXmlInit();
+            XmlManager.Init();
+            XmlManager.AfterInit();
         }
 
         internal void SelectLogTab(string lfs)

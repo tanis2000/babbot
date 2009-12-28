@@ -111,7 +111,7 @@ namespace BabBot.Forms
             {
                 try
                 {
-                    GameObject g = DataManager.LoadXml(fname);
+                    GameObject g = DataManager.LoadGameObj(fname);
                     g.Changed = false;
 
                     list.Add(g);

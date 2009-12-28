@@ -66,7 +66,7 @@
             this.cbObjB1 = new System.Windows.Forms.ComboBox();
             this.pRouteDescr = new System.Windows.Forms.Panel();
             this.tbDescr = new System.Windows.Forms.TextBox();
-            this.cbReverseable = new System.Windows.Forms.CheckBox();
+            this.cbReversible = new System.Windows.Forms.CheckBox();
             this.lblRouteDescr = new System.Windows.Forms.Label();
             this.bsGameObjectsB = new System.Windows.Forms.BindingSource(this.components);
             this.botDataSet = new BabBot.Data.BotDataSet();
@@ -152,14 +152,14 @@
             this.dgWaypoints.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgWaypoints.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgWaypoints.EnableHeadersVisualStyles = false;
-            this.dgWaypoints.Location = new System.Drawing.Point(12, 12);
+            this.dgWaypoints.Location = new System.Drawing.Point(12, 26);
             this.dgWaypoints.Name = "dgWaypoints";
             this.dgWaypoints.ReadOnly = true;
             this.dgWaypoints.RowHeadersVisible = false;
             this.dgWaypoints.RowTemplate.Height = 16;
             this.dgWaypoints.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgWaypoints.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgWaypoints.Size = new System.Drawing.Size(185, 447);
+            this.dgWaypoints.Size = new System.Drawing.Size(185, 433);
             this.dgWaypoints.TabIndex = 3;
             this.dgWaypoints.DoubleClick += new System.EventHandler(this.dgWaypoints_DoubleClick);
             this.dgWaypoints.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgWaypoints_RowsAdded);
@@ -325,6 +325,8 @@
             this.cbObjA0.Size = new System.Drawing.Size(142, 21);
             this.cbObjA0.TabIndex = 4;
             this.cbObjA0.ValueMember = "ID";
+            this.cbObjA0.DataSourceChanged += new System.EventHandler(this.cbObjA0_DataSourceChanged);
+            this.cbObjA0.SelectedIndexChanged += new System.EventHandler(this.RegisterChanges);
             // 
             // lblObjA0
             // 
@@ -365,6 +367,7 @@
             this.cbObjA1.Size = new System.Drawing.Size(142, 21);
             this.cbObjA1.TabIndex = 20;
             this.cbObjA1.ValueMember = "ID";
+            this.cbObjA1.SelectedIndexChanged += new System.EventHandler(this.RegisterChanges);
             // 
             // pOptB
             // 
@@ -448,6 +451,7 @@
             this.cbObjB0.Size = new System.Drawing.Size(142, 21);
             this.cbObjB0.TabIndex = 4;
             this.cbObjB0.ValueMember = "ID";
+            this.cbObjB0.SelectedIndexChanged += new System.EventHandler(this.RegisterChanges);
             // 
             // lblObjB0
             // 
@@ -488,11 +492,12 @@
             this.cbObjB1.Size = new System.Drawing.Size(142, 21);
             this.cbObjB1.TabIndex = 20;
             this.cbObjB1.ValueMember = "ID";
+            this.cbObjB1.SelectedIndexChanged += new System.EventHandler(this.RegisterChanges);
             // 
             // pRouteDescr
             // 
             this.pRouteDescr.Controls.Add(this.tbDescr);
-            this.pRouteDescr.Controls.Add(this.cbReverseable);
+            this.pRouteDescr.Controls.Add(this.cbReversible);
             this.pRouteDescr.Controls.Add(this.lblRouteDescr);
             this.pRouteDescr.Location = new System.Drawing.Point(3, 239);
             this.pRouteDescr.Name = "pRouteDescr";
@@ -510,15 +515,17 @@
             this.tbDescr.Size = new System.Drawing.Size(185, 54);
             this.tbDescr.TabIndex = 13;
             // 
-            // cbReverseable
+            // cbReversible
             // 
-            this.cbReverseable.AutoSize = true;
-            this.cbReverseable.Location = new System.Drawing.Point(4, 79);
-            this.cbReverseable.Name = "cbReverseable";
-            this.cbReverseable.Size = new System.Drawing.Size(135, 17);
-            this.cbReverseable.TabIndex = 12;
-            this.cbReverseable.Text = "Route can be reversed";
-            this.cbReverseable.UseVisualStyleBackColor = true;
+            this.cbReversible.AutoSize = true;
+            this.cbReversible.Checked = true;
+            this.cbReversible.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbReversible.Location = new System.Drawing.Point(4, 79);
+            this.cbReversible.Name = "cbReversible";
+            this.cbReversible.Size = new System.Drawing.Size(135, 17);
+            this.cbReversible.TabIndex = 12;
+            this.cbReversible.Text = "Route can be reversed";
+            this.cbReversible.UseVisualStyleBackColor = true;
             // 
             // lblRouteDescr
             // 
@@ -546,7 +553,7 @@
             this.bsGameObjectsA.DataMember = "GameObjects";
             this.bsGameObjectsA.DataSource = this.botDataSet;
             this.bsGameObjectsA.Sort = "NAME";
-            this.bsGameObjectsA.CurrentChanged += new System.EventHandler(this.bsGameObjects1_CurrentChanged);
+            this.bsGameObjectsA.CurrentChanged += new System.EventHandler(this.bsGameObjectsA_CurrentChanged);
             // 
             // btnControl
             // 
@@ -733,7 +740,7 @@
         private System.Windows.Forms.Label lblRecDistance;
         private System.Windows.Forms.ContextMenuStrip popWaypoints;
         private System.Windows.Forms.ToolStripMenuItem goToToolStripMenuItem;
-        private System.Windows.Forms.CheckBox cbReverseable;
+        private System.Windows.Forms.CheckBox cbReversible;
         private System.Windows.Forms.GroupBox gbRecOptions;
         private System.Windows.Forms.DataGridViewTextBoxColumn X;
         private System.Windows.Forms.DataGridViewTextBoxColumn Y;

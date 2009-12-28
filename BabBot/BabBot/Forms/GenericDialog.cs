@@ -122,6 +122,12 @@ namespace BabBot.Forms
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        protected void ShowSuccessMessage(string msg)
+        {
+            MessageBox.Show(this, msg, "SUCCESS",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
         protected bool GetConfirmation(string question)
         {
             return GetConfirmation(this, question);
@@ -130,7 +136,7 @@ namespace BabBot.Forms
         public static bool GetConfirmation(IWin32Window owner, string question)
         {
             return (MessageBox.Show(owner, question, "Confirmation", 
-                MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button2) == DialogResult.Yes);
         }
 

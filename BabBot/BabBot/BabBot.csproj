@@ -324,12 +324,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="States\ChangeStateEventArgs.cs" />
-    <Compile Include="States\Common\AttackNearMobState.cs" />
-    <Compile Include="States\Common\DeadState.cs" />
-    <Compile Include="States\Common\GlobalBaseBotState.cs" />
     <Compile Include="States\Common\RouteRecordingState.cs" />
     <Compile Include="States\Samples\HangingAroundState.cs" />
-    <Compile Include="States\Common\MoveToState.cs" />
     <Compile Include="States\StateEventArgs.cs" />
     <Compile Include="States\StateMachine.cs" />
     <Compile Include="States\State.cs" />
@@ -375,7 +371,12 @@
     <None Include="Lib\EasyHook64.lib" />
     <None Include="Lib\EasyHook64Drv.sys" />
     <None Include="Lib\EasyHookTestCert.cer" />
-    <Content Include="Data\GameObjectData.xml" />
+    <Content Include="Data\GameObjectData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\RouteList.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\WoWData.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -449,6 +450,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Data\Routes\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

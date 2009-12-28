@@ -108,8 +108,16 @@ namespace BabBot.Wow
         [XmlElement("globals")]
         public GlobalOffsets Globals;
 
-        [XmlIgnore]
-        public GameDataVersion GameObjData;
+        /// <summary>
+        /// Pointer on list with route headers related to current version
+        /// </summary>
+        internal RouteListVersion Routes;
+
+        /// <summary>
+        /// Pointer on Game Object list related to current version
+        /// </summary>
+        internal GameDataVersion GameObjData;
+
 
         public WoWVersion() 
             : base()
