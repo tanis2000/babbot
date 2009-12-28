@@ -21,6 +21,12 @@ using System.Runtime.InteropServices;
 
 namespace BabBot.Common
 {
+    public class TimerQueryException : NotSupportedException
+    {
+        public TimerQueryException() :
+            base("Error while querying the high-resolution performance counter.") { }
+    }
+        
     public class GTimer
     {
         #region -- Private Variables --
@@ -117,9 +123,8 @@ namespace BabBot.Common
         {
             long ret = 0;
             if (QueryPerformanceCounter(ref ret) == 0)
-            {
-                throw new NotSupportedException("Error while querying " + "the high-resolution performance counter.");
-            }
+                throw new TimerQueryException();
+
             return ret;
         }
 
@@ -127,11 +132,8 @@ namespace BabBot.Common
         {
             long ret = 0;
             if (QueryPerformanceFrequency(ref ret) == 0)
-            {
-                throw new NotSupportedException(
-                    "Error while querying "
-                    + "the performance counter frequency.");
-            }
+                throw new TimerQueryException();
+            
             return ret;
         }
     }
