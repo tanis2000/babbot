@@ -59,8 +59,34 @@ namespace BabBot.States
         /// <summary>Date/Time when last update was executed</summary>
         public DateTime LastUpdated { get; private set; }
 
-        /// <summary>True/False whether the state machine is running</summary>
+        /// <summary>Set, Get the state machine running state</summary>
         public bool IsRunning { get; set; }
+
+        private object obj = new object();
+        private State<T> _init_state;
+
+        /// <summary>
+        /// Initial Global State
+        /// This parameter must be used to initialize StateMachine
+        /// if initialization happened outside of BotManager thread
+        /// </summary>
+        public State<T> InitState
+        {
+            get
+            {
+                lock (obj)
+                {
+                    return _init_state;
+                }
+            }
+            set
+            {
+                lock (obj)
+                {
+                    _init_state = value;
+                }
+            }
+        }
 
         public void SetGlobalState(State<T> NewGlobalState)
         {
@@ -88,6 +114,16 @@ namespace BabBot.States
             //if state machine is not active, then skip
             if (!IsRunning)
             {
+                // Initialize and start state machine
+                // If global state assigned by external thread
+                if (InitState != null)
+                {
+                    SetGlobalState(InitState);
+                    InitState = null;
+
+                    IsRunning = true;
+                }
+
                 return;
             }
 
@@ -124,9 +160,7 @@ namespace BabBot.States
                 //if we aren't going to track this one anymore
                 // then remove the state change request event
                 if (CurrentState != null)
-                {
                     CurrentState.ChangeStateRequest -= CurrentState_ChangeStateRequest;
-                }
             }
 
             //if we need to exit the previous state 
@@ -136,7 +170,6 @@ namespace BabBot.States
                 //Exit Current State
                 CurrentState.Exit(Entity);
             }
-
 
             //capture new current state
             CurrentState = NewState;
@@ -152,7 +185,8 @@ namespace BabBot.States
             //Enter new state if enter date/time is min date
             // otherwise we entered before and we don't need to enter again
             // OR re-enter if the exit time is not min value
-            if (CurrentState.EnterTime == DateTime.MinValue || CurrentState.ExitTime != DateTime.MinValue)
+            if (CurrentState.EnterTime == DateTime.MinValue || 
+                        CurrentState.ExitTime != DateTime.MinValue)
             {
                 CurrentState.Enter(Entity);
             }
@@ -170,18 +204,15 @@ namespace BabBot.States
         {
             //when the currently running state requests a change request (either the global or CurrentState).
             // then pause currently running state and switch to the new one.
-
             ChangeState(e.NewState, e.TrackPrevious, e.ExitPrevious);
         }
 
         /// <summary>Is state machine in the specified state?</summary>
         public bool IsInState(Type State)
         {
-            if (CurrentState != null && CurrentState.GetType() == State && CurrentState.ExitTime == DateTime.MinValue)
-            {
-                return true;
-            }
-            return false;
+            return (CurrentState != null &&
+                CurrentState.GetType() == State && 
+                    CurrentState.ExitTime == DateTime.MinValue);
         }
     }
 }
