@@ -152,9 +152,6 @@ namespace BabBot.States
                 Finishing(this, StateEventArgs<T>.GetArgs(Entity));
             }
 
-            //Update Finish date/time
-            FinishTime = DateTime.Now;
-
             //call DoFinish
             DoFinish(Entity);
 
@@ -163,6 +160,9 @@ namespace BabBot.States
             {
                 Finished(this, StateEventArgs<T>.GetArgs(Entity));
             }
+
+            //Update Finish date/time. Always last
+            FinishTime = DateTime.Now;
         }
 
         protected abstract void DoFinish(T Entity);
