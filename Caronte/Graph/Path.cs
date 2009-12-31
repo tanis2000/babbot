@@ -8,9 +8,7 @@ namespace Pather.Graph
 	{
 		public List<Location> locations = new List<Location>();
 
-		public Path()
-		{
-		}
+		public Path() {}
 
 		public Path(List<Spot> steps)
 		{
@@ -20,9 +18,20 @@ namespace Pather.Graph
 			}
 		}
 
-		public int Count()
+        public Location this[int idx]
+        {
+            get
+            {
+                if ((idx < 0) || (idx >= locations.Count))
+                    return null;
+                else
+                    return locations[idx];
+            }
+        }
+
+		public int Count
 		{
-			return locations.Count;
+            get { return locations.Count; }
 		}
 
 		public Location GetFirst()

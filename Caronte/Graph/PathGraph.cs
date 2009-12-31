@@ -821,7 +821,7 @@ namespace Pather.Graph
 			if (rawPath != null && paint != null)
 			{
 				Location prev = null;
-				for (int i = 0; i < rawPath.Count(); i++)
+				for (int i = 0; i < rawPath.Count; i++)
 				{
 					Location l = rawPath.Get(i);
 					paint.AddBigMarker(l.X, l.Y, l.Z);
