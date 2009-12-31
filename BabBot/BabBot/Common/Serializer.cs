@@ -69,7 +69,7 @@ namespace BabBot.Common
         }
     }
 
-    #region IMergeable interface
+    #region Interface
 
     public class MergeException : Exception {
         public MergeException(string type, string value1, string value2) :
@@ -109,6 +109,13 @@ namespace BabBot.Common
         }
     }
 
+    public interface IExportable
+    {
+        string Version { get; set; }
+        void DoBeforeExport(string version);
+        void DoAfterExport();
+    }
+
     #endregion
 
     #region Common Serialization Classes
@@ -116,10 +123,25 @@ namespace BabBot.Common
     /// <summary>
     /// Common class for collection item that has a unique name 
     /// </summary>
-    public abstract class CommonItem : IComparable
+    public abstract class CommonItem : IComparable, IExportable
     {
+        /// <summary>
+        /// Generic name that can be used as label, reference etc
+        /// </summary>
         [XmlAttribute("name")]
         public string Name { get; set; }
+
+        private string _version = null;
+
+        /// <summary>
+        /// Version of xml. Used for export
+        /// </summary>
+        [XmlAttribute("version")]
+        public string Version
+        {
+            get { return _version; }
+            set { _version = value; }
+        }
 
         protected CommonItem() { }
 
@@ -144,6 +166,16 @@ namespace BabBot.Common
             return (obj != null) && 
                 (obj.GetType().Equals(GetType())) && 
                     ToString().Equals(obj.ToString());
+        }
+
+        public virtual void DoBeforeExport(string version)
+        {
+            _version = version;
+        }
+
+        public virtual void DoAfterExport()
+        {
+            _version = null;
         }
     }
 

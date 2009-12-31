@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <route_list version="0">
-  <wow_version name="3.2.2.10505" />
+  <wow_version name="3.2.2.10505">
+    <route name="B223A2FEF93A964A" reversible="true" idx="1">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+		    <waypoint x="10328.29" y="826.6" z="1326.38" type="0" />
+	    </point_a>
+      <point_b d4p1:type="QuestItemEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" item_name="Young Nightsaber slain" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+	      <waypoint x="10307.94" y="871.77" z="1333.94" type="0" />
+	    </point_b>
+      <descr />
+    </route>
+    <route name="BDCDBBF638B9F74C" reversible="true" idx="1">
+      <point_a d4p1:type="QuestItemEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" item_name="Young Nightsaber slain" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+		    <waypoint x="10293.55" y="861.35" z="1336.29" type="0" />
+	    </point_a>
+      <point_b d4p1:type="QuestItemEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" item_name="Young Nightsaber slain" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+	      <waypoint x="10282.16" y="742.78" z="1338.97" type="0" />
+	    </point_b>
+      <descr>Same for Boars</descr>
+    </route>
+    <route name="E22C72F11FC2E41" reversible="true" idx="0">
+      <point_a d4p1:type="QuestItemEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" item_name="Young Nightsaber slain" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+	      <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
+	    </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+	      <waypoint x="10382.55" y="757.25" z="1319.91" type="0" />
+	    </point_b>
+      <descr>Turn in quest</descr>
+    </route>
+  </wow_version>
   <wow_version name="3.3.0.11159" />
 </route_list>

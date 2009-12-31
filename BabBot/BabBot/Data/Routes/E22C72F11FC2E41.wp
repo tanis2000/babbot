@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<waypoints name="E22C72F11FC2E41">
+  <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
+  <waypoint x="10294.12" y="733.21" z="1334.68" type="0" />
+  <waypoint x="10303.88" y="732.66" z="1331.48" type="0" />
+  <waypoint x="10314.45" y="732.06" z="1331.34" type="0" />
+  <waypoint x="10324.91" y="731.47" z="1331.08" type="0" />
+  <waypoint x="10335.49" y="730.87" z="1329" type="0" />
+  <waypoint x="10337.01" y="730.81" z="1328.37" type="0" />
+  <waypoint x="10346.58" y="733.28" z="1324.02" type="0" />
+  <waypoint x="10356.82" y="736" z="1322.24" type="0" />
+  <waypoint x="10358.25" y="736.4" z="1322.06" type="0" />
+  <waypoint x="10366.39" y="743.37" z="1321.66" type="0" />
+  <waypoint x="10374.42" y="750.27" z="1321.27" type="0" />
+  <waypoint x="10382.55" y="757.25" z="1319.91" type="0" />
+</waypoints>

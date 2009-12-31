@@ -68,6 +68,7 @@ namespace BabBot.Manager
         public const string SK_SHIFT_UP = "{SHIFTU}";
         public const string SK_TAB = "{TAB}";
         public const string SK_CTRL_TAB = "{CTRLTAB}";
+        public const string SK_SPACE = "{SPACE}";
 
         #endregion
 
@@ -113,12 +114,17 @@ namespace BabBot.Manager
 
         #region Keyboard Manager
 
+        public int SendKeys(string keys)
+        {
+            return SendKeys(keys, true);
+        }
         /// <summary>
         /// Sends keystrokes to the specified window
         /// </summary>
         /// <param name="keys">String of keys to send</param>
+        /// <param name="release">True to send release event, False if button keep pressed</param>
         /// <returns>Returns number of keystrokes sent, -1 if an error occurs</returns>
-        public int SendKeys(string keys)
+        public int SendKeys(string keys, bool release)
         {
             if (WowHWND <= 0 || keys.Length == 0)
             {
@@ -140,6 +146,7 @@ namespace BabBot.Manager
             str.Replace(SK_F12, Convert.ToChar(0x7B).ToString());
             str.Replace(SK_SHIFT_DOWN, Convert.ToChar(0xC1).ToString());
             str.Replace(SK_SHIFT_UP, Convert.ToChar(0xC2).ToString());
+            str.Replace(SK_SPACE, Convert.ToChar(0x20).ToString());
 
             for (int ix = 1; ix <= str.Length; ++ix)
             {
@@ -166,9 +173,14 @@ namespace BabBot.Manager
 
                     Thread.Sleep(1);
 
-                    if (_PostMessage(WowHWND, 0x101, Convert.ToInt32(chr), (MakeLong(1, ret) + 0xC0000000)) == 0)
+                    if (release)
                     {
-                        return -1;
+                        //Post the WM_KEYUP message, return false if unsuccessful
+                        if (_PostMessage(WowHWND, 0x101, Convert.ToInt32(chr), 
+                                                (MakeLong(1, ret) + 0xC0000000)) == 0)
+                        {
+                            return -1;
+                        }
                     }
                 }
                 i++;
@@ -176,19 +188,22 @@ namespace BabBot.Manager
             return i;
         }
 
+        public bool SendArrowKey(ArrowKey key)
+        {
+            return SendArrowKey(key, true);
+        }
+
         /// <summary>
         /// Taps the specified arrow key
         /// </summary>
         /// <param name="key">The arrow key to be send</param>
+        /// <param name="release">True if send WM_KEYUP message as well</param>
         /// <returns>Returns true if successful, false if not</returns>
-        public bool SendArrowKey(ArrowKey key)
+        public bool SendArrowKey(ArrowKey key, bool release)
         {
             //If hWnd is 0 return false
             if (WowHWND <= 0)
-            {
                 return false;
-            }
-
 
             var wParam = (int) key;
             uint lParam;
@@ -225,14 +240,18 @@ namespace BabBot.Manager
             //Sleep to let the window process the message
             Thread.Sleep(5);
 
-            //Post the WM_KEYUP message, return false if unsuccessful
-            if (_PostMessage(WowHWND, 0x101, wParam, (lParam + 0xC0000000)) == 0)
+            if (release)
             {
-                return false;
+                //Post the WM_KEYUP message, return false if unsuccessful
+                if (_PostMessage(WowHWND, 0x101, wParam, (lParam + 0xC0000000)) == 0)
+                {
+                    return false;
+                }
             }
 
             return true;
         }
+
 
         /// <summary>
         /// Holds down an arrow key for the specified time

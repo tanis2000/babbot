@@ -247,7 +247,7 @@ namespace BabBot.Manager
         }
 
         /// <summary>
-        /// Serialize object in xml format
+        /// Serialize object in xml format and write XML document to external file
         /// </summary>
         /// <param name="fname">Output File Name</param>
         /// <param name="t">Type of object</param>
@@ -369,6 +369,20 @@ namespace BabBot.Manager
         internal static WoWVersion[] WoWVersions
         {
             get { return wdata.Versions; }
+        }
+
+        /// <summary>
+        /// Sequence of Quest Items in Quest local items array
+        /// </summary>
+        internal static QuestItemTypes[] QuestItemSeq
+        {
+            get
+            {
+                return new QuestItemTypes[] {
+                QuestItemTypes.REQUIRED,
+                QuestItemTypes.REWARD,
+                QuestItemTypes.CHOICE };
+            }
         }
 
         /// <summary>
@@ -652,7 +666,7 @@ namespace BabBot.Manager
                         CommonQty qi = q.QuestItems[i].List[j];
                         // Locate type
                         GameData.QuestItems.AddQuestItemsRow(qrow, j,
-                            (int)q.QuestItemSeq[i],qi.Name, qi.Qty, qi.Name);
+                            (int)DataManager.QuestItemSeq[i],qi.Name, qi.Qty, qi.Name);
                     }
                 }
 
@@ -802,9 +816,9 @@ namespace BabBot.Manager
                 Quest q = new Quest(qrow.ID, qrow.TITLE, qrow.GREETING_TEXT,
                         qrow.OBJECTIVES_TEXT, qrow.LEVEL, qrow.BONUS_SPELL, qrow.LINK);
 
-                for (int i = 0; i < q.QuestItemSeq.Length; i++)
+                for (int i = 0; i < DataManager.QuestItemSeq.Length; i++)
                 {
-                    QuestItemTypes qi = q.QuestItemSeq[i];
+                    QuestItemTypes qi = DataManager.QuestItemSeq[i];
 
                     DataRow[] item_rows = GameData.QuestItems.
                         Select("QID=" + qrow.ID + " AND ITEM_TYPE_ID=" + (int)qi);
@@ -989,14 +1003,15 @@ namespace BabBot.Manager
             string fname = XmlManager.ExportDataDir + Path.DirectorySeparatorChar + name + ".obj";
             try
             {
-                if (!string.IsNullOrEmpty(lfs))
-                    Output.Instance.Log("npc", "Exporting Game Object: " + name +
+                Output.Instance.Log(lfs, "Exporting Game Object: " + name +
                                                 " to " + XmlManager.ExportDataDir + " subdirectory");
 
-                XmlManager.Save(fname, typeof(GameObject), obj);
+                obj.DoBeforeExport(GameObjectVersion.ToString());
+                bool res = XmlManager.Save(fname, typeof(GameObject), obj);
+                obj.DoAfterExport();
 
-                if (!string.IsNullOrEmpty(lfs))
-                    Output.Instance.Log("npc", 
+                if (res)
+                    Output.Instance.Log(lfs, 
                         "Export successfull!!! Don't forget upload updated data to " +
                                         "BabBot forum https://sourceforge.net/apps/phpbb/babbot/");
             }
@@ -1073,9 +1088,7 @@ namespace BabBot.Manager
         }
 
     }
-
-    
-    
+            
     #region Routes
 
     public class WaypointsNotFoundException : Exception
@@ -1109,12 +1122,24 @@ namespace BabBot.Manager
         /// <summary>
         /// Indexed table of all undef endpoints A and endpoints B for reversible routes
         /// Used to quickly locate waypoints available from current one
+        /// Include only defined endpoints
         /// </summary>
         public static Dictionary<string, List<Route>> Endpoints = 
                                 new Dictionary<string, List<Route>>();
 
+        /// <summary>
+        /// Indexed table with available routes. 
+        /// Include only route that has defined points A and B
+        /// </summary>
         public static Dictionary<string, List<Route>> Routes =
                                 new Dictionary<string, List<Route>>();
+
+        /// <summary>
+        /// Similar to Endpoints but include actual vector length as a key
+        /// Include all waypoints (include undefined)
+        /// </summary>
+        public static SortedList<double, List<Route>> Waypoints =
+                                new SortedList<double, List<Route>>(new Vector3DComparer());
 
         /// <summary>
         /// Save All Routes data in xml format
@@ -1129,61 +1154,112 @@ namespace BabBot.Manager
 
         public static bool SaveRoute(Route route, Waypoints waypoints)
         {
+            return SaveRoute(route, waypoints, true);
+        }
+
+        private static bool SaveRoute(Route route, Waypoints waypoints, bool export)
+        {
             // Make sure file name for waypoints is unique
-            do
-            {
+            if (route.WaypointFileName == null)
                 route.MakeWaypointFileName();
-            } while (DataManager.CurWoWVersion.Routes.STable.ContainsKey(route.WaypointFileName));
+
+            while (DataManager.CurWoWVersion.Routes.STable.ContainsKey(route.WaypointFileName))
+                route.MakeWaypointFileName();
 
             // Save waypoints first
             waypoints.Name = route.WaypointFileName;
             if (!XmlManager.Save(RouteListManager.RoutesDirFull + waypoints.Name +
-                        ".route", typeof(Waypoints), waypoints))
+                        ".wp", typeof(Waypoints), waypoints))
                 return false;
 
             DataManager.CurWoWVersion.Routes.Add(route);
             SaveRouteList("routes");
 
-            string fname = route.MakeFileName();
-            if (fname != null) 
+            if (export)
             {
-                route.FileName = fname + ".route";
+                string fname = route.MakeFileName();
+                if (fname != null)
+                {
+                    route.FileName = fname + ".route";
 
-                // Check for existing routes between 2 endpoints
-                route.idx = 0;
-                if (Routes.ContainsKey(fname))
-                    route.idx = Routes[fname].Count;
+                    // Check for existing routes between 2 endpoints
+                    route.idx = 0;
+                    if (Routes.ContainsKey(fname))
+                        route.idx = Routes[fname].Count;
 
-                // Attach waypoints
-                route.WpList = waypoints;
+                    // Attach waypoints and version
+                    route.DoBeforeExport(RouteListVersion.ToString(), waypoints);
 
-                // Set version
-                route.Version = RouteListVersion.ToString();
-
-                // Create Export file
-                if (!XmlManager.Save(XmlManager.ExportDataDirFull + 
+                    // Create Export file
+                    if (!XmlManager.Save(XmlManager.ExportDataDirFull +
                                     route.FileName, typeof(Route), route))
-                    route.FileName = null;
+                        route.FileName = null;
 
-                // Detach waypoints
-                route.WpList = null;
-                route.Version = null;
+                    // Detach waypoints
+                    route.DoAfterExport();
+                }
+                else 
+                    route.FileName = null;
             }
-            else route.FileName = null;
 
             return true;
         }
 
-        public static Route FindRoute(Endpoint a, Endpoint b)
+        /// <summary>
+        /// Look up route in Endpoints table
+        /// </summary>
+        /// <param name="name">Endpoint name. Can be GameObject QuestItem name</param>
+        /// <returns>Route object or null if not found</returns>
+        public static Route FindRoute(string name)
         {
-            // TODO
+            try 
+            { 
+                List<Route> r = Endpoints[name];
+                // For multiple routes return random
+                if (r.Count > 1)
+                {
+                    Random rand = new Random();
+                    return r[rand.Next(r.Count)];
+                }
+                else
+                    return r[0];
+            }  
+            catch 
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Look up route by destination waypoint in Waypoints table
+        /// </summary>
+        /// <param name="v">Destination waypoint</param>
+        /// <returns>Route object or null if not found</returns>
+        public static Route FindRoute(Vector3D v)
+        {
+            double len = v.Length;
+
+            List<Route> lr;
+
+            if (!Waypoints.TryGetValue(v.Length, out lr))
+                return null;
+
+            // Check which route exactly have started or ended waypoint
+            foreach (Route r in lr)
+            {
+                if (r.PointA.Waypoint.IsClose(v) ||
+                        r.Reversible && r.PointB.Waypoint.IsClose(v))
+                    return r;
+            }
+
+            // If nothing found than nothing found
             return null;
         }
 
         public static Waypoints LoadWaypoints(string id)
         {
             // Check if file exists
-            string fname = RoutesDirFull + id + ".route";
+            string fname = RoutesDirFull + id + ".wp";
             if (!File.Exists(fname))
                 throw new WaypointsNotFoundException(fname);
 
@@ -1191,22 +1267,48 @@ namespace BabBot.Manager
             return s.Load(fname);
         }
 
-        public static Route ImportRoute(string fname)
+        public static bool ImportRoute(string fname)
         {
             if (!File.Exists(fname))
             {
                 ProcessManager.ShowError("Route file '" + fname + "' not found");
-                return null;
+                return false;
             }
 
-            Serializer<Route> s = new Serializer<Route>();
-            return s.Load(fname);
+            Route r = null;
+            try
+            {
+                Serializer<Route> s = new Serializer<Route>();
+                r = s.Load(fname);
+            }
+            catch (Exception e)
+            {
+                ProcessManager.ShowError("Failed import route from file '" +
+                    fname + "'. " + e.Message);
+                return false;
+            }
+
+            // Check version
+            if (r.Version != RouteListVersion.ToString())
+            {
+                ProcessManager.ShowError("Imported route version " + r.Version +
+                    " different from supported " + RouteListVersion);
+                return false;
+            }
+
+            // Extract waypoints and save in external file
+            Waypoints wp = r.WpList;
+            r.WpList = null;
+            r.Version = null;
+
+            return SaveRoute(r, wp, false);
         }
 
         public static void IndexData()
         {
             Routes.Clear();
             Endpoints.Clear();
+            Waypoints.Clear();
 
             foreach (Route r in DataManager.CurWoWVersion.Routes.STable.Values)
             {
@@ -1227,8 +1329,30 @@ namespace BabBot.Manager
                 foreach (char c in new char[] { 'a', 'b' } )
                 {
                     Endpoint e = r[c];
-                    if ((e.PType == EndpointTypes.UNDEF) || 
-                            (c.Equals("b") && !r.Reversible))
+
+                    if (c.Equals('a') ||
+                        c.Equals('b') && r.Reversible)
+                    {
+                        // Add to Endpoint waypoint
+                        double len = e.Waypoint.Length;
+                        List<Route> l = null;
+                        try
+                        {
+                            l = Waypoints[len];
+                        }
+                        catch
+                        {
+                            l = new List<Route>();
+                            Waypoints.Add(len, l);
+                        }
+
+                        l.Add(r);
+                    }
+                    else
+                        continue;
+
+                    // Add endpoint
+                    if (e.PType == EndpointTypes.UNDEF)
                         continue;
 
                     string ename = e.ToString();
@@ -1247,6 +1371,16 @@ namespace BabBot.Manager
             }
         }
     }
+
+    public class Vector3DComparer : IComparer<double>
+    {
+        public int Compare(double v1, double v2)
+        {
+            return (Math.Abs(v1 - v2) <= 5F) ? 0 :
+                                ((v1 < v2) ? -1 : 1);
+        }
+    }
+
+    #endregion
 }
 
-#endregion

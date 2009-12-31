@@ -52,11 +52,18 @@ namespace Caronte
 
         }
 
-        public Pather.Graph.Path CalculatePath(Pather.Graph.Location iOrigin, Pather.Graph.Location iDestination)
+        public Pather.Graph.Path CalculatePath(Pather.Graph.Location iOrigin, 
+                                                    Pather.Graph.Location iDestination)
+        {
+            return CalculatePath(iOrigin, iDestination, 5F);
+        }
+
+        public Pather.Graph.Path CalculatePath(Pather.Graph.Location iOrigin, 
+                                    Pather.Graph.Location iDestination, float sDist)
         {
             // We try to find a path 
 
-            Pather.Graph.Path mypath = world.CreatePath(iOrigin, iDestination, 5f);
+            Pather.Graph.Path mypath = world.CreatePath(iOrigin, iDestination, sDist);
 
             /* We save the PathGraph. Stores every chunk of the map we used in the 
                PPather\PathInfo\{map} folder */

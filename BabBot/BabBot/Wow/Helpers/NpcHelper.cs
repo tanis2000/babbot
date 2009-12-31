@@ -4,7 +4,7 @@ using System.Text;
 using BabBot.Common;
 using BabBot.Manager;
 using System.Threading;
-using BabBot.Scripts.Common;
+using BabBot.States.Common;
 using Pather.Graph;
 using System.Text.RegularExpressions;
 
@@ -85,7 +85,7 @@ namespace BabBot.Wow.Helpers
     public static class NpcHelper
     {
         // For test use
-        public static bool UseState;
+        public static bool UseState = true;
 
         static List<GameObject> SaveList = new List<GameObject>();
 
@@ -159,11 +159,14 @@ namespace BabBot.Wow.Helpers
                             bool auto_close, string lfs)
         {
             Output.Instance.Log(lfs, "Interacting with NPC '" + npc_name + "' ...");
+
+            // TODO Interact with Game Object by name
             LuaHelper.Exec("InteractWithTarget");
+
             // ProcessManager.Player.ClickToMoveInteract(ProcessManager.Player.CurTargetGuid);
 
             // IF NPC doesn't have any quests and just on gossip option the WoW
-            // use it option by default
+            // does use this single option by default
 
             DateTime dt = DateTime.Now;
             Thread.Sleep(100);
@@ -196,7 +199,7 @@ namespace BabBot.Wow.Helpers
             MoveToGameObj(obj, lfs);
         }
 
-        public static void MoveToGameObj(GameObject obj, string lfs)
+        public static Vector3D GetGameObjCoord(GameObject obj, string lfs)
         {
             WowPlayer player = ProcessManager.Player;
 
@@ -217,67 +220,81 @@ namespace BabBot.Wow.Helpers
 
             // Check if NPC has coordinates in the same continent
             if (cid != player.ContinentID)
-                throw new CantReachNpcException(obj.Name, 
-                        "NPC located on different continent.");
+                throw new CantReachNpcException(obj.Name,
+                        "Game Object located on different continent.");
             else if (!zone_text.Equals(player.ZoneText))
                 new MultiZoneNotSupportedException();
 
             // Check if NPC has any waypoints assigned
             if (!obj.BasePosition.IsValid())
-                throw new CantReachNpcException(obj.Name, 
-                    "NPC doesn't have any waypoints assigned. " +
+                throw new CantReachNpcException(obj.Name,
+                    "Game Object doesn't have any waypoints assigned. " +
                     "Check NPCData.xml and try again.");
 
             // By default check the base position
-            Output.Instance.Debug(lfs, "Usning NPC waypoint: " + obj.BasePosition);
+            Output.Instance.Debug(lfs, "Using Game Object waypoint: " + obj.BasePosition);
 
-            if (!MoveToDest(obj.BasePosition, lfs))
-                throw new CantReachNpcException(obj.Name, "NPC still away after " +
+            return obj.BasePosition;
+        }
+
+        public static void MoveToGameObj(GameObject obj, string lfs)
+        {
+            Vector3D dest = GetGameObjCoord(obj, lfs);
+
+            if (!MoveToDest(dest, lfs, "Moving to " + obj.FullName))
+                throw new CantReachNpcException(obj.Name, "Game Object still away after " +
                     (ProcessManager.AppConfig.MaxTargetGetRetries + 1) + " tries");
+        }
+
+
+        public static bool MoveToDest(Vector3D dest, string lfs)
+        {
+            return MoveToDest(dest, lfs, "Moving to waypoint: " + dest);
         }
 
         /// <summary>
         /// Move character to destination
         /// </summary>
         /// <param name="dest"></param>
-        public static bool MoveToDest(Vector3D dest, string lfs)
+        public static bool MoveToDest(Vector3D dest, string lfs, string tooltip_text)
         {
             WowPlayer player = ProcessManager.Player;
 
-            float distance = dest.GetDistanceTo(player.Location);
-
-            // We have a 3 tries by default to reach target NPC
-            int retry = 0;
-            int max_retry = ProcessManager.AppConfig.MaxTargetGetRetries;
-
-            // We might be already at the target
-            while ((distance > 5F) && (retry <= max_retry))
+            if (UseState)
             {
-                if (retry > 0)
-                    Output.Instance.Log("Retrying " + retry + " of " + 
+                // Use NavigationState
+                NavigationState ns = new NavigationState(dest, lfs, tooltip_text);
+                ns.Finished += ProcessManager.StopStateMachine;
+                
+                player.StateMachine.InitState = ns;
+                Output.Instance.Debug(lfs, "State: " +
+                    ProcessManager.Player.StateMachine.CurrentState);
+
+                Output.Instance.Log(lfs, "Game Object coordinates located." +
+                        " Moving to Game Object using Player State Machine ...");
+
+                // Wait state machine switch to new state
+                while (!player.StateMachine.IsRunning)
+                    Thread.Sleep(1000);
+
+                // Wait state machine complete Travel State
+                while (player.StateMachine.IsRunning)
+                    Thread.Sleep(1000);
+            }
+            else
+            {
+                float distance = dest.GetDistanceTo(player.Location);
+
+                // We have a 3 tries by default to reach target NPC
+                int retry = 0;
+                int max_retry = ProcessManager.AppConfig.MaxTargetGetRetries;
+
+                // We might be already at the target
+                while ((distance > 5F) && (retry <= max_retry))
+                {
+                    if (retry > 0)
+                        Output.Instance.Log("Retrying " + retry + " of " + 
                                 max_retry + " to reach the destination");
-                if (UseState)
-                {
-                    // Use MoveToState
-                    MoveToState mt = new MoveToState(dest, 5F);
-                    ProcessManager.Player.StateMachine.SetGlobalState(mt);
-                    Output.Instance.Debug(lfs, "State: " +
-                        ProcessManager.Player.StateMachine.CurrentState);
-
-                    Output.Instance.Log(lfs, "NPC coordinates located. Moving to NPC ...");
-                    ProcessManager.Player.StateMachine.IsRunning = true;
-
-                    Output.Instance.Debug(lfs, "State: " +
-                        ProcessManager.Player.StateMachine.CurrentState);
-                    while (ProcessManager.Player.StateMachine.IsInState(typeof(MoveToState)))
-                    {
-                        Thread.Sleep(1000);
-                        Output.Instance.Debug(lfs, "State: " +
-                            ProcessManager.Player.StateMachine.CurrentState);
-                    }
-                }
-                else
-                {
                     // Click to move on each waypoint
                     // dynamically calculate time between each click 
                     // based on distance to the next waypoint
@@ -288,7 +305,7 @@ namespace BabBot.Wow.Helpers
                         WaypointVector3DHelper.Vector3DToLocation(dest));
 
                     // Travel path
-                    int max = p.Count();
+                    int max = p.Count;
                     Vector3D vprev = dest;
                     Vector3D vnext;
                     for (int i = 0; i < max; i++)
@@ -311,7 +328,17 @@ namespace BabBot.Wow.Helpers
                     retry++;
             }
 
-            return (dest.GetDistanceTo(player.Location) < 5F);
+            return (dest.GetDistanceTo(player.Location) <= 5F);
+        }
+
+        public static void TargetGameObj(GameObject obj, string lfs)
+        {
+            
+
+            // Only can target NPC
+            if ((obj.ObjType == DataManager.GameObjectTypes.NPC) &&
+                    !LuaHelper.TargetUnitByName(obj.Name))
+                throw new QuestSkipException("Unable target NPC");
         }
 
         public static string[] GetGossipList(string lfs)
@@ -627,7 +654,7 @@ namespace BabBot.Wow.Helpers
                 Quest mq = DataManager.CurWoWVersion.GameObjData.FindMaxQuestByTitle(q.Title);
                 if (mq != null)
                 {
-                    q.QIdx = mq.QIdx + 1;
+                    q.QNum = mq.QNum + 1;
                     // Probably I need link to high lvl quest with same title
                     q.Relations.Add(q.Id);
                 }
@@ -724,7 +751,7 @@ namespace BabBot.Wow.Helpers
 
             // Move to NPC
             // If it failed it throw exception. I know :)
-            MoveToDest(dest.Waypoint, lfs);
+            MoveToDest(dest.Waypoint, lfs, "Moving to NPC: '" + dest.Npc.Name + "'");
 
             // Interact with NPC and select given service
             LuaHelper.TargetUnitByName(dest.Npc.Name);

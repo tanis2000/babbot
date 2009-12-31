@@ -20,24 +20,43 @@
 // TODO Check for crush and implement WOW_CRUSHED status
 
 using System;
-using System.ComponentModel;
+using System.IO;
+using System.Net;
+using Pather.Graph;
+using System.Threading;
 using System.Diagnostics;
+using System.Collections;
+using System.ComponentModel;
+using System.Xml.Serialization;
+using System.Collections.Generic;
+
 using BabBot.Bot;
+using BabBot.Wow;
+using BabBot.States;
 using BabBot.Common;
 using BabBot.Scripting;
-using BabBot.Wow;
+
 using Magic;
-using System.Collections;
-using System.Collections.Generic;
-using Pather.Graph;
-using System.Linq;
-using System.Threading;
-using System.IO;
-using System.Xml.Serialization;
-using System.Net;
 
 namespace BabBot.Manager
 {
+
+    #region Exceptions
+
+    public class ConfigFileChangedException : Exception
+    {
+        public ConfigFileChangedException() :
+            base("Configuration file doesn't match application settings") { }
+    }
+
+    public class WoWDataNotFoundException : Exception
+    {
+        public WoWDataNotFoundException(string version) :
+            base("WoWData.xml doesn't contain data for WoW version '" + version + "'") { }
+    }
+
+    #endregion
+
     /// <summary>
     /// Main class for reading, writing and gathering process information 
     /// </summary>
@@ -94,9 +113,33 @@ namespace BabBot.Manager
         /// <param name="err"></param>
         public delegate void ShowErrorMessageHandler(string err);
 
+        /// <summary>
+        /// Bot Progress Bar start procedure
+        /// </summary>
+        /// <param name="max">Max number shown in progress bar</param>
+        /// <param name="tooltip">Text shown in progress bar tooltip</param>
+        public delegate void BotProgressStartHandle(int max, string tooltip);
+
+        /// <summary>
+        /// Bot Progress Bar change procedure
+        /// </summary>
+        /// <param name="value"></param>
+        public delegate void BotProgressChangeHandle(int value);
+
+        /// <summary>
+        /// Bot progress bar end procedure
+        /// </summary>
+        public delegate void BotProgressEndHandle();
+
+        /// <summary>
+        /// Path visualization procedure
+        /// </summary>
+        /// <param name="v_arr">Array of waypoints</param>
+        public delegate void DisplayPathCalculatedHandle(Vector3D[] v_arr, int retry);
+
         #endregion
 
-        #region WOWApplication Events
+        #region Application Events
 
         /// <summary>
         /// ProcessFailed is fired if an exception is thrown when attempting to start the
@@ -135,6 +178,21 @@ namespace BabBot.Manager
         public static event FirstTimeRunHandler FirstTimeRun;
         public static event ConfigFileChangedHandler ConfigFileChanged;
         public static event ShowErrorMessageHandler ShowErrorMessage;
+
+
+        public static event BotProgressStartHandle BotProgressStart;
+        public static event BotProgressChangeHandle BotProgressChange;
+        public static event BotProgressEndHandle BotProgressEnd;
+
+        /// <summary>
+        /// Event raising when bot calculated path and need visualize it
+        /// </summary>
+        public static event DisplayPathCalculatedHandle DisplayPathCalculated;
+
+        /// <summary>
+        /// Event raising when bot completed traveling (finish traveling state)
+        /// </summary>
+        public static event PlayerUpdateEventHandler TravelCompleted;
 
         #endregion
 
@@ -759,7 +817,8 @@ namespace BabBot.Manager
             if (PlayerWayPoint != null)
             {
                 Vector3D current = Player.Location;
-                WayPoint wpLast = (WayPointManager.Instance.NormalNodeCount > 0) ? WayPointManager.Instance.NormalPath.Last() : null;
+                WayPoint wpLast = (WayPointManager.Instance.NormalNodeCount > 0) ? 
+                    WayPointManager.Instance.NormalPath[WayPointManager.Instance.NormalPath.Count - 1] : null;
 
                 if (wpLast != null && MathFuncs.GetDistance(current, wpLast.Location, false) > 5 || wpLast == null)
                 {
@@ -992,7 +1051,15 @@ namespace BabBot.Manager
                 ". " + err + ". Terminating application");
             Environment.Exit((int) bug_id);
         }
-        
+
+        public static void SetGameIdle(int sleep_time)
+        {
+            GameStatus = GameStatuses.IDLE;
+            Thread.Sleep(sleep_time);
+        }
+
+        #endregion
+
         #region XML
 
         public static Talents ReadTalents(string fname)
@@ -1099,6 +1166,8 @@ namespace BabBot.Manager
 
         #endregion
 
+        #region Event Processing
+
         private static void OnConfigurationChanged()
         {
             // Check  mandatory directories
@@ -1125,24 +1194,42 @@ namespace BabBot.Manager
                 UpdateGameStatus(new_status);
         }
 
+        public static void OnBotProgressStart(int max, string tooltip)
+        {
+            if (BotProgressStart != null)
+                BotProgressStart(max, tooltip);
+        }
+
+        public static void OnBotProgressChange(int value)
+        {
+            if (BotProgressChange != null)
+                BotProgressChange(value);
+        }
+
+        public static void OnBotProgressEnd()
+        {
+            if (BotProgressEnd != null)
+                BotProgressEnd();
+        }
+
+        public static void StopStateMachine(object sm, EventArgs arg)
+        {
+            Player.StateMachine.IsRunning = false;
+        }
+
+        public static void OnPathCalculated(Vector3D[] v_arr, int retry)
+        {
+            if (DisplayPathCalculated != null)
+                DisplayPathCalculated(v_arr, retry);
+        }
+
+        public static void OnTravelCompleted()
+        {
+            if (TravelCompleted != null)
+                TravelCompleted();
+        }
+
         #endregion
 
-        public static void SetGameIdle(int sleep_time)
-        {
-            GameStatus = GameStatuses.IDLE;
-            Thread.Sleep(sleep_time);
-        }
-    }
-
-    public class ConfigFileChangedException : Exception
-    {
-        public ConfigFileChangedException() : 
-            base("Configuration file doesn't match application settings") { }
-    }
-
-    public class WoWDataNotFoundException : Exception
-    {
-        public WoWDataNotFoundException(string version) :
-            base("WoWData.xml doesn't contain data for WoW version '" + version + "'") { }
     }
 }

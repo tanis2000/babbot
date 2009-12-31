@@ -37,6 +37,9 @@ namespace BabBot.Forms
         // Change tracking
         private bool _changed = false;
 
+        // Delegate method for error message
+        private delegate void ErrorMsgDelegate(Exception e);
+
         protected virtual bool IsChanged
         {
             get { return _changed; }
@@ -112,8 +115,14 @@ namespace BabBot.Forms
 
         protected void ShowErrorMessage(Exception e)
         {
-            MessageBox.Show(this, "Caught exception " + e.GetType() + ": " + e.Message, 
-                "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (InvokeRequired)
+            {
+                ErrorMsgDelegate del = ShowErrorMessage;
+                Invoke(del, new object[] { e });
+            }
+            else
+                MessageBox.Show(this, "Caught exception " + e.GetType() + ": " + e.Message,
+                    "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         protected void ShowInfoMessage(string info)

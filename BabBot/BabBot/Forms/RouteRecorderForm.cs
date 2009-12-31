@@ -26,6 +26,7 @@ namespace BabBot.Forms
     {
         ComboBox[] type_cb;
         RecStates _rec_state = RecStates.IDLE;
+        RouteRecordingState _route_rec_state;
 
         public RouteRecorderForm()
             : base ("route_mgr")
@@ -133,8 +134,8 @@ namespace BabBot.Forms
                     tbZoneA.Text = ProcessManager.Player.ZoneText;
 
                     // Load RouteRecordingState and start
-                    ProcessManager.Player.StateMachine.ChangeState(
-                                new RouteRecordingState(RecordWp, numRecDistance.Value), false, true);
+                    _route_rec_state = new RouteRecordingState(RecordWp, numRecDistance.Value);
+                    ProcessManager.Player.StateMachine.ChangeState(_route_rec_state, false, true);
                     ProcessManager.Player.StateMachine.IsRunning = true;
 #if DEBUG
                 } else tbZoneA.Text = "Teldrassil";
@@ -158,8 +159,9 @@ namespace BabBot.Forms
                 {
 #endif
                 // Put state machine back in idle status
+                _route_rec_state.Exit(ProcessManager.Player);
                 ProcessManager.Player.StateMachine.IsRunning = false;
-                ProcessManager.Player.StateMachine.ChangeState(null, false, true);
+
                 ProcessManager.Player.setCurrentMapInfo();
                 tbZoneB.Text = ProcessManager.Player.ZoneText;
 #if DEBUG
@@ -256,7 +258,7 @@ namespace BabBot.Forms
             if (ProcessManager.Player != null)
 #endif
             // Move To
-                NpcHelper.MoveToDest(MakeVector(row), "record");
+            NpcHelper.MoveToDest(MakeVector(row), "record");
         }
 
         private Vector3D MakeVector(DataGridViewRow row)
@@ -326,8 +328,11 @@ namespace BabBot.Forms
             // Make route
             AbstractListEndpoint point_a = cbTypeA.SelectedItem as AbstractListEndpoint;
             AbstractListEndpoint point_b = cbTypeB.SelectedItem as AbstractListEndpoint;
-            Route route = new Route(point_a.GetEndpoint(tbZoneA.Text), 
-                point_b.GetEndpoint(tbZoneB.Text), tbDescr.Text, cbReversible.Checked);
+            Route route = new Route(
+                point_a.GetEndpoint(tbZoneA.Text,MakeVector(dgWaypoints.Rows[0])),
+                point_b.GetEndpoint(tbZoneB.Text, 
+                        MakeVector(dgWaypoints.Rows[dgWaypoints.Rows.Count - 2])), 
+                tbDescr.Text, cbReversible.Checked);
 
             // Add waypoints except  last empty line
             Waypoints waypoints = new Waypoints(route.WaypointFileName);
@@ -427,7 +432,7 @@ namespace BabBot.Forms
 
         public abstract void OnSelection();
 
-        public abstract Endpoint GetEndpoint(string ZoneText);
+        public abstract Endpoint GetEndpoint(string ZoneText, Vector3D waypoint);
     }
 
     public class UndefListEndpoint : AbstractListEndpoint
@@ -484,9 +489,9 @@ namespace BabBot.Forms
                 PTargets[i + 1].Visible = enabled;
         }
 
-        public override Endpoint GetEndpoint(string ZoneText)
+        public override Endpoint GetEndpoint(string ZoneText, Vector3D waypoint)
         {
-            return new Endpoint(Type, ZoneText);
+            return new Endpoint(Type, ZoneText, waypoint);
         }
     }
 
@@ -572,9 +577,9 @@ namespace BabBot.Forms
             get { return EndpointTypes.GAME_OBJ; }
         }
 
-        public override Endpoint GetEndpoint(string ZoneText)
+        public override Endpoint GetEndpoint(string ZoneText, Vector3D waypoint)
         {
-            return new GameObjEndpoint(Type, cb_list[0].Text, ZoneText);
+            return new GameObjEndpoint(Type, cb_list[0].Text, ZoneText, waypoint);
         }
 
         protected override string TypeStr
@@ -615,11 +620,11 @@ namespace BabBot.Forms
             get { return "Quest"; }
         }
 
-        public override Endpoint GetEndpoint(string ZoneText)
+        public override Endpoint GetEndpoint(string ZoneText, Vector3D waypoint)
         {
             BotDataSet.QuestListRow row = (BotDataSet.QuestListRow) ((DataRowView) 
                 ((BindingSource)cb_list[0].DataSource).Current).Row;
-            return new QuestItemEndpoint(Type, row.ID, cb_list[1].Text, ZoneText);
+            return new QuestItemEndpoint(Type, row.ID, cb_list[1].Text, ZoneText, waypoint);
         }
 
 

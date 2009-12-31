@@ -49,6 +49,11 @@ namespace BabBot.Forms
         // number of lines in logging window
         private int _log_len = 500;
 
+        /// <summary>
+        /// Last calculated path
+        /// </summary>
+        private List<Vector3D[]> _path;
+
         public MainForm()
         {
             InitializeComponent();
@@ -63,6 +68,8 @@ namespace BabBot.Forms
 
             // Custom initialization of some components
             Initialize();
+            tabRadar.MouseWheel += new MouseEventHandler(imgRadar_MouseWheel);
+
             Output.Instance.Log("char", "Initialization done.");
 
             // ProcessManager events binding
@@ -73,10 +80,17 @@ namespace BabBot.Forms
             ProcessManager.WoWInGame += wow_InGame;
             ProcessManager.WoWGameLoaded += wo_GameLoaded;
 
+            ProcessManager.BotProgressStart += StartBotProgress;
+            ProcessManager.BotProgressChange += ChangeBotProgress;
+            ProcessManager.BotProgressEnd += EndBotProgress;
+
+            ProcessManager.DisplayPathCalculated += DisplayCalculatedPath;
+            //\\ProcessManager.TravelCompleted += EraseCalculatedPath;
+
             // Starts the bot thread
-            // Main form update temporarily disabled to avoid constant exception
+            // Main form update can be temporarily disabled to avoid constant exception
             // from BlackMagic concurrent memory read
-            // ProcessManager.PlayerUpdate += PlayerUpdate;
+            ProcessManager.PlayerUpdate += PlayerUpdate;
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
             ProcessManager.UpdateAppStatus += UpdateAppStatus;
             ProcessManager.UpdateGameStatus += UpdateGameStatus;
@@ -184,6 +198,13 @@ namespace BabBot.Forms
         //    throw new Exception("Unrecognized WayPoint type " + comboWayPointTypes.SelectedItem.ToString());
         //}
 
+        private void SetPlayerTargetInfo(string guid, string name, string faction)
+        {
+            tbPlayerTarget.Text = guid;
+            tbPlayerTargetName.Text = name;
+            tbPlayerTargetFaction.Text = faction;
+        }
+
         private void PlayerUpdate()
         {
             if (InvokeRequired)
@@ -198,99 +219,57 @@ namespace BabBot.Forms
 
                 //Misc info updates for the "Player" tab
 
-                WowPlayer Player = ProcessManager.Player;
+                WowPlayer player = ProcessManager.Player;
                 try
                 {
 #if DEBUG
                     string nl = Environment.NewLine;
                     string divider = "===========" + nl;
 
-                    tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}", 
-                        Player.Location.X,  Player.Location.Y, 
-                        Player.Location.Z, Player.CurTargetGuid);
+                    tbLocation.Text = String.Format("Loc: {0}, {1}, {2} | {3}",
+                        player.Location.X, player.Location.Y,
+                        player.Location.Z, player.CurTargetGuid);
 
 
-                    tbOrientation.Text = String.Format("Or.: {0}", Player.Orientation);
-                    tbPlayerHp.Text = Player.Hp.ToString();
-                    tbPlayerMaxHp.Text = ProcessManager.Player.MaxHp.ToString();
-                    tbPlayerMp.Text = ProcessManager.Player.Mp.ToString();
-                    tbPlayerMaxMp.Text = ProcessManager.Player.MaxMp.ToString();
-                    tbPlayerXp.Text = ProcessManager.Player.Xp.ToString();
-                    tbPlayerTarget.Text = string.Format("{0:X}", 
-                                            ProcessManager.Player.CurTargetGuid);
-                    tbPlayerTargetName.Text = ProcessManager.Player.CurTargetName;
-                    tbPlayerNearObjects.Text = "Objects" + nl + 
-                        divider + Player.NearObjectsAsTextList + nl +
+                    tbOrientation.Text = String.Format("Or.: {0}", player.Orientation);
+                    tbPlayerHp.Text = player.Hp.ToString();
+                    tbPlayerMaxHp.Text = player.MaxHp.ToString();
+                    tbPlayerMp.Text = player.Mp.ToString();
+                    tbPlayerMaxMp.Text = player.MaxMp.ToString();
+                    tbPlayerXp.Text = player.Xp.ToString();
+
+                    WowUnit target = player.CurTarget;
+                    if (target != null)
+                        SetPlayerTargetInfo(string.Format("{0:X}", target.Guid), 
+                                                target.Name, target.Faction.ToString());
+                    else
+                        SetPlayerTargetInfo(null, null, null);
+
+                    tbPlayerNearObjects.Text = "Objects" + nl +
+                        divider + player.NearObjectsAsTextList + nl +
                         "Mobs" + Environment.NewLine +
-                        divider + ProcessManager.Player.NearMobsAsTextList;
+                        divider + player.NearMobsAsTextList;
 #endif
                     // Update radar
-                    Radar.AddCenter(Player.Guid, Player.Location, Player.Orientation);
+                    UpdateRadar(player);
 
-                    List<WowObject> AllObj = Player.GetNearObjects();
+                    tbCorpseX.Text = player.CorpseLocation.X.ToString();
+                    tbCorpseY.Text = player.CorpseLocation.Y.ToString();
+                    tbCorpseZ.Text = player.CorpseLocation.Z.ToString();
 
-                    // Add Mobs
-                    foreach (WowObject wobj in AllObj)
-                    {
-                        switch (wobj.Type)
-                        {
-                            case Descriptor.eObjType.OT_UNIT:
-                                // Add mob
-                                WowUnit unit = (WowUnit)wobj;
-                                if (unit.IsDead)
-                                    // Draw as a circle
-                                    Radar.AddItem(unit.Guid, unit.Location,
-                                        ((unit.IsLootable) ? Color.Gray : ((unit.IsSkinnable) ?
-                                        Color.LightSteelBlue : Color.Silver)));
-                                else
-                                    // Draw as triangle with orientation
-                                    Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
-                                        ((unit.IsAggro) ? Color.Red : ((unit.IsNpc) ?
-                                        Color.Yellow : Color.Blue)));
-                                break;
+                    txtCurrentX.Text = player.Location.X.ToString();
+                    txtCurrentY.Text = player.Location.Y.ToString();
+                    txtCurrentZ.Text = player.Location.Z.ToString();
+                    txtLastDistance.Text = player.LastDistance.ToString();
+                    txtFaceRadian.Text = player.LastFaceRadian.ToString();
 
-                            case Descriptor.eObjType.OT_PLAYER:
-                                // Add Player
-                                unit = (WowUnit)wobj;
-                                if (unit.Guid != Player.Guid)
-                                    Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
-                                        ((unit.IsAggro) ? Color.Red :
-                                        ((unit.IsDead) ? Color.Silver :
-                                            ((unit.IsGhost ? Color.Gray : Color.Green)))));
-
-                                break;
-
-                            case Descriptor.eObjType.OT_ITEM:
-                                // Add Item
-                                WowItem item = (WowItem)wobj;
-                                // item.Name;
-                                break;
-
-                            // Resources - fish, herb, vein
-                            /* case Descriptor.eObjType.
-                             */
-                        }
-                    }
-                    
-                    Radar.Update();
-
-                    tbCorpseX.Text = ProcessManager.Player.CorpseLocation.X.ToString();
-                    tbCorpseY.Text = ProcessManager.Player.CorpseLocation.Y.ToString();
-                    tbCorpseZ.Text = ProcessManager.Player.CorpseLocation.Z.ToString();
-
-                    txtCurrentX.Text = ProcessManager.Player.Location.X.ToString();
-                    txtCurrentY.Text = ProcessManager.Player.Location.Y.ToString();
-                    txtCurrentZ.Text = ProcessManager.Player.Location.Z.ToString();
-                    txtLastDistance.Text = ProcessManager.Player.LastDistance.ToString();
-                    txtFaceRadian.Text = ProcessManager.Player.LastFaceRadian.ToString();
-
-                    var orientation = (float)((ProcessManager.Player.Orientation * 180) / Math.PI);
+                    var orientation = (float)((player.Orientation * 180) / Math.PI);
                     txtCurrentFace.Text = string.Format("{0}°", orientation);
 
-                    var facing = (float)((ProcessManager.Player.LastFaceRadian * 180) / Math.PI);
+                    var facing = (float)((player.LastFaceRadian * 180) / Math.PI);
                     txtComputedFacing.Text = string.Format("{0}°", facing);
 
-                    tbPlayerIsSitting.Text = ProcessManager.Player.IsSitting.ToString();
+                    tbPlayerIsSitting.Text = player.IsSitting.ToString();
                     txtTravelTime.Text = string.Format("{0} ms", ProcessManager.Player.TravelTime);
 
                     tbCountNormal.Text = WayPointManager.Instance.NormalNodeCount.ToString();
@@ -304,9 +283,90 @@ namespace BabBot.Forms
                     Output.Instance.LogError("char",
                         "PlayerUpdate() - caugth exception. See error log for details");
                     Output.Instance.LogError("errors", "PlayerUpdate() - ", e);
-                    ProcessManager.ResetGameStatus();
+
+                    // Temporarily disabled
+                    // ProcessManager.ResetGameStatus();
                 }
             }
+        }
+
+        private void UpdateRadar(WowPlayer player)
+        {
+            Radar.AddCenter(player.Guid, player.Location, player.Orientation);
+
+            // Add Mobs
+            PaintMobsAround(player, player.GetNearObjects());
+
+            if (_path.Count != 0)
+                for (int i = 0; i < _path.Count; i++)
+                    if ((i < cblPathList.Items.Count) && 
+                            (cblPathList.GetItemCheckState(i) == CheckState.Checked))
+                        PaintCalcPath(_path[i], i);
+
+            Radar.Update();
+
+        }
+
+        private void PaintMobsAround(WowPlayer player, List<WowObject> all_obj)
+        {
+            foreach (WowObject wobj in all_obj)
+            {
+                switch (wobj.Type)
+                {
+                    case Descriptor.eObjType.OT_UNIT:
+                        // Add mob
+                        WowUnit unit = (WowUnit)wobj;
+                        if (unit.IsDead)
+                            // Draw as a circle
+                            Radar.AddItem(unit.Guid, unit.Location,
+                                ((unit.IsLootable) ? Color.Gray : ((unit.IsSkinnable) ?
+                                Color.LightSteelBlue : Color.Silver)));
+                        else
+                            // Draw as triangle with orientation
+                            Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
+                                ((unit.IsAggro) ? Color.Red : ((unit.IsNpc) ?
+                                Color.Yellow : Color.Blue)));
+                        break;
+
+                    case Descriptor.eObjType.OT_PLAYER:
+                        // Add Player
+                        unit = (WowUnit)wobj;
+                        if (unit.Guid != player.Guid)
+                            Radar.AddItem(unit.Guid, unit.Location, unit.Orientation,
+                                ((unit.IsAggro) ? Color.Red :
+                                ((unit.IsDead) ? Color.Silver :
+                                    ((unit.IsGhost ? Color.Gray : Color.Green)))));
+
+                        break;
+
+                    case Descriptor.eObjType.OT_ITEM:
+                        // Add Item
+                        WowItem item = (WowItem)wobj;
+                        // item.Name;
+                        break;
+
+                    // Resources - fish, herb, vein
+                    /* case Descriptor.eObjType.
+                     */
+                }
+            }
+        }
+
+        private void PaintCalcPath(Vector3D[] path, int idx)
+        {
+            if ((path == null) || (path.Length == 0))
+                return;
+
+            // Draw each path in different color
+            Color c = Color.FromArgb((byte)(Color.Orange.R + idx),
+                    (byte)(Color.Orange.G + idx), (byte)(Color.Orange.B + idx));
+            
+            // First point is filled
+            RadarItem prev = Radar.AddItem(0, path[0], c, (byte)5, false);
+
+            for (int i = 1; i < path.Length; i++)
+                // Show path as orange circle with link to previous
+                prev = Radar.AddItem(0, path[i], c, (byte)5, true, prev);
         }
 
         private void wow_ProcessEnded(int process)
@@ -414,7 +474,8 @@ namespace BabBot.Forms
             // Cross thread calls
             if (InvokeRequired)
             {
-                StatusUpdateDelegate del = UpdateAppStatus;
+                // StatusUpdateDelegate del = UpdateAppStatus;
+                ProcessManager.UpdateStatusEventHandler del = UpdateAppStatus;
                 object[] parameters = { status };
                 Invoke(del, parameters);
             }
@@ -445,7 +506,7 @@ namespace BabBot.Forms
                 Invoke(del, parameters);
             }
             else
-                slBotStatus.Text = status;
+                labelBotStatus.Text = status;
         }
 
         private void ActivateDebugMode()
@@ -977,6 +1038,11 @@ namespace BabBot.Forms
             // Initialize Synax Highlighter
             InitializeSyntaxHighlighter(tbLuaScript);
 
+            for (int i = 0; i < ProcessManager.AppConfig.MaxTargetGetRetries; i++)
+                cblPathList.Items.Add("Retry #" + (i + 1));
+            cblPathList.SetItemChecked(0, true);
+            _path = new List<Vector3D[]>(ProcessManager.AppConfig.MaxTargetGetRetries + 1);
+
             // Always last
             if (ProcessManager.AutoRun)
             {
@@ -1004,7 +1070,7 @@ namespace BabBot.Forms
                         break;
 
                     case 3:
-                        new RouteRecorderForm().Show();
+                        recordRouteToolStripMenuItem_Click(sender, e);
                         break;
                 }
             }
@@ -1078,14 +1144,26 @@ namespace BabBot.Forms
                 ProcessManager.Config.Character, 5);
         }
 
+        #region Nested: Virtual Keyboard
+
         private void btnUp_KeyDown(object sender, KeyEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up);
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up, false);
+        }
+
+        private void btnUp_KeyUp(object sender, KeyEventArgs e)
+        {
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up, true);
         }
 
         private void btnLeft_KeyDown(object sender, KeyEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Left);
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Left, false);
+        }
+
+        private void btnLeft_KeyUp(object sender, KeyEventArgs e)
+        {
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Left, true);
         }
 
         private void btnDown_KeyDown(object sender, KeyEventArgs e)
@@ -1093,20 +1171,32 @@ namespace BabBot.Forms
             ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Down);
         }
 
+        private void btnDown_KeyUp(object sender, KeyEventArgs e)
+        {
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Down, true);
+        }
+
         private void btnRight_KeyDown(object sender, KeyEventArgs e)
         {
             ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Right);
         }
 
-        private void btnUp_Click(object sender, EventArgs e)
+        private void btnRight_KeyUp(object sender, KeyEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up);
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Right, true);
         }
 
         private void tbZoom_Scroll(object sender, EventArgs e)
         {
             Radar.Zoom = tbZoom.Value;
         }
+
+        private void btnSpace_Click(object sender, EventArgs e)
+        {
+            ProcessManager.CommandManager.SendKeys(CommandManager.SK_SPACE);
+        }
+
+        #endregion
 
         private void talentTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1826,6 +1916,90 @@ namespace BabBot.Forms
         private void questListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new QuestList().Show();
+        }
+
+        private void StartBotProgress(int max, string tooltip)
+        {
+            if (InvokeRequired)
+            {
+                ProcessManager.BotProgressStartHandle del = StartBotProgress;
+                Invoke(del, new object[] { max, tooltip });
+            }
+            else
+            {
+                pbBotProgress.Value = 0;
+                pbBotProgress.Maximum = max;
+                pbBotProgress.ToolTipText = tooltip + " ...";
+
+                pbBotProgress.Visible = true;
+            }
+        }
+        
+        private void ChangeBotProgress(int value)
+        {
+            if (InvokeRequired)
+            {
+                ProcessManager.BotProgressChangeHandle del = ChangeBotProgress;
+                Invoke(del, new object[] { value });
+            }
+            else
+                pbBotProgress.Value = value;
+        }
+
+        private void EndBotProgress()
+        {
+            if (InvokeRequired)
+            {
+                ProcessManager.BotProgressEndHandle del = EndBotProgress;
+                Invoke(del);
+            }
+            else
+                pbBotProgress.Visible = false;
+        }
+
+        private void recordRouteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new RouteRecorderForm().Show();
+        }
+
+        private void DisplayCalculatedPath(Vector3D[] path, int retry)
+        {
+            if (InvokeRequired)
+            {
+                ProcessManager.DisplayPathCalculatedHandle del = DisplayCalculatedPath;
+                Invoke(del, new object[] { path, retry });
+            }
+            else
+            {
+                if ((retry == 0) && (_path.Count > 0))
+                    _path.Clear();
+
+                _path.Add(path);
+            }
+        }
+
+        private void EraseCalculatedPath()
+        {
+            if (InvokeRequired)
+            {
+                ProcessManager.PlayerUpdateEventHandler del = EraseCalculatedPath;
+                Invoke(del);
+            }
+            else
+            {
+                _path.Clear();
+            }
+        }
+
+        private void imgRadar_MouseWheel(object sender, MouseEventArgs e)
+        {
+            int value = tbZoom.Value + e.Delta / SystemInformation.MouseWheelScrollDelta;
+
+            if ((value >= tbZoom.Minimum) && (value <= tbZoom.Maximum))
+            {
+                tbZoom.Value = value;
+                tbZoom_Scroll(sender, null);
+            }
         }
     }
 }

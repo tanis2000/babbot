@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.msMain = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,6 +45,7 @@
             this.questListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addTargetNPCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.recordRouteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,9 +98,12 @@
             this.label10 = new System.Windows.Forms.Label();
             this.tabPagePlayer = new System.Windows.Forms.TabPage();
             this.tabControlPlayer = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabObjectsNear = new System.Windows.Forms.TabPage();
             this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabRadar = new System.Windows.Forms.TabPage();
+            this.btnSpace = new System.Windows.Forms.Button();
+            this.label41 = new System.Windows.Forms.Label();
+            this.cblPathList = new System.Windows.Forms.CheckedListBox();
             this.label38 = new System.Windows.Forms.Label();
             this.tbZoom = new System.Windows.Forms.TrackBar();
             this.label37 = new System.Windows.Forms.Label();
@@ -208,7 +213,7 @@
             this.btnCopyToClipboard = new System.Windows.Forms.Button();
             this.btnNewLua = new System.Windows.Forms.Button();
             this.tabLua = new System.Windows.Forms.TabControl();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPageF1 = new System.Windows.Forms.TabPage();
             this.tbLuaScript = new SyntaxHighlighter.SyntaxRichTextBox();
             this.btnUnregisterInputHandler = new System.Windows.Forms.Button();
             this.btnRegisterInputHandler = new System.Windows.Forms.Button();
@@ -221,8 +226,12 @@
             this.slAppStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.slGameStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.labelBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.pbBotProgress = new System.Windows.Forms.ToolStripProgressBar();
+            this.ttStateMachineInfo = new System.Windows.Forms.ToolTip(this.components);
+            this.label42 = new System.Windows.Forms.Label();
+            this.tbPlayerTargetFaction = new System.Windows.Forms.TextBox();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -238,8 +247,8 @@
             this.gbNormalWaypoints.SuspendLayout();
             this.tabPagePlayer.SuspendLayout();
             this.tabControlPlayer.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.tabObjectsNear.SuspendLayout();
+            this.tabRadar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgRadar)).BeginInit();
             this.tabPageEnemies.SuspendLayout();
@@ -251,7 +260,7 @@
             this.groupBox7.SuspendLayout();
             this.tabPageScript.SuspendLayout();
             this.tabLua.SuspendLayout();
-            this.tabPage3.SuspendLayout();
+            this.tabPageF1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -368,7 +377,8 @@
             // actionsToolStripMenuItem
             // 
             this.actionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addTargetNPCToolStripMenuItem});
+            this.addTargetNPCToolStripMenuItem,
+            this.recordRouteToolStripMenuItem});
             this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
             this.actionsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
             this.actionsToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
@@ -381,6 +391,14 @@
             this.addTargetNPCToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.addTargetNPCToolStripMenuItem.Text = "Add Target NPC";
             this.addTargetNPCToolStripMenuItem.Click += new System.EventHandler(this.addCurrentTargetToolStripMenuItem_Click);
+            // 
+            // recordRouteToolStripMenuItem
+            // 
+            this.recordRouteToolStripMenuItem.Name = "recordRouteToolStripMenuItem";
+            this.recordRouteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
+            this.recordRouteToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.recordRouteToolStripMenuItem.Text = "Record Route";
+            this.recordRouteToolStripMenuItem.Click += new System.EventHandler(this.recordRouteToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -943,25 +961,25 @@
             // 
             this.tabControlPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControlPlayer.Controls.Add(this.tabPage1);
-            this.tabControlPlayer.Controls.Add(this.tabPage2);
+            this.tabControlPlayer.Controls.Add(this.tabObjectsNear);
+            this.tabControlPlayer.Controls.Add(this.tabRadar);
             this.tabControlPlayer.Location = new System.Drawing.Point(-4, 81);
             this.tabControlPlayer.Name = "tabControlPlayer";
             this.tabControlPlayer.SelectedIndex = 0;
             this.tabControlPlayer.Size = new System.Drawing.Size(572, 293);
             this.tabControlPlayer.TabIndex = 46;
             // 
-            // tabPage1
+            // tabObjectsNear
             // 
-            this.tabPage1.Controls.Add(this.tbPlayerNearObjects);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(564, 267);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Near";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabObjectsNear.Controls.Add(this.tbPlayerNearObjects);
+            this.tabObjectsNear.Location = new System.Drawing.Point(4, 22);
+            this.tabObjectsNear.Margin = new System.Windows.Forms.Padding(0);
+            this.tabObjectsNear.Name = "tabObjectsNear";
+            this.tabObjectsNear.Padding = new System.Windows.Forms.Padding(3);
+            this.tabObjectsNear.Size = new System.Drawing.Size(564, 267);
+            this.tabObjectsNear.TabIndex = 0;
+            this.tabObjectsNear.Text = "Near";
+            this.tabObjectsNear.UseVisualStyleBackColor = true;
             // 
             // tbPlayerNearObjects
             // 
@@ -977,40 +995,72 @@
             this.tbPlayerNearObjects.TabIndex = 14;
             this.tbPlayerNearObjects.WordWrap = false;
             // 
-            // tabPage2
+            // tabRadar
             // 
-            this.tabPage2.Controls.Add(this.label38);
-            this.tabPage2.Controls.Add(this.tbZoom);
-            this.tabPage2.Controls.Add(this.label37);
-            this.tabPage2.Controls.Add(this.label36);
-            this.tabPage2.Controls.Add(this.btnDown);
-            this.tabPage2.Controls.Add(this.btnRight);
-            this.tabPage2.Controls.Add(this.label22);
-            this.tabPage2.Controls.Add(this.btnLeft);
-            this.tabPage2.Controls.Add(this.btnUp);
-            this.tabPage2.Controls.Add(this.imgRadar);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(564, 267);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Radar";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabRadar.Controls.Add(this.btnSpace);
+            this.tabRadar.Controls.Add(this.label41);
+            this.tabRadar.Controls.Add(this.cblPathList);
+            this.tabRadar.Controls.Add(this.label38);
+            this.tabRadar.Controls.Add(this.tbZoom);
+            this.tabRadar.Controls.Add(this.label37);
+            this.tabRadar.Controls.Add(this.label36);
+            this.tabRadar.Controls.Add(this.btnDown);
+            this.tabRadar.Controls.Add(this.btnRight);
+            this.tabRadar.Controls.Add(this.label22);
+            this.tabRadar.Controls.Add(this.btnLeft);
+            this.tabRadar.Controls.Add(this.btnUp);
+            this.tabRadar.Controls.Add(this.imgRadar);
+            this.tabRadar.Location = new System.Drawing.Point(4, 22);
+            this.tabRadar.Name = "tabRadar";
+            this.tabRadar.Padding = new System.Windows.Forms.Padding(3);
+            this.tabRadar.Size = new System.Drawing.Size(564, 267);
+            this.tabRadar.TabIndex = 1;
+            this.tabRadar.Text = "Radar";
+            this.tabRadar.UseVisualStyleBackColor = true;
+            // 
+            // btnSpace
+            // 
+            this.btnSpace.Location = new System.Drawing.Point(453, 6);
+            this.btnSpace.Name = "btnSpace";
+            this.btnSpace.Size = new System.Drawing.Size(31, 50);
+            this.btnSpace.TabIndex = 245;
+            this.btnSpace.Text = "J\r\nM\r\nP";
+            this.btnSpace.UseVisualStyleBackColor = true;
+            this.btnSpace.Click += new System.EventHandler(this.btnSpace_Click);
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(287, 147);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(43, 13);
+            this.label41.TabIndex = 244;
+            this.label41.Text = "Path ID";
+            // 
+            // cblPathList
+            // 
+            this.cblPathList.CheckOnClick = true;
+            this.cblPathList.FormattingEnabled = true;
+            this.cblPathList.Items.AddRange(new object[] {
+            "Main"});
+            this.cblPathList.Location = new System.Drawing.Point(337, 147);
+            this.cblPathList.Name = "cblPathList";
+            this.cblPathList.Size = new System.Drawing.Size(113, 64);
+            this.cblPathList.TabIndex = 243;
             // 
             // label38
             // 
             this.label38.AutoSize = true;
             this.label38.Location = new System.Drawing.Point(439, 120);
             this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(18, 13);
+            this.label38.Size = new System.Drawing.Size(24, 13);
             this.label38.TabIndex = 242;
-            this.label38.Text = "5x";
+            this.label38.Text = "10x";
             // 
             // tbZoom
             // 
             this.tbZoom.BackColor = System.Drawing.SystemColors.Control;
             this.tbZoom.Location = new System.Drawing.Point(326, 72);
-            this.tbZoom.Maximum = 5;
             this.tbZoom.Minimum = 1;
             this.tbZoom.Name = "tbZoom";
             this.tbZoom.Size = new System.Drawing.Size(131, 45);
@@ -1044,6 +1094,7 @@
             this.btnDown.TabIndex = 69;
             this.btnDown.Text = "DN";
             this.btnDown.UseVisualStyleBackColor = true;
+            this.btnDown.KeyUp += new System.Windows.Forms.KeyEventHandler(this.btnDown_KeyUp);
             this.btnDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnDown_KeyDown);
             // 
             // btnRight
@@ -1054,6 +1105,7 @@
             this.btnRight.TabIndex = 68;
             this.btnRight.Text = "R";
             this.btnRight.UseVisualStyleBackColor = true;
+            this.btnRight.KeyUp += new System.Windows.Forms.KeyEventHandler(this.btnRight_KeyUp);
             this.btnRight.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnRight_KeyDown);
             // 
             // label22
@@ -1073,6 +1125,7 @@
             this.btnLeft.TabIndex = 66;
             this.btnLeft.Text = "L";
             this.btnLeft.UseVisualStyleBackColor = true;
+            this.btnLeft.KeyUp += new System.Windows.Forms.KeyEventHandler(this.btnLeft_KeyUp);
             this.btnLeft.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnLeft_KeyDown);
             // 
             // btnUp
@@ -1083,7 +1136,7 @@
             this.btnUp.TabIndex = 65;
             this.btnUp.Text = "UP";
             this.btnUp.UseVisualStyleBackColor = true;
-            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+            this.btnUp.KeyUp += new System.Windows.Forms.KeyEventHandler(this.btnUp_KeyUp);
             this.btnUp.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnUp_KeyDown);
             // 
             // imgRadar
@@ -1258,6 +1311,8 @@
             // 
             // tabPageEnemies
             // 
+            this.tabPageEnemies.Controls.Add(this.tbPlayerTargetFaction);
+            this.tabPageEnemies.Controls.Add(this.label42);
             this.tabPageEnemies.Controls.Add(this.btnRemoveEnemyFromList);
             this.tabPageEnemies.Controls.Add(this.lbEnemies);
             this.tabPageEnemies.Controls.Add(this.btnAddEnemyToList);
@@ -1306,7 +1361,7 @@
             this.tbPlayerTargetName.Enabled = false;
             this.tbPlayerTargetName.Location = new System.Drawing.Point(82, 41);
             this.tbPlayerTargetName.Name = "tbPlayerTargetName";
-            this.tbPlayerTargetName.Size = new System.Drawing.Size(388, 20);
+            this.tbPlayerTargetName.Size = new System.Drawing.Size(264, 20);
             this.tbPlayerTargetName.TabIndex = 17;
             // 
             // label21
@@ -2045,7 +2100,7 @@
             this.tabLua.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabLua.Controls.Add(this.tabPage3);
+            this.tabLua.Controls.Add(this.tabPageF1);
             this.tabLua.Location = new System.Drawing.Point(0, 3);
             this.tabLua.Name = "tabLua";
             this.tabLua.SelectedIndex = 0;
@@ -2053,16 +2108,16 @@
             this.tabLua.TabIndex = 28;
             this.tabLua.SelectedIndexChanged += new System.EventHandler(this.tabLua_SelectedIndexChanged);
             // 
-            // tabPage3
+            // tabPageF1
             // 
-            this.tabPage3.Controls.Add(this.tbLuaScript);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(467, 180);
-            this.tabPage3.TabIndex = 0;
-            this.tabPage3.Text = "f1";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabPageF1.Controls.Add(this.tbLuaScript);
+            this.tabPageF1.Location = new System.Drawing.Point(4, 22);
+            this.tabPageF1.Name = "tabPageF1";
+            this.tabPageF1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageF1.Size = new System.Drawing.Size(467, 180);
+            this.tabPageF1.TabIndex = 0;
+            this.tabPageF1.Text = "f1";
+            this.tabPageF1.UseVisualStyleBackColor = true;
             // 
             // tbLuaScript
             // 
@@ -2149,10 +2204,12 @@
             this.slAppStatus,
             this.toolStripStatusLabel2,
             this.slGameStatus,
+            this.labelBotStatus,
             this.slBotStatus,
-            this.toolStripStatusLabel3});
+            this.pbBotProgress});
             this.statusStrip1.Location = new System.Drawing.Point(0, 416);
             this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.ShowItemToolTips = true;
             this.statusStrip1.Size = new System.Drawing.Size(572, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 2;
@@ -2184,19 +2241,50 @@
             this.slGameStatus.Size = new System.Drawing.Size(95, 17);
             this.slGameStatus.Text = "NOT_CONNECTED";
             // 
+            // labelBotStatus
+            // 
+            this.labelBotStatus.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.labelBotStatus.Name = "labelBotStatus";
+            this.labelBotStatus.Size = new System.Drawing.Size(27, 17);
+            this.labelBotStatus.Text = "Bot:";
+            // 
             // slBotStatus
             // 
-            this.slBotStatus.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.slBotStatus.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             this.slBotStatus.Name = "slBotStatus";
-            this.slBotStatus.Size = new System.Drawing.Size(27, 17);
-            this.slBotStatus.Text = "Bot:";
+            this.slBotStatus.Size = new System.Drawing.Size(59, 17);
+            this.slBotStatus.Text = "UNKNOWN";
+            this.slBotStatus.ToolTipText = "TEST\r\nTEST\r\n";
             // 
-            // toolStripStatusLabel3
+            // pbBotProgress
             // 
-            this.toolStripStatusLabel3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(59, 17);
-            this.toolStripStatusLabel3.Text = "UNKNOWN";
+            this.pbBotProgress.Name = "pbBotProgress";
+            this.pbBotProgress.Size = new System.Drawing.Size(100, 16);
+            this.pbBotProgress.Step = 1;
+            this.pbBotProgress.Visible = false;
+            // 
+            // ttStateMachineInfo
+            // 
+            this.ttStateMachineInfo.IsBalloon = true;
+            this.ttStateMachineInfo.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.ttStateMachineInfo.ToolTipTitle = "StateMachine Info:";
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(352, 44);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(57, 13);
+            this.label42.TabIndex = 21;
+            this.label42.Text = "Faction Id:";
+            // 
+            // tbPlayerTargetFaction
+            // 
+            this.tbPlayerTargetFaction.Enabled = false;
+            this.tbPlayerTargetFaction.Location = new System.Drawing.Point(415, 41);
+            this.tbPlayerTargetFaction.Name = "tbPlayerTargetFaction";
+            this.tbPlayerTargetFaction.Size = new System.Drawing.Size(55, 20);
+            this.tbPlayerTargetFaction.TabIndex = 22;
             // 
             // MainForm
             // 
@@ -2239,10 +2327,10 @@
             this.tabPagePlayer.ResumeLayout(false);
             this.tabPagePlayer.PerformLayout();
             this.tabControlPlayer.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
+            this.tabObjectsNear.ResumeLayout(false);
+            this.tabObjectsNear.PerformLayout();
+            this.tabRadar.ResumeLayout(false);
+            this.tabRadar.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgRadar)).EndInit();
             this.tabPageEnemies.ResumeLayout(false);
@@ -2260,7 +2348,7 @@
             this.tabPageScript.ResumeLayout(false);
             this.tabPageScript.PerformLayout();
             this.tabLua.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
+            this.tabPageF1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -2404,8 +2492,8 @@
         private System.Windows.Forms.TabPage tabAll;
         private System.Windows.Forms.Button btnLogin;
         private System.Windows.Forms.TabControl tabControlPlayer;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabObjectsNear;
+        private System.Windows.Forms.TabPage tabRadar;
         private System.Windows.Forms.PictureBox imgRadar;
         private System.Windows.Forms.Button btnDown;
         private System.Windows.Forms.Button btnRight;
@@ -2430,7 +2518,7 @@
         private System.Windows.Forms.ToolStripMenuItem startWoWToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TabControl tabLua;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPageF1;
         private System.Windows.Forms.Button btnDeleteAll;
         private System.Windows.Forms.Button btnCopyToClipboard;
         private System.Windows.Forms.Button btnNewLua;
@@ -2448,10 +2536,10 @@
         private System.Windows.Forms.Label lblTalentTemplates;
         private System.Windows.Forms.GroupBox groupBox9;
         private System.Windows.Forms.ToolStripStatusLabel slGameStatus;
-        private System.Windows.Forms.ToolStripStatusLabel slBotStatus;
+        private System.Windows.Forms.ToolStripStatusLabel labelBotStatus;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel slBotStatus;
         private System.Windows.Forms.Button btnLuaTest;
         private SyntaxHighlighter.SyntaxRichTextBox tbLuaScript;
         private System.Windows.Forms.Button btnMoveAttack;
@@ -2464,6 +2552,14 @@
         private System.Windows.Forms.ToolStripMenuItem addTargetNPCToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveCurrentPositionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem questListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripProgressBar pbBotProgress;
+        private System.Windows.Forms.ToolStripMenuItem recordRouteToolStripMenuItem;
+        private System.Windows.Forms.CheckedListBox cblPathList;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.Button btnSpace;
+        private System.Windows.Forms.ToolTip ttStateMachineInfo;
+        private System.Windows.Forms.TextBox tbPlayerTargetFaction;
+        private System.Windows.Forms.Label label42;
     }
 }
 

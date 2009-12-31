@@ -54,7 +54,10 @@ namespace BabBot.States.Common
         {
             // Remember current player coordinates
             _angle = player.Orientation;
-            _coord = (Vector3D)player.Location.Clone();
+            _coord = player.Location;
+
+            // Record first coordinates
+            OnWaypointRecording(_coord.CloneVector());
         }
 
         /// <summary>

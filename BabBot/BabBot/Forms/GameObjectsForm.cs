@@ -33,6 +33,7 @@ using BabBot.Wow;
 using BabBot.Data;
 using BabBot.Common;
 using BabBot.Wow.Helpers;
+using BabBot.States.Common;
 
 namespace BabBot.Forms
 {
@@ -65,6 +66,8 @@ namespace BabBot.Forms
         public GameObjectsForm() : base ("npc_list")
         {
             InitializeComponent();
+
+            btnMoveToNearest.Tag = 0;
 
             // Dictionary tables first
             bsZoneList.DataSource = DataManager.GameData;
@@ -238,6 +241,11 @@ namespace BabBot.Forms
             if (!CheckInGame())
                 return;
 
+            backgroundWorker.RunWorkerAsync();
+        }
+
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
             try
             {
                 NpcHelper.MoveToGameObjByName(GetCurrentRow().NAME, "npc");
@@ -250,34 +258,50 @@ namespace BabBot.Forms
 
         private void btnMoveToNearest_Click(object sender, EventArgs e)
         {
-            if (!CheckInGame())
-                return;
-
-            if (cbServiceList.SelectedItem == null)
+            if ((int) btnMoveToNearest.Tag == 0)
             {
-                ShowErrorMessage("No services selected");
-                return;
-            }
 
-            // Find nearest class trainer
-            try
-            {
-                BotDataSet.ServiceTypesRow srv_row = (BotDataSet.ServiceTypesRow)
+                if (!CheckInGame())
+                    return;
+
+                if (cbServiceList.SelectedItem == null)
+                {
+                    ShowErrorMessage("No services selected");
+                    return;
+                }
+
+                // Find nearest class trainer
+                try
+                {
+                    BotDataSet.ServiceTypesRow srv_row = (BotDataSet.ServiceTypesRow)
                                             ((DataRowView)cbServiceList.SelectedItem).Row;
-                btnMoveToNearest.Enabled = false;
-                NPC npc = NpcHelper.MoveInteractService(srv_row.NAME, "npc");
 
-                // Select found npc
-                if (npc != null)
-                    SelectGameObj(npc);
+                    // Change button state
+                    btnMoveToNearest.Tag = 1;
+                    btnMoveToNearest.Text = "Stop Moving";
+
+                    NPC npc = NpcHelper.MoveInteractService(srv_row.NAME, "npc");
+
+                    // Select found npc
+                    if (npc != null)
+                        SelectGameObj(npc);
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage(ex);
+                }
+                finally
+                {
+                    btnMoveToNearest.Enabled = true;
+                }
             }
-            catch (Exception ex)
+            else if ((int)btnMoveToNearest.Tag == 1)
             {
-                ShowErrorMessage(ex);
-            }
-            finally
-            {
-                btnMoveToNearest.Enabled = true;
+                ProcessManager.Player.StateMachine.GlobalState.Exit(ProcessManager.Player);
+
+                // Change button state
+                btnMoveToNearest.Text = "Move to Nearest";
+                btnMoveToNearest.Tag = 0;
             }
         }
 
@@ -523,6 +547,14 @@ namespace BabBot.Forms
 
         private void popQuestActions_Opening(object sender, CancelEventArgs e)
         {
+            // Is state machine running
+            bool f = (ProcessManager.Player == null) || 
+                ProcessManager.Player.StateMachine.IsRunning;
+
+            acceptQuestToolStripMenuItem.Enabled = !f;
+            executeQuestToolStripMenuItem.Enabled = !f;
+            deliverQuestToolStripMenuItem.Enabled = !f;
+
             deleteQuestToolStripMenuItem.Enabled = 
                     (lbQuestList.SelectedItems.Count > 0);
         }
@@ -599,13 +631,72 @@ namespace BabBot.Forms
 
         private void acceptQuestToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SetQuestState(typeof(QuestAcceptState), -1);
+        }
+
+        private void deliverQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             Quest q = CheckBeforeQuestTest();
             if (q == null)
                 return;
 
+            // Check if quest accepted and completed
+            QuestHelper.CheckQuest(q, "quest_test");
+            string err = null;
+
+            if (q.Idx == 0)
+                err = "Quest not found in toon's quest log";
+            else if (q.State != QuestStates.COMPLETED)
+                err = "Quest not completed";
+
+            if (err != null)
+            {
+                ShowErrorMessage(err);
+                return;
+            }
+
+
+            SetQuestState(typeof(QuestAcceptState), GetQuestReward());
+        }
+
+        private int GetQuestReward()
+        {
+            // Get choice reward (if any)
+            int choice = 0;
+            if (fKQuestListQuestItemsChoice.Current != null)
+            {
+                BotDataSet.QuestItemsRow row = (BotDataSet.QuestItemsRow)((DataRowView)
+                    fKQuestListQuestItemsChoice.Current).Row;
+                choice = row.IDX;
+            }
+            return choice;
+        }
+
+        private void SetQuestState(Type T, int choice)
+        {
+            Quest q = CheckBeforeQuestTest();
+            if (q == null)
+                return;
+
+            // Reset quest state
+            q.State = QuestStates.UNKNOWN;
+
             try
             {
-                QuestHelper.AcceptQuest(q, "quest_test");
+                // QuestHelper.AcceptQuest(q, "quest_test");
+                object[] param_list = new object[] { q, "quest_test" };
+
+                if (choice >= 0)
+                {
+                    Array.Resize<object>(ref param_list, 3);
+                    param_list[2] = choice;
+                }
+
+                AbstractQuestState s = (AbstractQuestState)Activator.
+                    CreateInstance(T, param_list);
+
+                s.Finished += ProcessManager.StopStateMachine;
+                ProcessManager.Player.StateMachine.InitState = s;
             }
             catch (QuestProcessingException qe)
             {
@@ -615,11 +706,16 @@ namespace BabBot.Forms
             {
                 ShowErrorMessage(ex);
             }
+
         }
 
-        private void deliverQuestToolStripMenuItem_Click(object sender, EventArgs e)
+        private void executeQuestToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Quest q = CheckBeforeQuestTest();
+            if (q == null)
+                return;
 
+            QuestExecState qe = new QuestExecState(q, "quest_test");
         }
 
         #endregion
@@ -857,6 +953,9 @@ namespace BabBot.Forms
 
             moveToObjectToolStripMenuItem.Text += " '" + GetCurrentRow().NAME + "'";
             deleteGameObjectToolStripMenuItem.Text += " '" + GetCurrentRow().NAME + "'";
+
+            moveToObjectToolStripMenuItem.Enabled = ((ProcessManager.Player != null) &&
+                (ProcessManager.Player.StateMachine.IsRunning == false));
         }
 
         private void bsCoordTypes_CurrentChanged(object sender, EventArgs e)
@@ -896,6 +995,11 @@ namespace BabBot.Forms
 
             // Clear description
             tbDescr.Text = "";
+        }
+
+        private void GameObjectsForm_Load(object sender, EventArgs e)
+        {
+            NpcHelper.UseState = cbUseState.Checked;
         }
     }
 }

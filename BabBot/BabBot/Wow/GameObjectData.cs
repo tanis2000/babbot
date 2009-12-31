@@ -29,6 +29,8 @@ using System.Collections.Generic;
 
 namespace BabBot.Wow
 {
+   
+
     #region Game Objects
 
     [XmlRoot("game_object_data")]
@@ -58,7 +60,7 @@ namespace BabBot.Wow
             {
                 if (obj.FindQuestQtyByTitle(title) > 0)
                     foreach (Quest q in obj.QuestList.Table.Values)
-                        if ((q.Title.Equals(title)) && (q.QIdx > max))
+                        if ((q.Title.Equals(title)) && (q.QNum > max))
                             res = q;
 
             }
@@ -333,6 +335,24 @@ namespace BabBot.Wow
     
     #region Quests
 
+    /// <summary>
+    /// Quest states during execution
+    /// </summary>
+    public enum QuestStates : sbyte
+    {
+        SKIPPED,
+        UNKNOWN,
+        OBJ_FOUND,
+        MOVING_TO_OBJ,
+        OBJ_REACHED,
+        OBJ_TARGETED,
+        SELECTED, 
+        ACCEPTED,
+        PROGRESS,
+        COMPLETED,
+        DELIVERED
+    }
+
     public class Quests : CommonTable<Quest>
     {
         [XmlElement("quest")]
@@ -352,45 +372,58 @@ namespace BabBot.Wow
         }
     }
 
+    /// <summary>
+    /// Quest class
+    /// </summary>
     public class Quest : CommonText, IMergeable
     {
-        private bool _changed = false;
-
-        [XmlIgnore]
-        public bool Changed
-        {
-            get { return _changed || Relations.Changed; }
-            set { _changed = value; }
-        }
-
-        internal string Title
-        {
-            get { return Name; }
-        }
-
+        /// <summary>
+        /// WoW Quest Id
+        /// </summary>
         [XmlAttribute("id")]
         public int Id;
 
+        /// <summary>
+        /// Quest link as it retrieved from last wow version
+        /// </summary>
         [XmlAttribute("link")]
         public string Link = "";
 
+        /// <summary>
+        /// Recommended toon level to accomplish quest
+        /// </summary>
         [XmlAttribute("level")]
         public int Level;
 
-        internal int QIdx = 0;
+        /// <summary>
+        /// Number of quest with same title found in local list
+        /// </summary>
+        internal int QNum = 0;
 
-        [XmlAttribute("idx")]
-        public string Idx
+        /// <summary>
+        /// Number of quest with same title found in local list
+        /// </summary>
+        [XmlAttribute("num")]
+        public string Num
         {
-            get { return (QIdx > 0) ? null : QIdx.ToString(); }
-            set {QIdx = (value == null) ? 0 : Convert.ToInt32(value); }
+            get { return (QNum > 0) ? null : QNum.ToString(); }
+            set { QNum = (value == null) ? 0 : Convert.ToInt32(value); }
         }
 
+        /// <summary>
+        /// Bonus Spell (if any) rewarded by quest
+        /// </summary>
         [XmlAttribute("bonus_spell")]
         public string BonusSpell = "";
 
+        /// <summary>
+        /// Name of destination game object
+        /// </summary>
         private string _dest_name = "";
 
+        /// <summary>
+        /// Name of destination game object
+        /// </summary>
         [XmlAttribute("dest_name")]
         public string DestName
         {
@@ -402,6 +435,9 @@ namespace BabBot.Wow
             }
         }
 
+        /// <summary>
+        /// List of comma delimited quest id this quest related to
+        /// </summary>
         [XmlAttribute("related_to")]
         public string RelatedTo
         {
@@ -429,94 +465,140 @@ namespace BabBot.Wow
         }
 
         /// <summary>
+        /// Required items (not objectives)
+        /// </summary>
+        [XmlElement("req_items")]
+        public QuestItem ReqItems
+        {
+            get 
+            { 
+                return QuestItems[Array.IndexOf(DataManager.QuestItemSeq, 
+                            DataManager.QuestItemTypes.REQUIRED)];
+            }
+            set
+            {
+                QuestItems[Array.IndexOf(DataManager.QuestItemSeq,
+                          DataManager.QuestItemTypes.REQUIRED)] = value;
+            }
+        }
+
+        /// <summary>
+        /// Reward items provided by default
+        /// </summary>
+        [XmlElement("reward_items")]
+        public QuestItem RewardItems
+        {
+            get
+            {
+                return QuestItems[Array.IndexOf(DataManager.QuestItemSeq,
+                          DataManager.QuestItemTypes.REWARD)];
+            }
+            set
+            {
+                QuestItems[Array.IndexOf(DataManager.QuestItemSeq,
+                        DataManager.QuestItemTypes.REWARD)] = value;
+            }
+        }
+        
+        /// <summary>
+        /// List of Reward items that required selection
+        /// </summary>
+        [XmlElement("choice_items")]
+        public QuestItem ChoiceItems
+        {
+            get
+            {
+                return QuestItems[Array.IndexOf(DataManager.QuestItemSeq,
+                        DataManager.QuestItemTypes.CHOICE)];
+            }
+            set
+            {
+                QuestItems[Array.IndexOf(DataManager.QuestItemSeq,
+                      DataManager.QuestItemTypes.CHOICE)] = value;
+            }
+        }
+
+        /// <summary>
+        /// Register changes during merge or update
+        /// </summary>
+        private bool _changed = false;
+
+        /// <summary>
+        /// Register changes during merge or update
+        /// </summary>
+        [XmlIgnore]
+        public bool Changed
+        {
+            get { return _changed || Relations.Changed; }
+            set { _changed = value; }
+        }
+
+        /// <summary>
+        /// Quest title
+        /// </summary>
+        internal string Title
+        {
+            get { return Name; }
+        }
+
+        /// <summary>
         /// Actual array with dependency links of other quests
         /// </summary>
         internal QuestRelations Relations = new QuestRelations();
 
+        /// <summary>
+        /// Total array with all quest items except objectives
+        /// </summary>
         internal QuestItem[] QuestItems = new QuestItem[3];
-        internal DataManager.QuestItemTypes[] QuestItemSeq
-        {
-            get
-            {
-                return new DataManager.QuestItemTypes[] {
-                DataManager.QuestItemTypes.REQUIRED,
-                DataManager.QuestItemTypes.REWARD,
-                DataManager.QuestItemTypes.CHOICE };
-            }
-        }
 
+        /// <summary>
+        /// Game Object that act as a Quest giver
+        /// </summary>
         internal GameObject Src
         {
             get { return GameObjList[0]; }
             set { GameObjList[0] = value; }
         }
 
+        /// <summary>
+        /// Game Object that act as a Quest destination
+        /// </summary>
         internal GameObject Dest
         {
             get { return GameObjList[1]; }
             set { GameObjList[1] = value; }
         }
 
+        /// <summary>
+        /// Array with Quest start/end Game Objects
+        /// </summary>
         internal GameObject[] GameObjList = new GameObject[2];
-        
-        [XmlElement("req_items")]
-        public QuestItem ReqItems
-        {
-            get 
-            { 
-                return QuestItems[Array.IndexOf(QuestItemSeq, 
-                            DataManager.QuestItemTypes.REQUIRED)];
-            }
-            set
-            {
-                QuestItems[Array.IndexOf(QuestItemSeq,
-                          DataManager.QuestItemTypes.REQUIRED)] = value;
-            }
-        }
 
-        [XmlElement("reward_items")]
-        public QuestItem RewardItems
-        {
-            get
-            {
-                return QuestItems[Array.IndexOf(QuestItemSeq,
-                          DataManager.QuestItemTypes.REWARD)];
-            }
-            set
-            {
-                QuestItems[Array.IndexOf(QuestItemSeq,
-                        DataManager.QuestItemTypes.REWARD)] = value;
-            }
-        }
-        
-        [XmlElement("choice_items")]
-        public QuestItem ChoiceItems
-        {
-            get
-            {
-                return QuestItems[Array.IndexOf(QuestItemSeq,
-                        DataManager.QuestItemTypes.CHOICE)];
-            }
-            set
-            {
-                QuestItems[Array.IndexOf(QuestItemSeq,
-                      DataManager.QuestItemTypes.CHOICE)] = value;
-            }
-        }
-
+        /// <summary>
+        /// Greeting text
+        /// </summary>
         internal string GreetingText
         {
             get { return TextData;  }
         }
 
+        /// <summary>
+        /// Greeting text
+        /// </summary>
         [XmlElement("objectives_text", typeof(XmlCDataSection))]
         public XmlCDataSection TextObjectives { get; set; }
 
+        /// <summary>
+        /// Objectives text
+        /// </summary>
         internal string ObjectivesText
         {
             get { return ((TextObjectives != null) ? TextObjectives.InnerText : null); }
         }
 
+        /// <summary>
+        /// Reward text
+        /// </summary>
         [XmlElement("reward_text", typeof(XmlCDataSection))]
         public XmlCDataSection TextRewards { get; set; }
 
@@ -525,11 +607,43 @@ namespace BabBot.Wow
             get { return ((TextRewards != null) ? TextRewards.InnerText : null); }
         }
 
+        /// <summary>
+        /// List of objectives
+        /// </summary>
         [XmlElement("objectives")]
         public QuestObjectives ObjList;
 
+        /// <summary>
+        /// Index in toon quest log if quest already accepted
+        /// </summary>
+        internal int Idx = 0;
+
+        /// <summary>
+        /// Quest State
+        /// </summary>
+        internal QuestStates State = QuestStates.UNKNOWN;
+
+        internal bool Completed
+        {
+            get { return State == QuestStates.COMPLETED; }
+            set { if (value) State = QuestStates.COMPLETED; }
+        }
+
+        /// <summary>
+        /// Class parameterless constructor
+        /// </summary>
         public Quest() :base() {}
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="id">Quest ID</param>
+        /// <param name="title">Quest Title</param>
+        /// <param name="text">Greeting text</param>
+        /// <param name="objectives">Objectives text</param>
+        /// <param name="level">Recommended level to accept</param>
+        /// <param name="bonus_spell">Bonus spell (if any)</param>
+        /// <param name="link">Quest link</param>
         public Quest(int id, string title, string text, string objectives, 
                                 int level, string bonus_spell, string link) :
             base(title, text)
@@ -543,6 +657,19 @@ namespace BabBot.Wow
             TextObjectives = doc.CreateCDataSection(objectives);
         }
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="id">Quest ID</param>
+        /// <param name="title">Quest Title</param>
+        /// <param name="text">Greeting text</param>
+        /// <param name="objectives">Objectives text</param>
+        /// <param name="level">Recommended level to accept</param>
+        /// <param name="det_qty">Array with qty for quest items</param>
+        /// <param name="det_list">Array with quest items</param>
+        /// <param name="objs">Quest objectives</param>
+        /// <param name="bonus_spell">Bonus spell (if any)</param>
+        /// <param name="link">Quest link</param>
         public Quest(int id, string title, string text, string objectives, int level, 
                         int[] det_qty, string[] det_list, string objs, 
                                 string bonus_spell, string link) :
@@ -1257,6 +1384,9 @@ namespace BabBot.Wow
         [XmlAttribute("zone")]
         public string ZoneText;
 
+        [XmlElement("waypoint")]
+        public Vector3D Waypoint;
+
         internal EndpointTypes PType;
 
         internal virtual string Descr
@@ -1271,10 +1401,11 @@ namespace BabBot.Wow
         /// </summary>
         /// <param name="type">Endpoint type. See EndpointTypes</param>
         /// <param name="zone_text">Endpoint zone name</param>
-        public Endpoint(EndpointTypes type, string zone_text)
+        public Endpoint(EndpointTypes type, string zone_text, Vector3D waypoint)
         {
             PType = type;
             ZoneText = zone_text;
+            Waypoint = waypoint;
         }
 
         public override bool  Equals(object obj)
@@ -1307,8 +1438,8 @@ namespace BabBot.Wow
 
         public GameObjEndpoint() : base() { }
 
-        public GameObjEndpoint(EndpointTypes type, string name, string zone_text)
-            : base(EndpointTypes.GAME_OBJ, zone_text)
+        public GameObjEndpoint(EndpointTypes type, string name, string zone_text, Vector3D waypoint)
+            : base(EndpointTypes.GAME_OBJ, zone_text, waypoint)
         {
             GameObjName = name;
         }
@@ -1351,8 +1482,8 @@ namespace BabBot.Wow
         public QuestItemEndpoint() : base() { }
 
         public QuestItemEndpoint(EndpointTypes type,
-                        int quest_id, string item_name, string zone_text)
-            : base(EndpointTypes.QUEST_OBJ, zone_text)
+                        int quest_id, string item_name, string zone_text, Vector3D waypoint)
+            : base(EndpointTypes.QUEST_OBJ, zone_text, waypoint)
         {
             QuestId = quest_id;
             ItemName = item_name;
@@ -1379,7 +1510,7 @@ namespace BabBot.Wow
     /// Set of pre-recordered waypoints for route from A to B
     /// </summary>
     [XmlRoot("route")]
-    public class Route
+    public class Route : CommonItem
     {
         /// <summary>
         /// Starting point
@@ -1402,8 +1533,10 @@ namespace BabBot.Wow
         /// <summary>
         /// Name of external file used for saving/loading waypoints
         /// </summary>
-        [XmlAttribute("ref_name")]
-        public string WaypointFileName;
+        public string WaypointFileName
+        {
+            get { return Name; }
+        }
 
         /// <summary>
         /// Is route can be reversed (i.e go from B to A)
@@ -1417,12 +1550,6 @@ namespace BabBot.Wow
         /// </summary>
         [XmlAttribute("idx")]
         public int idx = 0;
-
-        /// <summary>
-        /// Version of xml. Used for export
-        /// </summary>
-        [XmlAttribute("version")]
-        public string Version = null;
 
         /// <summary>
         /// List of waypoints. Used for export.
@@ -1473,10 +1600,10 @@ namespace BabBot.Wow
         public string MakeWaypointFileName()
         {
             byte[] guid = Guid.NewGuid().ToByteArray();
-            WaypointFileName = Convert.ToString(guid[0], 16).ToUpper();
+            Name = Convert.ToString(guid[0], 16).ToUpper();
             for (int i = 1; i < 8; i++)
-                WaypointFileName += Convert.ToString(guid[i], 16).ToUpper();
-            return WaypointFileName;
+                Name += Convert.ToString(guid[i], 16).ToUpper();
+            return Name;
         }
 
         /// <summary>
@@ -1493,9 +1620,16 @@ namespace BabBot.Wow
             return PointA.Descr + "-" + PointB.Descr;
         }
 
-        public override string ToString()
+        public void DoBeforeExport(string version, Waypoints wp)
         {
-            return WaypointFileName;
+            base.DoBeforeExport(version);
+            WpList = wp;
+        }
+
+        public override void DoAfterExport()
+        {
+            base.DoAfterExport();
+            WpList = null;
         }
     }
 

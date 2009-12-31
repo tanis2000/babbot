@@ -4,7 +4,7 @@
     <game_object d3p1:type="NPC" name="Conservator Ilthalaine" zone="Teldrassil" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10328.9" y="826.05" z="1326.38" type="0" />
       <quests>
-        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" idx="0" dest_name="">
+        <quest name="The Balance of Nature" id="456" link="|cffffff00|Hquest:456:2|h[The Balance of Nature]|h|r" level="2" bonus_spell="" num="0" dest_name="">
           <text><![CDATA[Greetings, Fediia.  I am Conservator Ilthalaine.  My purpose in Shadowglen is to ensure that the balance of nature is maintained.
 
 The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
@@ -43,7 +43,7 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
     <game_object d3p1:type="NPC" name="Melithar Staghelm" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10389.8" y="763.48" z="1319.95" type="0" />
       <quests>
-        <quest name="The Woodland Protector" id="458" link="|cffffff00|Hquest:458:1|h[The Woodland Protector]|h|r" level="1" bonus_spell="" idx="0" dest_name="">
+        <quest name="The Woodland Protector" id="458" link="|cffffff00|Hquest:458:1|h[The Woodland Protector]|h|r" level="1" bonus_spell="" num="0" dest_name="Tarindrella">
           <text><![CDATA[Thank goodness you are here, priest. Strange news has traveled to me through the whisperings of the forest spirits.
 
 The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
@@ -52,6 +52,20 @@ Seek out Tarindrella and see what business she tends to in our grove. One of the
           <objectives_text><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives_text>
         </quest>
       </quests>
+      <coordinates />
+      <services />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Shanda" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="10458.8" y="801.62" z="1346.75" type="0" />
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="ClassTrainingService" name="class_trainer" class="PRIEST" />
+      </services>
+    </game_object>
+    <game_object d3p1:type="NPC" name="Tarindrella" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="10296.9" y="870.23" z="1335.89" type="0" />
+      <quests />
       <coordinates />
       <services />
     </game_object>

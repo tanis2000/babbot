@@ -324,8 +324,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="States\ChangeStateEventArgs.cs" />
+    <Compile Include="States\Common\NavigationState.cs" />
+    <Compile Include="States\Common\QuestDeliveryState.cs" />
+    <Compile Include="States\Common\QuestAcceptState.cs" />
+    <Compile Include="States\Common\QuestExecState.cs" />
+    <Compile Include="States\Common\TravelState.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="States\Common\RouteRecordingState.cs" />
     <Compile Include="States\Samples\HangingAroundState.cs" />
+    <Compile Include="States\Common\AbstractQuestState.cs" />
     <Compile Include="States\StateEventArgs.cs" />
     <Compile Include="States\StateMachine.cs" />
     <Compile Include="States\State.cs" />
@@ -374,6 +382,7 @@
     <Content Include="Data\GameObjectData.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\RouteList.xml" />
     <Content Include="Data\WoWData.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
