@@ -76,6 +76,9 @@ namespace BabBot.Forms.Radar
         // Default item radius
         byte _r = 8;
 
+        // Default pen width
+        internal float PenWidth = 1F;
+
         // Zoom
         float _zoom = 1F;
 
@@ -296,7 +299,7 @@ namespace BabBot.Forms.Radar
 
             double r, x, y;
 
-            // determine the lngth of the radius
+            // determine the length of the radius
             r = (double)_size * 0.5d;
             r -= (r * (double)elevation / 90);
 
@@ -318,14 +321,56 @@ namespace BabBot.Forms.Radar
 
         public void AddItem(ulong id, Vector3D coord, double dir, Color color)
         {
-            PointF p = GetXY(coord.X, coord.Y);
-            _items.Add(new TriangleRadarItem(id, _r, p, coord.Z, dir, color));
+            AddItem(id, coord, dir, color, null);
         }
 
-        public void AddItem(ulong id, Vector3D coord, Color color)
+        /// <summary>
+        /// Add triangle item to radar
+        /// </summary>
+        /// <param name="id">Object GUID</param>
+        /// <param name="coord">Object absolute coordinated</param>
+        /// <param name="dir">Direction (orientation) in radians</param>
+        /// <param name="color">Triangle color</param>
+        public void AddItem(ulong id, Vector3D coord, double dir, Color color, RadarItem link)
         {
             PointF p = GetXY(coord.X, coord.Y);
-            _items.Add(new CircleRadarItem(id, _r, p, coord.Z, color));
+            _items.Add(new TriangleRadarItem(id, _r, p, coord.Z, dir, color, link));
+        }
+
+        /// <summary>
+        /// Add circle item to radar
+        /// </summary>
+        /// <param name="id">Object GUID</param>
+        /// <param name="coord">Object absolute coordinated</param>
+        /// <param name="color">Circle color</param>
+        public void AddItem(ulong id, Vector3D coord, Color color)
+        {
+            AddItem(id, coord, color, _r, false);
+        }
+
+        public RadarItem AddItem(ulong id, Vector3D coord, Color color, byte radius, bool is_hollow)
+        {
+            return AddItem(id, coord, color, radius, is_hollow, null);
+        }
+
+        /// <summary>
+        /// Add circle item to radar
+        /// </summary>
+        /// <param name="id">Object GUID</param>
+        /// <param name="coord">Object absolute coordinated</param>
+        /// <param name="color">Circle color</param>
+        /// <param name="radius">Circle radius</param>
+        /// <param name="is_hollow">Is circle hollow. 
+        /// Please note that circle outer width is 1 pixels
+        /// so if radius is 2 pixels than it can't be hollow</param>
+        public RadarItem AddItem(ulong id, Vector3D coord, 
+                    Color color, byte radius, bool is_hollow, RadarItem link)
+        {
+            PointF p = GetXY(coord.X, coord.Y);
+            RadarItem ri = new CircleRadarItem(id, radius, p, coord.Z, color, is_hollow, link);
+            _items.Add(ri);
+
+            return ri;
         }
 
         public void Update()

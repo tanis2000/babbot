@@ -31,13 +31,21 @@ namespace BabBot.Forms.Radar.Items
         private static double b1 = Math.PI - angle;
         private static double b2 = Math.PI + angle;
  
-        public TriangleRadarItem(ulong id, int r, PointF p, float z, double dir, Color c)
+        public TriangleRadarItem(ulong id, int r, 
+                        PointF p, float z, double dir, Color c)
             : base(id, r, p, z, dir, c) { }
+
+        public TriangleRadarItem(ulong id, int r, 
+                        PointF p, float z, double dir, Color c, RadarItem link)
+            : base(id, r, p, z, dir, c, link) { }
 
         public override void DrawItem(Radar radar, Graphics g)
         {
             double[] a = {D, GetAngle(b1), GetAngle(b2) };
             AddPolygon(g, a);
+
+            // Draw link if required
+            base.DrawItem(radar, g);
         }
     }
 }

@@ -29,9 +29,25 @@ namespace BabBot.Forms.Radar.Items
         public CircleRadarItem(ulong id, int r, PointF p, float z, Color c)
             : base(id, r, p, z, 0, c) { }
 
+        public CircleRadarItem(ulong id, int r, 
+                PointF p, float z, Color c, bool hollow)
+            : base(id, r, p, z, 0, c, hollow) { }
+
+        public CircleRadarItem(ulong id, int r, 
+                PointF p, float z, Color c, bool hollow, RadarItem link)
+            : base(id, r, p, z, 0, c, hollow, link) { }
+
         public override void DrawItem(Radar radar, Graphics g)
         {
-            g.FillEllipse(new SolidBrush(Color), new RectangleF(new PointF(X, Y), new SizeF(R, R)));
+            RectangleF r = new RectangleF(new PointF(X - R/2, Y - R/2), new SizeF(R, R));
+
+            if (H)
+                g.DrawEllipse(new Pen(C, radar.PenWidth), r);
+            else
+                g.FillEllipse(new SolidBrush(C), r);
+
+            // Draw link if required
+            base.DrawItem(radar, g);
         }
     }
 }
