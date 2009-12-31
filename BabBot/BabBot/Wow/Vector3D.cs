@@ -51,6 +51,16 @@ namespace BabBot.Wow
         }
 
         /// <summary>
+        /// Vector length
+        /// i.e distance from coordinate start point
+        /// </summary>
+        /// <returns></returns>
+        public double Length
+        {
+            get { return Math.Sqrt(X * X + Y * Y + Z * Z); }
+        }
+
+        /// <summary>
         /// Vector type (ABSOLUTE or RELATIVE)
         /// For now by default is ABSOLUTE until coordinates converter will be completed
         /// </summary>
@@ -105,6 +115,8 @@ namespace BabBot.Wow
             return ((X == 0) && (Y == 0) && (Z == 0)) ? false : true;
         }
 
+        
+
         /// <summary>
         /// Normalize vector i.e divide each coordinate on vector length (from center)
         /// so lenth of new vector is always 1
@@ -112,7 +124,7 @@ namespace BabBot.Wow
         /// <returns>Normalized vector</returns>
         public Vector3D Normalize()
         {
-            double length = Math.Sqrt(X*X + Y*Y + Z*Z);
+            double length = Length;
             var v = new Vector3D();
             v.X = (float) (X/length);
             v.Y = (float) (Y/length);
