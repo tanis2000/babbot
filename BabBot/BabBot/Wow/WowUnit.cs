@@ -186,6 +186,16 @@ namespace BabBot.Wow
             }
         }
 
+        public uint Faction
+        {
+            get
+            {
+                // return int Faction = Memory.ReadUInt(hProcess,(Memory.ReadUInt(hProcess, (curObj + 0x120)) + 0x74));
+                return ProcessManager.WowProcess.ReadUInt(
+                    ProcessManager.WowProcess.ReadUInt(ObjectPointer + 0xD0) + 0xC0);
+            }
+        }
+
         public bool Equals(WowUnit obj)
         {
             if (ReferenceEquals(null, obj))
