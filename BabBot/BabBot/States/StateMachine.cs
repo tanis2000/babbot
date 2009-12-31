@@ -145,7 +145,21 @@ namespace BabBot.States
             LastUpdated = DateTime.Now;
         }
 
-        /// <summary>Change the current state to the new specified state.</summary>
+        /// <summary>
+        /// Safe change state. Track previous and don't exit current.
+        /// </summary>
+        /// <param name="NewState">New State</param>
+        public void SafeStateChange(State<T> NewState)
+        {
+            ChangeState(NewState, true, false);
+        }
+
+        /// <summary>
+        /// Change the current state to the new specified state.
+        /// </summary>
+        /// <param name="NewState">New State</param>
+        /// <param name="TrackPrevious">Track & Return to current state</param>
+        /// <param name="ExitPrevious">Exit current state or keep it pending</param>
         public void ChangeState(State<T> NewState, bool TrackPrevious, bool ExitPrevious)
         {
             //if a current state exists, and we need to keep track
