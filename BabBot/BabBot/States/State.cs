@@ -17,6 +17,7 @@
     Copyright 2009 BabBot Team
 */
 using System;
+using BabBot.Common;
 
 namespace BabBot.States
 {
@@ -76,9 +77,7 @@ namespace BabBot.States
 
             //Raise Entering event
             if (Entering != null)
-            {
                 Entering(this, StateEventArgs<T>.GetArgs(Entity));
-            }
 
             //Update Enter Date/time
             EnterTime = DateTime.Now;
@@ -88,9 +87,7 @@ namespace BabBot.States
 
             //Raise Entered
             if (Entered != null)
-            {
                 Entered(this, StateEventArgs<T>.GetArgs(Entity));
-            }
         }
 
         protected abstract void DoEnter(T Entity);
@@ -100,9 +97,7 @@ namespace BabBot.States
         {
             //Raise Executing event
             if (Executing != null)
-            {
                 Executing(this, StateEventArgs<T>.GetArgs(Entity));
-            }
 
             //Update last executed Date/time
             LastExecuteTime = DateTime.Now;
@@ -112,9 +107,7 @@ namespace BabBot.States
 
             //Raise Executed
             if (Executed != null)
-            {
                 Executed(this, StateEventArgs<T>.GetArgs(Entity));
-            }
         }
 
         protected abstract void DoExecute(T Entity);
@@ -124,9 +117,7 @@ namespace BabBot.States
         {
             //Raise Exiting event
             if (Exiting != null)
-            {
                 Exiting(this, StateEventArgs<T>.GetArgs(Entity));
-            }
 
             //Update Exit date/time
             ExitTime = DateTime.Now;
@@ -136,47 +127,51 @@ namespace BabBot.States
 
             //Raise Exited
             if (Exited != null)
-            {
                 Exited(this, StateEventArgs<T>.GetArgs(Entity));
-            }
         }
 
-        protected abstract void DoExit(T Entity);
+        protected virtual void DoExit(T Entity) { }
 
         /// <summary>Finish State</summary>
         public void Finish(T Entity)
         {
             //Raise Finishing event
             if (Finishing != null)
-            {
                 Finishing(this, StateEventArgs<T>.GetArgs(Entity));
-            }
 
             //call DoFinish
             DoFinish(Entity);
 
             //Raise Finished
             if (Finished != null)
-            {
                 Finished(this, StateEventArgs<T>.GetArgs(Entity));
-            }
 
             //Update Finish date/time. Always last
             FinishTime = DateTime.Now;
         }
 
-        protected abstract void DoFinish(T Entity);
+
+        protected virtual void DoFinish(T Entity) { }
 
         protected bool CallChangeStateEvent(T Entity, State<T> NewState, bool TrackPrevious, bool ExitPrevious)
         {
             if (HasChangeStateEventHookup)
             {
                 ChangeStateRequest(this, ChangeStateEventArgs<T>.GetArgs(Entity, NewState, TrackPrevious, ExitPrevious));
-
                 return true;
             }
 
             return false;
+        }
+
+        protected void Log(string lfs, string msg)
+        {
+            Output.Instance.Log(lfs, msg);
+        }
+
+        protected void Debug(string lfs, string msg)
+        {
+            Output.Instance.Debug(lfs, msg, this);
         }
     }
 }
