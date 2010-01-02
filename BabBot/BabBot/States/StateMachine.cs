@@ -122,23 +122,43 @@ namespace BabBot.States
                     InitState = null;
 
                     IsRunning = true;
-                }
-
-                return;
+                } else
+                    return;
             }
 
             //update the global state (if it exists and has not already exited or finished)
-            if (GlobalState != null && GlobalState.ExitTime == DateTime.MinValue &&
-                GlobalState.FinishTime == DateTime.MinValue)
+            if (GlobalState != null) 
             {
-                GlobalState.Execute(Entity);
+                if (GlobalState.Started)
+                {
+                    GlobalState.Execute(Entity);
+                }
+                else if (GlobalState.Completed)
+                {
+                    // Global state doesn't have track
+                    // So if it completed stop state machine as well
+                    IsRunning = false;
+                    GlobalState = null;
+                    CurrentState = null;
+                }
             }
 
             //update the current state (if it exists and has not already exited or finished)
-            if (CurrentState != null && CurrentState.ExitTime == DateTime.MinValue &&
-                CurrentState.FinishTime == DateTime.MinValue)
+            if (CurrentState != null)
             {
-                CurrentState.Execute(Entity);
+                if (CurrentState.Started)
+                {
+                    CurrentState.Execute(Entity);
+                }
+                else if (CurrentState.Completed)
+                {
+                    // if current state has track of previous state
+                    // than auto-revert, otherwise set it null
+                    if (CurrentState.PreviousState != null)
+                        RevertToPreviousState();
+                    else
+                        CurrentState = null;
+                }
             }
 
             //update last updated variable
@@ -199,8 +219,7 @@ namespace BabBot.States
             //Enter new state if enter date/time is min date
             // otherwise we entered before and we don't need to enter again
             // OR re-enter if the exit time is not min value
-            if (CurrentState.EnterTime == DateTime.MinValue || 
-                        CurrentState.ExitTime != DateTime.MinValue)
+            if (!CurrentState.Started)
             {
                 CurrentState.Enter(Entity);
             }
@@ -210,8 +229,10 @@ namespace BabBot.States
         public void RevertToPreviousState()
         {
             //when going back to a previous state we want to 
-            // not track the current state and we want to exit the current state.
-            ChangeState(CurrentState.PreviousState, false, true);
+            // not track the current state
+            // exit previous state depends of current state status
+            bool exit = !CurrentState.Completed;
+            ChangeState(CurrentState.PreviousState, false, exit);
         }
 
         private void CurrentState_ChangeStateRequest(object sender, ChangeStateEventArgs<T> e)
