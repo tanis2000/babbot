@@ -4,6 +4,7 @@ using System.Text;
 using BabBot.Common;
 using BabBot.Manager;
 using System.Threading;
+using BabBot.States;
 using BabBot.States.Common;
 using Pather.Graph;
 using System.Text.RegularExpressions;
@@ -60,6 +61,11 @@ namespace BabBot.Wow.Helpers
             : base("Service " + srv + " not found at target NPC") { }
     }
 
+    public class BinderServiceNotFound : ServiceNotFound
+    {
+        public BinderServiceNotFound()
+            : base("binder") { }
+    }
 
     #endregion
 
@@ -75,6 +81,31 @@ namespace BabBot.Wow.Helpers
             Npc = npc;
             Waypoint = vector;
         }
+    }
+
+    /// <summary>
+    /// Class for Global Test state to test different states
+    /// </summary>
+    class TestGlobalState : State<WowPlayer>
+    {
+        State<WowPlayer> _state;
+
+        public TestGlobalState(State<WowPlayer> state)
+        {
+            _state = state;
+            _state.Finishing += ProcessManager.StopStateMachine;
+        }
+
+        /// <summary>
+        /// Switch to assigned state
+        /// </summary>
+        /// <param name="player"></param>
+        protected override void DoEnter(WowPlayer player)
+        {
+            CallChangeStateEvent(player, _state);
+        }
+
+        protected override void DoExecute(WowPlayer player) { }
     }
 
     #endregion
@@ -144,6 +175,10 @@ namespace BabBot.Wow.Helpers
                 fparams = InteractNpc(npc_name, auto_close, lfs);
                 cur_service = fparams[0];
             }
+
+            if (fparams == null)
+                throw new NpcProcessingException("Unable retrieve NPC gossip information. " +
+                            "Does it communicate at all ?");
 
             return fparams;
         }
@@ -252,6 +287,25 @@ namespace BabBot.Wow.Helpers
             return MoveToDest(dest, lfs, "Moving to waypoint: " + dest);
         }
 
+        public static void StartNavState(NavigationState ns, WowPlayer player, string lfs)
+        {
+            player.StateMachine.InitState = new TestGlobalState(ns);
+
+            Output.Instance.Debug(lfs, "State: " +
+                ProcessManager.Player.StateMachine.CurrentState);
+
+            Output.Instance.Log(lfs, "Game Object coordinates located." +
+                " Moving to Game Object using Player State Machine ...");
+
+            // Wait state machine switch to new state
+            while (!player.StateMachine.IsRunning)
+                Thread.Sleep(100);
+
+            // Wait state machine complete Navigation State
+            while (player.StateMachine.IsRunning)
+                Thread.Sleep(1000);
+        }
+
         /// <summary>
         /// Move character to destination
         /// </summary>
@@ -264,22 +318,18 @@ namespace BabBot.Wow.Helpers
             {
                 // Use NavigationState
                 NavigationState ns = new NavigationState(dest, lfs, tooltip_text);
-                ns.Finished += ProcessManager.StopStateMachine;
-                
-                player.StateMachine.InitState = ns;
-                Output.Instance.Debug(lfs, "State: " +
-                    ProcessManager.Player.StateMachine.CurrentState);
 
-                Output.Instance.Log(lfs, "Game Object coordinates located." +
-                        " Moving to Game Object using Player State Machine ...");
-
-                // Wait state machine switch to new state
-                while (!player.StateMachine.IsRunning)
-                    Thread.Sleep(1000);
-
-                // Wait state machine complete Travel State
-                while (player.StateMachine.IsRunning)
-                    Thread.Sleep(1000);
+                if (player.StateMachine.IsRunning)
+                {
+                    // Assume bot doesn't do anything and wait
+                    // for manual state change
+                    // Otherwise we can't call this method outside of bot thread
+                    player.StateMachine.SafeStateChange(ns);
+                }
+                else
+                {
+                    StartNavState(ns, player, lfs);
+                }
             }
             else
             {
@@ -341,10 +391,10 @@ namespace BabBot.Wow.Helpers
                 throw new QuestSkipException("Unable target NPC");
         }
 
-        public static string[] GetGossipList(string lfs)
+        public static string[][] GetGossipList(string lfs)
         {
             // Get list of options
-            string[] res = null;
+            string[][] res = null;
             Output.Instance.Debug(lfs, "Getting list of gossip options ...");
 
             string[] opts = ProcessManager.
@@ -354,42 +404,78 @@ namespace BabBot.Wow.Helpers
             else
             {
                 int max = (int)(opts.Length / 2);
-                Output.Instance.Debug(max + " service(s) detected.");
-                res = new string[max];
+                Output.Instance.Debug(max + " gossip(s) detected.");
+                res = new string[][] { new string[max], new string[max] };
+
                 // Parse list of services
                 for (int i = 0; i < max; i++)
-                    res[i] = opts[i * 2 + 1];
+                {
+                    res[0][i] = opts[i * 2 + 1];
+                    res[1][i] = opts[i * 2];
+                }
             }
             return res;
         }
 
+        private static void SelectNpcGossipOption(NPC npc, int idx, string lfs)
+        {
+            SelectNpcOption(npc, "SelectGossipOption", idx, lfs);
+        }
+    
         /// <summary>
         /// Check list of available NPC gossip options and click on each
         /// </summary>
         /// <param name="npc">NPC</param>
         /// <returns>true if NPC has any service</returns>
-        private static bool FindAvailGossips(NPC npc, string lfs)
+        private static bool CheckAvailGossips(NPC npc, string lfs)
         {
             // Get list of options
-            string[] opts = GetGossipList(lfs);
+            string[][] opts = GetGossipList(lfs);
 
-            if (opts == null || (opts.Length > 0))
+            if (opts == null || (opts[0].Length > 0))
             {
-                Output.Instance.Log("Checking each available option");
+                Output.Instance.Log("Checking each available gossip option");
                 // TODO We only need test standard service but not talking one, especially teleporting one
 
-                for (int i = 0; i < opts.Length; i++)
+                for (int i = 0; i < opts[0].Length; i++)
                 {
-                    Output.Instance.Debug("Selecting gossip option: " + i + "; " + opts[i]);
-                    SelectNpcOption(npc, "SelectGossipOption", i + 1, opts.Length, lfs);
+                    string cur_opts = opts[0][i];
+                    string cur_descr = opts[1][i];
+
+                    // Select only options that brings extra dialog
+                    // like vendor
+                    switch (cur_opts)
+                    {
+                        case "gossip":
+                            // Check if it's binding options
+                            npc.AddGossip(cur_descr, DataManager.CurWoWVersion.
+                                        NpcConfig.PortOptionRx.IsMatch(cur_descr));
+                            break;
+
+                        case "vendor":
+                        case "trainer":
+                            Output.Instance.Debug("Selecting gossip option: " + i + "; " + cur_opts);
+                            SelectNpcOption(npc, "SelectGossipOption", i + 1, lfs);
+                            break;
+
+                        case "binder":
+                        case "taxi":
+                        case "banker":
+                        case "battlemaster":
+                            AddNpcService(npc, cur_opts, null, lfs);
+                            break;
+
+                        default:
+                            throw new UnknownServiceException(cur_opts);
+
+                    }
                 }
             }
 
             return true;
         }
 
-        public static bool SelectNpcOption(NPC npc, 
-                string lua_fname, int idx, int max, string lfs)
+        public static bool SelectNpcOption(NPC npc, string lua_fname, int idx, string lfs)
         {
             // Choose gossip option and check npc again
             Output.Instance.Debug("Execute: " + lua_fname + "; idx: " + idx);
@@ -499,8 +585,7 @@ namespace BabBot.Wow.Helpers
                             Output.Instance.Debug(lfs, "Adding quest '" +
                                                             qtitle + "'");
 
-                            SelectNpcOption(npc,
-                                "SelectGossip" + type + "Quest", i + 1, cnt, lfs);
+                            SelectNpcOption(npc,"SelectGossip" + type + "Quest", i + 1, lfs);
                         }
                         catch (Exception e)
                         {
@@ -518,13 +603,7 @@ namespace BabBot.Wow.Helpers
         // This method is recursive
         private static bool AddTargetNpcInfo(NPC npc, string lfs)
         {
-            string[] fparams = NpcHelper.GetTargetNpcDialogInfo(npc.Name, lfs);
-            if (fparams == null)
-            {
-                Output.Instance.Log("Unable retrieve NPC gossip information. " +
-                        "Does it communicate at all ?");
-                return false;
-            }
+            string[] fparams = GetTargetNpcDialogInfo(npc.Name, lfs);
 
             string cur_service = fparams[0];
 
@@ -565,7 +644,7 @@ namespace BabBot.Wow.Helpers
                 }
 
                 if (opti[2] > 0)
-                    if (!FindAvailGossips(npc, lfs))
+                    if (!CheckAvailGossips(npc, lfs))
                         return false;
 
             }
@@ -683,8 +762,13 @@ namespace BabBot.Wow.Helpers
                             ((opts[2] != null) && opts[2].Equals("1")),
                             ((opts[3] != null) && opts[3].Equals("1")));
                     break;
-                case "wep_skill_trainer":
+
                 case "taxi":
+                case "binder":
+                    npc_service = new ZoneNpcService(cur_service, ProcessManager.Player.SubZoneText);
+                    break;
+
+                case "wep_skill_trainer":
                 case "banker":
                 case "battlemaster":
                     npc_service = new NPCService(cur_service);
@@ -867,10 +951,12 @@ namespace BabBot.Wow.Helpers
             if (!dinfo[0].Equals(service))
             {
                 // Get available services
-                string[] srv = GetGossipList(lfs);
+                string[][] glist = GetGossipList(lfs);
 
-                if (string.IsNullOrEmpty(service) || (srv.Length == 0))
+                if ((glist == null) || (glist[0].Length == 0))
                     throw new ServiceNotFound(service);
+
+                string[] srv = glist[0];
 
                 bool f = false;
                 for(int i = 0; i < srv.Length; i++)
@@ -940,5 +1026,47 @@ namespace BabBot.Wow.Helpers
         }
 
         #endregion
+
+        public static void BindToInn(NPC npc, string lfs)
+        {
+            // Check if NPC targeted
+            WowUnit target = ProcessManager.Player.CurTarget;
+            if (target == null && !target.Name.Equals(npc.Name))
+                TargetGameObj(npc, lfs);
+
+            // Check NPC has bind service
+            if (!npc.HasInn)
+                throw new BinderServiceNotFound();
+
+            // Interact with NPC and choose binder service
+            string[] fparams = NpcHelper.GetTargetNpcDialogInfo(npc.Name, lfs);
+
+            string cur_service = fparams[0];
+
+            if ((cur_service == null) || !cur_service.Equals("gossip"))
+                throw new BinderServiceNotFound();
+
+            // Get list of options
+            string[][] opts = GetGossipList(lfs);
+            if (opts == null)
+                throw new BinderServiceNotFound();
+
+            // Find binder
+            int idx = 0;
+            for (int i = 0; i < opts[0].Length; i++)
+            {
+                if (opts[i].Equals("binder"))
+                {
+                    idx = i + 1;
+                    break;
+                }
+            }
+
+            if (idx == 0)
+                throw new BinderServiceNotFound();
+
+            // SelectNpcOption(npc, 
+
+        }
     }
 }

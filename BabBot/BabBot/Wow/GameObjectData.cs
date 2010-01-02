@@ -242,6 +242,13 @@ namespace BabBot.Wow
             set { MergeList[2] = value; }
         }
 
+        [XmlElement("gossips")]
+        public NPCGossips Gossips
+        {
+            get { return (NPCGossips)MergeList[3]; }
+            set { MergeList[3] = value; }
+        }
+
         /// <summary>
         /// Is NPC moving i.e has additional coordinates other than base coordinate
         /// </summary>
@@ -262,7 +269,7 @@ namespace BabBot.Wow
 
         internal bool HasInn
         {
-            get { return Services.Table.ContainsKey("inn"); }
+            get { return Services.Table.ContainsKey("binder"); }
         }
 
         internal bool IsVendor
@@ -287,10 +294,11 @@ namespace BabBot.Wow
         {
             base.Init();
 
-            Array.Resize<IMergeable>(ref MergeList, 3);
+            Array.Resize<IMergeable>(ref MergeList, 4);
 
             Coordinates = new WpZones();
             Services = new NPCServices();
+            Gossips = new NPCGossips();
         }
 
         public NPC(WowPlayer player, string faction)
@@ -298,8 +306,12 @@ namespace BabBot.Wow
 
         public void AddService(NPCService service)
         {
-            // if (string.IsNullOrEmpty(Service)) Service = service.Name;
             Services.Add(service);
+        }
+
+        public void AddGossip(string text, bool port)
+        {
+            Gossips.Add(new NPCGossip(text, port));
         }
 
         public bool IsFriendly(string faction)
@@ -806,16 +818,53 @@ namespace BabBot.Wow
 
     #endregion
 
-    #region NPC Services
+    #region NPC Services & Gossip
 
     // Service container
-    public class NPCServices : CommonTable<NPCService>, IMergeable
+    public class NPCServices : CommonTable<NPCService>
     {
         [XmlElement("service")]
         public NPCService[] ServiceList
         {
             get { return Items; }
             set { Items = value; }
+        }
+    }
+
+    // Service container
+    public class NPCGossips : CommonList<NPCGossip>
+    {
+        [XmlElement("gossip")]
+        public NPCGossip[] GossipList
+        {
+            get { return Items; }
+            set { Items = value; }
+        }
+    }
+
+    /// <summary>
+    /// NPC Gossip
+    /// The name is actual gossip text
+    /// </summary>
+    public class NPCGossip : CommonItem
+    {
+        internal string Text
+        {
+            get { return Name; }
+        }
+
+        [XmlAttribute("teleport")]
+        public bool Teleport = false;
+
+        public NPCGossip() : base() { }
+
+        public NPCGossip(string descr)
+                        : this(descr, false) { }
+
+        public NPCGossip(string text, bool port)
+            : base(text) 
+        {
+            Teleport = port;
         }
     }
 
@@ -888,7 +937,7 @@ namespace BabBot.Wow
                 switch (SType)
                 {
                     case "taxi": return DataManager.ServiceTypes.TAXI;
-                    case "inn": return DataManager.ServiceTypes.INN;
+                    case "binder": return DataManager.ServiceTypes.BINDER;
                     default: return base.SrvType;
                 }
             }

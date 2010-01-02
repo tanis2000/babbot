@@ -60,6 +60,9 @@ namespace BabBot.Wow
         [XmlElement("quest_config")]
         public QuestConfig QuestConfig;
 
+        [XmlElement("npc_config")]
+        public NpcConfig NpcConfig;
+
         // Mergeable elements start
         // Must be not-null and included into MergeList
 
@@ -408,6 +411,17 @@ namespace BabBot.Wow
         }
 
         public QuestConfig() { }
+    }
+
+    public class NpcConfig
+    {
+        internal Regex PortOptionRx;
+
+        [XmlAttribute("port_opt_pattern")]
+        public string PortOption {
+            get { return PortOptionRx.ToString(); }
+            set { PortOptionRx = new Regex(value, RegexOptions.Singleline); }
+        }
     }
 
     /// <summary>

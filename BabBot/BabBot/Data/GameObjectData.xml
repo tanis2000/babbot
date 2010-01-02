@@ -23,6 +23,7 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
       </quests>
       <coordinates />
       <services />
+      <gossips />
     </game_object>
     <game_object d3p1:type="NPC" name="Dellylah" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10450.2" y="779.86" z="1322.67" type="0" />
@@ -31,6 +32,19 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
       <services>
         <service d3p1:type="VendorService" name="vendor" can_repair="false" has_drink="true" has_food="true" />
       </services>
+      <gossips />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Innkeeper Keldamyr" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="9802.21" y="982.61" z="1313.9" type="0" />
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="false" has_drink="true" has_food="true" />
+        <service d3p1:type="ZoneNpcService" name="binder" sub_zone="Dolanaar" />
+      </services>
+      <gossips>
+        <gossip name="What can I do at an Inn?" teleport="false" />
+      </gossips>
     </game_object>
     <game_object d3p1:type="NPC" name="Keina" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10436.7" y="794.84" z="1322.7" type="0" />
@@ -39,6 +53,7 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
       <services>
         <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
       </services>
+      <gossips />
     </game_object>
     <game_object d3p1:type="NPC" name="Melithar Staghelm" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10389.8" y="763.48" z="1319.95" type="0" />
@@ -54,6 +69,25 @@ Seek out Tarindrella and see what business she tends to in our grove. One of the
       </quests>
       <coordinates />
       <services />
+      <gossips />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Porthannius" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="10214.3" y="700.55" z="1360.6" type="0" />
+      <quests>
+        <quest name="Dolanaar Delivery" id="2159" link="|cffff8040|Hquest:2159:5|h[Dolanaar Delivery]|h|r" level="5" bonus_spell="" num="0" dest_name="">
+          <text><![CDATA[Greetings, young priest.  Can you offer me aid?  I have a package of herbs that I must deliver to the town of Dolanaar.  But I still have business with the druids of Shadowglen and cannot yet leave.
+
+Can you deliver this package for me?  It must be sent to Innkeeper Keldamyr, at the Dolanaar inn.  It lies along the road, to the south.]]></text>
+          <choice_items>
+            <item name="Darnassian Bleu" qty="5" />
+            <item name="Refreshing Spring Water" qty="5" />
+          </choice_items>
+          <objectives_text><![CDATA[Bring the Dolanaar Delivery to Innkeeper Keldamyr.]]></objectives_text>
+        </quest>
+      </quests>
+      <coordinates />
+      <services />
+      <gossips />
     </game_object>
     <game_object d3p1:type="NPC" name="Shanda" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10458.8" y="801.62" z="1346.75" type="0" />
@@ -62,12 +96,14 @@ Seek out Tarindrella and see what business she tends to in our grove. One of the
       <services>
         <service d3p1:type="ClassTrainingService" name="class_trainer" class="PRIEST" />
       </services>
+      <gossips />
     </game_object>
     <game_object d3p1:type="NPC" name="Tarindrella" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10296.9" y="870.23" z="1335.89" type="0" />
       <quests />
       <coordinates />
       <services />
+      <gossips />
     </game_object>
   </wow_version>
   <wow_version name="3.3.0.11159" />

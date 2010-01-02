@@ -1097,6 +1097,7 @@ end)()]]></text>
       "delay" parameter define delay between learning each talent from list
        "retry" parameters control how many retries need if learning too fast
     -->
+    <npc_config port_opt_pattern="Teleport" />
     <talent_config lvl_start="10" delay="1000" retry="5"
       armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
     <!-- Set of configuration for quest processing -->

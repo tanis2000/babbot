@@ -40,7 +40,7 @@ namespace BabBot.Forms
     public partial class GameObjectsForm : BabBot.Forms.GenericDialog
     {
         private readonly string[] ReqSrvDescr = new string[] {
-            "inn", "taxi", "class_trainer", "trade_skill_trainer", "wep_skill_trainer" };
+            "binder", "taxi", "class_trainer", "trade_skill_trainer", "wep_skill_trainer" };
 
         private string LogFacility = "game_objects";
 
@@ -63,7 +63,8 @@ namespace BabBot.Forms
             }
         }
 
-        public GameObjectsForm() : base ("npc_list")
+        public GameObjectsForm() 
+                : base ("npc_list", true)
         {
             InitializeComponent();
 
@@ -89,12 +90,11 @@ namespace BabBot.Forms
 #endif
         }
 
-        public void Open()
+        public override void Open()
         {
             labelWoWVersion.Text = DataManager.CurWoWVersion.Build;
 
-            IsChanged = false;
-            Show();
+            base.Open();
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -140,25 +140,12 @@ namespace BabBot.Forms
                     
         }
 
-        protected override void OnFormClosing(
-                        object sender, FormClosingEventArgs e)
+        protected override void  DoOnFormClosing()
         {
-            // For some reason called twice
-            if (!e.Cancel)
-                base.OnFormClosing(sender, e);
-
-            if (!e.Cancel)
-            {
-                if (!btnClose.Text.Equals("Close"))
-                {
-                    DataManager.GameData.RejectChanges();
-                    btnClose.Text = "Close";
-                }
-
-                e.Cancel = true; // this cancels the close event.
-                Visible = false;
-                // Hide();
-            }
+ 	        base.DoOnFormClosing();
+            
+            DataManager.GameData.RejectChanges();
+            btnClose.Text = "Close";
         }
 
         void SetFormControls(bool Enabled)
@@ -180,9 +167,6 @@ namespace BabBot.Forms
 
         internal void btnAddNPC_Click(object sender, EventArgs e)
         {
-            if (!CheckBeforeNpcTest())
-                return;
-
 #if DEBUG
             //\\ TEST
             if (ProcessManager.Config.IsTest)
@@ -193,10 +177,15 @@ namespace BabBot.Forms
                     // string name = "Melithar Staghelm";
                     // string name = "Conservator Ilthalaine";
                     // string name = "Gilshalan Windwalker";
-                    string name = "Dellylah";
+                    // string name = "Dellylah";
+                    string name = "Innkeeper Keldamyr";
                     LuaHelper.TargetUnitByName(name);
                 }
 #endif
+
+            if (!CheckBeforeNpcTest())
+                return;
+
 
             try
             {
@@ -331,23 +320,24 @@ namespace BabBot.Forms
             NpcHelper.UseState = cbUseState.Checked;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        protected override void btnClose_Click(object sender, EventArgs e)
         {
             if (IsChanged && (MessageBox.Show("Are you sure cancel changes ?",
-                        "Confirmation", MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Exclamation) == DialogResult.No))
+                    "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
+                    MessageBoxDefaultButton.Button2) == DialogResult.No))
                 return;
+            
+            // Hide if chosen
+            if (btnClose.Text.Equals("Close"))
+            {
+                base.btnClose_Click(sender, e);
+            }
             else
             {
-                BotDataSet.GameObjectsRow row = GetCurrentRow();
-                // row.CancelEdit();
+                // Cancel changes
+                IsChanged = false;
                 DataManager.GameData.RejectChanges();
             }
-
-            if (btnClose.Text.Equals("Close"))
-                Hide();
-
-            IsChanged = false;
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -1000,6 +990,35 @@ namespace BabBot.Forms
         private void GameObjectsForm_Load(object sender, EventArgs e)
         {
             NpcHelper.UseState = cbUseState.Checked;
+        }
+
+        private void recordRouteFromNPCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            object obj = bsGameObjects.Current;
+            object q = fkGameObjectsQuestList.Current;
+            object qi = fKQuestListQuestItemsObjectives.Current;
+
+            if ((obj == null) || (q == null) || (qi == null))
+                return;
+
+            BotDataSet.GameObjectsRow obj_row = (BotDataSet.GameObjectsRow)
+                                                        ((DataRowView)obj).Row;
+
+            BotDataSet.QuestListRow q_row = (BotDataSet.QuestListRow)
+                                                        ((DataRowView) q).Row;
+
+            BotDataSet.QuestItemsRow qi_row = (BotDataSet.QuestItemsRow)
+                                                        ((DataRowView)qi).Row;
+
+            Program.mainForm.OpenRouteRecording(obj_row.NAME, q_row.TITLE, qi_row.NAME);
+        }
+
+        private void popQuestItemActions_Opening(object sender, CancelEventArgs e)
+        {
+            bool enabled = fKQuestListQuestItemsObjectives.Current != null;
+            recordRouteFromNPCToolStripMenuItem.Enabled = enabled;
+            recordRouteToNPCToolStripMenuItem.Enabled = enabled;
+
         }
     }
 }

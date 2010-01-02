@@ -415,7 +415,8 @@ namespace BabBot.Manager
                 process.EnableRaisingEvents = true;
                 process.Exited += exitProcess;
 
-                WowHWND = AppHelper.WaitForWowWindow();
+                IntPtr hnd = process.MainWindowHandle;
+                WowHWND = AppHelper.WaitForWowWindow((uint) process.Id);
                 CommandManager.WowHWND = WowHWND;
 
                 //verify we haven't already opened it, like when we do the injection
@@ -596,6 +597,16 @@ namespace BabBot.Manager
             XmlManager.AfterInit();
 
 #if DEBUG
+            List<Route> lr = new List<Route>();
+            Route r1 = new Route(new Endpoint(EndpointTypes.UNDEF, "", new Vector3D(1, 1, 1)),
+                new Endpoint(EndpointTypes.UNDEF, "", new Vector3D(100, 100, 100)), "", true);
+            lr.Add(r1);
+            RouteListManager.Waypoints.Add(1F, lr);
+
+            Route r2 = RouteListManager.FindRoute(new Vector3D(2, 2, 2));
+            if (!ReferenceEquals(r1, r2))
+                throw new Exception("Waypoints access failed");
+
             //\\ Test
             // Quest merge test
             Quest q1 = new Quest(1, "Test 1", "Test", "", 1, new int[6], new string[3], "", "", "");

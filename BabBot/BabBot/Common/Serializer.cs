@@ -559,6 +559,20 @@ namespace BabBot.Common
             set { _changed = value; }
         }
 
+        internal int Count
+        {
+            get { return _stable.Count; }
+        }
+
+        public T this[int idx]
+        {
+            get
+            {
+                return ((idx < 0) || (idx >= _stable.Count)) ?
+                    default(T) : _stable.Values[idx];
+            }
+        }
+
         internal T[] Items
         {
             get
@@ -622,11 +636,13 @@ namespace BabBot.Common
             return _stable[name];
         }
 
+        /*
         public T GetItemByIndex(int idx)
         {
             return ((idx < 0) || (idx >= _stable.Count)) ?
                     default(T) : _stable.Values[idx];
         }
+        */
 
         public void Add(T item)
         {

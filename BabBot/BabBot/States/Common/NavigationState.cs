@@ -18,7 +18,7 @@ namespace BabBot.States.Common
     /// takes some time
     /// If path not supplied it using Caronte to calculate it
     /// </summary>
-    class NavigationState : State<WowPlayer>
+    public class NavigationState : State<WowPlayer>
     {
         /// <summary>
         /// Travel destination point
@@ -209,7 +209,7 @@ namespace BabBot.States.Common
                         t += 1000;
                     }
 
-                    Thread.Sleep(t + 1);
+                    Thread.Sleep(t);
 
                     // Check if we moved
                     float dd = _player.Location.GetDistanceTo(vnext);

@@ -68,10 +68,16 @@
             this.fKCoordinatesZoneCoordinates = new System.Windows.Forms.BindingSource(this.components);
             this.fKGameObjectsCoordinatesZone = new System.Windows.Forms.BindingSource(this.components);
             this.gbQuestList = new System.Windows.Forms.GroupBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.fKQuestListQuestItemsChoice = new System.Windows.Forms.BindingSource(this.components);
+            this.lbQuestObjectives = new System.Windows.Forms.ListBox();
+            this.popQuestItemActions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.recordRouteFromNPCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.recordRouteToNPCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fKQuestListQuestItemsObjectives = new System.Windows.Forms.BindingSource(this.components);
             this.fkGameObjectsQuestList = new System.Windows.Forms.BindingSource(this.components);
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.lbQuestItems = new System.Windows.Forms.ListBox();
+            this.fKQuestListQuestItemsChoice = new System.Windows.Forms.BindingSource(this.components);
             this.lbQuestList = new System.Windows.Forms.ListBox();
             this.popQuestActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.acceptQuestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -115,8 +121,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.fKCoordinatesZoneCoordinates)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fKGameObjectsCoordinatesZone)).BeginInit();
             this.gbQuestList.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fKQuestListQuestItemsChoice)).BeginInit();
+            this.popQuestItemActions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fKQuestListQuestItemsObjectives)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fkGameObjectsQuestList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fKQuestListQuestItemsChoice)).BeginInit();
             this.popQuestActions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bsServiceTypesFull)).BeginInit();
             this.gbDebug.SuspendLayout();
@@ -134,7 +142,6 @@
             // btnClose
             // 
             this.btnClose.Location = new System.Drawing.Point(631, 458);
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSave
             // 
@@ -480,10 +487,11 @@
             // 
             this.gbQuestList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbQuestList.Controls.Add(this.lbQuestObjectives);
+            this.gbQuestList.Controls.Add(this.label11);
             this.gbQuestList.Controls.Add(this.label10);
-            this.gbQuestList.Controls.Add(this.listBox1);
+            this.gbQuestList.Controls.Add(this.lbQuestItems);
             this.gbQuestList.Controls.Add(this.lbQuestList);
-            this.gbQuestList.Controls.Add(this.btnAddQuest);
             this.gbQuestList.Location = new System.Drawing.Point(480, 260);
             this.gbQuestList.Name = "gbQuestList";
             this.gbQuestList.Size = new System.Drawing.Size(226, 192);
@@ -491,25 +499,82 @@
             this.gbQuestList.TabStop = false;
             this.gbQuestList.Text = "Quest List";
             // 
+            // lbQuestObjectives
+            // 
+            this.lbQuestObjectives.ContextMenuStrip = this.popQuestItemActions;
+            this.lbQuestObjectives.DataSource = this.fKQuestListQuestItemsObjectives;
+            this.lbQuestObjectives.DisplayMember = "NAME";
+            this.lbQuestObjectives.FormattingEnabled = true;
+            this.lbQuestObjectives.HorizontalScrollbar = true;
+            this.lbQuestObjectives.Location = new System.Drawing.Point(6, 117);
+            this.lbQuestObjectives.Name = "lbQuestObjectives";
+            this.lbQuestObjectives.Size = new System.Drawing.Size(105, 69);
+            this.lbQuestObjectives.TabIndex = 49;
+            // 
+            // popQuestItemActions
+            // 
+            this.popQuestItemActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.recordRouteFromNPCToolStripMenuItem,
+            this.recordRouteToNPCToolStripMenuItem});
+            this.popQuestItemActions.Name = "popQuestItemActions";
+            this.popQuestItemActions.Size = new System.Drawing.Size(202, 48);
+            this.popQuestItemActions.Opening += new System.ComponentModel.CancelEventHandler(this.popQuestItemActions_Opening);
+            // 
+            // recordRouteFromNPCToolStripMenuItem
+            // 
+            this.recordRouteFromNPCToolStripMenuItem.Name = "recordRouteFromNPCToolStripMenuItem";
+            this.recordRouteFromNPCToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.recordRouteFromNPCToolStripMenuItem.Text = "Record Route From NPC";
+            this.recordRouteFromNPCToolStripMenuItem.Click += new System.EventHandler(this.recordRouteFromNPCToolStripMenuItem_Click);
+            // 
+            // recordRouteToNPCToolStripMenuItem
+            // 
+            this.recordRouteToNPCToolStripMenuItem.Name = "recordRouteToNPCToolStripMenuItem";
+            this.recordRouteToNPCToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.recordRouteToNPCToolStripMenuItem.Text = "Record Route To NPC";
+            // 
+            // fKQuestListQuestItemsObjectives
+            // 
+            this.fKQuestListQuestItemsObjectives.DataMember = "FK_QuestList_QuestItems";
+            this.fKQuestListQuestItemsObjectives.DataSource = this.fkGameObjectsQuestList;
+            this.fKQuestListQuestItemsObjectives.Filter = "ITEM_TYPE_ID = 3";
+            this.fKQuestListQuestItemsObjectives.Sort = "IDX";
+            // 
+            // fkGameObjectsQuestList
+            // 
+            this.fkGameObjectsQuestList.DataMember = "FK_GameObjects_QuestList";
+            this.fkGameObjectsQuestList.DataSource = this.bsGameObjects;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.label11.Location = new System.Drawing.Point(3, 102);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(57, 13);
+            this.label11.TabIndex = 48;
+            this.label11.Text = "Objectives";
+            // 
             // label10
             // 
             this.label10.AutoSize = true;
             this.label10.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label10.Location = new System.Drawing.Point(9, 136);
+            this.label10.Location = new System.Drawing.Point(112, 102);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(85, 13);
             this.label10.TabIndex = 47;
             this.label10.Text = "Choice Rewards";
             // 
-            // listBox1
+            // lbQuestItems
             // 
-            this.listBox1.DataSource = this.fKQuestListQuestItemsChoice;
-            this.listBox1.DisplayMember = "NAME";
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(100, 136);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(120, 56);
-            this.listBox1.TabIndex = 46;
+            this.lbQuestItems.DataSource = this.fKQuestListQuestItemsChoice;
+            this.lbQuestItems.DisplayMember = "NAME";
+            this.lbQuestItems.FormattingEnabled = true;
+            this.lbQuestItems.HorizontalScrollbar = true;
+            this.lbQuestItems.Location = new System.Drawing.Point(115, 117);
+            this.lbQuestItems.Name = "lbQuestItems";
+            this.lbQuestItems.Size = new System.Drawing.Size(105, 69);
+            this.lbQuestItems.TabIndex = 46;
             // 
             // fKQuestListQuestItemsChoice
             // 
@@ -517,11 +582,6 @@
             this.fKQuestListQuestItemsChoice.DataSource = this.fkGameObjectsQuestList;
             this.fKQuestListQuestItemsChoice.Filter = "ITEM_TYPE_ID = 2";
             this.fKQuestListQuestItemsChoice.Sort = "IDX";
-            // 
-            // fkGameObjectsQuestList
-            // 
-            this.fkGameObjectsQuestList.DataMember = "FK_GameObjects_QuestList";
-            this.fkGameObjectsQuestList.DataSource = this.bsGameObjects;
             // 
             // lbQuestList
             // 
@@ -531,9 +591,10 @@
             this.lbQuestList.DataSource = this.fkGameObjectsQuestList;
             this.lbQuestList.DisplayMember = "TITLE";
             this.lbQuestList.FormattingEnabled = true;
-            this.lbQuestList.Location = new System.Drawing.Point(6, 19);
+            this.lbQuestList.HorizontalScrollbar = true;
+            this.lbQuestList.Location = new System.Drawing.Point(6, 16);
             this.lbQuestList.Name = "lbQuestList";
-            this.lbQuestList.Size = new System.Drawing.Size(214, 108);
+            this.lbQuestList.Size = new System.Drawing.Size(214, 82);
             this.lbQuestList.TabIndex = 45;
             this.lbQuestList.DoubleClick += new System.EventHandler(this.lbQuestList_DoubleClick);
             this.lbQuestList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbQuestList_KeyDown);
@@ -547,7 +608,7 @@
             this.executeQuestToolStripMenuItem,
             this.deleteQuestToolStripMenuItem});
             this.popQuestActions.Name = "popQuestActions";
-            this.popQuestActions.Size = new System.Drawing.Size(157, 120);
+            this.popQuestActions.Size = new System.Drawing.Size(157, 98);
             this.popQuestActions.Text = "1";
             this.popQuestActions.Opening += new System.ComponentModel.CancelEventHandler(this.popQuestActions_Opening);
             // 
@@ -587,7 +648,7 @@
             // btnAddQuest
             // 
             this.btnAddQuest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddQuest.Location = new System.Drawing.Point(6, 163);
+            this.btnAddQuest.Location = new System.Drawing.Point(400, 458);
             this.btnAddQuest.Name = "btnAddQuest";
             this.btnAddQuest.Size = new System.Drawing.Size(75, 23);
             this.btnAddQuest.TabIndex = 44;
@@ -853,11 +914,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(718, 493);
-            this.Controls.Add(this.btnImport);
             this.Controls.Add(this.labelWoWVersion);
             this.Controls.Add(this.gbDescription);
+            this.Controls.Add(this.btnImport);
             this.Controls.Add(this.gbDebug);
             this.Controls.Add(this.gbAutoAdd);
+            this.Controls.Add(this.btnAddQuest);
             this.Controls.Add(this.gbAddCoord);
             this.Controls.Add(this.gbCoordinates);
             this.Controls.Add(this.lbGameObjList);
@@ -874,7 +936,6 @@
             this.Text = "NPC List";
             this.Load += new System.EventHandler(this.GameObjectsForm_Load);
             this.Activated += new System.EventHandler(this.GameObjectsForm_Activated);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
             this.Controls.SetChildIndex(this.btnAddItem, 0);
             this.Controls.SetChildIndex(this.btnAddNPC, 0);
             this.Controls.SetChildIndex(this.gbQuestList, 0);
@@ -886,11 +947,12 @@
             this.Controls.SetChildIndex(this.lbGameObjList, 0);
             this.Controls.SetChildIndex(this.gbCoordinates, 0);
             this.Controls.SetChildIndex(this.gbAddCoord, 0);
+            this.Controls.SetChildIndex(this.btnAddQuest, 0);
             this.Controls.SetChildIndex(this.gbAutoAdd, 0);
             this.Controls.SetChildIndex(this.gbDebug, 0);
+            this.Controls.SetChildIndex(this.btnImport, 0);
             this.Controls.SetChildIndex(this.gbDescription, 0);
             this.Controls.SetChildIndex(this.labelWoWVersion, 0);
-            this.Controls.SetChildIndex(this.btnImport, 0);
             this.Controls.SetChildIndex(this.btnHelp, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
@@ -907,8 +969,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.fKGameObjectsCoordinatesZone)).EndInit();
             this.gbQuestList.ResumeLayout(false);
             this.gbQuestList.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fKQuestListQuestItemsChoice)).EndInit();
+            this.popQuestItemActions.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.fKQuestListQuestItemsObjectives)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fkGameObjectsQuestList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fKQuestListQuestItemsChoice)).EndInit();
             this.popQuestActions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bsServiceTypesFull)).EndInit();
             this.gbDebug.ResumeLayout(false);
@@ -999,8 +1063,14 @@
         private System.Windows.Forms.ToolStripMenuItem deliverQuestToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox lbQuestItems;
         private System.Windows.Forms.BindingSource fKQuestListQuestItemsChoice;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.ContextMenuStrip popQuestItemActions;
+        private System.Windows.Forms.ToolStripMenuItem recordRouteFromNPCToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem recordRouteToNPCToolStripMenuItem;
+        private System.Windows.Forms.ListBox lbQuestObjectives;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.BindingSource fKQuestListQuestItemsObjectives;
     }
 }

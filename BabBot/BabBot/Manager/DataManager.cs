@@ -339,8 +339,6 @@ namespace BabBot.Manager
             get { return gdata; }
         }
 
-        
-
         /// <summary>
         /// GameObjectData xml file name
         /// </summary>
@@ -423,7 +421,7 @@ namespace BabBot.Manager
         /// </summary>
         public enum ServiceTypes : byte
         {
-            INN = 0,
+            BINDER = 0,
             BANKER = 1,
             BATTLEMASTER = 2,
             CLASS_TRAINER = 3,
@@ -1057,7 +1055,7 @@ namespace BabBot.Manager
             LocalServices.Add(Enum.GetName(typeof(DataManager.ServiceTypes), 
                 DataManager.ServiceTypes.TAXI).ToLower(), TaxiServices);
             LocalServices.Add(Enum.GetName(typeof(DataManager.ServiceTypes),
-                DataManager.ServiceTypes.INN).ToLower(), InnServices);
+                DataManager.ServiceTypes.BINDER).ToLower(), InnServices);
             LocalServices.Add(Enum.GetName(typeof(DataManager.ServiceTypes),
                  DataManager.ServiceTypes.VENDOR_REPAIR).ToLower(), RepairServices);
             LocalServices.Add(Enum.GetName(typeof(DataManager.ServiceTypes),
@@ -1241,7 +1239,7 @@ namespace BabBot.Manager
 
             List<Route> lr;
 
-            if (!Waypoints.TryGetValue(v.Length, out lr))
+            if (!Waypoints.TryGetValue(len, out lr))
                 return null;
 
             // Check which route exactly have started or ended waypoint

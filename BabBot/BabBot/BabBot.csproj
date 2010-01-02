@@ -187,11 +187,23 @@
     <Compile Include="Forms\Radar\RadarItem.cs" />
     <Compile Include="Forms\Radar\RadarItems\CircleRadarItem.cs" />
     <Compile Include="Forms\Radar\RadarItems\TriangleRadarItem.cs" />
+    <Compile Include="Forms\RoutesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\RoutesForm.Designer.cs">
+      <DependentUpon>RoutesForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Shared\QuestInfo.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Forms\Shared\QuestInfo.Designer.cs">
       <DependentUpon>QuestInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Shared\RouteDetails.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Shared\RouteDetails.Designer.cs">
+      <DependentUpon>RouteDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TalentsForm.cs">
       <SubType>Form</SubType>
@@ -246,8 +258,16 @@
       <DependentUpon>QuestList.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RoutesForm.resx">
+      <DependentUpon>RoutesForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Shared\QuestInfo.resx">
       <DependentUpon>QuestInfo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Shared\RouteDetails.resx">
+      <DependentUpon>RouteDetails.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TalentsForm.resx">

@@ -134,6 +134,8 @@
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.tabPageEnemies = new System.Windows.Forms.TabPage();
+            this.tbPlayerTargetFaction = new System.Windows.Forms.TextBox();
+            this.label42 = new System.Windows.Forms.Label();
             this.btnRemoveEnemyFromList = new System.Windows.Forms.Button();
             this.lbEnemies = new System.Windows.Forms.ListBox();
             this.btnAddEnemyToList = new System.Windows.Forms.Button();
@@ -230,8 +232,7 @@
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.pbBotProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.ttStateMachineInfo = new System.Windows.Forms.ToolTip(this.components);
-            this.label42 = new System.Windows.Forms.Label();
-            this.tbPlayerTargetFaction = new System.Windows.Forms.TextBox();
+            this.routesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -324,7 +325,8 @@
             this.npcListToolStripMenuItem,
             this.talentTemplatesToolStripMenuItem,
             this.realmListToolStripMenuItem,
-            this.questListToolStripMenuItem});
+            this.questListToolStripMenuItem,
+            this.routesToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.editToolStripMenuItem.Text = "&Edit";
@@ -387,7 +389,7 @@
             // addTargetNPCToolStripMenuItem
             // 
             this.addTargetNPCToolStripMenuItem.Name = "addTargetNPCToolStripMenuItem";
-            this.addTargetNPCToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.addTargetNPCToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
             this.addTargetNPCToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.addTargetNPCToolStripMenuItem.Text = "Add Target NPC";
             this.addTargetNPCToolStripMenuItem.Click += new System.EventHandler(this.addCurrentTargetToolStripMenuItem_Click);
@@ -1327,6 +1329,23 @@
             this.tabPageEnemies.TabIndex = 5;
             this.tabPageEnemies.Text = "Enemies";
             this.tabPageEnemies.UseVisualStyleBackColor = true;
+            // 
+            // tbPlayerTargetFaction
+            // 
+            this.tbPlayerTargetFaction.Enabled = false;
+            this.tbPlayerTargetFaction.Location = new System.Drawing.Point(415, 41);
+            this.tbPlayerTargetFaction.Name = "tbPlayerTargetFaction";
+            this.tbPlayerTargetFaction.Size = new System.Drawing.Size(55, 20);
+            this.tbPlayerTargetFaction.TabIndex = 22;
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(352, 44);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(57, 13);
+            this.label42.TabIndex = 21;
+            this.label42.Text = "Faction Id:";
             // 
             // btnRemoveEnemyFromList
             // 
@@ -2269,22 +2288,13 @@
             this.ttStateMachineInfo.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.ttStateMachineInfo.ToolTipTitle = "StateMachine Info:";
             // 
-            // label42
+            // routesToolStripMenuItem
             // 
-            this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(352, 44);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(57, 13);
-            this.label42.TabIndex = 21;
-            this.label42.Text = "Faction Id:";
-            // 
-            // tbPlayerTargetFaction
-            // 
-            this.tbPlayerTargetFaction.Enabled = false;
-            this.tbPlayerTargetFaction.Location = new System.Drawing.Point(415, 41);
-            this.tbPlayerTargetFaction.Name = "tbPlayerTargetFaction";
-            this.tbPlayerTargetFaction.Size = new System.Drawing.Size(55, 20);
-            this.tbPlayerTargetFaction.TabIndex = 22;
+            this.routesToolStripMenuItem.Name = "routesToolStripMenuItem";
+            this.routesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.routesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.routesToolStripMenuItem.Text = "Routes";
+            this.routesToolStripMenuItem.Click += new System.EventHandler(this.routesToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -2560,6 +2570,7 @@
         private System.Windows.Forms.ToolTip ttStateMachineInfo;
         private System.Windows.Forms.TextBox tbPlayerTargetFaction;
         private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.ToolStripMenuItem routesToolStripMenuItem;
     }
 }
 

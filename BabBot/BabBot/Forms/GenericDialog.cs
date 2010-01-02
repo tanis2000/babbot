@@ -32,23 +32,27 @@ namespace BabBot.Forms
 {
     public partial class GenericDialog : Form
     {
-        // Internal name
+        /// <summary>
+        /// Internal name
+        /// </summary>
         private string _name;
-        // Change tracking
+
+        /// <summary>
+        /// Change tracking
+        /// </summary>
         private bool _changed = false;
 
-        // Delegate method for error message
+        /// <summary>
+        /// Delegate method for error message
+        /// </summary>
+        /// <param name="e"></param>
         private delegate void ErrorMsgDelegate(Exception e);
 
-        protected virtual bool IsChanged
-        {
-            get { return _changed; }
-            set { 
-                _changed = value;
-                btnSave.Enabled = _changed;
-            }
-        }
-
+        /// <summary>
+        /// Hide instead of close on closing event
+        /// </summary>
+        private bool _hide;
+        
         GenericDialog()
         {
             InitializeComponent();
@@ -56,10 +60,27 @@ namespace BabBot.Forms
 
         #region Public Methods
 
+        /// <summary>
+        /// Form constructor
+        /// </summary>
+        /// <param name="name">Form system name used for content help redirection</param>
         public GenericDialog(string name)
             : this()
         {
             _name = name;
+
+        }
+
+        /// <summary>
+        /// Form constructor
+        /// </summary>
+        /// <param name="name">Form system name used for content help redirection</param>
+        /// <param name="hide_on_closing">Hide form instead of closing. 
+        /// General usage for reused forms</param>
+        public GenericDialog(string name, bool hide_on_closing)
+            : this(name)
+        {
+            _hide = hide_on_closing;
 
         }
 
@@ -150,20 +171,11 @@ namespace BabBot.Forms
         }
 
 
-        protected virtual void GenericDialog_Load(object sender, EventArgs e)
-        {
-            _changed = false;
-        }
-
         protected void OpenURL(string url)
         {
             Process.Start(GetDefaultBrowserPath(), url);
         }
 
-        protected virtual void RegisterChange(object sender, EventArgs e)
-        {
-            IsChanged = true;
-        }
 
         #endregion
 
@@ -187,14 +199,67 @@ namespace BabBot.Forms
             OpenURL(url);
         }
 
+        #endregion
+
+        #region Virtual Methods
+
+        protected virtual bool IsChanged
+        {
+            get { return _changed; }
+            set
+            {
+                _changed = value;
+                btnSave.Enabled = _changed;
+            }
+        }
+
+        protected virtual void GenericDialog_Load(object sender, EventArgs e)
+        {
+            _changed = false;
+        }
+
+        protected virtual void RegisterChange(object sender, EventArgs e)
+        {
+            IsChanged = true;
+        }
+
         protected virtual void OnFormClosing(
                             object sender, FormClosingEventArgs e)
         {
-            e.Cancel = (IsChanged &&
+            bool close = !(IsChanged &&
                 (MessageBox.Show(this, "Are you sure you want close and cancel changes ?",
                     "Confirmation", MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button2) != DialogResult.Yes));
+
+            e.Cancel = !close;
+
+            if (close)
+            {
+                DoOnFormClosing();
+
+                if (_hide)
+                {
+                    e.Cancel = true;
+                    Hide();
+                }
+            }
+        }
+
+        protected virtual void DoOnFormClosing()
+        {
+            IsChanged = false;
+        }
+        
+        public virtual void Open()
+        {
+            IsChanged = false;
+            Show();
+        }
+
+        protected virtual void btnClose_Click(object sender, EventArgs e)
+        {
+            Close();
         }
 
         #endregion

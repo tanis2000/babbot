@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using BabBot.Scripts.Common;
 using BabBot.Wow.Helpers;
+using BabBot.Data;
 using System.IO;
 using SyntaxHighlighter;
 using Microsoft.Win32;
@@ -45,7 +46,9 @@ namespace BabBot.Forms
         private Radar.Radar Radar;
         private AppOptionsForm AppOptionsForm;
         private OptionsForm BotOptionsForm;
-        private GameObjectsForm NPCListForm;
+        private GenericDialog NPCListForm;
+        private GenericDialog RouteListForm;
+
         // number of lines in logging window
         private int _log_len = 500;
 
@@ -1072,6 +1075,10 @@ namespace BabBot.Forms
                     case 3:
                         recordRouteToolStripMenuItem_Click(sender, e);
                         break;
+
+                    case 4:
+                        routesToolStripMenuItem_Click(sender, e);
+                        break;
                 }
             }
 #endif
@@ -1449,12 +1456,7 @@ namespace BabBot.Forms
 
         private void npcListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (NPCListForm == null)
-                NPCListForm = new GameObjectsForm();
-            NPCListForm.TopMost = this.TopMost;
-
-            if (!NPCListForm.Visible)
-                NPCListForm.Open();
+            ShowGenericDialog<GameObjectsForm>(ref NPCListForm);
         }
 
         private void addCurrentTargetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1507,7 +1509,7 @@ namespace BabBot.Forms
                 }
 #endif
             npcListToolStripMenuItem_Click(sender, e);
-            NPCListForm.btnAddNPC_Click(sender, e);
+            ((GameObjectsForm) NPCListForm).btnAddNPC_Click(sender, e);
         }
 
         private void startWoWToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2000,6 +2002,32 @@ namespace BabBot.Forms
                 tbZoom.Value = value;
                 tbZoom_Scroll(sender, null);
             }
+        }
+
+        public void OpenRouteRecording(string obj_name, 
+                            string q_title, string qi_name)
+        {
+            RouteRecorderForm rrf = new RouteRecorderForm();
+            rrf.StartRecording(obj_name, q_title, qi_name);
+        }
+
+        private void routesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowGenericDialog<RoutesForm>(ref RouteListForm);
+        }
+
+        private void ShowGenericDialog<T>(ref GenericDialog form)
+        {
+            if (form == null)
+                form = (GenericDialog) Activator.CreateInstance(typeof(T));
+
+            form.TopMost = this.TopMost;
+
+            if (!form.Visible)
+                form.Open();
+            else
+                form.BringToFront();
+
         }
     }
 }

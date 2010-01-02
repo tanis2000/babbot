@@ -65,7 +65,8 @@ namespace BabBot.States.Common
                             NavigationState ns = new NavigationState(dest, lfs, msg);
 
                             ns.Finished += SetQuestStateReached;
-                            player.StateMachine.SafeStateChange(ns);
+                            CallChangeStateEvent(player, ns, true, false);
+
                             q.State = QuestStates.MOVING_TO_OBJ;
                             break;
 
