@@ -40,19 +40,41 @@ namespace BabBot.Common
 
         #endregion
 
+        /// <summary>
+        /// Process ID of currently running (or started) wow.exe
+        /// </summary>
+        private static uint wow_pid;
+
+        /// <summary>
+        /// Windows handle that has pid as owner process
+        /// </summary>
+        private static uint wow_hnd;
+
         private static IntPtr botHandle;
 
         #region External Declarations
-
-        [DllImport("user32.dll")]
-        private static extern int FindWindow(string className, string windowText);
 
         /// <summary>
         /// API: Get if a window is visible from its handle 
         /// </summary>
         /// <returns>
         [DllImport("user32.dll")]
-        public static extern bool IsWindowVisible(int hWnd);
+        public static extern bool IsWindowVisible(uint hWnd);
+
+        /// <summary>
+        /// API: Returns the id of the thread and process id that created the target window
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="lpdwProcessId"></param>
+        /// <returns></returns>
+        [DllImport("user32.dll")]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, int lParam);
+
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
         #endregion
 
@@ -263,28 +285,51 @@ namespace BabBot.Common
         /// <summary>
         /// Dummy version to check and wait for Wow window init 
         /// </summary>
-        public static int WaitForWowWindow()
+        public static int WaitForWowWindow(uint pid)
         {
-            int hWnd = 0;
+            uint hWnd = 0;
             bool isVisible = false;
             while (hWnd == 0 && !isVisible)
             {
-                hWnd = GetWowWindowHandle();
+                if (hWnd == 0)
+                    hWnd = GetWowWindowHandle(pid);
+
                 if (hWnd != 0)
-                {
                     isVisible = IsWindowVisible(hWnd);
-                }
+
                 Thread.Sleep(1000);
             }
-            return hWnd;
+
+            return (int) hWnd;
+        }
+
+        public static bool CheckWowWindow(IntPtr hwnd, IntPtr lParam)
+        {
+            uint pid;
+            GetWindowThreadProcessId(hwnd, out pid);
+            bool found = (pid == wow_pid);
+            if (found)
+                wow_hnd = (uint) hwnd;
+
+            return !found;
         }
 
         /// <summary>
-        /// Dummy version to get the Wow window handle
+        /// Find windows handle of started wow.exe process
+        /// Comment: FindWindow doesn't work if multiple wow.exe started
         /// </summary>
-        public static int GetWowWindowHandle()
+        public static uint GetWowWindowHandle(uint pid)
         {
-            return FindWindow(null, WND_TITLE);
+            // Old version
+            // return FindWindow(null, WND_TITLE);
+
+            wow_pid = pid;
+            wow_hnd = 0;
+
+            // Not checking for error since wow_hnd set in callback function
+            EnumWindows(new EnumWindowsProc(CheckWowWindow), 0);
+
+            return wow_hnd;
         }
 
         public static IntPtr BotHandle
