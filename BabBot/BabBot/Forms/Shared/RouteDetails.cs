@@ -1,0 +1,376 @@
+﻿/*
+    This file is part of BabBot.
+
+    BabBot is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BabBot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
+  
+    Copyright 2009 BabBot Team
+*/
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Reflection;
+
+// BabBot namespaces
+using BabBot.Wow;
+using BabBot.Data;
+using BabBot.Manager;
+using BabBot.Common;
+
+
+namespace BabBot.Forms.Shared
+{
+    public partial class RouteDetails : UserControl
+    {
+        public ComboBox[] CbTypes;
+
+        public event EventHandler RegisterChanges;
+
+        public RouteDetails()
+        {
+            InitializeComponent();
+
+            pOptA.Tag = pObjA;
+            pObjA.Tag = pSubObjA;
+            cbObjA0.Tag = lblObjA0;
+            cbObjA1.Tag = lblObjA1;
+
+            pOptB.Tag = pObjB;
+            pObjB.Tag = pSubObjB;
+            cbObjB0.Tag = lblObjB0;
+            cbObjB1.Tag = lblObjB1;
+
+            CbTypes = new ComboBox[] { cbTypeA, cbTypeB };
+            Panel[] obj_p = new Panel[] { pOptA, pOptB };
+
+            List<AbstractListEndpoint>[] obj_list = new List<AbstractListEndpoint>[] {
+                new List<AbstractListEndpoint>(), new List<AbstractListEndpoint>() };
+
+            foreach (EndpointTypes ept in Enum.GetValues(typeof(EndpointTypes)))
+            {
+                string class_name = Output.GetLogNameByLfs(
+                    Enum.GetName(typeof(EndpointTypes), ept).ToLower(), "") + "ListEndpoint";
+
+                Type reflect_class = Type.GetType("BabBot.Forms.Shared." + class_name);
+
+                for (int i = 0; i < 2; i++)
+                    obj_list[i].Add(Activator.CreateInstance(
+                        reflect_class, new object[] { this, 
+                            obj_p[i], (char) (65 + i) }) as AbstractListEndpoint);
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                CbTypes[i].Tag = i;
+                CbTypes[i].DataSource = obj_list[i];
+                CbTypes[i].DisplayMember = "Name";
+                CbTypes[i].SelectedIndex = 0;
+            }
+        }
+
+        private void bsGameObjectsA_CurrentChanged(object sender, EventArgs e)
+        {
+            if (bsGameObjectsA.Current == null)
+                return;
+
+            bsGameObjectsB.Filter = "ID <> " + ((DataRowView)bsGameObjectsA.Current).Row["ID"].ToString();
+        }
+
+        private void cbType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox cbs = (ComboBox)sender;
+            if (cbs.SelectedItem == null)
+                return;
+
+            ((AbstractListEndpoint)cbs.SelectedItem).OnSelection();
+
+            OnRegisterChanges(sender, e);
+        }
+
+        private void OnRegisterChanges(object sender, EventArgs e)
+        {
+            if (RegisterChanges != null)
+                RegisterChanges(sender, e);
+        }
+
+        private void cbObjA0_DataSourceChanged(object sender, EventArgs e)
+        {
+            if (cbObjA0.DataSource != bsGameObjectsA)
+                bsGameObjectsB.Filter = null;
+            else
+                bsGameObjectsA_CurrentChanged(sender, e);
+        }
+
+        public void SetDataSource(BotDataSet source)
+        {
+            bsGameObjectsA.DataSource = source;
+            bsGameObjectsB.DataSource = source;
+
+            bsQuestListA.DataSource = source;
+            bsQuestListB.DataSource = source;
+        }
+    }
+
+    #region Classes for Reflection
+
+    public abstract class AbstractListEndpoint
+    {
+        public virtual bool Check
+        {
+            get { return true; }
+        }
+
+        public abstract EndpointTypes Type { get; }
+
+        public abstract string Name { get; }
+
+        public abstract void OnSelection();
+
+        public abstract Endpoint GetEndpoint(string ZoneText, Vector3D waypoint);
+    }
+
+    public class UndefListEndpoint : AbstractListEndpoint
+    {
+        protected char C;
+        protected Panel[] PTargets = new Panel[3];
+
+        protected RouteDetails Owner;
+        protected ComboBox[] cb_list = new ComboBox[2];
+
+        public override string Name
+        {
+            get { return "undef"; }
+        }
+
+        public override EndpointTypes Type
+        {
+            get { return EndpointTypes.UNDEF; }
+        }
+
+        public UndefListEndpoint() { }
+
+        public UndefListEndpoint(RouteDetails owner, Panel target, char a_b)
+        {
+            C = a_b;
+            Owner = owner;
+            PTargets[0] = target;
+            for (int i = 0; i < 2; i++)
+            {
+                PTargets[i + 1] = (Panel)PTargets[i].Tag;
+                cb_list[i] = (ComboBox)PTargets[i + 1].Controls["cbObj" + C + i];
+            }
+        }
+
+        public override bool Check
+        {
+            get
+            {
+                return GenericDialog.GetConfirmation(Owner,
+                  "Continue with undefined Endpoint " + C + " ?");
+            }
+        }
+
+        public override void OnSelection()
+        {
+            SetControls(false, 2);
+            foreach (ComboBox cb in cb_list)
+                cb.DataSource = null;
+        }
+
+        protected void SetControls(bool enabled, int cnt)
+        {
+            for (int i = 0; i < cnt; i++)
+                PTargets[i + 1].Visible = enabled;
+        }
+
+        public override Endpoint GetEndpoint(string ZoneText, Vector3D waypoint)
+        {
+            return new Endpoint(Type, ZoneText, waypoint);
+        }
+    }
+
+    public abstract class AbstractDefListEndpoint : UndefListEndpoint
+    {
+        protected readonly BindingSource[] bs;
+        private string[] DisplayMembers;
+        private int _bs_cnt;
+        protected abstract string TypeStr { get; }
+
+        public AbstractDefListEndpoint(string bs_name) : base() { }
+
+        public AbstractDefListEndpoint(RouteDetails owner,
+                        Panel target, char a_b, string[] bs_list, string[] members)
+            : base(owner, target, a_b)
+        {
+            _bs_cnt = bs_list.Length;
+            DisplayMembers = members;
+            bs = new BindingSource[_bs_cnt];
+
+            for (int i = 0; i < bs_list.Length; i++)
+                bs[i] = FindBindingSource(bs_list[i]);
+        }
+
+        private BindingSource FindBindingSource(string name)
+        {
+            // Check for binding source
+            FieldInfo[] fi = Owner.GetType().GetFields();
+
+            foreach (FieldInfo f in fi)
+                if (f.Name.Equals(name + C))
+                    return (BindingSource)f.GetValue(Owner);
+
+            return null;
+        }
+
+        public override bool Check
+        {
+            get
+            {
+                if (cb_list[0].SelectedItem == null)
+                {
+                    GenericDialog.ShowErrorMessage(Owner,
+                        "Select " + TypeStr + " for Point " + C);
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        public override void OnSelection()
+        {
+            base.OnSelection();
+            SetControls(true, _bs_cnt);
+
+            for (int i = 0; i < _bs_cnt; i++)
+                SetBindingSource(cb_list[i], i, DisplayMembers[i]);
+        }
+
+        protected void SetBindingSource(ComboBox cb, int idx, string member)
+        {
+            cb.DataSource = bs[idx];
+            cb.DisplayMember = member;
+            ((Label)cb.Tag).Text = DisplayMembers[idx][0] +
+                    DisplayMembers[idx].Substring(1).ToLower();
+        }
+    }
+
+    public class GameObjListEndpoint : AbstractDefListEndpoint
+    {
+        public GameObjListEndpoint(RouteDetails owner, Panel target, char a_b)
+            : base(owner, target, a_b, new string[] { "bsGameObjects" },
+                                                new string[] { "NAME" }) { }
+
+        public override string Name
+        {
+            get { return "game_object"; }
+        }
+
+        public override EndpointTypes Type
+        {
+            get { return EndpointTypes.GAME_OBJ; }
+        }
+
+        public override Endpoint GetEndpoint(string ZoneText, Vector3D waypoint)
+        {
+            return new GameObjEndpoint(Type, cb_list[0].Text, ZoneText, waypoint);
+        }
+
+        protected override string TypeStr
+        {
+            get { return "Game Object"; }
+        }
+    }
+
+    public class QuestObjListEndpoint : AbstractDefListEndpoint
+    {
+        public QuestObjListEndpoint(RouteDetails owner, Panel target, char a_b)
+            : base(owner, target, a_b,
+                new string[] { "bsQuestList", "fkQuestItems" },
+                            new string[] { "TITLE", "NAME" }) { }
+
+        public override string Name
+        {
+            get { return "quest_objective"; }
+        }
+
+        public override bool Check
+        {
+            get
+            {
+                if (!base.Check || (cb_list[1].SelectedItem == null))
+                {
+                    GenericDialog.ShowErrorMessage(Owner,
+                        "Select Quest Objective for Point " + C);
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        protected override string TypeStr
+        {
+            get { return "Quest"; }
+        }
+
+        public override Endpoint GetEndpoint(string ZoneText, Vector3D waypoint)
+        {
+            BotDataSet.QuestListRow row = (BotDataSet.QuestListRow)((DataRowView)
+                ((BindingSource)cb_list[0].DataSource).Current).Row;
+            return new QuestItemEndpoint(Type, row.ID, cb_list[1].Text, ZoneText, waypoint);
+        }
+
+
+    }
+
+    public class HotSpotListEndpoint : UndefListEndpoint
+    {
+        public HotSpotListEndpoint(RouteDetails owner, Panel target, char a_b)
+            : base(owner, target, a_b) { }
+
+        public override string Name
+        {
+            get { return "hot_spot"; }
+        }
+
+        public override EndpointTypes Type
+        {
+            get { return EndpointTypes.HOT_SPOT; }
+        }
+    }
+
+    public class GraveyardListEndpoint : UndefListEndpoint
+    {
+        public GraveyardListEndpoint(RouteDetails owner, Panel target, char a_b)
+            : base(owner, target, a_b) { }
+
+        public override string Name
+        {
+            get { return "graveyard"; }
+        }
+
+        public override EndpointTypes Type
+        {
+            get { return EndpointTypes.GRAVEYARD; }
+        }
+    }
+
+    #endregion
+
+}
