@@ -21,6 +21,14 @@ using BabBot.Common;
 
 namespace BabBot.States
 {
+    public enum StateConditions : byte
+    {
+        NEW,
+        STARTED,
+        FINISHED,
+        TERMINATED,
+    }
+
     /// <summary>
     /// Represents a generic state in the fininte state machine
     /// </summary>
@@ -32,12 +40,31 @@ namespace BabBot.States
         public DateTime ExitTime { get; protected set; }
         public DateTime FinishTime { get; protected set; }
 
+        /// <summary>
+        /// State condition
+        /// </summary>
+        public StateConditions Status = StateConditions.NEW;
+
         /// <summary>The state the entity was in previous to this state being started;</summary>
         public State<T> PreviousState { get; set; }
 
         public bool HasChangeStateEventHookup
         {
             get { return (ChangeStateRequest == null) ? false : true; }
+        }
+
+        public bool Started
+        {
+            get { return Status == StateConditions.STARTED; }
+        }
+
+        public bool Completed
+        {
+            get
+            {
+                return (Status == StateConditions.FINISHED) ||
+                  (Status == StateConditions.TERMINATED);
+            }
         }
 
         /// <summary>Event fires before Enter code runs</summary>
@@ -88,6 +115,9 @@ namespace BabBot.States
             //Raise Entered
             if (Entered != null)
                 Entered(this, StateEventArgs<T>.GetArgs(Entity));
+
+            // Last call. Change status
+            Status = StateConditions.STARTED;
         }
 
         protected abstract void DoEnter(T Entity);
@@ -119,15 +149,18 @@ namespace BabBot.States
             if (Exiting != null)
                 Exiting(this, StateEventArgs<T>.GetArgs(Entity));
 
-            //Update Exit date/time
-            ExitTime = DateTime.Now;
-
             //call DoExecute
             DoExit(Entity);
 
             //Raise Exited
             if (Exited != null)
                 Exited(this, StateEventArgs<T>.GetArgs(Entity));
+
+            //Update Exit date/time at the end
+            ExitTime = DateTime.Now;
+
+            // Last call. Change status
+            Status = StateConditions.TERMINATED;
         }
 
         protected virtual void DoExit(T Entity) { }
@@ -146,29 +179,60 @@ namespace BabBot.States
             if (Finished != null)
                 Finished(this, StateEventArgs<T>.GetArgs(Entity));
 
-            //Update Finish date/time. Always last
+            //Update Finish date/time at the end
             FinishTime = DateTime.Now;
-        }
 
+            // Last call. Change status
+            Status = StateConditions.FINISHED;
+        }
 
         protected virtual void DoFinish(T Entity) { }
 
-        protected bool CallChangeStateEvent(T Entity, State<T> NewState, bool TrackPrevious, bool ExitPrevious)
+        protected bool CallChangeStateEvent(T Entity, State<T> NewState)
+        {
+            return CallChangeStateEvent(Entity, NewState, true, false);
+        }
+
+        /// <summary>
+        /// Call this method when current state decide it need swith to different state,
+        /// For ex travel state after it find destination coordinates switch to navigation
+        /// state to actually start moving to destination
+        /// </summary>
+        /// <param name="Entity">Object this state interact with</param>
+        /// <param name="NewState">New State</param>
+        /// <param name="TrackPrevious">True if need track previous state
+        /// (i.e state that calling change)</param>
+        /// <param name="ExitPrevious">True if need exit previous
+        /// (i.e state that calling change)</param>
+        /// <returns>True if change accepted and false if not</returns>
+        protected bool CallChangeStateEvent(T Entity, State<T> NewState, 
+                                                bool TrackPrevious, bool ExitPrevious)
         {
             if (HasChangeStateEventHookup)
             {
-                ChangeStateRequest(this, ChangeStateEventArgs<T>.GetArgs(Entity, NewState, TrackPrevious, ExitPrevious));
+                ChangeStateRequest(this, ChangeStateEventArgs<T>.GetArgs(Entity, 
+                                                NewState, TrackPrevious, ExitPrevious));
                 return true;
             }
 
             return false;
         }
 
+        /// <summary>
+        /// Logging utility
+        /// </summary>
+        /// <param name="lfs">Logging facility</param>
+        /// <param name="msg">Logging message</param>
         protected void Log(string lfs, string msg)
         {
             Output.Instance.Log(lfs, msg);
         }
 
+        /// <summary>
+        /// Debug utility
+        /// </summary>
+        /// <param name="lfs">Debug facility</param>
+        /// <param name="msg">Debug message</param>
         protected void Debug(string lfs, string msg)
         {
             Output.Instance.Debug(lfs, msg, this);
