@@ -110,13 +110,19 @@ namespace BabBot.Forms
 
         private void btnControl_Click(object sender, EventArgs e)
         {
-            if (!CheckEndpoints())
-                return;
-
             if (_rec_state == RecStates.IDLE)
             {
+                // Check that endpoints type selected
+                if (!CheckEndpoints())
+                    return;
+
+                // Ask for reset if table has data and last row not selected
+                // If last row selected than keep appending data
+                bool ask_reset = (dgWaypoints.RowCount > 1) &&
+                            (dgWaypoints.Rows[dgWaypoints.RowCount - 1].Selected == false);
+
                 if (!((AbstractListEndpoint) cbTypeA.SelectedItem).Check ||
-                    (!(CheckInGame() && ResetRoute())))
+                    (!(CheckInGame() && (!ask_reset || ResetRoute()))))
                     return;
                 
 #if DEBUG
@@ -135,8 +141,8 @@ namespace BabBot.Forms
 
                     // Load RouteRecordingState and start
                     _route_rec_state = new RouteRecordingState(RecordWp, numRecDistance.Value);
-                    ProcessManager.Player.StateMachine.ChangeState(_route_rec_state, false, true);
-                    ProcessManager.Player.StateMachine.IsRunning = true;
+                    ProcessManager.Player.StateMachine.
+                            InitState = new TestGlobalState(_route_rec_state);
 #if DEBUG
                 } else tbZoneA.Text = "Teldrassil";
 #endif
@@ -319,6 +325,15 @@ namespace BabBot.Forms
             goToToolStripMenuItem_Click(sender, e);
         }
 
+        private Waypoints GetWaypointsList(string fname)
+        {
+            Waypoints waypoints = new Waypoints(fname);
+            for (int i = 0; i < dgWaypoints.Rows.Count - 1; i++)
+                waypoints.List.Add(MakeVector(dgWaypoints.Rows[i]));
+
+            return waypoints;
+        }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             // Check if B is set
@@ -335,9 +350,7 @@ namespace BabBot.Forms
                 tbDescr.Text, cbReversible.Checked);
 
             // Add waypoints except  last empty line
-            Waypoints waypoints = new Waypoints(route.WaypointFileName);
-            for (int i = 0; i < dgWaypoints.Rows.Count - 1; i++)
-                waypoints.List.Add(MakeVector(dgWaypoints.Rows[i]));
+            Waypoints waypoints = GetWaypointsList(route.FileName);
 
             // Save route
             if (RouteListManager.SaveRoute(route, waypoints))
@@ -414,6 +427,57 @@ namespace BabBot.Forms
                 bsGameObjectsB.Filter = null;
             else
                 bsGameObjectsA_CurrentChanged(sender, e);
+        }
+
+        public void StartRecording(string obj_name, string q_name, string qi_name)
+        {
+            // From Game Object
+            cbTypeA.Text = "game_object";
+            cbObjA0.Text = obj_name;
+
+            // To QuestItem
+            cbTypeB.Text = "quest_objective";
+            cbObjB0.Text = q_name;
+            cbObjB1.Text = qi_name;
+
+            Show();
+            btnControl_Click(this, null);
+        }
+
+        private void dgWaypoints_SelectionChanged(object sender, EventArgs e)
+        {
+            btnTest.Enabled = dgWaypoints.Rows.Count > 1 &&
+                (dgWaypoints.Rows[0].Selected || dgWaypoints.Rows[dgWaypoints.Rows.Count - 1].Selected);
+        }
+
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+            if (!CheckInGame())
+                return;
+
+            Vector3D cur_pos = ProcessManager.Player.Location;
+
+            // Check if bot at first point
+            Vector3D vfirst = MakeVector(dgWaypoints.Rows[0]);
+            if (cur_pos.IsClose(vfirst))
+            {
+                // Make vector array
+
+                // Start navigation thread with vector array
+                bwRouteNavigation.RunWorkerAsync(GetWaypointsList("Test Direct Run"));
+            } 
+            else if (cur_pos.IsClose(MakeVector(dgWaypoints.
+                                Rows[dgWaypoints.Rows.Count - 2])))
+            {
+                bwRouteNavigation.RunWorkerAsync();
+            }
+        }
+
+        private void bwRouteNavigation_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Waypoints wp = (Waypoints)e.Argument;
+            NpcHelper.StartNavState(new NavigationState(wp, "test_run", wp.Name), 
+                                                ProcessManager.Player, "test_run");
         }
     }
 

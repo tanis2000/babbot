@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgWaypoints = new System.Windows.Forms.DataGridView();
             this.X = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Y = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -77,11 +77,13 @@
             this.numRecDistance = new System.Windows.Forms.NumericUpDown();
             this.lblRecDistance = new System.Windows.Forms.Label();
             this.gbRecOptions = new System.Windows.Forms.GroupBox();
+            this.btnTest = new System.Windows.Forms.Button();
             this.bsQuestListA = new System.Windows.Forms.BindingSource(this.components);
             this.bsQuestListB = new System.Windows.Forms.BindingSource(this.components);
             this.flpMain = new System.Windows.Forms.FlowLayoutPanel();
             this.fkQuestItemsA = new System.Windows.Forms.BindingSource(this.components);
             this.fkQuestItemsB = new System.Windows.Forms.BindingSource(this.components);
+            this.bwRouteNavigation = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.dgWaypoints)).BeginInit();
             this.popWaypoints.SuspendLayout();
             this.gbRouteDetails.SuspendLayout();
@@ -107,16 +109,16 @@
             // 
             // btnHelp
             // 
-            this.btnHelp.Location = new System.Drawing.Point(12, 473);
+            this.btnHelp.Location = new System.Drawing.Point(12, 523);
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(331, 473);
+            this.btnClose.Location = new System.Drawing.Point(331, 523);
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(247, 473);
+            this.btnSave.Location = new System.Drawing.Point(247, 523);
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // dgWaypoints
@@ -128,28 +130,28 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.dgWaypoints.BackgroundColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.dgWaypoints.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.DarkKhaki;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgWaypoints.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.DarkKhaki;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgWaypoints.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dgWaypoints.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgWaypoints.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.X,
             this.Y,
             this.Z});
             this.dgWaypoints.ContextMenuStrip = this.popWaypoints;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.ScrollBar;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgWaypoints.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.ScrollBar;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgWaypoints.DefaultCellStyle = dataGridViewCellStyle4;
             this.dgWaypoints.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgWaypoints.EnableHeadersVisualStyles = false;
             this.dgWaypoints.Location = new System.Drawing.Point(12, 26);
@@ -159,11 +161,12 @@
             this.dgWaypoints.RowTemplate.Height = 16;
             this.dgWaypoints.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgWaypoints.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgWaypoints.Size = new System.Drawing.Size(185, 433);
+            this.dgWaypoints.Size = new System.Drawing.Size(185, 483);
             this.dgWaypoints.TabIndex = 3;
             this.dgWaypoints.DoubleClick += new System.EventHandler(this.dgWaypoints_DoubleClick);
             this.dgWaypoints.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgWaypoints_RowsAdded);
             this.dgWaypoints.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dgWaypoints_RowsRemoved);
+            this.dgWaypoints.SelectionChanged += new System.EventHandler(this.dgWaypoints_SelectionChanged);
             // 
             // X
             // 
@@ -620,6 +623,7 @@
             // 
             // gbRecOptions
             // 
+            this.gbRecOptions.Controls.Add(this.btnTest);
             this.gbRecOptions.Controls.Add(this.lblRecDescr);
             this.gbRecOptions.Controls.Add(this.numRecDistance);
             this.gbRecOptions.Controls.Add(this.lblRecDistance);
@@ -628,10 +632,21 @@
             this.gbRecOptions.Location = new System.Drawing.Point(0, 357);
             this.gbRecOptions.Margin = new System.Windows.Forms.Padding(0);
             this.gbRecOptions.Name = "gbRecOptions";
-            this.gbRecOptions.Size = new System.Drawing.Size(199, 90);
+            this.gbRecOptions.Size = new System.Drawing.Size(199, 124);
             this.gbRecOptions.TabIndex = 11;
             this.gbRecOptions.TabStop = false;
             this.gbRecOptions.Text = "Recording Options";
+            // 
+            // btnTest
+            // 
+            this.btnTest.Enabled = false;
+            this.btnTest.Location = new System.Drawing.Point(37, 88);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(156, 23);
+            this.btnTest.TabIndex = 11;
+            this.btnTest.Text = "Test";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
             // 
             // bsQuestListA
             // 
@@ -657,7 +672,7 @@
             this.flpMain.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flpMain.Location = new System.Drawing.Point(203, 12);
             this.flpMain.Name = "flpMain";
-            this.flpMain.Size = new System.Drawing.Size(200, 447);
+            this.flpMain.Size = new System.Drawing.Size(200, 481);
             this.flpMain.TabIndex = 12;
             // 
             // fkQuestItemsA
@@ -672,10 +687,14 @@
             this.fkQuestItemsB.DataSource = this.bsQuestListB;
             this.fkQuestItemsB.Filter = "ITEM_TYPE_ID = 3";
             // 
+            // bwRouteNavigation
+            // 
+            this.bwRouteNavigation.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwRouteNavigation_DoWork);
+            // 
             // RouteRecorderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(415, 508);
+            this.ClientSize = new System.Drawing.Size(415, 558);
             this.Controls.Add(this.flpMain);
             this.Controls.Add(this.dgWaypoints);
             this.Name = "RouteRecorderForm";
@@ -776,5 +795,7 @@
         private System.Windows.Forms.FlowLayoutPanel flpMain;
         public System.Windows.Forms.BindingSource fkQuestItemsA;
         public System.Windows.Forms.BindingSource fkQuestItemsB;
+        private System.Windows.Forms.Button btnTest;
+        private System.ComponentModel.BackgroundWorker bwRouteNavigation;
     }
 }
