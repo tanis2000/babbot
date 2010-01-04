@@ -255,7 +255,7 @@ namespace BabBot.Wow
         public CharClass FindClassByArmoryId(byte id)
         {
             CharClass res = null;
-            foreach (CharClass c in Table.Values)
+            foreach (CharClass c in Values)
                 if (c.ArmoryId == id)
                 {
                     res = c;
@@ -429,15 +429,29 @@ namespace BabBot.Wow
     /// </summary>
     public class AppConfig
     {
+        /// <summary>
+        /// Minimum time to refresh bot state machine
+        /// </summary>
         [XmlAttribute("min_refresh_time")]
         public int MinBotRefreshTime;
 
+        /// <summary>
+        /// Maximum number ot retries bot uses to reach target
+        /// Not include original try so
+        /// # of tries = 1 + # of retries
+        /// </summary>
         [XmlAttribute("max_get_target_retries")]
         public int MaxTargetGetRetries;
 
+        /// <summary>
+        /// Maximum time bot wait to receive response from NPC after request (any)
+        /// </summary>
         [XmlAttribute("max_npc_interact_time")]
         public int MaxNpcInteractTime;
 
+        /// <summary>
+        /// String representation of MaxNpcInteractTime
+        /// </summary>
         internal string MaxNpcInteractSec
         {
             get { return Convert.ToString(

@@ -115,6 +115,8 @@ namespace BabBot.Wow.Helpers
     /// </summary>
     public static class NpcHelper
     {
+        private delegate bool CheckDelegate(object[] param_list, out string[] res);
+
         // For test use
         public static bool UseState = true;
 
@@ -183,6 +185,13 @@ namespace BabBot.Wow.Helpers
             return fparams;
         }
 
+        private static bool CheckNpcDialog(object[] param_list, out string[] fparams)
+        {
+            bool auto_close = (bool)param_list[0];
+            fparams = DoGetNpcDialogInfo(auto_close);
+            return fparams[0] != null;
+        }
+
         /// <summary>
         /// Interact with NPC, wait until NPC frame opens and return type of open frame.
         /// See description for GetTargetNpcFrameInfo for detail
@@ -202,11 +211,13 @@ namespace BabBot.Wow.Helpers
 
             // IF NPC doesn't have any quests and just on gossip option the WoW
             // does use this single option by default
-
+            
+            /*
             DateTime dt = DateTime.Now;
             Thread.Sleep(100);
             TimeSpan ts = DateTime.Now.Subtract(dt);
 
+            
             string[] fparams = null;
             string cur_service = null;
             while ((cur_service == null) &&
@@ -221,17 +232,26 @@ namespace BabBot.Wow.Helpers
 
             if (cur_service == null)
                 throw new NpcInteractException();
+            */
 
+            string[] fparams;
+            TimedTargetInteract(CheckNpcDialog, new object[] { auto_close }, out fparams);
             return fparams;
         }
 
-        public static void MoveToGameObjByName(string name, string lfs)
+        public static GameObject FindGameObjByName(string name)
         {
             GameObject obj = DataManager.CurWoWVersion.GameObjData.FindGameObjByName(name);
             if (obj == null)
                 throw new GameObjectNotFountException(name);
 
-            MoveToGameObj(obj, lfs);
+            return obj;
+
+        }
+
+        public static void MoveToGameObjByName(string name, string lfs)
+        {
+            MoveToGameObj(FindGameObjByName(name), lfs);
         }
 
         public static Vector3D GetGameObjCoord(GameObject obj, string lfs)
@@ -491,12 +511,21 @@ namespace BabBot.Wow.Helpers
             return true;
         }
 
+        public static bool CheckDialogOpen(object[] param_list, out string[] res)
+        {
+            res = null;
+            string fname = (string)param_list[0];
+            return LuaHelper.Exec("IsNpcFrameOpen", fname)[0].Equals("1");
+        }
+
         public static void WaitDialogOpen(string fname, string lfs)
         {
-            bool is_open = false;
-            DateTime dt = DateTime.Now;
             Output.Instance.Debug(lfs, 
                 "Waiting for the " + fname + "Frame opened");
+
+            /*
+            bool is_open = false;
+            DateTime dt = DateTime.Now;
 
             do
             {
@@ -510,6 +539,12 @@ namespace BabBot.Wow.Helpers
                 throw new NpcInteractException(
                     "Unable retrieve " + fname + "Frame after " +
                         ProcessManager.AppConfig.MaxNpcInteractSec + 
+                        " of waiting");
+
+             */
+            TimedTargetInteract(CheckDialogOpen, new object[] { fname }, 
+                        "Unable retrieve " + fname + "Frame after " +
+                        ProcessManager.AppConfig.MaxNpcInteractSec +
                         " of waiting");
             Output.Instance.Debug(lfs,fname + "Frame ready");
         }
@@ -872,14 +907,14 @@ namespace BabBot.Wow.Helpers
             if (list == null)
             {
                 // Otherwise look the whole list
-                foreach (GameObject obj in DataManager.CurWoWVersion.GameObjData.STable.Values)
+                foreach (GameObject obj in DataManager.CurWoWVersion.GameObjData.Values)
                 {
                     if (obj.ObjType == DataManager.GameObjectTypes.ITEM)
                         continue;
 
                     NPC npc = (NPC)obj;
 
-                    if (npc.Services.Table.ContainsKey(service))
+                    if (npc.Services.ContainsKey(service))
                         list.Add(npc);
                 }
             }
@@ -907,7 +942,7 @@ namespace BabBot.Wow.Helpers
                     dist = d1;
                 } 
 
-                foreach (ZoneWp z in npc.Coordinates.Table.Values)
+                foreach (ZoneWp z in npc.Coordinates.Values)
                 {
                     if (!z.Name.Equals(player_zone))
                         continue;
@@ -1065,8 +1100,76 @@ namespace BabBot.Wow.Helpers
             if (idx == 0)
                 throw new BinderServiceNotFound();
 
-            // SelectNpcOption(npc, 
+            // Click make inn my home
+            SelectNpcGossipOption(npc, idx, lfs); 
 
+            // Wait for dialog popup
+            TimedTargetInteract(CheckBinderConfirmation);
+
+            // Confirm bind
+            LuaHelper.Exec("ConfirmBinder");
         }
+
+        private static bool CheckBinderConfirmation(object[] param_list, out string[] res)
+        {
+            return CheckStaticDialog("CONFIRM_BINDER", out res);
+        }
+
+        private static bool CheckStaticDialog(string dname, out string[] res)
+        {
+            res = LuaHelper.Exec("FindVisibleStaticDialog", dname);
+            return !string.IsNullOrEmpty(res[0]);
+        }
+
+        #region TimedTargetInteract
+
+        private static void TimedTargetInteract(CheckDelegate check)
+        {
+            string[] res;
+            TimedTargetInteract(check, null, out res, null);
+        }
+
+        private static void TimedTargetInteract(CheckDelegate check,
+                                    object[] param_list, string err)
+        {
+            string[] res;
+            TimedTargetInteract(check, param_list, out res, err);
+        }
+
+        private static void TimedTargetInteract(CheckDelegate check, 
+                                    object[] param_list, out string[] res)
+        {
+            TimedTargetInteract(check, param_list, out res, null);
+        }
+
+        private static void TimedTargetInteract(CheckDelegate check,
+                                    object[] param_list, out string[] res, string err)
+        {
+            TimedTargetInteract(check, param_list, out res, 1000, err);
+        }
+
+        private static void TimedTargetInteract(CheckDelegate check, 
+                                    object[] param_list, out string[] res, int wait, string err)
+        {
+            res = null;
+            bool f = false;
+            DateTime dt = DateTime.Now;
+            while (!f && (DateTime.Now - dt).
+                TotalMilliseconds <= ProcessManager.AppConfig.MaxNpcInteractTime)
+            {
+                Thread.Sleep(wait);
+                f = check(param_list, out res);
+            }
+
+            if (!f)
+            {
+                if (err == null)
+                    throw new NpcInteractException();
+                else
+                    throw new NpcInteractException(err);
+            }
+        }
+
+        #endregion
     }
 }

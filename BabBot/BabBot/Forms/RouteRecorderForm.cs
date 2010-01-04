@@ -46,7 +46,8 @@ namespace BabBot.Forms
         
         RecStates _rec_state = RecStates.IDLE;
         RouteRecordingState _route_rec_state;
-        
+        private Route _route;
+
         public RouteRecorderForm()
             : base ("route_mgr")
         {
@@ -73,27 +74,12 @@ namespace BabBot.Forms
 #endif
         }
 
-        private bool CheckEndpoints()
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                ComboBox cb = ctrlRouteDetails.CbTypes[i];
-                if (cb.SelectedItem == null)
-                {
-                    ShowErrorMessage("Type for Endpoint " + (char)(65 + i) + " not selected");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         private void btnControl_Click(object sender, EventArgs e)
         {
             if (_rec_state == RecStates.IDLE)
             {
                 // Check that endpoints type selected
-                if (!CheckEndpoints())
+                if (!ctrlRouteDetails.CheckEndpoints())
                     return;
 
                 // Ask for reset if table has data and last row not selected
@@ -123,11 +109,11 @@ namespace BabBot.Forms
                     _route_rec_state = new RouteRecordingState(RecordWp, numRecDistance.Value);
                     ProcessManager.Player.StateMachine.
                             InitState = new TestGlobalState(_route_rec_state);
+
 #if DEBUG
                 }
                 else ctrlRouteDetails.tbZoneA.Text = "Teldrassil";
 #endif
-                
                 btnControl.Text = "Stop";
                 btnReset.Text = "Suspend";
 
@@ -151,10 +137,10 @@ namespace BabBot.Forms
 
                 ProcessManager.Player.setCurrentMapInfo();
                 ctrlRouteDetails.tbZoneB.Text = ProcessManager.Player.ZoneText;
+
 #if DEBUG
                 }
 #endif
-
                 btnControl.Text = "Start";
                 btnReset.Text = "Reset";
             }
@@ -199,7 +185,6 @@ namespace BabBot.Forms
                 // For some reason the first row keep selected
                 if (idx == 2)
                     dgWaypoints.Rows[0].Selected = false;
-
 
                 dgWaypoints.Rows[idx].Selected = true;
                 dgWaypoints.FirstDisplayedScrollingRowIndex = idx;
@@ -259,7 +244,6 @@ namespace BabBot.Forms
         {
             // Disable when multiselected
             goToToolStripMenuItem.Enabled = (dgWaypoints.SelectedRows.Count == 1);
-            
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -308,44 +292,70 @@ namespace BabBot.Forms
 
         private Waypoints GetWaypointsList(string fname)
         {
+            return GetWaypointsList(fname, false);
+        }
+
+        private Waypoints GetReverseWaypointsList(string fname)
+        {
+            return GetWaypointsList(fname, true);
+        }
+
+        private Waypoints GetWaypointsList(string fname, bool reverse)
+        {
             Waypoints waypoints = new Waypoints(fname);
             for (int i = 0; i < dgWaypoints.Rows.Count - 1; i++)
-                waypoints.List.Add(MakeVector(dgWaypoints.Rows[i]));
+                waypoints.Add(MakeVector(dgWaypoints.Rows[i]));
+
+            if (reverse)
+                waypoints.List.Reverse();
 
             return waypoints;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            // Check if B is set
-            if (!(CheckEndpoints() && ((AbstractListEndpoint)
-                        ctrlRouteDetails.cbTypeB.SelectedItem).Check))
-                return;
-
             // Make route
             AbstractListEndpoint point_a = ctrlRouteDetails.
                         cbTypeA.SelectedItem as AbstractListEndpoint;
             AbstractListEndpoint point_b = ctrlRouteDetails.
                         cbTypeB.SelectedItem as AbstractListEndpoint;
-            Route route = new Route(
-                point_a.GetEndpoint(ctrlRouteDetails.tbZoneA.Text, MakeVector(dgWaypoints.Rows[0])),
-                point_b.GetEndpoint(ctrlRouteDetails.tbZoneB.Text, 
-                        MakeVector(dgWaypoints.Rows[dgWaypoints.Rows.Count - 2])),
-                ctrlRouteDetails.tbDescr.Text, ctrlRouteDetails.cbReversible.Checked);
+
+            if (_route == null)
+            {
+                // Make new route
+                _route = ctrlRouteDetails.GetRoute(MakeVector(dgWaypoints.Rows[0]),
+                            MakeVector(dgWaypoints.Rows[dgWaypoints.Rows.Count - 2]));
+                if (_route == null)
+                    return;
+            }
+            else
+            {
+                // Update existing
+                _route.PointA = point_a.GetEndpoint(ctrlRouteDetails.tbZoneA.Text,
+                        MakeVector(dgWaypoints.Rows[0]));
+                _route.PointB = point_b.GetEndpoint(ctrlRouteDetails.tbZoneB.Text,
+                        MakeVector(dgWaypoints.Rows[dgWaypoints.Rows.Count - 2]));
+                _route.Description = ctrlRouteDetails.tbDescr.Text;
+                _route.Reversible = ctrlRouteDetails.cbReversible.Checked;
+            }
 
             // Add waypoints except  last empty line
-            Waypoints waypoints = GetWaypointsList(route.FileName);
+            Waypoints waypoints = GetWaypointsList(_route.FileName);
 
             // Save route
-            if (RouteListManager.SaveRoute(route, waypoints))
+            if (RouteListManager.SaveRoute(_route, waypoints))
             {
                 string s = "Route successfully saved";
 
-                if (route.FileName == null)
+                if (_route.FileName == null)
                     s += ". No export file generated.";
                 else
-                    s += ".\nExport data located in the file '" + route.FileName + "'";
-                
+                    s += ".\nExport data located in the file '" + 
+                                                _route.FileName + "'";
+
+                ctrlRouteDetails.lblWaypointFile.Text = 
+                                "Waypoint : " + _route.WaypointFileName;
+
                 ShowSuccessMessage(s);
                 IsChanged = false;
             }
@@ -376,41 +386,17 @@ namespace BabBot.Forms
             IsChanged = true;
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        
-
-        
-
         private void RegisterChanges(object sender, EventArgs e)
         {
             IsChanged = true;
         }
 
-        
-
-        public void StartRecording(string obj_name, string q_name, string qi_name)
-        {
-            // From Game Object
-            ctrlRouteDetails.cbTypeA.Text = "game_object";
-            ctrlRouteDetails.cbObjA0.Text = obj_name;
-
-            // To QuestItem
-            ctrlRouteDetails.cbTypeB.Text = "quest_objective";
-            ctrlRouteDetails.cbObjB0.Text = q_name;
-            ctrlRouteDetails.cbObjB1.Text = qi_name;
-
-            Show();
-            btnControl_Click(this, null);
-        }
-
         private void dgWaypoints_SelectionChanged(object sender, EventArgs e)
         {
-            btnTest.Enabled = dgWaypoints.Rows.Count > 1 &&
-                (dgWaypoints.Rows[0].Selected || dgWaypoints.Rows[dgWaypoints.Rows.Count - 1].Selected);
+            btnTest.Enabled = (dgWaypoints.Rows.Count > 1) && 
+                (dgWaypoints.SelectedRows.Count == 1) &&
+                (dgWaypoints.Rows[0].Selected || 
+                    dgWaypoints.Rows[dgWaypoints.Rows.Count - 1].Selected);
         }
 
         private void btnTest_Click(object sender, EventArgs e)
@@ -432,7 +418,7 @@ namespace BabBot.Forms
             else if (cur_pos.IsClose(MakeVector(dgWaypoints.
                                 Rows[dgWaypoints.Rows.Count - 2])))
             {
-                bwRouteNavigation.RunWorkerAsync();
+                bwRouteNavigation.RunWorkerAsync(GetReverseWaypointsList("Test Direct Run"));
             }
         }
 
@@ -442,6 +428,62 @@ namespace BabBot.Forms
             NpcHelper.StartNavState(new NavigationState(wp, "test_run", wp.Name), 
                                                 ProcessManager.Player, "test_run");
         }
-    }
 
+        public void StartRecording(string obj_name, string q_name, string qi_name)
+        {
+            // From Game Object
+            ctrlRouteDetails.cbTypeA.Text = "game_object";
+            ctrlRouteDetails.cbObjA0.Text = obj_name;
+
+            // To QuestItem
+            ctrlRouteDetails.cbTypeB.Text = "quest_objective";
+            ctrlRouteDetails.cbObjB0.Text = q_name;
+            ctrlRouteDetails.cbObjB1.Text = qi_name;
+
+            ShowDialog();
+            btnControl_Click(this, null);
+        }
+
+        public void Open(Route route)
+        {
+            _route = route;
+            ctrlRouteDetails.PopulateControls(route);
+
+            Waypoints wp = null;
+            try
+            {
+                // Fill waypoints
+                wp = RouteListManager.LoadWaypoints(route.WaypointFileName);
+            }
+            catch (Exception e)
+            {
+                ShowErrorMessage(e);
+                Dispose();
+                return;
+            }
+
+            // Fill data table
+            foreach (Vector3D v in wp.List)
+                dgWaypoints.Rows.Add(v.X, v.Y, v.Z);
+
+            // Select last
+            int last = dgWaypoints.Rows.Count - 1;
+            dgWaypoints.FirstDisplayedScrollingRowIndex = last;
+            
+            // Assign event on shown
+            Shown += SelectLastRecord;
+            
+            ShowDialog();
+        }
+
+        private void SelectLastRecord(object sender, EventArgs e)
+        {
+            int last = dgWaypoints.Rows.Count - 1;
+            dgWaypoints.Rows[0].Selected = false;
+            dgWaypoints.Rows[last].Selected = true;
+
+            // Remove event handler
+            Shown -= SelectLastRecord;
+        }
+    }
 }

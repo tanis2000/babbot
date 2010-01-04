@@ -46,8 +46,8 @@
             this.gbRecOptions = new System.Windows.Forms.GroupBox();
             this.btnTest = new System.Windows.Forms.Button();
             this.flpMain = new System.Windows.Forms.FlowLayoutPanel();
-            this.bwRouteNavigation = new System.ComponentModel.BackgroundWorker();
             this.ctrlRouteDetails = new BabBot.Forms.Shared.RouteDetails();
+            this.bwRouteNavigation = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.dgWaypoints)).BeginInit();
             this.popWaypoints.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRecDistance)).BeginInit();
@@ -62,7 +62,6 @@
             // btnClose
             // 
             this.btnClose.Location = new System.Drawing.Point(357, 523);
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnSave
             // 
@@ -102,14 +101,14 @@
             this.dgWaypoints.DefaultCellStyle = dataGridViewCellStyle4;
             this.dgWaypoints.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgWaypoints.EnableHeadersVisualStyles = false;
-            this.dgWaypoints.Location = new System.Drawing.Point(12, 15);
+            this.dgWaypoints.Location = new System.Drawing.Point(12, 12);
             this.dgWaypoints.Name = "dgWaypoints";
             this.dgWaypoints.ReadOnly = true;
             this.dgWaypoints.RowHeadersVisible = false;
             this.dgWaypoints.RowTemplate.Height = 16;
             this.dgWaypoints.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgWaypoints.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgWaypoints.Size = new System.Drawing.Size(190, 494);
+            this.dgWaypoints.Size = new System.Drawing.Size(190, 497);
             this.dgWaypoints.TabIndex = 3;
             this.dgWaypoints.DoubleClick += new System.EventHandler(this.dgWaypoints_DoubleClick);
             this.dgWaypoints.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgWaypoints_RowsAdded);
@@ -230,7 +229,7 @@
             this.gbRecOptions.Controls.Add(this.lblRecDistance);
             this.gbRecOptions.Controls.Add(this.btnControl);
             this.gbRecOptions.Controls.Add(this.btnReset);
-            this.gbRecOptions.Location = new System.Drawing.Point(0, 265);
+            this.gbRecOptions.Location = new System.Drawing.Point(0, 253);
             this.gbRecOptions.Margin = new System.Windows.Forms.Padding(0);
             this.gbRecOptions.Name = "gbRecOptions";
             this.gbRecOptions.Size = new System.Drawing.Size(207, 124);
@@ -257,21 +256,24 @@
             this.flpMain.Controls.Add(this.ctrlRouteDetails);
             this.flpMain.Controls.Add(this.gbRecOptions);
             this.flpMain.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flpMain.Location = new System.Drawing.Point(216, 12);
+            this.flpMain.Location = new System.Drawing.Point(222, 12);
             this.flpMain.Name = "flpMain";
-            this.flpMain.Size = new System.Drawing.Size(213, 389);
+            this.flpMain.Size = new System.Drawing.Size(207, 377);
             this.flpMain.TabIndex = 12;
+            // 
+            // ctrlRouteDetails
+            // 
+            this.ctrlRouteDetails.AutoSize = true;
+            this.ctrlRouteDetails.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ctrlRouteDetails.Location = new System.Drawing.Point(0, 0);
+            this.ctrlRouteDetails.Margin = new System.Windows.Forms.Padding(0);
+            this.ctrlRouteDetails.Name = "ctrlRouteDetails";
+            this.ctrlRouteDetails.Size = new System.Drawing.Size(200, 253);
+            this.ctrlRouteDetails.TabIndex = 13;
             // 
             // bwRouteNavigation
             // 
             this.bwRouteNavigation.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwRouteNavigation_DoWork);
-            // 
-            // ctrlRouteDetails
-            // 
-            this.ctrlRouteDetails.Location = new System.Drawing.Point(3, 3);
-            this.ctrlRouteDetails.Name = "ctrlRouteDetails";
-            this.ctrlRouteDetails.Size = new System.Drawing.Size(207, 259);
-            this.ctrlRouteDetails.TabIndex = 13;
             // 
             // RouteRecorderForm
             // 
@@ -293,6 +295,7 @@
             this.gbRecOptions.ResumeLayout(false);
             this.gbRecOptions.PerformLayout();
             this.flpMain.ResumeLayout(false);
+            this.flpMain.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

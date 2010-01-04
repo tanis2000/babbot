@@ -230,14 +230,28 @@ namespace BabBot.Forms
             if (!CheckInGame())
                 return;
 
-            backgroundWorker.RunWorkerAsync();
+            StartBackgroundWork(MoveTo);
         }
 
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void MoveTo(object sender, DoWorkEventArgs e)
         {
             try
             {
                 NpcHelper.MoveToGameObjByName(GetCurrentRow().NAME, "npc");
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex);
+            }
+        }
+
+        private void BindTo(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                GameObject obj = NpcHelper.FindGameObjByName(GetCurrentRow().NAME);
+                NpcHelper.MoveToGameObj(obj, "test_bind");
+                NpcHelper.BindToInn((NPC)obj, "test_bind");
             }
             catch (Exception ex)
             {
@@ -506,7 +520,7 @@ namespace BabBot.Forms
             }
 
             BotDataSet.GameObjectsRow row = GetCurrentRow();
-            GameObject obj = DataManager.CurWoWVersion.GameObjData.STable[row.NAME];
+            GameObject obj = DataManager.CurWoWVersion.GameObjData[row.NAME];
             if (obj == null)
             {
                 ShowErrorMessage("Game Object not found. Restart Bot and try again");
@@ -527,8 +541,18 @@ namespace BabBot.Forms
 
         private void popServiceActions_Opening(object sender, CancelEventArgs e)
         {
-            deleteServiceToolStripMenuItem.Enabled =
-                    (lbActiveServices.SelectedItem != null);
+            bool selected = (lbActiveServices.SelectedItem != null);
+            deleteServiceToolStripMenuItem.Enabled = selected;
+            bindToInnToolStripMenuItem.Enabled = selected &&
+                (lbActiveServices.Text.StartsWith("binder:"));
+
+            bindToInnToolStripMenuItem.Text = "Bind to Inn";
+
+            if (bindToInnToolStripMenuItem.Enabled)
+            {
+                string loc = lbActiveServices.Text.Substring("binder:".Length);
+                bindToInnToolStripMenuItem.Text += " " + loc;
+            }
         }
 
         #endregion
@@ -1019,6 +1043,35 @@ namespace BabBot.Forms
             recordRouteFromNPCToolStripMenuItem.Enabled = enabled;
             recordRouteToNPCToolStripMenuItem.Enabled = enabled;
 
+        }
+
+        private void bindToInnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!CheckGameObjSelected())
+                return;
+            
+            if (!CheckInGame())
+                return;
+
+            StartBackgroundWork(BindTo);
+        }
+
+        private void StartBackgroundWork(DoWorkEventHandler proc)
+        {
+            if (backgroundWorker.IsBusy)
+            {
+                ShowErrorMessage("Bot still running previous request. Wait for completion");
+                return;
+            }
+
+            backgroundWorker.DoWork += proc;
+            this.Enabled = false;
+            backgroundWorker.RunWorkerAsync();
+        }
+
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.Enabled = true;
         }
     }
 }

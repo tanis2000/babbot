@@ -261,7 +261,7 @@ namespace BabBot.States.Common
                 path = new Path();
                 foreach (Vector3D v in _wp.List)
                     path.AddLast(WaypointVector3DHelper.Vector3DToLocation(v));
-                dest = _wp.List[_wp.List.Count - 1];
+                dest = _wp[_wp.Count - 1];
             }
             else
             {

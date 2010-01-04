@@ -1961,7 +1961,7 @@ namespace BabBot.Forms
 
         private void recordRouteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new RouteRecorderForm().Show();
+            new RouteRecorderForm().ShowDialog(this);
         }
 
         private void DisplayCalculatedPath(Vector3D[] path, int retry)
@@ -2002,6 +2002,12 @@ namespace BabBot.Forms
                 tbZoom.Value = value;
                 tbZoom_Scroll(sender, null);
             }
+        }
+
+        public void OpenRouteRecording(Route route)
+        {
+            RouteRecorderForm rrf = new RouteRecorderForm();
+            rrf.Open(route);
         }
 
         public void OpenRouteRecording(string obj_name, 

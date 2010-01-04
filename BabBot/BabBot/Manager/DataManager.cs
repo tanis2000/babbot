@@ -83,15 +83,18 @@ namespace BabBot.Manager
         internal static string[] DataFiles = new string[2] {DataDirEx + "GameObjectData.xml", 
             DataDirEx + "RouteList.xml" };
 
+
         internal static void Init()
         {
             // data first
             int[] versions = new int[2];
-            DataManager.wdata = (WoWData)XmlManager.Load("Data\\WoWData.xml", typeof(WoWData));
-            DataManager.gdata = (GameObjectData)XmlManager.Load(
-                    DataManager.GameObjDataFileName, typeof(GameObjectData));
-            RouteListManager.rdata = (RouteList) XmlManager.Load(
-                    RouteListManager.RouteListFileName, typeof(RouteList));
+
+            DataManager.wdata = (WoWData) LoadInitData("Data\\WoWData.xml", typeof(WoWData));
+
+            DataManager.gdata = (GameObjectData) LoadInitData(
+                        DataManager.GameObjDataFileName, typeof(GameObjectData));
+            RouteListManager.rdata = (RouteList)LoadInitData(
+                        RouteListManager.RouteListFileName, typeof(RouteList));
 
             versions[0] = DataManager.gdata.Version;
             versions[1] = RouteListManager.rdata.Version;
@@ -130,12 +133,12 @@ namespace BabBot.Manager
         internal static void Merge(string wow_version)
         {
             // Auto Merge data from earlier version with latest one
-            WoWVersion wprev = (WoWVersion)DataManager.wdata.STable.Values[0];
+            WoWVersion wprev = (WoWVersion)DataManager.wdata[0];
             int i = 1;
-            while ((i < DataManager.wdata.STable.Count) &&
+            while ((i < DataManager.wdata.Count) &&
                 !wprev.Build.Equals(wow_version))
             {
-                WoWVersion wnew = (WoWVersion)DataManager.wdata.STable.Values[i];
+                WoWVersion wnew = (WoWVersion)DataManager.wdata[i];
 
                 // Merge WoW data
                 wnew.MergeWith(wprev);
@@ -162,6 +165,25 @@ namespace BabBot.Manager
             DataManager.gdata = null;
             DataManager.wdata = null;
             RouteListManager.rdata = null;
+        }
+
+        private static object LoadInitData(string fname, Type t)
+        {
+            object res = null;
+            try
+            {
+                res = Load(fname, t);
+
+            }
+            catch (Exception e)
+            {
+                Output.Instance.LogError(e);
+                ProcessManager.TerminateOnInternalBug(
+                    ProcessManager.Bugs.XML_ERROR, "Unable load " + fname + 
+                    " file. See error log for details");
+            }
+
+            return res;
         }
 
         private static object Load(string fname, Type t)
@@ -235,7 +257,7 @@ namespace BabBot.Manager
             // Check all list and generate chanded data for export
 
             if (export)
-                foreach (GameObject obj in DataManager.CurWoWVersion.GameObjData.STable.Values)
+                foreach (GameObject obj in DataManager.CurWoWVersion.GameObjData.Values)
                     if (obj.Changed)
                         DataManager.ExportGameObj(obj, lfs);
 
@@ -562,7 +584,7 @@ namespace BabBot.Manager
                     foreach (Zone z in cid.List)
                         ZoneList.Add(z.Name, new ZoneServices(cid.Id));
 
-            foreach (GameObject g_obj in CurWoWVersion.GameObjData.STable.Values)
+            foreach (GameObject g_obj in CurWoWVersion.GameObjData.Values)
             {
                 if (!string.IsNullOrEmpty(g_obj.ZoneText) && 
                                             g_obj.GetType().Equals(typeof(NPC)))
@@ -580,11 +602,11 @@ namespace BabBot.Manager
                 Quests ql = g_obj.QuestList;
                 if (ql != null)
                 {
-                    foreach (Quest q in ql.Table.Values)
+                    foreach (Quest q in ql.Values)
                     {
                         q.Src = g_obj;
                         if (!string.IsNullOrEmpty(q.DestName))
-                            q.Dest = CurWoWVersion.GameObjData.STable[q.DestName];
+                            q.Dest = CurWoWVersion.GameObjData[q.DestName];
                         QuestList.Add(q.Id, q);
                     }
                 }
@@ -603,14 +625,14 @@ namespace BabBot.Manager
             // GameData.GameObjects.Clear();
             // GameData.ContinentList.Clear();
 
-            foreach (Continent c in CurWoWVersion.Continents.Table.Values)
+            foreach (Continent c in CurWoWVersion.Continents.Values)
             {
                 GameData.ContinentList.Rows.Add(c.Id, c.Name);
                 foreach (Zone z in c.List)
                     GameData.ZoneList.AddZoneListRow(z.Name, c.Id);
             }
 
-            foreach (GameObject g in CurWoWVersion.GameObjData.STable.Values)
+            foreach (GameObject g in CurWoWVersion.GameObjData.Values)
                 AddGameObject(g);
 
             GameData.AcceptChanges();
@@ -646,7 +668,7 @@ namespace BabBot.Manager
                                 g.X, g.Y, g.Z, g.BasePosition.Type);
 
             // Add quests
-            foreach (Quest q in g.QuestList.Table.Values)
+            foreach (Quest q in g.QuestList.Values)
             {
                 BotDataSet.QuestListRow qrow = GameData.QuestList.
                     AddQuestListRow(q.Id, obj_row, q.Title,
@@ -659,9 +681,9 @@ namespace BabBot.Manager
                     if (q.QuestItems[i] == null)
                         continue;
 
-                    for (int j = 0; j < q.QuestItems[i].List.Count; j++)
+                    for (int j = 0; j < q.QuestItems[i].Count; j++)
                     {
-                        CommonQty qi = q.QuestItems[i].List[j];
+                        CommonQty qi = q.QuestItems[i][j];
                         // Locate type
                         GameData.QuestItems.AddQuestItemsRow(qrow, j,
                             (int)DataManager.QuestItemSeq[i],qi.Name, qi.Qty, qi.Name);
@@ -671,9 +693,9 @@ namespace BabBot.Manager
                 if (q.ObjList != null)
                 {
                     // Add quest objectives
-                    for (int i = 0; i < q.ObjList.List.Count; i++)
+                    for (int i = 0; i < q.ObjList.Count; i++)
                     {
-                        AbstractQuestObjective qobj = q.ObjList.List[i];
+                        AbstractQuestObjective qobj = q.ObjList[i];
 
                         int qty = 0;
                         if (qobj.HasQty)
@@ -692,7 +714,7 @@ namespace BabBot.Manager
                 NPC npc = (NPC)g;
 
                 // Add other coordinates
-                foreach (ZoneWp coord in npc.Coordinates.Table.Values)
+                foreach (ZoneWp coord in npc.Coordinates.Values)
                 {
                     // Check if row exists
                     DataRow[] cz_check = GameData.CoordinatesZone.
@@ -709,7 +731,7 @@ namespace BabBot.Manager
                 }
 
                 // Add Services
-                foreach (NPCService srv in npc.Services.Table.Values)
+                foreach (NPCService srv in npc.Services.Values)
                 {
                     // Locate service
                     BotDataSet.ServiceTypesRow srv_row =
@@ -727,13 +749,13 @@ namespace BabBot.Manager
         /// </summary>
         internal static void ResetChanged()
         {
-            foreach (GameObject obj in CurWoWVersion.GameObjData.STable.Values)
+            foreach (GameObject obj in CurWoWVersion.GameObjData.Values)
                 obj.Changed = false;
         }
 
         public static void DeleteGameObjRow(string name)
         {
-            CurWoWVersion.GameObjData.STable.Remove(name);
+            CurWoWVersion.GameObjData.Remove(name);
         }
 
         /// <summary>
@@ -751,7 +773,7 @@ namespace BabBot.Manager
             string name = row.NAME;
 
             // Delete Game Object data
-            if (!CurWoWVersion.GameObjData.STable.ContainsKey(name))
+            if (!CurWoWVersion.GameObjData.ContainsKey(name))
                 throw new DataSynchException();
 
             
@@ -825,7 +847,7 @@ namespace BabBot.Manager
                         // Quest item by default null
                         if (q.QuestItems[i] == null)
                             q.QuestItems[i] = new QuestItem();
-                        q.QuestItems[i].List.Add(new CommonQty(item_row.NAME, item_row.QTY));
+                        q.QuestItems[i].Add(new CommonQty(item_row.NAME, item_row.QTY));
                     }
                 }
 
@@ -854,7 +876,7 @@ namespace BabBot.Manager
                                 zone.Add(v);
                         }
 
-                        if (zone.List.Count > 0)
+                        if (zone.Count > 0)
                             npc.Coordinates.Add(zone);
                     }
                 }
@@ -1075,7 +1097,7 @@ namespace BabBot.Manager
             if (npc.IsVendor)
             {
                 VendorServices.Add(npc);
-                VendorService vs = (VendorService)npc.Services.Table["vendor"];
+                VendorService vs = (VendorService)npc.Services["vendor"];
                 
                 // Check for other services
                 if (vs.CanRepair)
@@ -1150,57 +1172,102 @@ namespace BabBot.Manager
             return XmlManager.SaveDataFile(lfs, false, 1, typeof(RouteList), rdata);
         }
 
+        /// <summary>
+        /// Save route with associated waypoints
+        /// and export saved file
+        /// </summary>
+        /// <param name="route">Route object</param>
+        /// <param name="waypoints">Waypoint object</param>
+        /// <returns></returns>
         public static bool SaveRoute(Route route, Waypoints waypoints)
         {
             return SaveRoute(route, waypoints, true);
         }
 
+        /// <summary>
+        /// Save route with associated waypoints
+        /// </summary>
+        /// <param name="route">Route object</param>
+        /// <param name="waypoints">Waypoint object</param>
+        /// <param name="export">Is export required</param>
+        /// <returns></returns>
         private static bool SaveRoute(Route route, Waypoints waypoints, bool export)
         {
-            // Make sure file name for waypoints is unique
-            if (route.WaypointFileName == null)
+            bool is_new = route.WaypointFileName == null;
+            // Make sure file name for new route waypoints is unique
+            if (is_new)
+            {
                 route.MakeWaypointFileName();
 
-            while (DataManager.CurWoWVersion.Routes.STable.ContainsKey(route.WaypointFileName))
-                route.MakeWaypointFileName();
+                while (DataManager.CurWoWVersion.Routes.ContainsKey(route.WaypointFileName))
+                    route.MakeWaypointFileName();
+            }
 
             // Save waypoints first
             waypoints.Name = route.WaypointFileName;
-            if (!XmlManager.Save(RouteListManager.RoutesDirFull + waypoints.Name +
-                        ".wp", typeof(Waypoints), waypoints))
+            if (!XmlManager.Save(RouteListManager.RoutesDirFull + 
+                    waypoints.Name + ".wp", typeof(Waypoints), waypoints))
                 return false;
 
-            DataManager.CurWoWVersion.Routes.Add(route);
+            return SaveRoute(route, waypoints, is_new, export);
+        }
+
+        /// <summary>
+        /// Save existing route
+        /// </summary>
+        /// <param name="route">Route object</param>
+        public static bool SaveRoute(Route route)
+        {
+            return SaveRoute(route, null, false, false);
+        }
+
+        /// <summary>
+        /// Save just the route and index route list after all
+        /// </summary>
+        /// <param name="route">Route object</param>
+        /// <param name="is_new">Is route new</param>
+        /// <param name="export">Is export required</param>
+        private static bool SaveRoute(Route route, 
+                        Waypoints waypoints, bool is_new, bool export)
+        {
+             if (is_new)
+                DataManager.CurWoWVersion.Routes.Add(route);
+            else
+                DataManager.CurWoWVersion.Routes[route.WaypointFileName] = route;
+
             SaveRouteList("routes");
 
             if (export)
-            {
-                string fname = route.MakeFileName();
-                if (fname != null)
-                {
-                    route.FileName = fname + ".route";
-
-                    // Check for existing routes between 2 endpoints
-                    route.idx = 0;
-                    if (Routes.ContainsKey(fname))
-                        route.idx = Routes[fname].Count;
-
-                    // Attach waypoints and version
-                    route.DoBeforeExport(RouteListVersion.ToString(), waypoints);
-
-                    // Create Export file
-                    if (!XmlManager.Save(XmlManager.ExportDataDirFull +
-                                    route.FileName, typeof(Route), route))
-                        route.FileName = null;
-
-                    // Detach waypoints
-                    route.DoAfterExport();
-                }
-                else 
-                    route.FileName = null;
-            }
+                ExportRoute(route, waypoints);
 
             return true;
+        }
+
+        public static bool ExportRoute(Route route, Waypoints waypoints)
+        {
+            bool res = false;
+            string fname = route.MakeFileName();
+
+            if (fname != null)
+            {
+                route.FileName = fname + ".route";
+
+                // Attach waypoints and version
+                route.DoBeforeExport(RouteListVersion.ToString(), waypoints);
+
+                // Create Export file
+                res = XmlManager.Save(XmlManager.ExportDataDirFull +
+                                route.FileName, typeof(Route), route);
+                if (!res)
+                    route.FileName = null;
+
+                // Detach waypoints
+                route.DoAfterExport();
+            }
+            else
+                route.FileName = null;
+
+            return res;
         }
 
         /// <summary>
@@ -1254,6 +1321,11 @@ namespace BabBot.Manager
             return null;
         }
 
+        /// <summary>
+        /// Load waypoints from external file
+        /// </summary>
+        /// <param name="id">Waypoint file name </param>
+        /// <returns></returns>
         public static Waypoints LoadWaypoints(string id)
         {
             // Check if file exists
@@ -1265,12 +1337,17 @@ namespace BabBot.Manager
             return s.Load(fname);
         }
 
-        public static bool ImportRoute(string fname)
+        /// <summary>
+        /// Load route from external file
+        /// </summary>
+        /// <param name="fname">File Name</param>
+        /// <returns></returns>
+        public static Route ImportRoute(string fname)
         {
             if (!File.Exists(fname))
             {
                 ProcessManager.ShowError("Route file '" + fname + "' not found");
-                return false;
+                return null;
             }
 
             Route r = null;
@@ -1283,7 +1360,7 @@ namespace BabBot.Manager
             {
                 ProcessManager.ShowError("Failed import route from file '" +
                     fname + "'. " + e.Message);
-                return false;
+                return null;
             }
 
             // Check version
@@ -1291,7 +1368,7 @@ namespace BabBot.Manager
             {
                 ProcessManager.ShowError("Imported route version " + r.Version +
                     " different from supported " + RouteListVersion);
-                return false;
+                return null;
             }
 
             // Extract waypoints and save in external file
@@ -1299,7 +1376,10 @@ namespace BabBot.Manager
             r.WpList = null;
             r.Version = null;
 
-            return SaveRoute(r, wp, false);
+            if (!SaveRoute(r, wp, false))
+                return null;
+
+            return r;
         }
 
         public static void IndexData()
@@ -1308,7 +1388,7 @@ namespace BabBot.Manager
             Endpoints.Clear();
             Waypoints.Clear();
 
-            foreach (Route r in DataManager.CurWoWVersion.Routes.STable.Values)
+            foreach (Route r in DataManager.CurWoWVersion.Routes.Values)
             {
                 r.FileName = r.MakeFileName();
 
@@ -1324,7 +1404,7 @@ namespace BabBot.Manager
                     }
                 }
 
-                foreach (char c in new char[] { 'a', 'b' } )
+                foreach (char c in new char[] { 'a', 'b' })
                 {
                     Endpoint e = r[c];
 
@@ -1368,6 +1448,19 @@ namespace BabBot.Manager
                 }
             }
         }
+
+        public static void DeleteRoute(Route route, string lfs)
+        {
+            // Remove file from list
+            DataManager.CurWoWVersion.Routes.Remove(route.WaypointFileName);
+
+            // Save & Index route
+            SaveRouteList(lfs);
+
+            // Delete waypoint file
+            File.Delete(RoutesDirFull + route.WaypointFileName+ ".wp");
+        }
+
     }
 
     public class Vector3DComparer : IComparer<double>

@@ -57,6 +57,7 @@
             this.lblObjB1 = new System.Windows.Forms.Label();
             this.cbObjB1 = new System.Windows.Forms.ComboBox();
             this.pRouteDescr = new System.Windows.Forms.Panel();
+            this.lblWaypointFile = new System.Windows.Forms.Label();
             this.tbDescr = new System.Windows.Forms.TextBox();
             this.cbReversible = new System.Windows.Forms.CheckBox();
             this.lblRouteDescr = new System.Windows.Forms.Label();
@@ -95,7 +96,7 @@
             this.flpMain.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flpMain.Location = new System.Drawing.Point(0, 0);
             this.flpMain.Name = "flpMain";
-            this.flpMain.Size = new System.Drawing.Size(200, 357);
+            this.flpMain.Size = new System.Drawing.Size(200, 392);
             this.flpMain.TabIndex = 13;
             // 
             // gbRouteDetails
@@ -107,7 +108,7 @@
             this.gbRouteDetails.Margin = new System.Windows.Forms.Padding(0);
             this.gbRouteDetails.Name = "gbRouteDetails";
             this.gbRouteDetails.Padding = new System.Windows.Forms.Padding(1);
-            this.gbRouteDetails.Size = new System.Drawing.Size(200, 357);
+            this.gbRouteDetails.Size = new System.Drawing.Size(200, 392);
             this.gbRouteDetails.TabIndex = 4;
             this.gbRouteDetails.TabStop = false;
             this.gbRouteDetails.Text = "Route Details";
@@ -128,7 +129,7 @@
             this.flpRouteDescr.Location = new System.Drawing.Point(1, 14);
             this.flpRouteDescr.Margin = new System.Windows.Forms.Padding(0);
             this.flpRouteDescr.Name = "flpRouteDescr";
-            this.flpRouteDescr.Size = new System.Drawing.Size(198, 342);
+            this.flpRouteDescr.Size = new System.Drawing.Size(198, 377);
             this.flpRouteDescr.TabIndex = 18;
             // 
             // pOptA
@@ -384,13 +385,23 @@
             // 
             // pRouteDescr
             // 
+            this.pRouteDescr.Controls.Add(this.lblWaypointFile);
             this.pRouteDescr.Controls.Add(this.tbDescr);
             this.pRouteDescr.Controls.Add(this.cbReversible);
             this.pRouteDescr.Controls.Add(this.lblRouteDescr);
             this.pRouteDescr.Location = new System.Drawing.Point(3, 239);
             this.pRouteDescr.Name = "pRouteDescr";
-            this.pRouteDescr.Size = new System.Drawing.Size(192, 100);
+            this.pRouteDescr.Size = new System.Drawing.Size(192, 135);
             this.pRouteDescr.TabIndex = 18;
+            // 
+            // lblWaypointFile
+            // 
+            this.lblWaypointFile.AutoSize = true;
+            this.lblWaypointFile.Location = new System.Drawing.Point(3, 110);
+            this.lblWaypointFile.Name = "lblWaypointFile";
+            this.lblWaypointFile.Size = new System.Drawing.Size(74, 13);
+            this.lblWaypointFile.TabIndex = 14;
+            this.lblWaypointFile.Text = "Waypoint File:";
             // 
             // tbDescr
             // 
@@ -402,6 +413,7 @@
             this.tbDescr.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.tbDescr.Size = new System.Drawing.Size(185, 54);
             this.tbDescr.TabIndex = 13;
+            this.tbDescr.TextChanged += new System.EventHandler(this.OnRegisterChanges);
             // 
             // cbReversible
             // 
@@ -414,6 +426,7 @@
             this.cbReversible.TabIndex = 12;
             this.cbReversible.Text = "Route can be reversed";
             this.cbReversible.UseVisualStyleBackColor = true;
+            this.cbReversible.CheckedChanged += new System.EventHandler(this.OnRegisterChanges);
             // 
             // lblRouteDescr
             // 
@@ -478,7 +491,7 @@
             this.Controls.Add(this.flpMain);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "RouteDetails";
-            this.Size = new System.Drawing.Size(200, 357);
+            this.Size = new System.Drawing.Size(200, 392);
             this.flpMain.ResumeLayout(false);
             this.flpMain.PerformLayout();
             this.gbRouteDetails.ResumeLayout(false);
@@ -551,5 +564,6 @@
         public System.Windows.Forms.ComboBox cbObjB1;
         public System.Windows.Forms.TextBox tbDescr;
         public System.Windows.Forms.CheckBox cbReversible;
+        public System.Windows.Forms.Label lblWaypointFile;
     }
 }

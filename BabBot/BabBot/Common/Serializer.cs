@@ -382,7 +382,7 @@ namespace BabBot.Common
         {
             get { return _htable; }
         }
-
+        
         private bool _changed = false;
 
         [XmlIgnore]
@@ -438,9 +438,34 @@ namespace BabBot.Common
             }
         }
 
+        internal int Count
+        {
+            get { return _htable.Count; }
+        }
+
+        internal T this[string key]
+        {
+            get
+            {
+                T res = default(T);
+                _htable.TryGetValue(key, out res);
+                return res;
+            }
+        }
+
+        internal ICollection Values
+        {
+            get { return _htable.Values; }
+        }
+
         public CommonTable()
         {
             _htable = new Dictionary<string, T> ();
+        }
+
+        internal bool ContainsKey(string key)
+        {
+            return _htable.ContainsKey(key);
         }
 
         public override bool Equals(object obj)
@@ -451,7 +476,7 @@ namespace BabBot.Common
             CommonTable<T> t = (CommonTable<T>)obj;
 
             // Check size first
-            if (_htable.Count != t.Table.Count)
+            if (_htable.Count != t.Count)
                 return false;
 
             // Check values
@@ -459,7 +484,7 @@ namespace BabBot.Common
             {
                 // Stupid exception if not found
                 try { 
-                    T item2 = t.Table[item1.Key];
+                    T item2 = t[item1.Key];
                     if (!item1.Value.Equals(item2))
                         return false;
 
@@ -559,18 +584,52 @@ namespace BabBot.Common
             set { _changed = value; }
         }
 
+        internal SortedList<string, T> STable
+        {
+            get { return _stable; }
+        }
+
         internal int Count
         {
             get { return _stable.Count; }
         }
 
-        public T this[int idx]
+        internal T this[int idx]
         {
             get
             {
                 return ((idx < 0) || (idx >= _stable.Count)) ?
                     default(T) : _stable.Values[idx];
             }
+        }
+
+        internal T this[string key]
+        {
+            get
+            {
+                T res = default(T);
+                _stable.TryGetValue(key, out res);
+                return res;
+            }
+            set
+            {
+                if (_stable.ContainsKey(key))
+                {
+                    // Replace
+                    _stable[key] = value;
+                    _changed = true;
+                }
+                else
+                {
+                    // Add new
+                    Add(value);
+                }
+            }
+        }
+
+        public IList<T> Values
+        {
+            get { return _stable.Values; }
         }
 
         internal T[] Items
@@ -596,14 +655,14 @@ namespace BabBot.Common
             }
         }
 
-        internal SortedList<string, T> STable
-        {
-            get { return _stable; }
-        }
-
         public CommonSortedTable()
         {
             _stable = new SortedList<string, T>();
+        }
+
+        internal bool ContainsKey(string key)
+        {
+            return _stable.ContainsKey(key);
         }
 
         public override bool Equals(object obj)
@@ -615,13 +674,13 @@ namespace BabBot.Common
 
             // Check size first
             int cnt = _stable.Count;
-            if (cnt != t.STable.Count)
+            if (cnt != t.Count)
                 return false;
 
             // Check keys and values. List is sorted
             for ( int i = 0; i < cnt; i++)
             {
-                T item2 = t.STable.Values[i];
+                T item2 = t[i];
 
                 if ((item2 == null) || !_stable.Values[i].Equals(item2))
                     return false;
@@ -636,18 +695,16 @@ namespace BabBot.Common
             return _stable[name];
         }
 
-        /*
-        public T GetItemByIndex(int idx)
-        {
-            return ((idx < 0) || (idx >= _stable.Count)) ?
-                    default(T) : _stable.Values[idx];
-        }
-        */
-
         public void Add(T item)
         {
             _changed = true;
             _stable.Add(item.ToString(), item);
+        }
+
+        internal void Remove(string key)
+        {
+            if (_stable.Remove(key))
+                _changed = true;
         }
 
         public int ItemCount()
@@ -662,10 +719,10 @@ namespace BabBot.Common
             if (!MergeHelper.IsMergeable(this, obj))
                 return;
 
-            CommonTable<T> t = (CommonTable<T>)obj;
+            CommonSortedTable<T> t = (CommonSortedTable<T>)obj;
 
             // Check values
-            foreach (KeyValuePair<string, T> item in t.Table)
+            foreach (KeyValuePair<string, T> item in t.STable)
             {
                 if (!_stable.ContainsKey(item.Key))
                     Add(item.Value);
@@ -709,7 +766,7 @@ namespace BabBot.Common
     /// <typeparam name="T">Type of elements in the list</typeparam>
     public abstract class CommonList<T> : IMergeable
     {
-        internal readonly List<T> _list;
+        private readonly List<T> _list;
 
         internal T[] Items
         {
@@ -737,6 +794,22 @@ namespace BabBot.Common
         internal List<T> List
         {
             get { return _list; }
+        }
+
+        internal int Count
+        {
+            get { return _list.Count; }
+        }
+
+        internal T this[int idx]
+        {
+            get
+            {
+                T res = default(T);
+                if ((idx >= 0) && (idx < _list.Count))
+                    res = _list[idx];
+                return res;
+            }
         }
 
         private bool _changed = false;
@@ -786,14 +859,14 @@ namespace BabBot.Common
             CommonList<T> l = (CommonList<T>)obj;
 
             // Check size first
-            if (_list.Count != l.List.Count)
+            if (_list.Count != l.Count)
                 return false;
 
             // Check values
             for (int i = 0; i < _list.Count; i++)
             {
                 T item1 = (T)_list[i];
-                T item2 = (T)l.List[i];
+                T item2 = (T)l[i];
 
                 if ((item2 == null) || !item1.Equals(item2))
                     return false;

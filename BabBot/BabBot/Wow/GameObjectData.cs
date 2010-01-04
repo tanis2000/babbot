@@ -56,10 +56,10 @@ namespace BabBot.Wow
             int max = -1;
             Quest res = null;
 
-            foreach (GameObject obj in STable.Values)
+            foreach (GameObject obj in Values)
             {
                 if (obj.FindQuestQtyByTitle(title) > 0)
-                    foreach (Quest q in obj.QuestList.Table.Values)
+                    foreach (Quest q in obj.QuestList.Values)
                         if ((q.Title.Equals(title)) && (q.QNum > max))
                             res = q;
 
@@ -254,7 +254,7 @@ namespace BabBot.Wow
         /// </summary>
         internal bool Mobile
         {
-            get { return Coordinates.Table.Count > 0; }
+            get { return Coordinates.Count > 0; }
         }
 
         internal override string FullName
@@ -264,17 +264,17 @@ namespace BabBot.Wow
 
         internal bool HasTaxi
         {
-            get { return Services.Table.ContainsKey("taxi"); }
+            get { return Services.ContainsKey("taxi"); }
         }
 
         internal bool HasInn
         {
-            get { return Services.Table.ContainsKey("binder"); }
+            get { return Services.ContainsKey("binder"); }
         }
 
         internal bool IsVendor
         {
-            get { return Services.Table.ContainsKey("vendor"); }
+            get { return Services.ContainsKey("vendor"); }
         }
 
         public override DataManager.GameObjectTypes ObjType
@@ -377,8 +377,8 @@ namespace BabBot.Wow
         public int FindQuestQtyByTitle(string title)
         {
             int qty = 0;
-            foreach (KeyValuePair<string, Quest> item in Table)
-                if (item.Value.Title.Equals(title))
+            foreach (Quest q in Values)
+                if (q.Title.Equals(title))
                     qty++;
             return qty;
         }
@@ -455,12 +455,12 @@ namespace BabBot.Wow
         {
             get
             {
-                if ((Relations == null) || (Relations.List.Count == 0))
+                if ((Relations == null) || (Relations.Count == 0))
                     return null;
 
-                string[] res = new string[Relations.List.Count];
-                for (int i = 0; i < Relations.List.Count; i++)
-                    res[i] = Relations.List[i];
+                string[] res = new string[Relations.Count];
+                for (int i = 0; i < Relations.Count; i++)
+                    res[i] = Relations[i];
 
                 return string.Join(",", res);
             }
@@ -1099,7 +1099,7 @@ namespace BabBot.Wow
         public ZoneWp(string name, Vector3D v)
             : this(name)
         {
-            List.Add(v);
+            Add(v);
         }
 
         public override bool Equals(object obj)
@@ -1114,11 +1114,11 @@ namespace BabBot.Wow
             // Compare vector list. If they are the same of stays in 5 yard distance 
             //    from zone waypoints than we ok
 
-            Vector3D first = List[0];
+            Vector3D first = this[0];
 
-            for (int i = 0; i < z.List.Count; i++)
+            for (int i = 0; i < z.Count; i++)
             {
-                Vector3D cur_wp = z.List[i];
+                Vector3D cur_wp = z[i];
 
                 // First check if vectors identicall
                 if (cur_wp.Equals(first))
@@ -1128,13 +1128,13 @@ namespace BabBot.Wow
                 if (cur_wp.GetDistanceTo(first) > 5F)
                 {
                     // Compare this item with others
-                    for (int j = 1; j < List.Count; j++)
+                    for (int j = 1; j < Count; j++)
                     {
                         if (cur_wp.Equals(first))
                             break;
 
                         bool found = false;
-                        if (cur_wp.GetDistanceTo(List[j]) < 5F)
+                        if (cur_wp.GetDistanceTo(this[j]) < 5F)
                         {
                             found = true;
                             break;
@@ -1221,7 +1221,7 @@ namespace BabBot.Wow
                             "Unknown type of quest objectives '" + stype + "'");
                 }
 
-                List.Add(qobj);
+                Add(qobj);
             }
         }
     }
@@ -1406,14 +1406,15 @@ namespace BabBot.Wow
 
     /// <summary>
     /// Type of route Endpoints
+    /// Number defines the index when it sorted on RouteForm
     /// </summary>
     public enum EndpointTypes : byte
     {
-        UNDEF = 0,
-        GAME_OBJ = 1,
-        QUEST_OBJ = 2,
-        HOT_SPOT = 3,
-        GRAVEYARD = 4
+        UNDEF = 4,
+        GAME_OBJ = 0,
+        QUEST_OBJ = 1,
+        HOT_SPOT = 2,
+        GRAVEYARD = 3
     }
 
     /// <summary>
@@ -1423,6 +1424,9 @@ namespace BabBot.Wow
     [XmlInclude(typeof(QuestItemEndpoint))]
     public class Endpoint
     {
+        /// <summary>
+        /// Endpoint type string
+        /// </summary>
         [XmlAttribute("type")]
         public string TypeStr
         {
@@ -1430,17 +1434,26 @@ namespace BabBot.Wow
             set { PType = DataManager.EndpointsSet[value]; }
         }
 
+        /// <summary>
+        /// Endpoint zone name
+        /// </summary>
         [XmlAttribute("zone")]
         public string ZoneText;
 
+        /// <summary>
+        /// Start waypoint for endpoint
+        /// </summary>
         [XmlElement("waypoint")]
         public Vector3D Waypoint;
 
+        /// <summary>
+        /// Endpoint type as EndpointTypes enum
+        /// </summary>
         internal EndpointTypes PType;
 
         internal virtual string Descr
         {
-            get { return Enum.GetName(typeof(EndpointTypes), PType); }
+            get { return Enum.GetName(typeof(EndpointTypes), PType).ToLower(); }
         }
 
         public Endpoint() { }
@@ -1457,7 +1470,7 @@ namespace BabBot.Wow
             Waypoint = waypoint;
         }
 
-        public override bool  Equals(object obj)
+        public override bool Equals(object obj)
         {
             if (obj == null)
                 return false;
@@ -1595,12 +1608,6 @@ namespace BabBot.Wow
         public bool Reversible;
 
         /// <summary>
-        /// Route index in case route already exists between same endpoints
-        /// </summary>
-        [XmlAttribute("idx")]
-        public int idx = 0;
-
-        /// <summary>
         /// List of waypoints. Used for export.
         /// </summary>
         [XmlElement("waypoints")]
@@ -1617,7 +1624,32 @@ namespace BabBot.Wow
                 else if (idx.Equals('b') || idx.Equals("B"))
                     return PointB;
                 else
-                    throw new Exception("Unknown Endpoint " + idx);
+                    throw new Exception("Unknown Endpoint: '" + idx + "'");
+            }
+        }
+
+        internal Endpoint this[int idx]
+        {
+            get
+            {
+                switch (idx)
+                {
+                    case 0: return PointA;
+                    case 1: return PointB;
+                    default: throw new Exception("Unknown Endpoint Index: " + idx);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Route screen name
+        /// Used in Route List Manager form
+        /// </summary>
+        internal string ScreenName
+        {
+            get
+            {
+                return PointA.Descr + "-" + PointB.Descr;
             }
         }
 

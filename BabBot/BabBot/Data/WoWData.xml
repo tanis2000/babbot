@@ -1077,7 +1077,30 @@ end)()]]>
 end)()]]>
         </text>
       </function>
-        
+
+      StaticPopupDialogs
+
+      <!-- FindVisibleStaticDialog -->
+      <function name="FindVisibleStaticDialog">
+        <parameters size="1">
+          0 - Dialog name to check
+        </parameters>
+        <return size="1">
+          0 - Name of static dialog
+        </return>
+        <text>
+          <![CDATA[(function()
+  return StaticPopup_FindVisible("{0}")
+end)()]]>
+        </text>
+      </function>
+
+      <!-- ConfirmBinder -->
+      <function name="ConfirmBinder">
+        <text><![CDATA[ConfirmBinder()]]></text>
+      </function>
+      
+      
       <!-- Template for new function
       <!- - name - ->
       <function name="">

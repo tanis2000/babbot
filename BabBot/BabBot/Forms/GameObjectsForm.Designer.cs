@@ -48,6 +48,7 @@
             this.lbActiveServices = new System.Windows.Forms.ListBox();
             this.popServiceActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.deleteServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bindToInnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fkGameObjectsNpcServices = new System.Windows.Forms.BindingSource(this.components);
             this.tbFaction = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -314,9 +315,10 @@
             // popServiceActions
             // 
             this.popServiceActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deleteServiceToolStripMenuItem});
+            this.deleteServiceToolStripMenuItem,
+            this.bindToInnToolStripMenuItem});
             this.popServiceActions.Name = "popServiceActions";
-            this.popServiceActions.Size = new System.Drawing.Size(155, 26);
+            this.popServiceActions.Size = new System.Drawing.Size(155, 48);
             this.popServiceActions.Opening += new System.ComponentModel.CancelEventHandler(this.popServiceActions_Opening);
             // 
             // deleteServiceToolStripMenuItem
@@ -325,6 +327,13 @@
             this.deleteServiceToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.deleteServiceToolStripMenuItem.Text = "Delete Service";
             this.deleteServiceToolStripMenuItem.Click += new System.EventHandler(this.deleteServiceToolStripMenuItem_Click);
+            // 
+            // bindToInnToolStripMenuItem
+            // 
+            this.bindToInnToolStripMenuItem.Name = "bindToInnToolStripMenuItem";
+            this.bindToInnToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.bindToInnToolStripMenuItem.Text = "Bind to Inn";
+            this.bindToInnToolStripMenuItem.Click += new System.EventHandler(this.bindToInnToolStripMenuItem_Click);
             // 
             // fkGameObjectsNpcServices
             // 
@@ -908,7 +917,7 @@
             // 
             // backgroundWorker
             // 
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
             // 
             // GameObjectsForm
             // 
@@ -1072,5 +1081,6 @@
         private System.Windows.Forms.ListBox lbQuestObjectives;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.BindingSource fKQuestListQuestItemsObjectives;
+        private System.Windows.Forms.ToolStripMenuItem bindToInnToolStripMenuItem;
     }
 }

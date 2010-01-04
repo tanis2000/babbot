@@ -587,7 +587,7 @@ namespace BabBot.Manager
             ShowErrorMessage += OnShowErrorMessage;
 
             XmlManager.Init();
-
+            
             //\\ TEST
             // SaveNpcData();
 
