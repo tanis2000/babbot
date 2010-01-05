@@ -242,11 +242,16 @@ namespace BabBot.Forms
                     tbPlayerXp.Text = player.Xp.ToString();
 
                     WowUnit target = player.CurTarget;
-                    if (target != null)
-                        SetPlayerTargetInfo(string.Format("{0:X}", target.Guid), 
+                    // Generate exception when trying read name of another player
+                    if (target != null && target.Type != Descriptor.eObjType.OT_PLAYER)
+                    {
+                        SetPlayerTargetInfo(string.Format("{0:X}", target.Guid),
                                                 target.Name, target.Faction.ToString());
+                    }
                     else
+                    {
                         SetPlayerTargetInfo(null, null, null);
+                    }
 
                     tbPlayerNearObjects.Text = "Objects" + nl +
                         divider + player.NearObjectsAsTextList + nl +
