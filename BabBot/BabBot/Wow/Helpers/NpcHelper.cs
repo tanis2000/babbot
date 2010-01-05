@@ -1066,7 +1066,7 @@ namespace BabBot.Wow.Helpers
         {
             // Check if NPC targeted
             WowUnit target = ProcessManager.Player.CurTarget;
-            if (target == null && !target.Name.Equals(npc.Name))
+            if (target == null || !target.Name.Equals(npc.Name))
                 TargetGameObj(npc, lfs);
 
             // Check NPC has bind service
@@ -1090,7 +1090,7 @@ namespace BabBot.Wow.Helpers
             int idx = 0;
             for (int i = 0; i < opts[0].Length; i++)
             {
-                if (opts[i].Equals("binder"))
+                if (opts[0][i].Equals("binder"))
                 {
                     idx = i + 1;
                     break;
@@ -1104,10 +1104,14 @@ namespace BabBot.Wow.Helpers
             SelectNpcGossipOption(npc, idx, lfs); 
 
             // Wait for dialog popup
-            TimedTargetInteract(CheckBinderConfirmation);
+            string[] dname;
+            TimedTargetInteract(CheckBinderConfirmation, out dname);
+
+            if (string.IsNullOrEmpty(dname[0]))
+                throw new BinderServiceNotFound();
 
             // Confirm bind
-            LuaHelper.Exec("ConfirmBinder");
+            LuaHelper.Exec("ConfirmBinder", dname[0]);
         }
 
         private static bool CheckBinderConfirmation(object[] param_list, out string[] res)
@@ -1126,6 +1130,11 @@ namespace BabBot.Wow.Helpers
         private static void TimedTargetInteract(CheckDelegate check)
         {
             string[] res;
+            TimedTargetInteract(check, null, out res, null);
+        }
+
+        private static void TimedTargetInteract(CheckDelegate check, out string[] res)
+        {
             TimedTargetInteract(check, null, out res, null);
         }
 

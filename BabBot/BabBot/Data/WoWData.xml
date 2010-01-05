@@ -1086,18 +1086,31 @@ end)()]]>
           0 - Dialog name to check
         </parameters>
         <return size="1">
-          0 - Name of static dialog
+          0 - Name of shown dialog (for ex StaticPopup1)
+            or null if not found
         </return>
         <text>
           <![CDATA[(function()
-  return StaticPopup_FindVisible("{0}")
+  local fname
+  local dialog = StaticPopup_FindVisible("{0}")
+  if (dialog ~= nil) then
+    fname = dialog:GetName()
+  end
+  return fname
 end)()]]>
         </text>
       </function>
 
       <!-- ConfirmBinder -->
       <function name="ConfirmBinder">
-        <text><![CDATA[ConfirmBinder()]]></text>
+        <parameters size="1">
+          0 - Name StaticPopup with binding confirmation
+        </parameters>
+        <text>
+          <![CDATA[(function()
+  ConfirmBinder()
+  {0}:Hide()
+end)()]]></text>
       </function>
       
       
