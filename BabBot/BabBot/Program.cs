@@ -19,6 +19,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Principal;
 using System.Windows.Forms;
 using BabBot.Forms;
 using BabBot.Manager;
@@ -36,26 +37,45 @@ namespace BabBot
         // doesn't depend of config parameters
         private static string[] dirs = new string[] { "Data\\Export", "Data\\Import" };
 
+        // Provides the ability to run application with elevated privileges 
+        private static void RunElevated(string fileName)
+        {
+            var processInfo = new ProcessStartInfo {Verb = "runas", FileName = fileName};
+            try
+            {
+                Process.Start(processInfo);
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                //Do nothing. Probably the user canceled the UAC window 
+            }
+        } 
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         private static void Main(string[] args)
         {
+            // Detect administrative rights 
+            var principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
+            bool hasAdministrativeRight = principal.IsInRole(WindowsBuiltInRole.Administrator);
+
+            // Not administrator 
+            if (!hasAdministrativeRight)
+            {
+                // Spawn new process 
+                RunElevated(Application.ExecutablePath);
+                // Kill current 
+                Process.GetCurrentProcess().Kill();
+            } 
+ 
             try
             {
-                string LuaInjectPath = Path.Combine(Application.StartupPath, "Dante.dll");
-                string BSPath = Path.Combine(Application.StartupPath, "B@S.Reversing.dll");
+                string luaInjectPath = Path.Combine(Application.StartupPath, "Dante.dll");
 
                 EasyHook.Config.Register(
                     "Dante",
-                    LuaInjectPath);
-               
-                /*
-                EasyHook.Config.Register(
-                    "B@S.Reversing",
-                    BSPath);
-                */
+                    luaInjectPath);
             }
             catch (ApplicationException)
             {
