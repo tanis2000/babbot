@@ -69,6 +69,7 @@
             this.fKCoordinatesZoneCoordinates = new System.Windows.Forms.BindingSource(this.components);
             this.fKGameObjectsCoordinatesZone = new System.Windows.Forms.BindingSource(this.components);
             this.gbQuestList = new System.Windows.Forms.GroupBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.lbQuestObjectives = new System.Windows.Forms.ListBox();
             this.popQuestItemActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.recordRouteFromNPCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,9 +77,9 @@
             this.fKQuestListQuestItemsObjectives = new System.Windows.Forms.BindingSource(this.components);
             this.fkGameObjectsQuestList = new System.Windows.Forms.BindingSource(this.components);
             this.label11 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
             this.lbQuestItems = new System.Windows.Forms.ListBox();
             this.fKQuestListQuestItemsChoice = new System.Windows.Forms.BindingSource(this.components);
+            this.label10 = new System.Windows.Forms.Label();
             this.lbQuestList = new System.Windows.Forms.ListBox();
             this.popQuestActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.acceptQuestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -122,6 +123,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.fKCoordinatesZoneCoordinates)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fKGameObjectsCoordinatesZone)).BeginInit();
             this.gbQuestList.SuspendLayout();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.popQuestItemActions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fKQuestListQuestItemsObjectives)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fkGameObjectsQuestList)).BeginInit();
@@ -496,10 +500,7 @@
             // 
             this.gbQuestList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbQuestList.Controls.Add(this.lbQuestObjectives);
-            this.gbQuestList.Controls.Add(this.label11);
-            this.gbQuestList.Controls.Add(this.label10);
-            this.gbQuestList.Controls.Add(this.lbQuestItems);
+            this.gbQuestList.Controls.Add(this.splitContainer1);
             this.gbQuestList.Controls.Add(this.lbQuestList);
             this.gbQuestList.Location = new System.Drawing.Point(480, 260);
             this.gbQuestList.Name = "gbQuestList";
@@ -508,16 +509,41 @@
             this.gbQuestList.TabStop = false;
             this.gbQuestList.Text = "Quest List";
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(6, 99);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.lbQuestObjectives);
+            this.splitContainer1.Panel1.Controls.Add(this.label11);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.lbQuestItems);
+            this.splitContainer1.Panel2.Controls.Add(this.label10);
+            this.splitContainer1.Size = new System.Drawing.Size(214, 87);
+            this.splitContainer1.SplitterDistance = 107;
+            this.splitContainer1.TabIndex = 46;
+            // 
             // lbQuestObjectives
             // 
+            this.lbQuestObjectives.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.lbQuestObjectives.ContextMenuStrip = this.popQuestItemActions;
             this.lbQuestObjectives.DataSource = this.fKQuestListQuestItemsObjectives;
             this.lbQuestObjectives.DisplayMember = "NAME";
             this.lbQuestObjectives.FormattingEnabled = true;
             this.lbQuestObjectives.HorizontalScrollbar = true;
-            this.lbQuestObjectives.Location = new System.Drawing.Point(6, 117);
+            this.lbQuestObjectives.Location = new System.Drawing.Point(3, 18);
             this.lbQuestObjectives.Name = "lbQuestObjectives";
-            this.lbQuestObjectives.Size = new System.Drawing.Size(105, 69);
+            this.lbQuestObjectives.Size = new System.Drawing.Size(101, 69);
             this.lbQuestObjectives.TabIndex = 49;
             // 
             // popQuestItemActions
@@ -558,31 +584,24 @@
             // 
             this.label11.AutoSize = true;
             this.label11.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label11.Location = new System.Drawing.Point(3, 102);
+            this.label11.Location = new System.Drawing.Point(0, 3);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(57, 13);
             this.label11.TabIndex = 48;
             this.label11.Text = "Objectives";
             // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.label10.Location = new System.Drawing.Point(112, 102);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(85, 13);
-            this.label10.TabIndex = 47;
-            this.label10.Text = "Choice Rewards";
-            // 
             // lbQuestItems
             // 
+            this.lbQuestItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.lbQuestItems.DataSource = this.fKQuestListQuestItemsChoice;
             this.lbQuestItems.DisplayMember = "NAME";
             this.lbQuestItems.FormattingEnabled = true;
             this.lbQuestItems.HorizontalScrollbar = true;
-            this.lbQuestItems.Location = new System.Drawing.Point(115, 117);
+            this.lbQuestItems.Location = new System.Drawing.Point(2, 18);
             this.lbQuestItems.Name = "lbQuestItems";
-            this.lbQuestItems.Size = new System.Drawing.Size(105, 69);
+            this.lbQuestItems.Size = new System.Drawing.Size(98, 69);
             this.lbQuestItems.TabIndex = 46;
             // 
             // fKQuestListQuestItemsChoice
@@ -591,6 +610,16 @@
             this.fKQuestListQuestItemsChoice.DataSource = this.fkGameObjectsQuestList;
             this.fKQuestListQuestItemsChoice.Filter = "ITEM_TYPE_ID = 2";
             this.fKQuestListQuestItemsChoice.Sort = "IDX";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.label10.Location = new System.Drawing.Point(-1, 3);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(85, 13);
+            this.label10.TabIndex = 47;
+            this.label10.Text = "Choice Rewards";
             // 
             // lbQuestList
             // 
@@ -870,6 +899,7 @@
             // 
             // gbAddCoord
             // 
+            this.gbAddCoord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.gbAddCoord.Controls.Add(this.cbCoordType);
             this.gbAddCoord.Controls.Add(this.tbY);
             this.gbAddCoord.Controls.Add(this.cbAllZones);
@@ -905,6 +935,7 @@
             // 
             // gbAutoAdd
             // 
+            this.gbAutoAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.gbAutoAdd.Controls.Add(this.cbPlayerTarget);
             this.gbAutoAdd.Controls.Add(this.btnAddPlayerTargetCoord);
             this.gbAutoAdd.Controls.Add(this.label9);
@@ -977,7 +1008,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.fKCoordinatesZoneCoordinates)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fKGameObjectsCoordinatesZone)).EndInit();
             this.gbQuestList.ResumeLayout(false);
-            this.gbQuestList.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            this.splitContainer1.ResumeLayout(false);
             this.popQuestItemActions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.fKQuestListQuestItemsObjectives)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fkGameObjectsQuestList)).EndInit();
@@ -1082,5 +1117,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.BindingSource fKQuestListQuestItemsObjectives;
         private System.Windows.Forms.ToolStripMenuItem bindToInnToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
