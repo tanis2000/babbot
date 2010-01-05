@@ -74,7 +74,7 @@ namespace BabBot.Wow
         /// <summary>
         /// Get toon's faction.
         /// </summary>
-        public string Faction
+        public string RaceFaction
         {
             get { return _race.Faction; }
         }
