@@ -6,6 +6,7 @@ using System.Threading;
 using BabBot.Wow;
 using BabBot.Common;
 using BabBot.Manager;
+using BabBot.Wow.Helpers;
 using Pather.Graph;
 
 namespace BabBot.States.Common
@@ -58,7 +59,31 @@ namespace BabBot.States.Common
         {
             // Locate route in Endpoints table
             string name = _dest.ToString();
+
+            if (_dest.GetType().IsSubclassOf(typeof(GameObject)))
+            {
+                // Check if obj has coordinates
+                Vector3D v = NpcHelper.GetGameObjCoord((GameObject)_dest, _lfs);
+                if (v == null)
+                    // Can't travel
+                    return;
+                
+            }
+
             Route r = RouteListManager.FindRoute(name);
+            if (r != null)
+            {
+                // Load waypoints and launch NavigationState
+                Waypoints wp = RouteListManager.LoadWaypoints(r.WaypointFileName);
+                if (wp != null)
+                    CallChangeStateEvent(player,
+                        new NavigationState(wp, _lfs, "Traveling to " + _dest.ToString()));
+
+                return;
+            }
+
+            // Check undef routes
+            // r = RouteListManager
         }
 
         protected override void DoExecute(WowPlayer player)

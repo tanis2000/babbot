@@ -362,6 +362,7 @@
     <Compile Include="Wow\Helpers\NpcHelper.cs" />
     <Compile Include="Wow\Helpers\QuestHelper.cs" />
     <Compile Include="Wow\Login.cs" />
+    <Compile Include="Wow\MyChar.cs" />
     <Compile Include="Wow\PlayerState.cs" />
     <Compile Include="Wow\Descriptor.cs" />
     <Compile Include="Wow\Globals.cs" />

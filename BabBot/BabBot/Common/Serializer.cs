@@ -837,6 +837,12 @@ namespace BabBot.Common
             IsSorted = sorted;
         }
 
+        public CommonList(List<T> list)
+        {
+            _list = list;
+            IsSorted = false;
+        }
+
         public CommonList(T[] list)
         {
             _list = new List<T>(list);

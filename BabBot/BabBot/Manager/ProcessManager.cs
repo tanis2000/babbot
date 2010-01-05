@@ -273,6 +273,7 @@ namespace BabBot.Manager
         private static Config config;
         public static ObjectManager ObjectManager;
         public static WowPlayer Player;
+        public static InGameChar MyChar;
         private static Process process;
         public static Profile Profile;
         public static Host ScriptHost;

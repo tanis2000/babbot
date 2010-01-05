@@ -1277,22 +1277,32 @@ namespace BabBot.Manager
         /// <returns>Route object or null if not found</returns>
         public static Route FindRoute(string name)
         {
+            return FindRoute(name, ProcessManager.MyChar.Location);
+        }
+
+        public static Route FindRoute(string name, Vector3D cur_pos)
+        {
+            Route r = null;
+
             try 
             { 
-                List<Route> r = Endpoints[name];
+                List<Route> lr = Endpoints[name];
+                if (lr == null || lr.Count == 0)
+                    return null;
+
+                // Find one close to cur pos
                 // For multiple routes return random
-                if (r.Count > 1)
+                foreach (Route r1 in lr)
                 {
-                    Random rand = new Random();
-                    return r[rand.Next(r.Count)];
+                    // TODO
                 }
-                else
-                    return r[0];
             }  
             catch 
             {
                 return null;
             }
+
+            return r;
         }
 
         /// <summary>

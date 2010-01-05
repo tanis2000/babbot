@@ -47,11 +47,20 @@ namespace BabBot.Wow
         {
             get
             {
-                return ProcessManager.WowProcess.ReadASCIIString(
-                    ProcessManager.WowProcess.ReadUInt(
-                        ProcessManager.WowProcess.ReadUInt(ObjectPointer +
-                            ProcessManager.GlobalOffsets.UnitNameBaseOffset1) +
-                                ProcessManager.GlobalOffsets.UnitNameBaseOffset2),
+                uint b1 = ObjectPointer + ProcessManager.
+                            GlobalOffsets.UnitNameBaseOffset1;
+                uint b2 = ProcessManager.GlobalOffsets.UnitNameBaseOffset2;
+
+                uint addr1 = ProcessManager.WowProcess.ReadUInt(b1);
+                if (addr1 == 0)
+                {
+                    // Object might gone
+                    return "";
+                }
+
+                uint addr2 = addr1 + b2;
+                uint name_addr = ProcessManager.WowProcess.ReadUInt(addr2);
+                return ProcessManager.WowProcess.ReadASCIIString(name_addr,
                                     ProcessManager.GlobalOffsets.UnitNameLen);
             }
         }
