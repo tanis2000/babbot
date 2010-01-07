@@ -100,13 +100,15 @@ namespace BabBot.Wow
                 while ((curObject != 0) && ((curObject & 1) == 0))
                 {
                     wo = WowObject.GetCorrentWowObjectFromPointer(curObject);
-                    list.Add(wo);
+
+                    // don't add itseld
+                    if (wo.Guid != LocalGUID)
+                        list.Add(wo);
 
                     tempHolder = GetNextObject(curObject);
                     if ((tempHolder == 0) || (tempHolder == curObject))
-                    {
                         return list;
-                    }
+
                     curObject = tempHolder;
                 }
                 return list;
@@ -120,10 +122,12 @@ namespace BabBot.Wow
         public Descriptor.eObjType GetTypeByObject(uint obj)
         {
             //get the object's type from obj+0x14 (like normal)
-            var type = (Descriptor.eObjType) ProcessManager.WowProcess.ReadByte(obj + 0x14);
+            var type = (Descriptor.eObjType) ProcessManager.
+                WowProcess.ReadByte(obj + DataManager.CurWoWVersion.Globals.TypeOffset);
             return type;
         }
 
+        /*
         public string GetName(uint obj, ulong guid)
         {
             //obj == base address of object
@@ -157,10 +161,10 @@ namespace BabBot.Wow
                 return String.Empty;
             }
         }
+        */
 
         public string GetNameFromGuid(ulong guid)
         {
-
             ulong nameStorePtr = ProcessManager.GlobalOffsets.NameStorePointer; // Player name database
             const ulong nameMaskOffset = 0x024; // Offset for the mask used with GUID to select a linked list
             const ulong nameBaseOffset = 0x01c; // Offset for the start of the name linked list
@@ -169,7 +173,7 @@ namespace BabBot.Wow
             ulong mask, base_, offset, current, shortGUID, testGUID;
 
             mask = ProcessManager.WowProcess.ReadUInt((uint) (nameStorePtr + nameMaskOffset));
-            base_ = ProcessManager.WowProcess.ReadUInt((uint) (nameStorePtr + nameBaseOffset));
+            base_ = ProcessManager.WowProcess.ReadUInt((uint)(nameStorePtr + nameBaseOffset));
 
             shortGUID = guid & 0xffffffff; // Only half the guid is used to check for a hit
             offset = 12*(mask & shortGUID); // select the appropriate linked list
@@ -195,16 +199,6 @@ namespace BabBot.Wow
             // Found the guid in the name list...
             //ReadBytesIntoBuffer(current + nameStringOffset, numBytes, name);
             return ProcessManager.WowProcess.ReadASCIIString((uint) (current + nameStringOffset), 40);
-        }
-
-
-        private string GetUnitName(uint unit)
-        {
-            //unit names are easy to get!
-            uint aaa = ProcessManager.WowProcess.ReadUInt((unit + 
-                                ProcessManager.GlobalOffsets.UnitNameBaseOffset1));
-            return  ProcessManager.WowProcess.ReadASCIIString(
-                    ProcessManager.WowProcess.ReadUInt((aaa + 0x54 /* 3.0.9: 0x3C */)), 40);
         }
 
         public ulong GetMouseOverGUID()

@@ -38,6 +38,19 @@ namespace BabBot.Wow
             get { return ReadDescriptor<ulong>(Descriptor.eUnitFields.UNIT_FIELD_TARGET); }
         }
 
+        public override string Name
+        {
+            get
+            {
+                return ProcessManager.WowProcess.ReadASCIIString(
+                    ProcessManager.WowProcess.ReadUInt(
+                        ProcessManager.WowProcess.ReadUInt(ObjectPointer +
+                            ProcessManager.GlobalOffsets.UnitNameBaseOffset1) +
+                                ProcessManager.GlobalOffsets.UnitNameBaseOffset2),
+                                    ProcessManager.GlobalOffsets.UnitNameLen);
+            }
+        }
+
         public float Orientation
         {
             get { return ReadOffset<float>(ProcessManager.GlobalOffsets.PlayerRotationOffset); }

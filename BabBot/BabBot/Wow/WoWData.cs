@@ -703,6 +703,30 @@ namespace BabBot.Wow
         }
         internal uint NextBuff;
 
+        [XmlAttribute("obj_name_base_offset1")]
+        public string StrGameObjNameBaseOffset1
+        {
+            get { return GameObjNameBaseOffset1.ToString(); }
+            set { GameObjNameBaseOffset1 = Convert.ToUInt32(value, 16); }
+        }
+        internal uint GameObjNameBaseOffset1;
+
+        [XmlAttribute("obj_name_base_offset2")]
+        public string StrGameObjNameBaseOffset2
+        {
+            get { return GameObjNameBaseOffset2.ToString(); }
+            set { GameObjNameBaseOffset2 = Convert.ToUInt32(value, 16); }
+        }
+        internal uint GameObjNameBaseOffset2;
+
+        [XmlAttribute("obj_name_len")]
+        public string StrGameObjNameLen
+        {
+            get { return GameObjNameLen.ToString(); }
+            set { GameObjNameLen = Convert.ToInt32(value); }
+        }
+        internal int GameObjNameLen;
+
         [XmlAttribute("unit_name_base_offset1")]
         public string StrUnitNameBaseOffset1
         {
@@ -723,7 +747,7 @@ namespace BabBot.Wow
         public string StrUnitNameLen
         {
             get { return UnitNameLen.ToString(); }
-            set { UnitNameLen = Convert.ToInt32(value, 16); }
+            set { UnitNameLen = Convert.ToInt32(value); }
         }
         internal int UnitNameLen;
 
@@ -819,6 +843,22 @@ namespace BabBot.Wow
             }
         }
         internal uint ClickToMoveDestZ;
+
+        [XmlAttribute("zone_text")]
+        public string StrZoneText
+        {
+            get { return ClickToMoveDestZ.ToString(); }
+            set { ZoneText = Convert.ToUInt32(value, 16); }
+        }
+        internal uint ZoneText;
+
+        [XmlAttribute("sub_zone_text")]
+        public string StrSubZoneText
+        {
+            get { return ClickToMoveDestZ.ToString(); }
+            set { SubZoneText = Convert.ToUInt32(value, 16); }
+        }
+        internal uint SubZoneText;
 
         [XmlAttribute("lua_dostring")]
         public string StrLuaDoString

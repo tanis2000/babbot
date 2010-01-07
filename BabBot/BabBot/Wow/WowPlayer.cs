@@ -46,31 +46,28 @@ namespace BabBot.Wow
         private bool StopMovement;
         public int TravelTime;
         public readonly List<WowUnit> MobBlackList;
+        
         /// <summary>
         /// The continent id currently player in.
         /// -1 is undefined
         /// </summary>
         private int _continent = -1;
+        
         /// <summary>
         /// Toon's class (English)
         /// </summary>
         string _class;
+        
         /// <summary>
         /// Toon race. Race define's the faction as well
         /// </summary>
         Race _race;
+        
         /// <summary>
         /// Toon sex
         /// </summary>
         int _sex;
-        /// <summary>
-        /// Zone text where currently toon in
-        /// </summary>
-        string _zone;
-        /// <summary>
-        /// Zone text where currently toon in
-        /// </summary>
-        string _subzone;
+
         /// <summary>
         /// Get toon's faction.
         /// </summary>
@@ -104,7 +101,8 @@ namespace BabBot.Wow
         {
             get
             {
-                return ProcessManager.ObjectManager.GetName(ObjectPointer, Guid);
+                // return ProcessManager.ObjectManager.GetName(ObjectPointer, Guid);
+                return ProcessManager.ObjectManager.GetNameFromGuid(Guid);
             }
         }
 
@@ -134,14 +132,30 @@ namespace BabBot.Wow
             get { return _class; }
         }
 
+        /// <summary>
+        /// Zone text where currently toon in
+        /// </summary>
         public string ZoneText
         {
-            get { return _zone; }
+            get 
+            { 
+                return ProcessManager.WowProcess.ReadASCIIString((uint)
+                    ProcessManager.WowProcess.ReadUInt(DataManager.
+                                CurWoWVersion.Globals.ZoneText), 40);
+            }
         }
 
+        /// <summary>
+        /// SubZone text where currently toon in
+        /// </summary>
         public string SubZoneText
         {
-            get { return _subzone; }
+            get
+            {
+                return ProcessManager.WowProcess.ReadASCIIString((uint)
+                    ProcessManager.WowProcess.ReadUInt(DataManager.
+                                CurWoWVersion.Globals.SubZoneText), 40);
+            }
         }
 
         #region Target stats
@@ -265,8 +279,10 @@ namespace BabBot.Wow
                 List<WowObject> l = GetNearObjects();
                 foreach (WowObject obj in l)
                 {
-                    s += string.Format("GUID:{0:X}|Type:{1:X}\r" + 
-                            Environment.NewLine, obj.Guid, obj.Type);
+                    string name = "";
+                    try { name = obj.Name; } catch { }
+                    s += string.Format("GUID:{0:X}|Name:{1}|Type:{2:X}\r" + 
+                            Environment.NewLine, obj.Guid, name, obj.Type);
                 }
                 return s;
             }
@@ -1483,8 +1499,6 @@ end)()");
             try
             {
                 _continent = Convert.ToInt32(lret[0]);
-                _zone = lret[1];
-                _subzone = lret[2];
             }
             catch
             {
