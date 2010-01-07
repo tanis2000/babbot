@@ -243,7 +243,7 @@ namespace BabBot.Forms
 
                     WowUnit target = player.CurTarget;
                     // Generate exception when trying read name of another player
-                    if (target != null /* && target.Type != Descriptor.eObjType.OT_PLAYER */)
+                    if (target != null)
                     {
                         SetPlayerTargetInfo(string.Format("{0:X}", target.Guid),
                                                 target.Name, target.Faction.ToString());
