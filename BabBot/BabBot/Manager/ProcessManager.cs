@@ -462,6 +462,10 @@ namespace BabBot.Manager
 
         private static void exitProcess(object sender, EventArgs e)
         {
+            // Prevent from recursion
+            if (ProcessStatus == ProcessStatuses.WOW_CLOSED)
+                return;
+
             // Do it first
             ProcessStatus = ProcessStatuses.WOW_CLOSED;
             GameStatus = GameStatuses.NOT_STARTED;
@@ -482,13 +486,60 @@ namespace BabBot.Manager
                 WoWProcessEnded(((Process) sender).Id);
 
             Debug("char", "WoW termination completed");
+            
+            // Check for crush
+            uint err_pid = AppHelper.FindPidWindowByTitle(AppHelper.WOWERROR_APP_NAME);
 
-            // TODO add autorestart. Only can do it if crush implemented
-            if (config.Account.ReStart)
+            if (err_pid != 0 && config.Account.ReStart)
             {
-                // StartBot();
-                Log("char", "Suppose to restart WoW.exe now but ... ");
-                Log("char", "Auto Restart not implemented yet");
+                Log("char", "Crush detected. Clearing task list ... ");
+
+                Process err_proc = null;
+
+                try
+                {
+                    err_proc = System.
+                        Diagnostics.Process.GetProcessById((int)err_pid);
+                }
+                catch
+                {
+                    // Nothing wrong. Might be closed already by user.
+                }
+
+                do
+                {
+                    try
+                    {
+                        if (process != null)
+                            process.Kill();
+                    }
+                    catch
+                    {
+                        // Already killed
+                        process = null;
+                    }
+
+                    try
+                    {
+                        if (err_proc != null)
+                        {
+                            err_proc.Kill();
+                            err_proc = System.Diagnostics.Process.GetProcessById((int)err_pid);
+                        }
+                    }
+                    catch
+                    {
+                        // Already killed or doesn't exists on the list
+                        err_proc = null;
+
+                    }
+
+                    Thread.Sleep(1000);
+                } while (process != null || err_proc != null);
+                    
+                Log("char", "Cleaing completed. Restarting bot ... ");
+
+                StartBot();
             }
             else
                 ProcessStatus = ProcessStatuses.IDLE;

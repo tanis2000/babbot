@@ -34,6 +34,7 @@ namespace BabBot.Common
         #region Const
 
         private const string APPNAME = "Wow.exe";
+        public const string WOWERROR_APP_NAME = "WowError";
         private const string KEY = "InstallPath";
         private const string ROOT = @"SOFTWARE\Blizzard Entertainment\World of Warcraft";
         private const string WND_TITLE = "World of Warcraft";
@@ -55,6 +56,18 @@ namespace BabBot.Common
         #region External Declarations
 
         /// <summary>
+        /// The FindWindow function retrieves a handle to the top-level window 
+        /// whose class name and window name match the specified strings. 
+        /// This function does not search child windows. 
+        /// This function does not perform a case-sensitive search.
+        /// </summary>
+        /// <param name="className">Class Name or null</param>
+        /// <param name="windowText">Window Title (case sensitive)</param>
+        /// <returns></returns>
+        [DllImport("user32.dll")]
+        private static extern uint FindWindow(string className, string windowText);
+
+        /// <summary>
         /// API: Get if a window is visible from its handle 
         /// </summary>
         /// <returns>
@@ -70,10 +83,26 @@ namespace BabBot.Common
         [DllImport("user32.dll")]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
+        /// <summary>
+        /// The EnumWindows function enumerates all top-level windows on the screen by 
+        /// passing the handle to each window, in turn, to an application-defined 
+        /// callback function. EnumWindows continues until the last top-level window is 
+        /// enumerated or the callback function returns FALSE. 
+        /// </summary>
+        /// <param name="lpEnumFunc"></param>
+        /// <param name="lParam"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, int lParam);
 
+        /// <summary>
+        /// The EnumWindowsProc function is an application-defined callback function 
+        /// used with the EnumWindows
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="lParam"></param>
+        /// <returns></returns>
         private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
         #endregion
@@ -326,10 +355,19 @@ namespace BabBot.Common
             wow_pid = pid;
             wow_hnd = 0;
 
-            // Not checking for error since wow_hnd set in callback function
+            // Not checking for returning value since wow_hnd set in callback function
             EnumWindows(new EnumWindowsProc(CheckWowWindow), 0);
 
             return wow_hnd;
+        }
+
+        public static uint FindPidWindowByTitle(string title)
+        {
+            uint pid = 0;
+            uint hWnd = FindWindow(null, title);
+            if (hWnd != 0)
+                GetWindowThreadProcessId((IntPtr)hWnd, out pid);
+            return pid;
         }
 
         public static IntPtr BotHandle
