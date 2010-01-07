@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using BabBot.Manager;
+using BabBot.Common;
 
 namespace BabBot.Wow
 {
@@ -132,26 +133,34 @@ namespace BabBot.Wow
             //get the object's type from obj+0x14 (like normal)
             Descriptor.eObjType type = GetTypeByObject(obj);
 
-            //determine what type of object it is and call associated routine
-            switch (type)
+            try
             {
-                case Descriptor.eObjType.OT_PLAYER:
-                    //return GetPlayerName(obj);
-                    return GetNameFromGuid(guid);
+                //determine what type of object it is and call associated routine
+                switch (type)
+                {
+                    case Descriptor.eObjType.OT_PLAYER:
+                        //return GetPlayerName(obj);
+                        return GetNameFromGuid(guid);
 
-                case Descriptor.eObjType.OT_UNIT:
-                    return GetUnitName(obj);
+                    case Descriptor.eObjType.OT_UNIT:
+                        return GetUnitName(obj);
 
-                default:
-                    return ProcessManager.WowProcess.ReadASCIIString(
-                        ProcessManager.WowProcess.ReadUInt(
-                        ProcessManager.WowProcess.ReadUInt(obj + 0x968) + 0x54), 0x40);
-
+                    default:
+                        return ProcessManager.WowProcess.ReadASCIIString(
+                            ProcessManager.WowProcess.ReadUInt(
+                            ProcessManager.WowProcess.ReadUInt(obj + 0x968) + 0x54), 0x40);
+                }
+            }
+            catch (Exception e)
+            {
+                Output.Instance.LogError("char", "Unable read object name", e);
+                return String.Empty;
             }
         }
 
         public string GetNameFromGuid(ulong guid)
         {
+
             ulong nameStorePtr = ProcessManager.GlobalOffsets.NameStorePointer; // Player name database
             const ulong nameMaskOffset = 0x024; // Offset for the mask used with GUID to select a linked list
             const ulong nameBaseOffset = 0x01c; // Offset for the start of the name linked list
