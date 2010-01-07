@@ -17,8 +17,11 @@
     Copyright 2009 BabBot Team
 */
 using System;
-using BabBot.Manager;
 using System.Collections.Generic;
+
+// BabBot import
+using BabBot.Manager;
+using BabBot.Common;
 
 namespace BabBot.Wow
 {
@@ -127,7 +130,20 @@ namespace BabBot.Wow
 
                 uint oPointer = ProcessManager.ObjectManager.GetObjectByGUID(CurTargetGuid);
 
-                WowUnit o = new WowUnit(oPointer);
+                WowUnit o = null;
+                // Get correct object. Might be Unit or Player
+                // WowUnit o = new WowUnit(oPointer);
+
+                try
+                {
+                    // In case it's not Unit or Player
+                    o = (WowUnit)GetCorrentWowObjectFromPointer(oPointer);
+                }
+                catch (Exception e)
+                {
+                    // Just continue
+                    Output.Instance.LogError(e);
+                }
 
                 return o;
             }
