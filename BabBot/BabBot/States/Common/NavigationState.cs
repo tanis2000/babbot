@@ -21,6 +21,12 @@ namespace BabBot.States.Common
     public class NavigationState : State<WowPlayer>
     {
         /// <summary>
+        /// Default distance to calculate each step
+        /// As lower it as more precise bot moves but less smooth
+        /// </summary>
+        private const float _default_step_dist = 10;
+
+        /// <summary>
         /// Travel destination point
         /// </summary>
         private Vector3D _dest = null;
@@ -72,7 +78,7 @@ namespace BabBot.States.Common
         private Waypoints _wp = null;
 
         public NavigationState(Vector3D dest, string lfs, string tooltip_text)
-            : this(dest, 5F, lfs, tooltip_text) { }
+            : this(dest, _default_step_dist, lfs, tooltip_text) { }
 
         public NavigationState(Vector3D dest, float step_dist, string lfs, string tooltip_text)
         {
@@ -81,7 +87,7 @@ namespace BabBot.States.Common
         }
 
         public NavigationState(Waypoints waypoints, string lfs, string tooltip_text)
-            : this(waypoints, 5F, lfs, tooltip_text) { }            
+            : this(waypoints, _default_step_dist, lfs, tooltip_text) { }            
 
         public NavigationState(Waypoints waypoints, float step_dist, string lfs, string tooltip_text)
         {
