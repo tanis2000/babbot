@@ -31,9 +31,7 @@ namespace BabBot.Wow
     {
         private readonly uint CurMgr;
         private readonly ulong LocalGUID;
-        private uint curObject;
-        private uint holder;
-        private uint tempHolder;
+        
 
         public ObjectManager()
         {
@@ -56,19 +54,19 @@ namespace BabBot.Wow
 
         public uint GetObjectByGUID(ulong GUID)
         {
-            holder = GetFirstObject();
-            tempHolder = holder;
+            uint holder = GetFirstObject();
+
             while ((holder != 0) && ((holder & 1) == 0))
             {
                 if (ProcessManager.WowProcess.ReadUInt64(holder + 
                     ProcessManager.GlobalOffsets.GuidOffset) == GUID)
                         return holder;
 
-                tempHolder = GetNextObject(holder);
-                if ((tempHolder == 0) || (tempHolder == holder))
+                uint temp = GetNextObject(holder);
+                if ((temp == 0) || (temp == holder))
                     break;
 
-                holder = tempHolder;
+                holder = temp;
             }
             return 0;
         }
@@ -93,8 +91,7 @@ namespace BabBot.Wow
         {
             List<WowObject> list = new List<WowObject>();
             WowObject wo = null;
-            curObject = GetFirstObject();
-            tempHolder = curObject;
+            uint curObject = GetFirstObject();
             try
             {
                 while ((curObject != 0) && ((curObject & 1) == 0))
@@ -105,11 +102,11 @@ namespace BabBot.Wow
                     if (wo.Guid != LocalGUID)
                         list.Add(wo);
 
-                    tempHolder = GetNextObject(curObject);
-                    if ((tempHolder == 0) || (tempHolder == curObject))
+                    uint temp = GetNextObject(curObject);
+                    if ((temp == 0) || (temp == curObject))
                         return list;
 
-                    curObject = tempHolder;
+                    curObject = temp;
                 }
                 return list;
             }
@@ -117,6 +114,39 @@ namespace BabBot.Wow
             {
                 throw new Exception(e.Message);
             }
+        }
+
+        public WowObject LookForGameObj(string name)
+        {
+            WowObject res = null;
+
+            uint holder = GetFirstObject();
+            try
+            {
+                while ((holder != 0) && ((holder & 1) == 0))
+                {
+                    WowObject wo = WowObject.GetCorrentWowObjectFromPointer(holder);
+
+                    // don't add itseld
+                    if (wo.Name.Equals(name))
+                    {
+                        res = wo;
+                        break;
+                    }
+
+                    uint temp = GetNextObject(holder);
+                    if ((temp == 0) || (temp == holder))
+                        break;
+
+                    holder = temp;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
+            return res;
         }
 
         public Descriptor.eObjType GetTypeByObject(uint obj)
