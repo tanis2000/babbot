@@ -102,7 +102,7 @@ namespace BabBot.Wow
             get
             {
                 // return ProcessManager.ObjectManager.GetName(ObjectPointer, Guid);
-                return ProcessManager.ObjectManager.GetNameFromGuid(Guid);
+                return ProcessManager.ObjectManager.GetPlayerNameFromGuid(Guid);
             }
         }
 

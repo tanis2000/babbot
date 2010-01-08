@@ -127,6 +127,55 @@ namespace BabBot.Wow
             return type;
         }
 
+        /// <summary>
+        /// Search thru linked list for given player GUID
+        /// Works for local user as well
+        /// </summary>
+        /// <param name="guid">Player GUID</param>
+        /// <returns></returns>
+        public string GetPlayerNameFromGuid(ulong guid)
+        {
+            uint base_addr = ProcessManager.GlobalOffsets.NameStorePointer + 0x11C;
+
+            // Offset to the C string in a name structure
+            const uint name_offset = 0x20;
+
+            // Only half the guid is used to check for a hit
+            uint short_guid = (uint)guid & 0xffffffff;
+
+            // First element
+            uint current = ProcessManager.
+                        WowProcess.ReadUInt(base_addr + 8);
+            // Offset between elements in linked list
+            uint offset = ProcessManager.
+                        WowProcess.ReadUInt(base_addr);
+
+            if ((current == 0) || (current & 1) == 1)
+                return "";
+
+            uint test_guid = ProcessManager.WowProcess.ReadUInt(current);
+
+            while (test_guid != short_guid)
+            {
+                current = ProcessManager.WowProcess.ReadUInt(current + offset + 4);
+
+                if ((current == 0) || (current & 1) == 1)
+                    return "";
+
+                test_guid = ProcessManager.WowProcess.ReadUInt(current);
+            }
+
+
+            return ProcessManager.WowProcess.
+                ReadASCIIString(current + name_offset, 40);
+        }
+
+        public ulong GetMouseOverGUID()
+        {
+            return ProcessManager.WowProcess.ReadUInt64(ProcessManager.
+                                                GlobalOffsets.MouseOverGuidOffset);
+        }
+
         /*
         public string GetName(uint obj, ulong guid)
         {
@@ -161,7 +210,6 @@ namespace BabBot.Wow
                 return String.Empty;
             }
         }
-        */
 
         public string GetNameFromGuid(ulong guid)
         {
@@ -201,13 +249,6 @@ namespace BabBot.Wow
             return ProcessManager.WowProcess.ReadASCIIString((uint) (current + nameStringOffset), 40);
         }
 
-        public ulong GetMouseOverGUID()
-        {
-            return ProcessManager.WowProcess.ReadUInt64(ProcessManager.
-                                                GlobalOffsets.MouseOverGuidOffset);
-        }
-
-/*
         private string GetPlayerName(uint player)
         {
             //read the object's GUID from obj+0x30 (again, pretty basic)
