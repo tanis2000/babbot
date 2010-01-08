@@ -1125,6 +1125,7 @@ namespace BabBot.Wow.Helpers
             return !string.IsNullOrEmpty(res[0]);
         }
 
+
         #region TimedTargetInteract
 
         private static void TimedTargetInteract(CheckDelegate check)
