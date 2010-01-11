@@ -25,30 +25,30 @@ namespace BabBot.Scripts.Common
 {
     public class DeadState : State<WowPlayer>
     {
-        protected Vector3D _CorpseLocation;
+        protected Vector3D CorpseLocation;
 
-        protected override void DoEnter(WowPlayer Entity)
+        protected override void DoEnter(WowPlayer entity)
         {
             //on enter, get location of corpose
-            _CorpseLocation = Entity.CorpseLocation;
-            Entity.RepopMe();
+            CorpseLocation = entity.CorpseLocation;
+            entity.RepopMe();
         }
 
-        protected override void DoExecute(WowPlayer Entity)
+        protected override void DoExecute(WowPlayer entity)
         {
-            if (!Entity.IsGhost) return;
+            if (!entity.IsGhost) return;
 
-            _CorpseLocation = Entity.CorpseLocation;
+            CorpseLocation = entity.CorpseLocation;
             //on execute, if the distance to our corpose is more than xx yards, we need to get there
-            Output.Instance.Script(string.Format("Distance from corpse: {0}", Entity.DistanceFromCorpse()), this);
-            if (Entity.DistanceFromCorpse() > GlobalBaseBotState.MinDistanceFromCorpse)
+            Output.Instance.Script(string.Format("Distance from corpse: {0}", entity.DistanceFromCorpse()), this);
+            if (entity.DistanceFromCorpse() > GlobalBaseBotState.MinDistanceFromCorpse)
             {
                 Output.Instance.Script("We're still too far, walking to corpse");
                 // so we make a new move to state that will take us to our corpose
-                var mtsCorpse = new MoveToState(_CorpseLocation, GlobalBaseBotState.MinDistanceFromCorpse);
+                var mtsCorpse = new MoveToState(CorpseLocation, GlobalBaseBotState.MinDistanceFromCorpse);
 
                 //request that we move to this location
-                CallChangeStateEvent(Entity, mtsCorpse, true, false);
+                CallChangeStateEvent(entity, mtsCorpse, true, false);
 
                 return;
             }
@@ -56,26 +56,26 @@ namespace BabBot.Scripts.Common
             //we should now be close to our corpse so rez!
             // TODO: we should check that there's no delay time running before trying this
             Output.Instance.Script("Trying to resurrect", this);
-            Entity.RetrieveCorpse();
+            entity.RetrieveCorpse();
 
             /// TODO: We should also check the time we spent running around trying to recover our corpse
             /// and if it's over a certain threshold we should run back to the spirit healer and repop there
 
             // We're done, let's finish & exit
-            Finish(Entity);
-            Exit(Entity);
+            Finish(entity);
+            Exit(entity);
         }
 
-        protected override void DoExit(WowPlayer Entity)
+        protected override void DoExit(WowPlayer entity)
         {
             //on exit, if there is a previous state, go back to it
             if (PreviousState != null)
             {
-                CallChangeStateEvent(Entity, PreviousState, false, false);
+                CallChangeStateEvent(entity, PreviousState, false, false);
             }
         }
 
-        protected override void DoFinish(WowPlayer Entity)
+        protected override void DoFinish(WowPlayer entity)
         {
             //finish
         }

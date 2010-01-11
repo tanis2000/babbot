@@ -40,7 +40,7 @@ namespace Dante
             }
             catch(Exception e)
             {
-                LuaInterface.LoggingInterface.Log("DoString() - Exception: e.ToString()");
+                LuaInterface.LoggingInterface.Log("DoString() - Exception:" + e);
                 LuaInterface.LuaState = 255;
             }
         }

@@ -25,19 +25,19 @@ namespace BabBot.Scripts.Common
 {
     public class PreCombatState : State<WowPlayer>
     {
-        protected static WowUnit _MobToAttack;
-        protected static DateTime _LastCTMCheck = DateTime.Now;
+        protected static WowUnit MobToAttack;
+        protected static DateTime LastCtmCheck = DateTime.Now;
         /// <summary> Time elapsed trying to attack the same mob (used to blacklist a mob that is evading/inside solids) </summary>
-        protected static DateTime _AttackTimeStart = DateTime.Now;
+        protected static DateTime AttackTimeStart = DateTime.Now;
 
         public bool HasMobToAttack()
         {
-            if (_MobToAttack == null) return false;
+            if (MobToAttack == null) return false;
 
             return true;
         }
 
-        protected override void DoEnter(WowPlayer Entity)
+        protected override void DoEnter(WowPlayer entity)
         {
         }
 
@@ -45,24 +45,24 @@ namespace BabBot.Scripts.Common
         /// This happens when we are being attacked by some mobs or when we
         /// have found something to kill 
         /// </summary>
-        protected override void DoExecute(WowPlayer Entity)
+        protected override void DoExecute(WowPlayer entity)
         {
             Output.Instance.Script("OnPreCombat() Begin", this);
 
             DateTime start = DateTime.Now;
             
-            if (Entity.IsBeingAttacked())
+            if (entity.IsBeingAttacked())
             {
                 Output.Instance.Script("OnPreCombat() - We are being attacked", this);
                 /// We are being attacked by a Mob. That means that we should fight back
                 /// by finding the mob first of all
-                if (Entity.SelectWhoIsAttackingUsWithCTM())
+                if (entity.SelectWhoIsAttackingUsWithCTM())
                 {
                     /// We found who is attacking us and we fight back (no rebuffing now)
                     /// (If everything is correct at this point the StateManager will take care
                     /// of switching to the OnCombat state)
-                    _MobToAttack = Entity.CurTarget;
-                    _AttackTimeStart = DateTime.Now; // Reset the time check for blacklisting mobs
+                    MobToAttack = entity.CurTarget;
+                    AttackTimeStart = DateTime.Now; // Reset the time check for blacklisting mobs
                 }
             }
             else
@@ -70,20 +70,20 @@ namespace BabBot.Scripts.Common
                 Output.Instance.Script("OnPreCombat() - We are going to attack someone", this);
                 
                 // Check if we already have a valid Unit to attack from a previous state
-                if (_MobToAttack == null)
+                if (MobToAttack == null)
                 {
                     Output.Instance.Script("Looking for a new enemy to attack", this);
                     // Find a new mob to attack
-                    if (Entity.EnemyInSight())
+                    if (entity.EnemyInSight())
                     {
                         Output.Instance.Script("We have something", this);
-                        _MobToAttack = Entity.GetClosestEnemyInSight();
-                        if (_MobToAttack != null)
+                        MobToAttack = entity.GetClosestEnemyInSight();
+                        if (MobToAttack != null)
                         {
                             Output.Instance.Script(
                                 string.Format("The mob we're going to attack is a {0} with GUID {1:X}",
-                                              _MobToAttack.Name, _MobToAttack.Guid), this);
-                            _AttackTimeStart = DateTime.Now; // Reset the time check for blacklisting mobs
+                                              MobToAttack.Name, MobToAttack.Guid), this);
+                            AttackTimeStart = DateTime.Now; // Reset the time check for blacklisting mobs
                         }
                         else
                         {
@@ -93,62 +93,62 @@ namespace BabBot.Scripts.Common
                 }
 
                 // Check if this is good
-                if (_MobToAttack != null)
+                if (MobToAttack != null)
                 {
                     Output.Instance.Script("We have a mob, checking if it's dead", this);
-                    if (!_MobToAttack.IsDead)
+                    if (!MobToAttack.IsDead)
                     {
-                        TimeSpan attackTimeDiff = start - _AttackTimeStart;
+                        TimeSpan attackTimeDiff = start - AttackTimeStart;
                         if (attackTimeDiff.TotalMilliseconds > 10000)
                         {
                             Output.Instance.Script("We spent more than 10 seconds trying to attack the same mob without reaching it. Moving on and blacklisting it.", this);
-                            Entity.MobBlackList.Add(_MobToAttack);
-                            _MobToAttack = null;
+                            entity.MobBlackList.Add(MobToAttack);
+                            MobToAttack = null;
                             return;
                         }
                             
                         Output.Instance.Script("Checking distance", this);
-                        float distance = MathFuncs.GetDistance(_MobToAttack.Location, Entity.Location, false);
+                        float distance = MathFuncs.GetDistance(MobToAttack.Location, entity.Location, false);
                         if (distance > 10.0f)
                         {
                             Output.Instance.Script("We're too far to CTM it, moving closer first", this);
-                            var mtsTarget = new MoveToState(_MobToAttack.Location, 3.0f);
+                            var mtsTarget = new MoveToState(MobToAttack.Location, 3.0f);
 
                             //request that we move to this location
-                            CallChangeStateEvent(Entity, mtsTarget, true, false);
+                            CallChangeStateEvent(entity, mtsTarget, true, false);
 
                             return;
                         }
 
                         Output.Instance.Script("Attacking it with CTM", this);
-                        TimeSpan timeDiff = start - _LastCTMCheck;
+                        TimeSpan timeDiff = start - LastCtmCheck;
                         if (timeDiff.TotalMilliseconds > 2000) 
                         {
-                            Entity.AttackMobWithCTM(_MobToAttack);
-                            _LastCTMCheck = DateTime.Now;
+                            entity.AttackMobWithCTM(MobToAttack);
+                            LastCtmCheck = DateTime.Now;
                         }
                     } else
                     {
                         Output.Instance.Script("The mob we were looking for is dead :(", this);
-                        _MobToAttack = null;
+                        MobToAttack = null;
                     }
                 }
 
                 /*
-                if (Entity.EnemyInSight())
+                if (entity.EnemyInSight())
                 {
                     // Face the closest enemy
                     Output.Instance.Script("OnPreCombat() - Facing closest enemy (we should get a target this way)", this);
-                    //Entity.FaceClosestEnemy();
-                    //Entity.AttackClosestEnemyWithCTM();
+                    //entity.FaceClosestEnemy();
+                    //entity.AttackClosestEnemyWithCTM();
                     // Get the enemy unit and save it
                     // Check that it's not dead or anything like that
                     // Move to it
 
-                    Entity.MoveToClosestEnemy();
+                    entity.MoveToClosestEnemy();
 
                     // Let's check if we actually got it as our target
-                    if ((Entity.HasTarget) && (!Entity.IsTargetDead()) && (Entity.IsTargetInEnemyList()))
+                    if ((entity.HasTarget) && (!entity.IsTargetDead()) && (entity.IsTargetInEnemyList()))
                     {
                         Output.Instance.Script("OnPreCombat() - Affirmative. We have a target", this);
                         /// Ok, we have the target, it's time to start attacking,
@@ -158,7 +158,7 @@ namespace BabBot.Scripts.Common
                     {
                         // Let's try moving closer. We should already be facing our wanted target
                         // TODO: Change this so that we use clicktomove instead
-                        Entity.MoveForward(1000);
+                        entity.MoveForward(1000);
                         Output.Instance.Script("OnPreCombat() - Can't target. This should not happen :-P", this);
                     }
                 }
@@ -166,16 +166,16 @@ namespace BabBot.Scripts.Common
             }
         }
 
-        protected override void DoExit(WowPlayer Entity)
+        protected override void DoExit(WowPlayer entity)
         {
             //on exit, if there is a previous state, go back to it
             if (PreviousState != null)
             {
-                CallChangeStateEvent(Entity, PreviousState, false, false);
+                CallChangeStateEvent(entity, PreviousState, false, false);
             }
         }
 
-        protected override void DoFinish(WowPlayer Entity)
+        protected override void DoFinish(WowPlayer entity)
         {
         }
     }

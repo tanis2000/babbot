@@ -60,7 +60,7 @@ namespace BabBot.Scripts.Common
 
         #endregion
 
-        protected bool _IsDeadStateRunning;
+        protected bool IsDeadStateRunning;
         public static SConsumable Consumable = SConsumable.Instance;
 
         /// <summary>
@@ -570,7 +570,7 @@ namespace BabBot.Scripts.Common
             if (Entity.IsDead || Entity.IsGhost)
             {
                 //if the current state is not already dead then don't worry about it
-                if (!_IsDeadStateRunning)
+                if (!IsDeadStateRunning)
                 {
                     var ds = new DeadState();
 
@@ -578,7 +578,7 @@ namespace BabBot.Scripts.Common
 
                     CallChangeStateEvent(Entity, ds, true, false);
 
-                    _IsDeadStateRunning = true;
+                    IsDeadStateRunning = true;
                 }
 
                 //now we return, as there isn't anything else to do while we are dead
@@ -603,7 +603,7 @@ namespace BabBot.Scripts.Common
 
         private void deadState_Exited(object sender, StateEventArgs<WowPlayer> e)
         {
-            _IsDeadStateRunning = false;
+            IsDeadStateRunning = false;
         }
 
         protected override void DoExit(WowPlayer Entity)

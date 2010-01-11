@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Dante
 {
@@ -51,7 +52,10 @@ namespace Dante
                         w.Close();
                     }
                 }
-                catch (Exception e) { }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
             }
         }
 
@@ -68,7 +72,10 @@ namespace Dante
                     w.Close();
                 }
                 }
-                catch (Exception e) { }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
             }
         }
     }

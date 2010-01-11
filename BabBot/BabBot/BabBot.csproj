@@ -354,7 +354,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripts\Common\RouteRecordingState.cs" />
-    <Compile Include="States\Samples\HangingAroundState.cs" />
+    <Compile Include="Scripts\Samples\HangingAroundState.cs" />
     <Compile Include="Scripts\Common\AbstractQuestState.cs" />
     <Compile Include="States\StateEventArgs.cs" />
     <Compile Include="States\StateMachine.cs" />
@@ -481,7 +481,6 @@
   <ItemGroup>
     <Folder Include="Data\Routes\" />
     <Folder Include="Resources\" />
-    <Folder Include="States\Common\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1291,7 +1291,7 @@ namespace BabBot.Wow
             set { Name = value; }
         }
 
-        internal virtual string FullName
+        internal override string FullName
         {
             get { return ItemName + ": 0/" + ReqQty; }
         }

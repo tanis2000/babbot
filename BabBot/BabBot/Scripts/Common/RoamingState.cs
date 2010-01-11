@@ -27,25 +27,25 @@ namespace BabBot.Scripts.Common
 {
     public class RoamingState : State<WowPlayer>
     {
-        protected static WayPoint _lastWayPoint = null;
+        protected static WayPoint LastWayPoint = null;
 
-        protected override void DoEnter(WowPlayer Entity)
+        protected override void DoEnter(WowPlayer entity)
         {
         }
 
         /// <summary>
         /// We are roaming through the waypoints with nothing else to do
         /// </summary>
-        protected override void DoExecute(WowPlayer Entity)
+        protected override void DoExecute(WowPlayer entity)
         {
             WayPoint wp = null;
 
             Output.Instance.Script("Checking if we have a last waypoint defined", this);
-            if (_lastWayPoint != null)
+            if (LastWayPoint != null)
             {
                 Output.Instance.Script("We have a last waypoint. Checking if we reached it", this);
 
-                float distanceFromLast = MathFuncs.GetDistance(_lastWayPoint.Location, Entity.Location, false);
+                float distanceFromLast = MathFuncs.GetDistance(LastWayPoint.Location, entity.Location, false);
                 if (distanceFromLast <= 3.0f)
                 {
                     Output.Instance.Script("We reached the last waypoint. Let's get a new one", this);
@@ -54,7 +54,7 @@ namespace BabBot.Scripts.Common
                 else
                 {
                     Output.Instance.Script("We still need to reach the last waypoint. We reuse the last one.", this);
-                    wp = _lastWayPoint;
+                    wp = LastWayPoint;
                 }
             }
             else
@@ -66,17 +66,17 @@ namespace BabBot.Scripts.Common
             // Id we do have a waypoint we actually move
             if (wp != null)
             {
-                _lastWayPoint = wp;
+                LastWayPoint = wp;
                 Output.Instance.Script(string.Format("Moving to waypoint. Index:{0}", WayPointManager.Instance.CurrentNormalWayPointIndex), this);
                 Output.Instance.Script(string.Format("WayPoint: X:{0} Y:{1} Z:{2}", wp.Location.X, wp.Location.Y, wp.Location.Z), this);
                 //MoveTo(wp.Location);
-                float distance = MathFuncs.GetDistance(wp.Location, Entity.Location, false);
+                float distance = MathFuncs.GetDistance(wp.Location, entity.Location, false);
                 if (distance > 3.0f)
                 {
                     var mtsTarget = new MoveToState(wp.Location, 3.0f);
 
                     //request that we move to this location
-                    CallChangeStateEvent(Entity, mtsTarget, true, false);
+                    CallChangeStateEvent(entity, mtsTarget, true, false);
 
                     return;
                 }
@@ -89,16 +89,16 @@ namespace BabBot.Scripts.Common
 
         }
 
-        protected override void DoExit(WowPlayer Entity)
+        protected override void DoExit(WowPlayer entity)
         {
             //on exit, if there is a previous state, go back to it
             if (PreviousState != null)
             {
-                CallChangeStateEvent(Entity, PreviousState, false, false);
+                CallChangeStateEvent(entity, PreviousState, false, false);
             }
         }
 
-        protected override void DoFinish(WowPlayer Entity)
+        protected override void DoFinish(WowPlayer entity)
         {
         }
     }
