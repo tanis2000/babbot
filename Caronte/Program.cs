@@ -33,6 +33,11 @@ namespace Caronte
 
         private Pather.Graph.PathGraph world;
 
+        public bool Cancel
+        {
+            set { world.Cancel = value; }
+        }
+
         public void Init(string iContinent)
         {
             continent = iContinent;

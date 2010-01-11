@@ -13,8 +13,9 @@ namespace Pather.Graph
 		public const float toonSize = 0.5f;
 
 		public const float MinStepLength = 2f;
-		public const float WantedStepLength = 3f;
-		public const float MaxStepLength = 5f;
+		public const float WantedStepLength = 5f;
+		public const float MaxStepLength = 10f;
+        public bool Cancel;
 
 		/*
 		public const float IndoorsWantedStepLength = 1.5f;
@@ -231,6 +232,7 @@ namespace Pather.Graph
 			Spot closest = null;
 			float closest_d = 1E30f;
 			int d = 0;
+        
 			while ((float)d <= max_d + 0.1f)
 			{
 				for (int i = -d; i <= d; i++)
@@ -259,6 +261,9 @@ namespace Pather.Graph
 								closest_d = di;
 							}
 							ss = ss.next;
+
+                            if (Cancel)
+                                goto loop_end;
 						}
 					}
 				}
@@ -270,6 +275,7 @@ namespace Pather.Graph
 				}
 				d++;
 			}
+loop_end:
 			//Log("Closest1 spot to " + l + " is " + closest);
 			return closest;
 		}
@@ -305,11 +311,15 @@ namespace Pather.Graph
 								sl.Add(ss);
 							}
 							ss = ss.next;
+
+                            if (Cancel)
+                                goto loop_end;
 						}
 					}
 				}
 				d++;
 			}
+loop_end:
 			return sl;
 		}
 
@@ -505,6 +515,7 @@ namespace Pather.Graph
 		{
 			searchID++;
 			int count = 0;
+            Cancel = false;
 			int prevCount = 0;
 			int currentSearchID = searchID;
 			float heuristicsFactor = 1.3f;
@@ -524,7 +535,7 @@ namespace Pather.Graph
 
 			// A* -ish algorithm
 
-			while (q.Count != 0) // && count < 100000)
+			while ((q.Count != 0) && !Cancel) // && count < 100000)
 			{
 				float prio;
 				Spot spot = q.Dequeue(out prio); // .Value; 
@@ -616,6 +627,9 @@ namespace Pather.Graph
 							new_found++;
 						}
 					}
+
+                    if (Cancel)
+                        break;
 				}
 
 				//hmm search the triangles :p
@@ -715,6 +729,9 @@ namespace Pather.Graph
 								}
 							}
 						}
+
+                        if (Cancel)
+                            break;
 					}
 
 				}
