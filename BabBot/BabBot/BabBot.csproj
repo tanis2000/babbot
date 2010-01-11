@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BFD0AB5E-EF57-4EF8-9E0C-F16F4C53B5A0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -346,16 +346,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="States\ChangeStateEventArgs.cs" />
-    <Compile Include="States\Common\NavigationState.cs" />
-    <Compile Include="States\Common\QuestDeliveryState.cs" />
-    <Compile Include="States\Common\QuestAcceptState.cs" />
-    <Compile Include="States\Common\QuestExecState.cs" />
-    <Compile Include="States\Common\TravelState.cs">
+    <Compile Include="Scripts\Common\NavigationState.cs" />
+    <Compile Include="Scripts\Common\QuestDeliveryState.cs" />
+    <Compile Include="Scripts\Common\QuestAcceptState.cs" />
+    <Compile Include="Scripts\Common\QuestExecState.cs" />
+    <Compile Include="Scripts\Common\TravelState.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="States\Common\RouteRecordingState.cs" />
+    <Compile Include="Scripts\Common\RouteRecordingState.cs" />
     <Compile Include="States\Samples\HangingAroundState.cs" />
-    <Compile Include="States\Common\AbstractQuestState.cs" />
+    <Compile Include="Scripts\Common\AbstractQuestState.cs" />
     <Compile Include="States\StateEventArgs.cs" />
     <Compile Include="States\StateMachine.cs" />
     <Compile Include="States\State.cs" />
@@ -481,6 +481,7 @@
   <ItemGroup>
     <Folder Include="Data\Routes\" />
     <Folder Include="Resources\" />
+    <Folder Include="States\Common\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
