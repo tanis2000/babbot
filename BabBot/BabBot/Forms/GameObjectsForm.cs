@@ -235,13 +235,22 @@ namespace BabBot.Forms
 
         private void MoveTo(object sender, DoWorkEventArgs e)
         {
+            // For some bizzard reason executes multiple times
+            if (e.Result != null)
+            {
+                Console.WriteLine("MoveTo again");
+                return;
+            }
+
             try
             {
                 NpcHelper.MoveToGameObjByName(GetCurrentRow().NAME, "npc");
+                e.Result = true;
             }
             catch (Exception ex)
             {
                 ShowErrorMessage(ex);
+                e.Result = false;
             }
         }
 
@@ -1064,8 +1073,9 @@ namespace BabBot.Forms
                 return;
             }
 
-            backgroundWorker.DoWork += proc;
-            this.Enabled = false;
+            backgroundWorker.DoWork +=new DoWorkEventHandler(proc);
+            // this.Enabled = false;
+            
             backgroundWorker.RunWorkerAsync();
         }
 

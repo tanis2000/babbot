@@ -132,8 +132,12 @@ namespace BabBot.States.Common
             if (_t == null || !_t.IsAlive)
                 return;
 
+            // Terminate path calculation
+            if (_wp == null)
+                ProcessManager.Caronte.Cancel = true;
             // Terminating movement
             _terminated = true;
+
             Thread.Sleep(500);
             if (_t.IsAlive)
                 _t.Abort();
@@ -210,39 +214,60 @@ namespace BabBot.States.Common
                     {
                         // Bot trying unstuck
                         // Click and Send jump at the same time
-                        Thread.Sleep(100);
+                        Thread.Sleep(150);
+
+                        float shift_d = _player.Location.Y - vnext.Y;
+
+                        // Check if we need send right/left shift key
+                        if (shift_d != 0)
+                        {
+                            string shift = (shift_d > 0) ?
+                                CommandManager.SK_Q :
+                                CommandManager.SK_E;
+                            ProcessManager.CommandManager.SendKeys(shift);
+                            Thread.Sleep(20);
+                        }
                         ProcessManager.CommandManager.SendKeys(CommandManager.SK_SPACE);
+
                         t += 1000;
                     }
 
-                    Thread.Sleep(t);
+                    if (t > 0)
+                        // Click a bit earlier for smooth movement
+                        Thread.Sleep((int) (0.98 * t));
 
                     // Check if we moved
                     float dd = _player.Location.GetDistanceTo(vnext);
-                    if (dd > step)
+                    if (dd > _step_dist)
                     {
-                        // We stuck
-                        if (_retry < _max_retry)
+                        // Wait a bit we might still moving
+                        Thread.Sleep((int)((dd / 7F) * 1000));
+
+                        // Check again
+                        if (dd > _step_dist)
                         {
-                            Output.Instance.Debug("Player stuck. Trying unstuck ...");
-                            _retry++;
+                            // We stuck
+                            if (_retry < _max_retry)
+                            {
+                                Output.Instance.Debug("Player stuck. Trying unstuck ...");
+                                _retry++;
 
-                            // Recalculate path to next waypoint but with smaller step
-                            float new_step = (float)(step * 0.9);
-                            Path new_path = ProcessManager.Caronte.CalculatePath(
-                                WaypointVector3DHelper.Vector3DToLocation(_player.Location),
-                                WaypointVector3DHelper.Vector3DToLocation(vnext), new_step);
-                            float d = MoveToDest(new_path, vnext, new_step);
-                            if (d > new_step)
+                                // Recalculate path to next waypoint but with smaller step
+                                float new_step = (float)(step * 0.618);
+                                Path new_path = ProcessManager.Caronte.CalculatePath(
+                                    WaypointVector3DHelper.Vector3DToLocation(_player.Location),
+                                    WaypointVector3DHelper.Vector3DToLocation(vnext), new_step);
+                                float d = MoveToDest(new_path, vnext, new_step);
+                                if (d > new_step)
+                                    return _player.Location.GetDistanceTo(_dest);
+
+                                Output.Instance.Debug("Player unstuck. Continue traveling.");
+                                _retry--;
+                            }
+                            else
+                                // Just exit
                                 return _player.Location.GetDistanceTo(_dest);
-
-                            Output.Instance.Debug("Player unstuck. Continue traveling.");
-                            _retry--;
                         }
-                        else
-                            // Just exit
-                            return _player.Location.GetDistanceTo(_dest);
-
                     }
 
                     if (_retry == 0)
@@ -275,6 +300,9 @@ namespace BabBot.States.Common
                 path = ProcessManager.Caronte.CalculatePath(
                     WaypointVector3DHelper.Vector3DToLocation(_player.Location),
                     WaypointVector3DHelper.Vector3DToLocation(_dest), _step_dist);
+
+                if (path == null || _terminated)
+                    return;
 
                 dest = _dest;
             }

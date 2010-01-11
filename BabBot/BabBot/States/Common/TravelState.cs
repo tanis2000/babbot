@@ -20,7 +20,7 @@ namespace BabBot.States.Common
         /// <summary>
         /// Logging facility
         /// </summary>
-        private string _lfs;
+        public string Lfs;
 
         /// <summary>
         /// Text shown in bot progress bar tooltip
@@ -35,7 +35,7 @@ namespace BabBot.States.Common
         /// <summary>
         /// List of coordinates if more than 1 (for NPC)
         /// </summary>
-        List<Vector3D> _vlist = null;
+        public List<Vector3D> Vlist = null;
 
         /// <summary>
         /// Last destination vector that was submit to 
@@ -48,9 +48,11 @@ namespace BabBot.States.Common
         /// </summary>
         AbstractCheck _check;
 
+        public WowPlayer Player;
+
         public TravelState(GameObject obj, string lfs, string tooltip_text)
         {
-            _check = new GameObjCheck(this, obj);
+            _check = new GameObjCheck(this,  obj);
             Init(obj, lfs, tooltip_text);
         }
 
@@ -62,8 +64,8 @@ namespace BabBot.States.Common
 
         void Init(object dest, string lfs, string tooltip_text)
         {
+            Lfs = lfs;
             _dest = dest;
-            _lfs = lfs;
             _tooltip = tooltip_text;
         }
 
@@ -75,59 +77,67 @@ namespace BabBot.States.Common
         /// <param name="player"></param>
         protected override void DoEnter(WowPlayer player)
         {
+            Player = player;
+
             // Locate route in Endpoints table
             string name = _dest.ToString();
+            Vector3D cur_loc = player.Location;
 
-            if (_dest.GetType().IsSubclassOf(typeof(GameObject)))
+            try
             {
-                GameObject obj = (GameObject)_dest;
-
-                // Check if obj close
-                if (LookForGameObjClose(obj))
+                if (!_check.DoBeforeRouteCheck())
                 {
-                    // We already at destination
+                    // We already at dest
                     Finish(player);
                     return;
-                }
-                
-                // Check if obj has coordinates
-                Vector3D v = NpcHelper.GetGameObjCoord(obj, _lfs);
-                if (v == null)
-                {
-                    // Can't travel
-                    Finish(player);
-                    return;
-                }
-
-                // Check for other coordinates
-                if (obj.GetType().IsSubclassOf(typeof(NPC)))
-                {
-                    NPC npc = (NPC) obj;
-
-                    // Use current zone as a key
-                    if (npc.Coordinates.Count > 0)
-                    {
-                        ZoneWp zwp = npc.Coordinates[player.ZoneText];
-                        if (zwp != null)
-                            _vlist = zwp.List;
-                    }
                 }
             }
-
-            Route r = RouteListManager.FindRoute(name);
-            if (r != null)
+            catch
             {
-                // Load waypoints and launch NavigationState
-                Waypoints wp = RouteListManager.LoadWaypoints(r.WaypointFileName);
-                if (wp != null)
-                    CallChangeStateEvent(player,
-                        new NavigationState(wp, _lfs, "Traveling to " + _dest.ToString()));
-
+                Finish(player);
                 return;
             }
 
-            // Check undef routes
-            // r = RouteListManager
+            // Find all avail routes for dest
+            List<Route> lr = RouteListManager.Endpoints[name];
+            bool calc_route = true;
+
+            // Min dist to Endpoint B (if any)
+            float min_dist_nb = float.MaxValue;
+            foreach (Route r in lr)
+            {
+                // It's either A or B
+                Endpoint[] eps = r.GetEndpoints(name);
+                if (eps == null)
+                    return;
+
+                if (CheckEndpoint(eps[1], r, player, cur_loc))
+                    return;
+
+                // Exact route not found
+                // Check distance to endpoint vs distance to destination
+                float dist_b = eps[1].Waypoint.GetDistanceTo(cur_loc);
+                float dist_a = eps[0].Waypoint.GetDistanceTo(cur_loc);
+
+                min_dist_nb = Math.Min(min_dist_nb, dist_b);
+                calc_route = calc_route && (dist_a < dist_b);
+            }
+            
+            // Check among undef routes
+            // r = RouteListManager.FindRoute(
+        }
+
+        private bool CheckEndpoint(Endpoint ep, Route r, 
+                        WowPlayer player, Vector3D cur_loc)
+        {
+            if (ep.Waypoint.IsClose(cur_loc))
+            {
+                // Found exact route
+                ActivateMoveState(r, player);
+                return true;
+            }
+
+            return false;
         }
 
         protected override void DoExecute(WowPlayer player)
@@ -150,6 +160,44 @@ namespace BabBot.States.Common
             }
         }
 
+        private void ActivateMoveState(Route r, WowPlayer player)
+        {
+            // Load waypoints and launch NavigationState
+            Waypoints wp = RouteListManager.LoadWaypoints(r.WaypointFileName);
+            if (wp != null)
+            {
+                if (r.Reversible)
+                    wp.List.Reverse();
+
+                CallChangeStateEvent(player, new NavigationState(wp, 
+                                Lfs, "Traveling to " + _dest.ToString()));
+            }
+        }
+       
+    }
+
+    abstract class AbstractCheck {
+        protected TravelState Parent;
+        protected string Lfs;
+
+        protected AbstractCheck(TravelState parent)
+        {
+            Parent = parent;
+        }
+
+        public virtual bool DoBeforeRouteCheck() { return true; }
+    }
+
+    class GameObjCheck : AbstractCheck
+    {
+        GameObject _obj;
+
+        internal GameObjCheck(TravelState parent, GameObject obj)
+            : base(parent)
+        {
+            _obj = obj;
+        }
+
         /// <summary>
         /// Check if GameObject can be found around
         /// </summary>
@@ -163,27 +211,34 @@ namespace BabBot.States.Common
 
             return wo.Location.IsClose(ProcessManager.Player.Location);
         }
-    }
 
-    abstract class AbstractCheck {
-        protected TravelState Parent;
-
-        protected AbstractCheck(TravelState parent)
+        public override bool DoBeforeRouteCheck()
         {
-            Parent = parent;
-        }
+            // Check if obj close
+            if (LookForGameObjClose(_obj))
+                // We already at destination
+                return false;
 
-        // abstract bool DoCheck(Vector3D coord);
-    }
+            // Check if obj has coordinates
+            Vector3D v = NpcHelper.GetGameObjCoord(_obj, Parent.Lfs);
+            if (v == null)
+                throw new GameObjectCoordNotFound(_obj.Name);
 
-    class GameObjCheck : AbstractCheck
-    {
-        GameObject _obj;
+            // Check for other coordinates
+            if (_obj.GetType().IsSubclassOf(typeof(NPC)))
+            {
+                NPC npc = (NPC)_obj;
 
-        internal GameObjCheck(TravelState parent, GameObject obj)
-            : base(parent)
-        {
-            _obj = obj;
+                // Use current zone as a key
+                if (npc.Coordinates.Count > 0)
+                {
+                    ZoneWp zwp = npc.Coordinates[Parent.Player.ZoneText];
+                    if (zwp != null)
+                        Parent.Vlist = zwp.List;
+                }
+            }
+
+            return true;
         }
     }
 

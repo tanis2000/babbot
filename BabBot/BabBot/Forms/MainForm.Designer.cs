@@ -43,6 +43,7 @@
             this.talentTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.realmListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.questListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.routesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addTargetNPCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recordRouteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,6 +102,7 @@
             this.tabObjectsNear = new System.Windows.Forms.TabPage();
             this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
             this.tabRadar = new System.Windows.Forms.TabPage();
+            this.btnQ = new System.Windows.Forms.Button();
             this.btnSpace = new System.Windows.Forms.Button();
             this.label41 = new System.Windows.Forms.Label();
             this.cblPathList = new System.Windows.Forms.CheckedListBox();
@@ -232,7 +234,7 @@
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.pbBotProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.ttStateMachineInfo = new System.Windows.Forms.ToolTip(this.components);
-            this.routesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnE = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -375,6 +377,14 @@
             this.questListToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.questListToolStripMenuItem.Text = "Quest List";
             this.questListToolStripMenuItem.Click += new System.EventHandler(this.questListToolStripMenuItem_Click);
+            // 
+            // routesToolStripMenuItem
+            // 
+            this.routesToolStripMenuItem.Name = "routesToolStripMenuItem";
+            this.routesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.routesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.routesToolStripMenuItem.Text = "Routes";
+            this.routesToolStripMenuItem.Click += new System.EventHandler(this.routesToolStripMenuItem_Click);
             // 
             // actionsToolStripMenuItem
             // 
@@ -999,6 +1009,8 @@
             // 
             // tabRadar
             // 
+            this.tabRadar.Controls.Add(this.btnE);
+            this.tabRadar.Controls.Add(this.btnQ);
             this.tabRadar.Controls.Add(this.btnSpace);
             this.tabRadar.Controls.Add(this.label41);
             this.tabRadar.Controls.Add(this.cblPathList);
@@ -1019,6 +1031,17 @@
             this.tabRadar.TabIndex = 1;
             this.tabRadar.Text = "Radar";
             this.tabRadar.UseVisualStyleBackColor = true;
+            // 
+            // btnQ
+            // 
+            this.btnQ.Location = new System.Drawing.Point(345, 6);
+            this.btnQ.Name = "btnQ";
+            this.btnQ.Size = new System.Drawing.Size(31, 23);
+            this.btnQ.TabIndex = 246;
+            this.btnQ.Text = "Q";
+            this.btnQ.UseVisualStyleBackColor = true;
+            this.btnQ.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnQ_MouseDown);
+            this.btnQ.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnQ_MouseUp);
             // 
             // btnSpace
             // 
@@ -1096,8 +1119,8 @@
             this.btnDown.TabIndex = 69;
             this.btnDown.Text = "DN";
             this.btnDown.UseVisualStyleBackColor = true;
-            this.btnDown.KeyUp += new System.Windows.Forms.KeyEventHandler(this.btnDown_KeyUp);
-            this.btnDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnDown_KeyDown);
+            this.btnDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnDown_MouseDown);
+            this.btnDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnDown_MouseUp);
             // 
             // btnRight
             // 
@@ -1107,8 +1130,8 @@
             this.btnRight.TabIndex = 68;
             this.btnRight.Text = "R";
             this.btnRight.UseVisualStyleBackColor = true;
-            this.btnRight.KeyUp += new System.Windows.Forms.KeyEventHandler(this.btnRight_KeyUp);
-            this.btnRight.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnRight_KeyDown);
+            this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseDown);
+            this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseUp);
             // 
             // label22
             // 
@@ -1127,8 +1150,8 @@
             this.btnLeft.TabIndex = 66;
             this.btnLeft.Text = "L";
             this.btnLeft.UseVisualStyleBackColor = true;
-            this.btnLeft.KeyUp += new System.Windows.Forms.KeyEventHandler(this.btnLeft_KeyUp);
-            this.btnLeft.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnLeft_KeyDown);
+            this.btnLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnLeft_MouseDown);
+            this.btnLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnLeft_MouseUp);
             // 
             // btnUp
             // 
@@ -1138,8 +1161,8 @@
             this.btnUp.TabIndex = 65;
             this.btnUp.Text = "UP";
             this.btnUp.UseVisualStyleBackColor = true;
-            this.btnUp.KeyUp += new System.Windows.Forms.KeyEventHandler(this.btnUp_KeyUp);
-            this.btnUp.KeyDown += new System.Windows.Forms.KeyEventHandler(this.btnUp_KeyDown);
+            this.btnUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseDown);
+            this.btnUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseUp);
             // 
             // imgRadar
             // 
@@ -2288,13 +2311,16 @@
             this.ttStateMachineInfo.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.ttStateMachineInfo.ToolTipTitle = "StateMachine Info:";
             // 
-            // routesToolStripMenuItem
+            // btnE
             // 
-            this.routesToolStripMenuItem.Name = "routesToolStripMenuItem";
-            this.routesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.routesToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.routesToolStripMenuItem.Text = "Routes";
-            this.routesToolStripMenuItem.Click += new System.EventHandler(this.routesToolStripMenuItem_Click);
+            this.btnE.Location = new System.Drawing.Point(419, 6);
+            this.btnE.Name = "btnE";
+            this.btnE.Size = new System.Drawing.Size(31, 23);
+            this.btnE.TabIndex = 247;
+            this.btnE.Text = "E";
+            this.btnE.UseVisualStyleBackColor = true;
+            this.btnE.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnE_MouseDown);
+            this.btnE.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnE_MouseUp);
             // 
             // MainForm
             // 
@@ -2571,6 +2597,8 @@
         private System.Windows.Forms.TextBox tbPlayerTargetFaction;
         private System.Windows.Forms.Label label42;
         private System.Windows.Forms.ToolStripMenuItem routesToolStripMenuItem;
+        private System.Windows.Forms.Button btnQ;
+        private System.Windows.Forms.Button btnE;
     }
 }
 

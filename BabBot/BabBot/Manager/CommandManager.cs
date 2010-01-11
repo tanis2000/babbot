@@ -69,6 +69,8 @@ namespace BabBot.Manager
         public const string SK_TAB = "{TAB}";
         public const string SK_CTRL_TAB = "{CTRLTAB}";
         public const string SK_SPACE = "{SPACE}";
+        public const string SK_Q = "Q";
+        public const string SK_E = "E";
 
         #endregion
 
@@ -147,6 +149,8 @@ namespace BabBot.Manager
             str.Replace(SK_SHIFT_DOWN, Convert.ToChar(0xC1).ToString());
             str.Replace(SK_SHIFT_UP, Convert.ToChar(0xC2).ToString());
             str.Replace(SK_SPACE, Convert.ToChar(0x20).ToString());
+            //str.Replace(SK_Q, Convert.ToChar(0x71).ToString());
+            //str.Replace(SK_E, Convert.ToChar(0x65).ToString());
 
             for (int ix = 1; ix <= str.Length; ++ix)
             {

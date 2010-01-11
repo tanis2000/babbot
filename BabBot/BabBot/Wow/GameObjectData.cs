@@ -1712,6 +1712,15 @@ namespace BabBot.Wow
             base.DoAfterExport();
             WpList = null;
         }
+
+        public Endpoint[] GetEndpoints(string name)
+        {
+            if (PointA.Equals(name))
+                return new Endpoint[] { PointB, PointA };
+            else if (PointB.Equals(name))
+                return new Endpoint[] { PointA, PointB };
+            else return null;
+        }
     }
 
     /// <summary>

@@ -108,7 +108,9 @@
     <Compile Include="Bot\Bag.cs" />
     <Compile Include="Bot\Binding.cs" />
     <Compile Include="Bot\Item.cs" />
-    <Compile Include="Bot\NavigationState.cs" />
+    <Compile Include="Bot\NavigationState.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Bot\Spell.cs" />
     <Compile Include="Bot\Enemy.cs" />
     <Compile Include="Bot\PlayerAction.cs" />

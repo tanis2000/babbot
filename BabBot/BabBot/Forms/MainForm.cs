@@ -1158,42 +1158,62 @@ namespace BabBot.Forms
 
         #region Nested: Virtual Keyboard
 
-        private void btnUp_KeyDown(object sender, KeyEventArgs e)
+        private void btnQ_MouseDown(object sender, MouseEventArgs e)
+        {
+            ProcessManager.CommandManager.SendKeys(CommandManager.SK_Q, false);
+        }
+
+        private void btnQ_MouseUp(object sender, MouseEventArgs e)
+        {
+            ProcessManager.CommandManager.SendKeys(CommandManager.SK_Q, true);
+        }
+
+        private void btnE_MouseDown(object sender, MouseEventArgs e)
+        {
+            ProcessManager.CommandManager.SendKeys(CommandManager.SK_Q, false);
+        }
+
+        private void btnE_MouseUp(object sender, MouseEventArgs e)
+        {
+            ProcessManager.CommandManager.SendKeys(CommandManager.SK_Q, true);
+        }
+
+        private void btnUp_MouseDown(object sender, MouseEventArgs e)
         {
             ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up, false);
         }
 
-        private void btnUp_KeyUp(object sender, KeyEventArgs e)
+        private void btnUp_MouseUp(object sender, MouseEventArgs e)
         {
             ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up, true);
         }
 
-        private void btnLeft_KeyDown(object sender, KeyEventArgs e)
+        private void btnLeft_MouseDown(object sender, MouseEventArgs e)
         {
             ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Left, false);
         }
 
-        private void btnLeft_KeyUp(object sender, KeyEventArgs e)
+        private void btnLeft_MouseUp(object sender, MouseEventArgs e)
         {
             ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Left, true);
         }
 
-        private void btnDown_KeyDown(object sender, KeyEventArgs e)
+        private void btnDown_MouseDown(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Down);
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Down, false);
         }
 
-        private void btnDown_KeyUp(object sender, KeyEventArgs e)
+        private void btnDown_MouseUp(object sender, MouseEventArgs e)
         {
             ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Down, true);
         }
 
-        private void btnRight_KeyDown(object sender, KeyEventArgs e)
+        private void btnRight_MouseDown(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Right);
+            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Right, false);
         }
 
-        private void btnRight_KeyUp(object sender, KeyEventArgs e)
+        private void btnRight_MouseUp(object sender, MouseEventArgs e)
         {
             ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Right, true);
         }

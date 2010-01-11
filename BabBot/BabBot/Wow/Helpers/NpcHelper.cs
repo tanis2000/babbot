@@ -31,6 +31,12 @@ namespace BabBot.Wow.Helpers
             : base("No Game Object found for name : " + name) {}
     }
 
+    public class GameObjectCoordNotFound : Exception
+    {
+        public GameObjectCoordNotFound(string name)
+            : base("No Coordinates found for Game Object : " + name) {}
+    }
+
     public class CantReachNpcException : Exception
     {
         public CantReachNpcException(string name, string reason)
