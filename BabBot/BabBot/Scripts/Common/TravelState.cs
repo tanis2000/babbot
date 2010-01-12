@@ -87,7 +87,7 @@ namespace BabBot.States.Common
             {
                 if (!_check.DoBeforeRouteCheck())
                 {
-                    // We already at dest
+                    // We already at dest or something wrong
                     Finish(player);
                     return;
                 }
@@ -119,6 +119,9 @@ namespace BabBot.States.Common
                 float dist_b = eps[1].Waypoint.GetDistanceTo(cur_loc);
                 float dist_a = eps[0].Waypoint.GetDistanceTo(cur_loc);
 
+                // Calc new min dist to B endpoint and
+                // set calc flag if it shorter than direct path
+                // to Endpoint A
                 min_dist_nb = Math.Min(min_dist_nb, dist_b);
                 calc_route = calc_route && (dist_a < dist_b);
             }
