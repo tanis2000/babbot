@@ -16,11 +16,8 @@
 
     Copyright 2009 BabBot Team
 */
-using System;
-
 namespace BabBot.States
 {
-    [Serializable]
     public class ChangeStateEventArgs<T> : StateEventArgs<T>
     {
         public ChangeStateEventArgs(T Entity, State<T> NewState, bool TrackPrevious, bool ExitPrevious) : base(Entity)

@@ -33,7 +33,7 @@ namespace BabBot.States
     /// Represents a generic state in the fininte state machine
     /// </summary>
     /// <typeparam name="T">T is the type of object that this state will interact with</typeparam>
-    public abstract class State<T> : MarshalByRefObject
+    public abstract class State<T>
     {
         public DateTime EnterTime { get; protected set; }
         public DateTime LastExecuteTime { get; protected set; }

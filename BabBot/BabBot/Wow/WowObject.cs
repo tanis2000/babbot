@@ -21,7 +21,7 @@ using System;
 using BabBot.Common;
 namespace BabBot.Wow
 {
-    public class WowObject : MarshalByRefObject
+    public class WowObject
     {
         public uint ObjectPointer { get; protected set; }
 
