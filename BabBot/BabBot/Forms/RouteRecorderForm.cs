@@ -102,7 +102,7 @@ namespace BabBot.Forms
                     }
 
                     // Set from zone
-                    ProcessManager.Player.setCurrentMapInfo();
+                    ProcessManager.Player.SetCurrentMapInfo();
                     ctrlRouteDetails.tbZoneA.Text = ProcessManager.Player.ZoneText;
 
                     // Load RouteRecordingState and start
@@ -135,7 +135,7 @@ namespace BabBot.Forms
                 _route_rec_state.Exit(ProcessManager.Player);
                 ProcessManager.Player.StateMachine.IsRunning = false;
 
-                ProcessManager.Player.setCurrentMapInfo();
+                ProcessManager.Player.SetCurrentMapInfo();
                 ctrlRouteDetails.tbZoneB.Text = ProcessManager.Player.ZoneText;
 
 #if DEBUG

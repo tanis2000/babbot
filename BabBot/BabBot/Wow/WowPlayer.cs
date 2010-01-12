@@ -51,7 +51,10 @@ namespace BabBot.Wow
         /// The continent id currently player in.
         /// -1 is undefined
         /// </summary>
-        private int _continent = -1;
+        private int Continent = -1;
+
+        private string Zone = "";
+        private string SubZone = "";
         
         /// <summary>
         /// Toon's class (English)
@@ -124,7 +127,7 @@ namespace BabBot.Wow
 
         public int ContinentID
         {
-            get { return _continent; }
+            get { return Continent; }
         }
 
         public string CharClass
@@ -138,10 +141,9 @@ namespace BabBot.Wow
         public string ZoneText
         {
             get 
-            { 
-                return ProcessManager.WowProcess.ReadASCIIString((uint)
-                    ProcessManager.WowProcess.ReadUInt(DataManager.
-                                CurWoWVersion.Globals.ZoneText), 40);
+            {
+                SetCurrentMapInfo();
+                return this.Zone;
             }
         }
 
@@ -152,9 +154,8 @@ namespace BabBot.Wow
         {
             get
             {
-                return ProcessManager.WowProcess.ReadASCIIString((uint)
-                    ProcessManager.WowProcess.ReadUInt(DataManager.
-                                CurWoWVersion.Globals.SubZoneText), 40);
+                SetCurrentMapInfo();
+                return this.SubZone;
             }
         }
 
@@ -1492,17 +1493,21 @@ end)()");
         /// <summary>
         /// Sets the id of the continent and text of the zone we're in
         /// </summary>
-        public void setCurrentMapInfo()
+        public void SetCurrentMapInfo()
         {
             string[] lret = ProcessManager.
                     Injector.Lua_ExecByName("GetCurrentMapInfo");
             try
             {
-                _continent = Convert.ToInt32(lret[0]);
+                Continent = Convert.ToInt32(lret[0]);
+                Zone = lret[1];
+                SubZone = lret[2];
             }
             catch
             {
-                _continent = -1;
+                Continent = -1;
+                Zone = "";
+                SubZone = "";
             }
         }
 

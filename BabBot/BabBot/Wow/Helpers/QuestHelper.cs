@@ -103,7 +103,7 @@ namespace BabBot.Wow.Helpers
             // Set player current zone
             WowPlayer player = ProcessManager.Player;
 
-            player.setCurrentMapInfo();
+            player.SetCurrentMapInfo();
 
             string qt = q.Title;
 

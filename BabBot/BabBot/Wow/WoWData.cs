@@ -844,22 +844,6 @@ namespace BabBot.Wow
         }
         internal uint ClickToMoveDestZ;
 
-        [XmlAttribute("zone_text")]
-        public string StrZoneText
-        {
-            get { return ClickToMoveDestZ.ToString(); }
-            set { ZoneText = Convert.ToUInt32(value, 16); }
-        }
-        internal uint ZoneText;
-
-        [XmlAttribute("sub_zone_text")]
-        public string StrSubZoneText
-        {
-            get { return ClickToMoveDestZ.ToString(); }
-            set { SubZoneText = Convert.ToUInt32(value, 16); }
-        }
-        internal uint SubZoneText;
-
         [XmlAttribute("lua_dostring")]
         public string StrLuaDoString
         {

@@ -563,7 +563,7 @@ namespace BabBot.Wow.Helpers
             SaveList.Clear();
 
             string npc_name = ProcessManager.Player.CurTarget.Name;
-            ProcessManager.Player.setCurrentMapInfo();
+            ProcessManager.Player.SetCurrentMapInfo();
 
             string[] npc_info = ProcessManager.Injector.
                 Lua_ExecByName("GetUnitInfo", new object[] { "target" });

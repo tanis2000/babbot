@@ -997,7 +997,7 @@ namespace BabBot.Manager
         {
             ObjectManager = new ObjectManager();
             Player = new WowPlayer(ObjectManager.GetLocalPlayerObject());
-            Player.setCurrentMapInfo();
+            Player.SetCurrentMapInfo();
             Player.SetCharInfo();
 
             if (WoWInGame != null)
