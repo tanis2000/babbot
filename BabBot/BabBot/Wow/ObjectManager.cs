@@ -200,12 +200,6 @@ namespace BabBot.Wow
                 ReadASCIIString(current + name_offset, 40);
         }
 
-        public ulong GetMouseOverGUID()
-        {
-            return ProcessManager.WowProcess.ReadUInt64(ProcessManager.
-                                                GlobalOffsets.MouseOverGuidOffset);
-        }
-
         /*
         public string GetName(uint obj, ulong guid)
         {

@@ -1142,11 +1142,9 @@ end)()]]></text>
     <!-- global WoW version related offset and variables -->
     <globals 
         game_offset="0x12D4EA8"
-        move_mouse_over_guid_offset="0x113D798"
         name_store_pointer="0x12541C8"
         player_base_offset1="0x34"
         player_base_offset2="0x24"
-        player_cur_target_guil_offset="0x113D7A8"
         player_rotation_offset="0x7A8"
         player_x_offset="0x798"
         player_y_offset="0x79C"
@@ -1184,17 +1182,14 @@ end)()]]></text>
         lua_gettop = "0x00803340"
         lua_register = "0x007CE460"
         lua_tostring = "0x00803850"
-        lua_getcurrentmapzone = "0x004CDA20"
      />
   </version>
   <version name="3.3.0.11159" max_lvl="80">
     <globals
         game_offset="0x00CF7C00"
-        move_mouse_over_guid_offset="0x00B68570"
         name_store_pointer="0x00C76020"
         player_base_offset1="0x34"
         player_base_offset2="0x24"
-        player_cur_target_guil_offset="0x00B68580"
         player_rotation_offset="0x7A8"
         player_x_offset="0x798"
         player_y_offset="0x79C"
@@ -1232,7 +1227,6 @@ end)()]]></text>
         lua_gettop = "0x00826680"
         lua_register = "0x007F0CC0"
         lua_tostring = "0x00826B90"
-        lua_getcurrentmapzone = "0x004DDDB0"
      />
   </version>
   

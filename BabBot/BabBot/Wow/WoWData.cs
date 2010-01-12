@@ -543,14 +543,6 @@ namespace BabBot.Wow
         }
         internal uint GameOffset;
 
-        [XmlAttribute("move_mouse_over_guid_offset")]
-        public string StrMouseOverGuidOffset
-        {
-            get { return MouseOverGuidOffset.ToString(); }
-            set { MouseOverGuidOffset = Convert.ToUInt32(value, 16); }
-        }
-        internal uint MouseOverGuidOffset;
-
         [XmlAttribute("name_store_pointer")]
         public string StrNameStorePointer
         {
@@ -574,14 +566,6 @@ namespace BabBot.Wow
             set { PlayerBaseOffset2 = Convert.ToUInt32(value, 16); }
         }
         internal uint PlayerBaseOffset2;
-
-        [XmlAttribute("player_cur_target_guil_offset")]
-        public string StrPlayerCurTargetGuidOffset
-        {
-            get { return PlayerCurTargetGuidOffset.ToString(); }
-            set { PlayerCurTargetGuidOffset = Convert.ToUInt32(value, 16); }
-        }
-        internal uint PlayerCurTargetGuidOffset;
 
         [XmlAttribute("player_rotation_offset")]
         public string StrPlayerRotationOffset
