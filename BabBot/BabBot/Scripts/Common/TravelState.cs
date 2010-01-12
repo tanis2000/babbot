@@ -100,10 +100,11 @@ namespace BabBot.States.Common
 
             // Find all avail routes for dest
             List<Route> lr = RouteListManager.Endpoints[name];
-            bool calc_route = true;
 
-            // Min dist to Endpoint B (if any)
-            float min_dist_nb = float.MaxValue;
+            // Best route
+            float min_route_len = float.MaxValue;
+            Route min_route = null;
+
             foreach (Route r in lr)
             {
                 // It's either A or B
@@ -115,17 +116,22 @@ namespace BabBot.States.Common
                     return;
 
                 // Exact route not found
-                // Check distance to endpoint vs distance to destination
-                float dist_b = eps[1].Waypoint.GetDistanceTo(cur_loc);
-                float dist_a = eps[0].Waypoint.GetDistanceTo(cur_loc);
+                // Check Direct Distance to both endpoint
+                float ddist_b = eps[1].Waypoint.GetDistanceTo(cur_loc);
+                float ddist_a = eps[0].Waypoint.GetDistanceTo(cur_loc);
 
-                // Calc new min dist to B endpoint and
-                // set calc flag if it shorter than direct path
-                // to Endpoint A
-                min_dist_nb = Math.Min(min_dist_nb, dist_b);
-                calc_route = calc_route && (dist_a < dist_b);
+                // Calc min lenght for best route
+                min_route_len = Math.Min(r.Length + ddist_b, min_route_len);
             }
-            
+
+            if (min_route == null)
+            {
+                // Go with navigation state
+            }
+
+            // set calc flag if it direct path shorter than best route
+            // calc_route = (dist_a < min_route_len);
+
             // Check among undef routes
             // r = RouteListManager.FindRoute(
         }

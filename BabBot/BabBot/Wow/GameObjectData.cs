@@ -1593,6 +1593,12 @@ namespace BabBot.Wow
         public string Description;
 
         /// <summary>
+        /// Total Route Length
+        /// </summary>
+        [XmlElement("length")]
+        public float Length;
+
+        /// <summary>
         /// Name of external file used for saving/loading waypoints
         /// </summary>
         public string WaypointFileName
@@ -1705,6 +1711,7 @@ namespace BabBot.Wow
         {
             base.DoBeforeExport(version);
             WpList = wp;
+            Length = wp.Length;
         }
 
         public override void DoAfterExport()
@@ -1735,6 +1742,8 @@ namespace BabBot.Wow
             get { return Items; }
             set { Items = value; }
         }
+
+        internal float Length;
 
         public Waypoints() : base() { }
 

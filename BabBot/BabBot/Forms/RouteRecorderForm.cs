@@ -302,9 +302,18 @@ namespace BabBot.Forms
 
         private Waypoints GetWaypointsList(string fname, bool reverse)
         {
+            float len = 0;
             Waypoints waypoints = new Waypoints(fname);
-            for (int i = 0; i < dgWaypoints.Rows.Count - 1; i++)
-                waypoints.Add(MakeVector(dgWaypoints.Rows[i]));
+            Vector3D v_prev = MakeVector(dgWaypoints.Rows[0]);
+            waypoints.Add(v_prev);
+
+            for (int i = 1; i < dgWaypoints.Rows.Count - 1; i++)
+            {
+                Vector3D v_cur = MakeVector(dgWaypoints.Rows[i]);
+                len += v_prev.GetDistanceTo(v_cur);
+                waypoints.Add(v_cur);
+                v_prev = v_cur;
+            }
 
             if (reverse)
                 waypoints.List.Reverse();
