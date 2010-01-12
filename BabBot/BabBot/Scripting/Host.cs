@@ -28,17 +28,37 @@ namespace BabBot.Scripting
 {
     public class Host
     {
-        private States.State<Wow.WowPlayer> script;
+        private States.State<Wow.WowPlayer> Script;
+        private AppDomain Domain;
 
         public void Start(string iScript)
         {
-            //script = Load("Scripts/PatTestScript.cs");
-            script = Load(iScript);
-            ProcessManager.Player.StateMachine.SetGlobalState(script);
+            //Script = Load("Scripts/PatTestScript.cs");
+            Script = Load(iScript);
+            ProcessManager.Player.StateMachine.SetGlobalState(Script);
         }
 
         private States.State<Wow.WowPlayer> Load(string iScript)
         {
+            if (Domain != null)
+            {
+                ProcessManager.Player.StateMachine.SetGlobalState(null);
+                ProcessManager.Player.StateMachine.IsRunning = false;
+                Unload();
+            }
+
+            var ads = new AppDomainSetup
+            {
+                ApplicationBase = Path.GetDirectoryName(iScript),
+                PrivateBinPath = AppDomain.CurrentDomain.BaseDirectory,
+                ApplicationName = Path.GetFileName(Assembly.GetExecutingAssembly().Location),
+                ShadowCopyFiles = "true",
+                ShadowCopyDirectories = Path.GetDirectoryName(iScript)
+            };
+
+            Domain = AppDomain.CreateDomain("Scripts", null, ads);
+            //AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+
             //variable to hold output
             State<WowPlayer> state = null;
 
@@ -48,6 +68,10 @@ namespace BabBot.Scripting
             // do not cache the scripts
             CSScript.CacheEnabled = false;
 
+            CSScript.Compile(Path.GetFullPath(iScript), Path.GetFullPath(iScript).Replace(".cs", ".dll"), true, null);
+            var asmHelper = new AsmHelper(Path.GetFullPath(iScript).Replace(".cs", ".dll"), null, true);
+            state = (State<WowPlayer>)asmHelper.CreateObject("BabBot.Scripts.Core");
+            /*
             Assembly asm = CSScript.Load(Path.GetFullPath(iScript), null, true);
 
             //get all types in assembly
@@ -65,8 +89,18 @@ namespace BabBot.Scripting
                     break;
                 }
             }
-
+            */
             return state;
+        }
+
+        private void Unload()
+        {
+            if ((Script != null) && (Domain != null))
+            {
+                AppDomain.Unload(Domain);
+                Domain = null;
+                Script = null;
+            }
         }
     }
 }

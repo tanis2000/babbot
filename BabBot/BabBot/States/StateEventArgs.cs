@@ -20,6 +20,7 @@ using System;
 
 namespace BabBot.States
 {
+    [Serializable]
     public class StateEventArgs<T> : EventArgs
     {
         public StateEventArgs(T Entity)

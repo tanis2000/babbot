@@ -20,7 +20,7 @@ using System;
 
 namespace BabBot.States
 {
-    public sealed class StateMachine<T>
+    public sealed class StateMachine<T> : MarshalByRefObject
     {
         /// <summary>Create a new state machine for the given entity.</summary>
         /// <param name="Entity">The entity that this state machine belongs too</param>
@@ -98,14 +98,18 @@ namespace BabBot.States
                 GlobalState.ChangeStateRequest -= CurrentState_ChangeStateRequest;
             }
 
-            //set new global state
-            GlobalState = NewGlobalState;
+            // we start the new global state only if it's not null. othewise we probably just stopped the FSM
+            if (NewGlobalState != null)
+            {
+                //set new global state
+                GlobalState = NewGlobalState;
 
-            //connect up to the global states change state request
-            GlobalState.ChangeStateRequest += CurrentState_ChangeStateRequest;
+                //connect up to the global states change state request
+                GlobalState.ChangeStateRequest += CurrentState_ChangeStateRequest;
 
-            //enter new global state
-            GlobalState.Enter(Entity);
+                //enter new global state
+                GlobalState.Enter(Entity);
+            }
         }
 
         /// <summary>Update states in state machine</summary>

@@ -23,7 +23,7 @@ using BabBot.Scripting;
 using BabBot.Scripts.Common;
 using BabBot.Wow;
 
-namespace BabBot.Scripts.Paladin
+namespace BabBot.Scripts
 {
     public class Core : GlobalBaseBotState
     {
