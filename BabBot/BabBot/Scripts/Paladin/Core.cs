@@ -23,6 +23,7 @@ using BabBot.Scripting;
 using BabBot.Scripts.Common;
 using BabBot.Wow;
 
+// NOTE: The namespace of the main script should always be "BabBot.Scripts" and che class name "Core"
 namespace BabBot.Scripts
 {
     public class Core : GlobalBaseBotState
