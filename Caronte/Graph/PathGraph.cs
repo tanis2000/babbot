@@ -13,8 +13,8 @@ namespace Pather.Graph
 		public const float toonSize = 0.5f;
 
 		public const float MinStepLength = 2f;
-		public const float WantedStepLength = 5f;
-		public const float MaxStepLength = 10f;
+		public const float WantedStepLength = 3f;
+		public const float MaxStepLength = 5f;
         public bool Cancel;
 
 		/*

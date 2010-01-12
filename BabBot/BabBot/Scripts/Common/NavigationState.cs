@@ -208,27 +208,16 @@ namespace BabBot.States.Common
                     // Calculate travel time
                     distance = vprev.GetDistanceTo(vnext);
                     int t = (int)((distance / 7F) * 1000);
+                    float z = vnext.Z - _player.Location.Z;
 
                     _player.ClickToMove(vnext);
-                    if (_retry > 0)
+                    if ((_retry == 0) && (z > 2)|| (_retry > 0))
                     {
-                        // Bot trying unstuck
-                        // Click and Send jump at the same time
+                        // Add jump if going too high up or trying unstack
                         Thread.Sleep(150);
-
-                        float shift_d = _player.Location.Y - vnext.Y;
-
-                        // Check if we need send right/left shift key
-                        if (shift_d != 0)
-                        {
-                            string shift = (shift_d > 0) ?
-                                CommandManager.SK_Q :
-                                CommandManager.SK_E;
-                            ProcessManager.CommandManager.SendKeys(shift);
-                            Thread.Sleep(20);
-                        }
                         ProcessManager.CommandManager.SendKeys(CommandManager.SK_SPACE);
 
+                        // Need wait for jump
                         t += 1000;
                     }
 
