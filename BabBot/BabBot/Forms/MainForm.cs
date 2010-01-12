@@ -1170,52 +1170,60 @@ namespace BabBot.Forms
 
         private void btnE_MouseDown(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendKeys(CommandManager.SK_Q, false);
+            ProcessManager.CommandManager.SendKeys(CommandManager.SK_E, false);
         }
 
         private void btnE_MouseUp(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendKeys(CommandManager.SK_Q, true);
+            ProcessManager.CommandManager.SendKeys(CommandManager.SK_E, true);
         }
 
         private void btnUp_MouseDown(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up, false);
+            ProcessManager.CommandManager.
+                ArrowKeyDown(CommandManager.ArrowKey.Up);
         }
 
         private void btnUp_MouseUp(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Up, true);
+            ProcessManager.CommandManager.
+                ArrowKeyUp(CommandManager.ArrowKey.Up);
         }
 
         private void btnLeft_MouseDown(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Left, false);
+            ProcessManager.CommandManager.
+                ArrowKeyDown(CommandManager.ArrowKey.Left);
         }
 
         private void btnLeft_MouseUp(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Left, true);
+            ProcessManager.CommandManager.
+                ArrowKeyUp(CommandManager.ArrowKey.Left);
         }
 
         private void btnDown_MouseDown(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Down, false);
+            ProcessManager.CommandManager.
+                ArrowKeyDown(CommandManager.ArrowKey.Down);
         }
 
         private void btnDown_MouseUp(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Down, true);
+            ProcessManager.CommandManager.
+                ArrowKeyUp(CommandManager.ArrowKey.Down);
         }
 
         private void btnRight_MouseDown(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Right, false);
+            ProcessManager.CommandManager.
+                ArrowKeyDown(CommandManager.ArrowKey.Right);
         }
 
         private void btnRight_MouseUp(object sender, MouseEventArgs e)
         {
-            ProcessManager.CommandManager.SendArrowKey(CommandManager.ArrowKey.Right, true);
+            ProcessManager.CommandManager.
+                ArrowKeyUp(CommandManager.ArrowKey.Right);
         }
 
         private void tbZoom_Scroll(object sender, EventArgs e)
@@ -1226,6 +1234,45 @@ namespace BabBot.Forms
         private void btnSpace_Click(object sender, EventArgs e)
         {
             ProcessManager.CommandManager.SendKeys(CommandManager.SK_SPACE);
+        }
+
+        /// <summary>
+        /// Send Jump & Rotate keys
+        /// </summary>
+        /// <param name="key">Direction to rotate as
+        /// Left -> Counter-clockwise
+        /// Right -> Clockwise</param>
+        private void JumpRotate(CommandManager.ArrowKey key)
+        {
+            // Run ahead
+            ProcessManager.CommandManager.ArrowKeyDown(CommandManager.ArrowKey.Up);
+            Thread.Sleep(10);
+            
+            // Jump
+            ProcessManager.CommandManager.SendKeys(CommandManager.SK_SPACE);
+            Thread.Sleep(10);
+
+            // Stop running
+            ProcessManager.CommandManager.ArrowKeyUp(CommandManager.ArrowKey.Up);
+            Thread.Sleep(10);
+
+            // Rotate
+            ProcessManager.CommandManager.SendArrowKey(key, 1200);
+            /*
+            ProcessManager.CommandManager.ArrowKeyDown(key);
+            Thread.Sleep(1200);
+            // Release buttons
+            ProcessManager.CommandManager.ArrowKeyUp(key); */
+        }
+
+        private void btnJmpTurnLeft_Click(object sender, EventArgs e)
+        {
+            JumpRotate(CommandManager.ArrowKey.Left);
+        }
+
+        private void btnJmpTrnRight_Click(object sender, EventArgs e)
+        {
+            JumpRotate(CommandManager.ArrowKey.Right);
         }
 
         #endregion

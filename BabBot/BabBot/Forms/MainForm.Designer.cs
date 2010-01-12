@@ -102,17 +102,15 @@
             this.tabObjectsNear = new System.Windows.Forms.TabPage();
             this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
             this.tabRadar = new System.Windows.Forms.TabPage();
+            this.btnE = new System.Windows.Forms.Button();
             this.btnQ = new System.Windows.Forms.Button();
             this.btnSpace = new System.Windows.Forms.Button();
-            this.label41 = new System.Windows.Forms.Label();
             this.cblPathList = new System.Windows.Forms.CheckedListBox();
             this.label38 = new System.Windows.Forms.Label();
             this.tbZoom = new System.Windows.Forms.TrackBar();
             this.label37 = new System.Windows.Forms.Label();
-            this.label36 = new System.Windows.Forms.Label();
             this.btnDown = new System.Windows.Forms.Button();
             this.btnRight = new System.Windows.Forms.Button();
-            this.label22 = new System.Windows.Forms.Label();
             this.btnLeft = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
             this.imgRadar = new System.Windows.Forms.PictureBox();
@@ -234,7 +232,11 @@
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.pbBotProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.ttStateMachineInfo = new System.Windows.Forms.ToolTip(this.components);
-            this.btnE = new System.Windows.Forms.Button();
+            this.gbZoom = new System.Windows.Forms.GroupBox();
+            this.gbPathId = new System.Windows.Forms.GroupBox();
+            this.gbControls = new System.Windows.Forms.GroupBox();
+            this.btnJmpTurnLeft = new System.Windows.Forms.Button();
+            this.btnJmpTrnRight = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -265,6 +267,9 @@
             this.tabLua.SuspendLayout();
             this.tabPageF1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.gbZoom.SuspendLayout();
+            this.gbPathId.SuspendLayout();
+            this.gbControls.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -1009,20 +1014,9 @@
             // 
             // tabRadar
             // 
-            this.tabRadar.Controls.Add(this.btnE);
-            this.tabRadar.Controls.Add(this.btnQ);
-            this.tabRadar.Controls.Add(this.btnSpace);
-            this.tabRadar.Controls.Add(this.label41);
-            this.tabRadar.Controls.Add(this.cblPathList);
-            this.tabRadar.Controls.Add(this.label38);
-            this.tabRadar.Controls.Add(this.tbZoom);
-            this.tabRadar.Controls.Add(this.label37);
-            this.tabRadar.Controls.Add(this.label36);
-            this.tabRadar.Controls.Add(this.btnDown);
-            this.tabRadar.Controls.Add(this.btnRight);
-            this.tabRadar.Controls.Add(this.label22);
-            this.tabRadar.Controls.Add(this.btnLeft);
-            this.tabRadar.Controls.Add(this.btnUp);
+            this.tabRadar.Controls.Add(this.gbControls);
+            this.tabRadar.Controls.Add(this.gbPathId);
+            this.tabRadar.Controls.Add(this.gbZoom);
             this.tabRadar.Controls.Add(this.imgRadar);
             this.tabRadar.Location = new System.Drawing.Point(4, 22);
             this.tabRadar.Name = "tabRadar";
@@ -1032,9 +1026,20 @@
             this.tabRadar.Text = "Radar";
             this.tabRadar.UseVisualStyleBackColor = true;
             // 
+            // btnE
+            // 
+            this.btnE.Location = new System.Drawing.Point(164, 15);
+            this.btnE.Name = "btnE";
+            this.btnE.Size = new System.Drawing.Size(31, 23);
+            this.btnE.TabIndex = 247;
+            this.btnE.Text = "E";
+            this.btnE.UseVisualStyleBackColor = true;
+            this.btnE.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnE_MouseDown);
+            this.btnE.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnE_MouseUp);
+            // 
             // btnQ
             // 
-            this.btnQ.Location = new System.Drawing.Point(345, 6);
+            this.btnQ.Location = new System.Drawing.Point(90, 15);
             this.btnQ.Name = "btnQ";
             this.btnQ.Size = new System.Drawing.Size(31, 23);
             this.btnQ.TabIndex = 246;
@@ -1045,38 +1050,30 @@
             // 
             // btnSpace
             // 
-            this.btnSpace.Location = new System.Drawing.Point(453, 6);
+            this.btnSpace.Location = new System.Drawing.Point(90, 67);
             this.btnSpace.Name = "btnSpace";
-            this.btnSpace.Size = new System.Drawing.Size(31, 50);
+            this.btnSpace.Size = new System.Drawing.Size(105, 23);
             this.btnSpace.TabIndex = 245;
-            this.btnSpace.Text = "J\r\nM\r\nP";
+            this.btnSpace.Text = "Space";
             this.btnSpace.UseVisualStyleBackColor = true;
             this.btnSpace.Click += new System.EventHandler(this.btnSpace_Click);
-            // 
-            // label41
-            // 
-            this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(287, 147);
-            this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(43, 13);
-            this.label41.TabIndex = 244;
-            this.label41.Text = "Path ID";
             // 
             // cblPathList
             // 
             this.cblPathList.CheckOnClick = true;
+            this.cblPathList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cblPathList.FormattingEnabled = true;
             this.cblPathList.Items.AddRange(new object[] {
             "Main"});
-            this.cblPathList.Location = new System.Drawing.Point(337, 147);
+            this.cblPathList.Location = new System.Drawing.Point(3, 16);
             this.cblPathList.Name = "cblPathList";
-            this.cblPathList.Size = new System.Drawing.Size(113, 64);
+            this.cblPathList.Size = new System.Drawing.Size(129, 64);
             this.cblPathList.TabIndex = 243;
             // 
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(439, 120);
+            this.label38.Location = new System.Drawing.Point(111, 67);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(24, 13);
             this.label38.TabIndex = 242;
@@ -1085,10 +1082,10 @@
             // tbZoom
             // 
             this.tbZoom.BackColor = System.Drawing.SystemColors.Control;
-            this.tbZoom.Location = new System.Drawing.Point(326, 72);
+            this.tbZoom.Location = new System.Drawing.Point(10, 19);
             this.tbZoom.Minimum = 1;
             this.tbZoom.Name = "tbZoom";
-            this.tbZoom.Size = new System.Drawing.Size(131, 45);
+            this.tbZoom.Size = new System.Drawing.Size(125, 45);
             this.tbZoom.TabIndex = 241;
             this.tbZoom.Value = 1;
             this.tbZoom.Scroll += new System.EventHandler(this.tbZoom_Scroll);
@@ -1096,24 +1093,15 @@
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(323, 120);
+            this.label37.Location = new System.Drawing.Point(7, 67);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(18, 13);
             this.label37.TabIndex = 240;
             this.label37.Text = "1x";
             // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(287, 72);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(34, 13);
-            this.label36.TabIndex = 239;
-            this.label36.Text = "Zoom";
-            // 
             // btnDown
             // 
-            this.btnDown.Location = new System.Drawing.Point(382, 33);
+            this.btnDown.Location = new System.Drawing.Point(127, 42);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(31, 23);
             this.btnDown.TabIndex = 69;
@@ -1124,27 +1112,18 @@
             // 
             // btnRight
             // 
-            this.btnRight.Location = new System.Drawing.Point(419, 33);
+            this.btnRight.Location = new System.Drawing.Point(164, 42);
             this.btnRight.Name = "btnRight";
             this.btnRight.Size = new System.Drawing.Size(31, 23);
             this.btnRight.TabIndex = 68;
             this.btnRight.Text = "R";
             this.btnRight.UseVisualStyleBackColor = true;
-            this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseDown);
-            this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseUp);
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(287, 11);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(45, 13);
-            this.label22.TabIndex = 67;
-            this.label22.Text = "Controls";
+            this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnRight_MouseDown);
+            this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnRight_MouseUp);
             // 
             // btnLeft
             // 
-            this.btnLeft.Location = new System.Drawing.Point(345, 33);
+            this.btnLeft.Location = new System.Drawing.Point(90, 42);
             this.btnLeft.Name = "btnLeft";
             this.btnLeft.Size = new System.Drawing.Size(31, 23);
             this.btnLeft.TabIndex = 66;
@@ -1155,7 +1134,7 @@
             // 
             // btnUp
             // 
-            this.btnUp.Location = new System.Drawing.Point(382, 6);
+            this.btnUp.Location = new System.Drawing.Point(127, 15);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(31, 23);
             this.btnUp.TabIndex = 65;
@@ -2311,16 +2290,65 @@
             this.ttStateMachineInfo.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.ttStateMachineInfo.ToolTipTitle = "StateMachine Info:";
             // 
-            // btnE
+            // gbZoom
             // 
-            this.btnE.Location = new System.Drawing.Point(419, 6);
-            this.btnE.Name = "btnE";
-            this.btnE.Size = new System.Drawing.Size(31, 23);
-            this.btnE.TabIndex = 247;
-            this.btnE.Text = "E";
-            this.btnE.UseVisualStyleBackColor = true;
-            this.btnE.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnE_MouseDown);
-            this.btnE.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnE_MouseUp);
+            this.gbZoom.Controls.Add(this.tbZoom);
+            this.gbZoom.Controls.Add(this.label37);
+            this.gbZoom.Controls.Add(this.label38);
+            this.gbZoom.Location = new System.Drawing.Point(273, 112);
+            this.gbZoom.Name = "gbZoom";
+            this.gbZoom.Size = new System.Drawing.Size(144, 88);
+            this.gbZoom.TabIndex = 248;
+            this.gbZoom.TabStop = false;
+            this.gbZoom.Text = "Zoom";
+            // 
+            // gbPathId
+            // 
+            this.gbPathId.Controls.Add(this.cblPathList);
+            this.gbPathId.Location = new System.Drawing.Point(423, 112);
+            this.gbPathId.Name = "gbPathId";
+            this.gbPathId.Size = new System.Drawing.Size(135, 88);
+            this.gbPathId.TabIndex = 249;
+            this.gbPathId.TabStop = false;
+            this.gbPathId.Text = "Path Id";
+            // 
+            // gbControls
+            // 
+            this.gbControls.Controls.Add(this.btnJmpTrnRight);
+            this.gbControls.Controls.Add(this.btnJmpTurnLeft);
+            this.gbControls.Controls.Add(this.btnUp);
+            this.gbControls.Controls.Add(this.btnLeft);
+            this.gbControls.Controls.Add(this.btnRight);
+            this.gbControls.Controls.Add(this.btnE);
+            this.gbControls.Controls.Add(this.btnDown);
+            this.gbControls.Controls.Add(this.btnQ);
+            this.gbControls.Controls.Add(this.btnSpace);
+            this.gbControls.Location = new System.Drawing.Point(273, 6);
+            this.gbControls.Name = "gbControls";
+            this.gbControls.Size = new System.Drawing.Size(285, 100);
+            this.gbControls.TabIndex = 250;
+            this.gbControls.TabStop = false;
+            this.gbControls.Text = "Controls";
+            // 
+            // btnJmpTurnLeft
+            // 
+            this.btnJmpTurnLeft.Location = new System.Drawing.Point(30, 15);
+            this.btnJmpTurnLeft.Name = "btnJmpTurnLeft";
+            this.btnJmpTurnLeft.Size = new System.Drawing.Size(54, 50);
+            this.btnJmpTurnLeft.TabIndex = 248;
+            this.btnJmpTurnLeft.Text = "JMP\r\nTURN\r\nLEFT";
+            this.btnJmpTurnLeft.UseVisualStyleBackColor = true;
+            this.btnJmpTurnLeft.Click += new System.EventHandler(this.btnJmpTurnLeft_Click);
+            // 
+            // btnJmpTrnRight
+            // 
+            this.btnJmpTrnRight.Location = new System.Drawing.Point(201, 15);
+            this.btnJmpTrnRight.Name = "btnJmpTrnRight";
+            this.btnJmpTrnRight.Size = new System.Drawing.Size(54, 50);
+            this.btnJmpTrnRight.TabIndex = 249;
+            this.btnJmpTrnRight.Text = "JMP\r\nTURN\r\nRIGHT";
+            this.btnJmpTrnRight.UseVisualStyleBackColor = true;
+            this.btnJmpTrnRight.Click += new System.EventHandler(this.btnJmpTrnRight_Click);
             // 
             // MainForm
             // 
@@ -2366,7 +2394,6 @@
             this.tabObjectsNear.ResumeLayout(false);
             this.tabObjectsNear.PerformLayout();
             this.tabRadar.ResumeLayout(false);
-            this.tabRadar.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgRadar)).EndInit();
             this.tabPageEnemies.ResumeLayout(false);
@@ -2387,6 +2414,10 @@
             this.tabPageF1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.gbZoom.ResumeLayout(false);
+            this.gbZoom.PerformLayout();
+            this.gbPathId.ResumeLayout(false);
+            this.gbControls.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2533,11 +2564,9 @@
         private System.Windows.Forms.PictureBox imgRadar;
         private System.Windows.Forms.Button btnDown;
         private System.Windows.Forms.Button btnRight;
-        private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Button btnLeft;
         private System.Windows.Forms.Button btnUp;
         private System.Windows.Forms.Label label37;
-        private System.Windows.Forms.Label label36;
         private System.Windows.Forms.TrackBar tbZoom;
         private System.Windows.Forms.Label label38;
         private System.Windows.Forms.ToolStripMenuItem botOptionsToolStripMenuItem;
@@ -2591,7 +2620,6 @@
         private System.Windows.Forms.ToolStripProgressBar pbBotProgress;
         private System.Windows.Forms.ToolStripMenuItem recordRouteToolStripMenuItem;
         private System.Windows.Forms.CheckedListBox cblPathList;
-        private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Button btnSpace;
         private System.Windows.Forms.ToolTip ttStateMachineInfo;
         private System.Windows.Forms.TextBox tbPlayerTargetFaction;
@@ -2599,6 +2627,11 @@
         private System.Windows.Forms.ToolStripMenuItem routesToolStripMenuItem;
         private System.Windows.Forms.Button btnQ;
         private System.Windows.Forms.Button btnE;
+        private System.Windows.Forms.GroupBox gbControls;
+        private System.Windows.Forms.GroupBox gbPathId;
+        private System.Windows.Forms.GroupBox gbZoom;
+        private System.Windows.Forms.Button btnJmpTrnRight;
+        private System.Windows.Forms.Button btnJmpTurnLeft;
     }
 }
 

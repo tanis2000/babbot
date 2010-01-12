@@ -192,70 +192,63 @@ namespace BabBot.Manager
             return i;
         }
 
-        public bool SendArrowKey(ArrowKey key)
+        /// <summary>
+        /// Retrieve lparam value for arrow key
+        /// </summary>
+        /// <param name="key">Arrow key</param>
+        /// <returns>lparam value or 0 if key is unknown</returns>
+        private uint GetArrowKeyCode(ArrowKey key)
         {
-            return SendArrowKey(key, true);
+            //Set up lParam based upon which button needs pressing
+            switch (key)
+            {
+                case ArrowKey.Left: return 0x14B0001;
+                case ArrowKey.Up: return 0x1480001;
+                case ArrowKey.Right: return 0x14D0001;
+                case ArrowKey.Down: return 0x1500001;
+                default: return 0;
+            }
+
         }
 
         /// <summary>
-        /// Taps the specified arrow key
+        /// Retrieve wparam and lparam for arrow key
         /// </summary>
-        /// <param name="key">The arrow key to be send</param>
-        /// <param name="release">True if send WM_KEYUP message as well</param>
-        /// <returns>Returns true if successful, false if not</returns>
-        public bool SendArrowKey(ArrowKey key, bool release)
+        /// <param name="key">Arrow key</param>
+        /// <param name="wparam">wParam value</param>
+        /// <param name="lparam">lParam value</param>
+        /// <returns>True if key valid and False if key invalid (unknown)</returns>
+        private bool CheckArrowKey(ArrowKey key, out int wparam, out uint lparam)
         {
+            wparam = (int)key;
+            lparam = GetArrowKeyCode(key);
+            if (lparam == 0)
+                    return false;
+
             //If hWnd is 0 return false
             if (WowHWND <= 0)
                 return false;
 
-            var wParam = (int) key;
-            uint lParam;
+            return true;
+        }
 
-            //Set up lParam based upon which button needs pressing
-            switch (key)
-            {
-                case ArrowKey.Left:
-                    lParam = 0x14B0001;
-                    break;
-
-                case ArrowKey.Up:
-                    lParam = 0x1480001;
-                    break;
-
-                case ArrowKey.Right:
-                    lParam = 0x14D0001;
-                    break;
-
-                case ArrowKey.Down:
-                    lParam = 0x1500001;
-                    break;
-
-                default:
-                    return false;
-            }
-
-            //Post the WM_KEYDOWN message, return false if unsuccessful
-            if (_PostMessage(WowHWND, 0x100, wParam, lParam) == 0)
-            {
+        /// <summary>
+        /// Taps the specified arrow key. Send both UP and DOWN events
+        /// with delay of 5 msec
+        /// </summary>
+        /// <param name="key">The arrow key to be send</param>
+        /// <param name="release">True if send WM_KEYUP message as well</param>
+        /// <returns>Returns true if successful, false if not</returns>
+        public bool SendArrowKey(ArrowKey key)
+        {
+            if (!ArrowKeyDown(key))
                 return false;
-            }
 
             //Sleep to let the window process the message
             Thread.Sleep(5);
 
-            if (release)
-            {
-                //Post the WM_KEYUP message, return false if unsuccessful
-                if (_PostMessage(WowHWND, 0x101, wParam, (lParam + 0xC0000000)) == 0)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return ArrowKeyUp(key);
         }
-
 
         /// <summary>
         /// Holds down an arrow key for the specified time
@@ -265,56 +258,25 @@ namespace BabBot.Manager
         /// <returns>Returns true if successful, false if not</returns>
         public bool SendArrowKey(ArrowKey key, int holdDelay)
         {
-            //If hWnd is 0 return false
-            if (WowHWND <= 0)
-            {
-                return false;
-            }
-
-
-            var wParam = (int) key;
+            int wParam;
             uint lParam;
 
-            //Set up lParam based upon which button needs pressing
-            switch (key)
-            {
-                case ArrowKey.Left:
-                    lParam = 0x14B0001;
-                    break;
-
-                case ArrowKey.Up:
-                    lParam = 0x1480001;
-                    break;
-
-                case ArrowKey.Right:
-                    lParam = 0x14D0001;
-                    break;
-
-                case ArrowKey.Down:
-                    lParam = 0x1500001;
-                    break;
-
-                default:
-                    return false;
-            }
+            if (!CheckArrowKey(key, out wParam, out lParam))
+                return false;
 
             //Post the WM_KEYDOWN message, return false if unsuccessful
             if (_PostMessage(WowHWND, 0x100, wParam, lParam) == 0)
-            {
                 return false;
-            }
 
-            //Sleep for half a second to emulate the delay you get when you hold a key down on your keyboard
-            Thread.Sleep(500);
+            //Sleep to emulate the delay you get when you hold a key down on your keyboard
+            Thread.Sleep(50);
 
-            //Loop until i >= delay specified in parameter 3
-            for (int i = 0; i < holdDelay; i += 50)
+            //Loop until i >= delay specified in parameter 2
+            for (int i = 1; i < holdDelay; i += 50)
             {
                 //Post the WM_KEYDOWN message with the repeat flag turned on, return false if unsuccessful
                 if (_PostMessage(WowHWND, 0x100, wParam, (lParam + 0x40000000)) == 0)
-                {
                     return false;
-                }
 
                 //Sleep for 1/20th of a second between posting the message
                 Thread.Sleep(50);
@@ -322,83 +284,46 @@ namespace BabBot.Manager
 
             //Post the WM_KEYUP message, return false if unsuccessful
             if (_PostMessage(WowHWND, 0x101, wParam, (lParam + 0xC0000000)) == 0)
-            {
                 return false;
-            }
 
             return true;
         }
 
+        /// <summary>
+        /// Send WM_KEYDOWN event for arrow key
+        /// </summary>
+        /// <param name="key">Arrow key</param>
+        /// <returns>True if WM_KEYDOWN message successfully sent and
+        /// False if not</returns>
         public bool ArrowKeyDown(ArrowKey key)
         {
-            //If hWnd is 0 return false
-            if (WowHWND <= 0)
-            {
+            uint lparam;
+            int wparam;
+
+            if (!CheckArrowKey(key, out wparam, out lparam))
                 return false;
-            }
 
-            var wParam = (int) key;
-            uint lParam;
-
-            switch (key)
-            {
-                case ArrowKey.Left:
-                    lParam = 0x14B0001;
-                    break;
-
-                case ArrowKey.Up:
-                    lParam = 0x1480001;
-                    break;
-
-                case ArrowKey.Right:
-                    lParam = 0x14D0001;
-                    break;
-
-                case ArrowKey.Down:
-                    lParam = 0x1500001;
-                    break;
-
-                default:
-                    return false;
-            }
-
-            return _PostMessage(WowHWND, 0x100, wParam, lParam) == 0 ? false : true;
+            //Post the WM_KEYDOWN message, return false if unsuccessful
+            return (_PostMessage(WowHWND, 0x100, wparam, lparam) == 0);
         }
 
+        /// <summary>
+        /// Send WM_KEYUP event for arrow key
+        /// </summary>
+        /// <param name="key">Arrow key</param>
+        /// <returns>True if WM_KEYUP message successfully sent and
+        /// False if not</returns>
         public bool ArrowKeyUp(ArrowKey key)
         {
-            //If hWnd is 0 return false
-            if (WowHWND <= 0)
-            {
+            uint lparam;
+            int wparam;
+
+            if (!CheckArrowKey(key, out wparam, out lparam))
                 return false;
-            }
 
-            var wParam = (int) key;
-            uint lParam;
-
-            switch (key)
-            {
-                case ArrowKey.Left:
-                    lParam = 0x14B0001;
-                    break;
-
-                case ArrowKey.Up:
-                    lParam = 0x1480001;
-                    break;
-
-                case ArrowKey.Right:
-                    lParam = 0x14D0001;
-                    break;
-
-                case ArrowKey.Down:
-                    lParam = 0x1500001;
-                    break;
-
-                default:
-                    return false;
-            }
-
-            return _PostMessage(WowHWND, 0x101, wParam, (lParam + 0xC0000000)) == 0 ? false : true;
+            //Post the WM_KEYUP message, return false if unsuccessful
+            return (_PostMessage(WowHWND, 0x101,
+                wparam, (lparam + 0xC0000000)) == 0);
         }
 
         #endregion

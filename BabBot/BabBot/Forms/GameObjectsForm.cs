@@ -230,6 +230,7 @@ namespace BabBot.Forms
             if (!CheckInGame())
                 return;
 
+            this.Enabled = false;
             StartBackgroundWork(MoveTo);
         }
 
