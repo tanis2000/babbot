@@ -1179,9 +1179,9 @@ namespace BabBot.Manager
         /// <param name="route">Route object</param>
         /// <param name="waypoints">Waypoint object</param>
         /// <returns></returns>
-        public static bool SaveRoute(Route route, Waypoints waypoints)
+        public static bool SaveRoute(Route route, Waypoints waypoints, string lfs)
         {
-            return SaveRoute(route, waypoints, true);
+            return SaveRoute(route, waypoints, true, lfs);
         }
 
         /// <summary>
@@ -1191,7 +1191,8 @@ namespace BabBot.Manager
         /// <param name="waypoints">Waypoint object</param>
         /// <param name="export">Is export required</param>
         /// <returns></returns>
-        private static bool SaveRoute(Route route, Waypoints waypoints, bool export)
+        private static bool SaveRoute(Route route, 
+            Waypoints waypoints, bool export, string lfs)
         {
             bool is_new = route.WaypointFileName == null;
             // Make sure file name for new route waypoints is unique
@@ -1209,16 +1210,16 @@ namespace BabBot.Manager
                     waypoints.Name + ".wp", typeof(Waypoints), waypoints))
                 return false;
 
-            return SaveRoute(route, waypoints, is_new, export);
+            return SaveRoute(route, waypoints, is_new, export, lfs);
         }
 
         /// <summary>
         /// Save existing route
         /// </summary>
         /// <param name="route">Route object</param>
-        public static bool SaveRoute(Route route)
+        public static bool SaveRoute(Route route, string lfs)
         {
-            return SaveRoute(route, null, false, false);
+            return SaveRoute(route, null, false, false, lfs);
         }
 
         /// <summary>
@@ -1228,17 +1229,22 @@ namespace BabBot.Manager
         /// <param name="is_new">Is route new</param>
         /// <param name="export">Is export required</param>
         private static bool SaveRoute(Route route, 
-                        Waypoints waypoints, bool is_new, bool export)
+                        Waypoints waypoints, bool is_new, bool export, string lfs)
         {
              if (is_new)
                 DataManager.CurWoWVersion.Routes.Add(route);
             else
                 DataManager.CurWoWVersion.Routes[route.WaypointFileName] = route;
 
-            SaveRouteList("routes");
+            SaveRouteList(lfs);
 
             if (export)
                 ExportRoute(route, waypoints);
+            
+            // Check if Quest/Gameobjects needs to be updated
+            if (route.PointA.UpdateDependedObj())
+                // Index GameObject data as well
+                DataManager.SaveGameObjData(lfs);
 
             return true;
         }
@@ -1352,7 +1358,7 @@ namespace BabBot.Manager
         /// </summary>
         /// <param name="fname">File Name</param>
         /// <returns></returns>
-        public static Route ImportRoute(string fname)
+        public static Route ImportRoute(string fname, string lfs)
         {
             if (!File.Exists(fname))
             {
@@ -1386,7 +1392,7 @@ namespace BabBot.Manager
             r.WpList = null;
             r.Version = null;
 
-            if (!SaveRoute(r, wp, false))
+            if (!SaveRoute(r, wp, false, lfs))
                 return null;
 
             return r;

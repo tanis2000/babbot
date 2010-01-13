@@ -1084,6 +1084,15 @@ namespace BabBot.Wow
         {
             return FindItemByName(name);
         }
+
+        public void AddCoordinate(string zone_name, Vector3D v)
+        {
+            ZoneWp zwp = this[zone_name];
+            if (zwp == null)
+                Add(new ZoneWp(zone_name, v));
+            else
+                zwp.Add(v);
+        }
     }
 
     public class ZoneWp : CommonNameList<Vector3D>
@@ -1513,6 +1522,12 @@ namespace BabBot.Wow
             Waypoint = waypoint;
         }
 
+        public virtual bool UpdateDependedObj()
+        {
+            // By default no dependecies
+            return false;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -1533,13 +1548,42 @@ namespace BabBot.Wow
         {
             return Descr;
         }
+    }
+
+    public class DefEndpoint : Endpoint
+    {
+        
+        public DefEndpoint() : base() { }
+
+        public DefEndpoint(EndpointTypes type, string zone_text, Vector3D waypoint)
+            : base(type, zone_text, waypoint) { }
+        
+
+        protected bool CheckWpZones(WpZones wpz)
+        {
+            // It's not the base coord. Check the rest
+            foreach (ZoneWp zwp in wpz.Values)
+                if (zwp.Name.Equals(ZoneText))
+                    foreach (Vector3D v in zwp.List)
+                        if (v.IsClose(Waypoint))
+                            return false;
+
+            // Looks we got another waypoint
+            wpz.AddCoordinate(ZoneText, Waypoint);
+            return true;
+        }
 
     }
 
-    public class GameObjEndpoint : Endpoint
+    public class GameObjEndpoint : DefEndpoint
     {
         [XmlAttribute("game_obj_name")]
         public string GameObjName;
+
+        internal override string Descr
+        {
+            get { return GameObjName.ToString().ToLower().Replace(' ', '_'); }
+        }
 
         public GameObjEndpoint() : base() { }
 
@@ -1549,9 +1593,27 @@ namespace BabBot.Wow
             GameObjName = name;
         }
 
-        internal override string Descr
+        internal GameObject Obj;
+
+        public override bool UpdateDependedObj()
         {
-            get { return GameObjName.ToString().ToLower().Replace(' ', '_'); }
+            // Update related game object
+            if (Obj == null)
+                return false;
+
+                // Compare based coord coordinates
+            if (Obj.BasePosition.IsClose(Waypoint))
+                    return false;
+
+            if (Obj.ObjType == DataManager.GameObjectTypes.NPC)
+            {
+                NPC npc = (NPC)Obj;
+
+                // It's not the base coord. Check the rest
+                return CheckWpZones(npc.Coordinates);
+            }
+
+            return base.UpdateDependedObj();
         }
 
         public override bool Equals(object obj)
@@ -1592,6 +1654,19 @@ namespace BabBot.Wow
         {
             QuestId = quest_id;
             ItemName = item_name;
+        }
+
+        internal QuestObjectives Obj;
+
+        public override bool UpdateDependedObj()
+        {
+            // Update related game object
+            if ((Obj == null) || (Obj.Coordinates == null))
+                return false;
+
+            // TODO
+
+            return base.UpdateDependedObj();
         }
 
         public override bool Equals(object obj)

@@ -144,7 +144,7 @@ namespace BabBot.Forms
         {
             Route route = GetRoute();
             // Save route
-            if (RouteListManager.SaveRoute(route))
+            if (RouteListManager.SaveRoute(route, _lfs))
             {
                 IsChanged = false;
 
@@ -209,7 +209,7 @@ namespace BabBot.Forms
                                             ". Check format and try again";
                 try
                 {
-                    Route r = RouteListManager.ImportRoute(fname);
+                    Route r = RouteListManager.ImportRoute(fname, _lfs);
                     if (r == null)
                     {
                         ShowErrorMessage(err);

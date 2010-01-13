@@ -47,9 +47,10 @@ namespace BabBot.Forms
         RecStates _rec_state = RecStates.IDLE;
         RouteRecordingState _route_rec_state;
         private Route _route;
+        private string _lfs = "route_recorder";
 
         public RouteRecorderForm()
-            : base ("route_mgr")
+            : base ("route_record")
         {
             InitializeComponent();
             ctrlRouteDetails.RegisterChanges += new EventHandler(RegisterChanges);
@@ -352,7 +353,7 @@ namespace BabBot.Forms
             Waypoints waypoints = GetWaypointsList(_route.FileName);
 
             // Save route
-            if (RouteListManager.SaveRoute(_route, waypoints))
+            if (RouteListManager.SaveRoute(_route, waypoints, _lfs))
             {
                 string s = "Route successfully saved";
 

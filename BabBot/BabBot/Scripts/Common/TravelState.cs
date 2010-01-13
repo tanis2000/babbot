@@ -57,7 +57,12 @@ namespace BabBot.States.Common
         /// <summary>
         /// List of used routes
         /// </summary>
-        protected List<Route> UsedRoute = new List<Route>();
+        protected List<Route> UsedRoutes = new List<Route>();
+
+        /// <summary>
+        /// List of found routes
+        /// </summary>
+        protected List<Route> FoundRoutes = new List<Route>();
 
         public WowPlayer Player;
 
@@ -109,31 +114,56 @@ namespace BabBot.States.Common
                 return;
             }
 
+            float calc_len = CheckRoute(name, 0);
+            if (calc_len > 0)
+            {
+                // Check if total calc length exceed much direct length
+                // if (
+            }
+            
+
+            // set calc flag if it direct path shorter than best route
+            // calc_route = (dist_a < min_route_len);
+
+            // Check among undef routes
+            // r = RouteListManager.FindRoute(
+        }
+
+        public float CheckRoute(string name, float total_len)
+        {
             // Find all avail routes for dest
             List<Route> lr = RouteListManager.Endpoints[name];
 
-            // Best route
-            float min_route_len = float.MaxValue;
+            // Best route with min total length
             Route min_route = null;
+            float min_route_len = float.MaxValue;
 
             foreach (Route r in lr)
             {
+                // Quick check we not cycling
+                if (FoundRoutes.IndexOf(r) >= 0)
+                    continue;
+
                 // It's either A or B
                 Endpoint[] eps = r.GetEndpoints(name);
                 if (eps == null)
-                    return;
+                    return 0;
 
                 // Only using atm based coord for game obj/quest item
 
-                if (CheckEndpoint(eps[1], r, player, cur_loc))
-                    return;
+                if (eps[1].Waypoint.IsClose(Player.Location))
+                {
+                    // Exact route found
+                    FoundRoutes.Add(r);
+                    return total_len + r.Length;
+                }
 
                 // Exact route not found
                 // Check Direct Distance to both endpoint
-                float ddist_b = eps[1].Waypoint.GetDistanceTo(cur_loc);
-                float ddist_a = eps[0].Waypoint.GetDistanceTo(cur_loc);
+                float ddist_b = eps[1].Waypoint.GetDistanceTo(Player.Location);
+                float ddist_a = eps[0].Waypoint.GetDistanceTo(Player.Location);
 
-                // Calc min lenght for best route
+                // Calc lenght and update best route
                 float cur_len = r.Length + ddist_b;
                 if (cur_len < min_route_len)
                 {
@@ -146,21 +176,13 @@ namespace BabBot.States.Common
             {
                 // Check if another route connected to given point
                 // This check is recursive
+                return CheckRoute(name, total_len + min_route_len);
 
             }
-            else
-            {
-                // Go with navigation state
-            }
-            
 
-            // set calc flag if it direct path shorter than best route
-            // calc_route = (dist_a < min_route_len);
-
-            // Check among undef routes
-            // r = RouteListManager.FindRoute(
+            return 0;
         }
-
+        
         private bool CheckEndpoint(Endpoint ep, Route r, 
                         WowPlayer player, Vector3D cur_loc)
         {
@@ -203,7 +225,7 @@ namespace BabBot.States.Common
                 if (r.Reversible)
                     wp.List.Reverse();
 
-                UsedRoute.Add(r);
+                UsedRoutes.Add(r);
                 CallChangeStateEvent(player, new NavigationState(wp, 
                                 Lfs, "Traveling to " + _dest.ToString()));
             }
