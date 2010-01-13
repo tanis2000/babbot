@@ -211,7 +211,7 @@ namespace BabBot.States.Common
                     float z = vnext.Z - _player.Location.Z;
 
                     _player.ClickToMove(vnext);
-                    if ((_retry == 0) && (z > 2)|| (_retry > 0))
+                    if ((_retry == 0) && (z > 3)|| (_retry > 0))
                     {
                         // Add jump if going too high up or trying unstack
                         Thread.Sleep(150);

@@ -207,6 +207,7 @@ namespace BabBot.Common
 
     /// <summary>
     /// Class with collection item that includes a mergeable list, for ex WoWVersion
+    /// Used by: QuestObjectives, GameObject
     /// </summary>
     public abstract class CommonMergeListItem : CommonMergeItem
     {

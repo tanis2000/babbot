@@ -66,6 +66,12 @@ namespace BabBot.States.Common
         /// <param name="player"></param>
         protected override void DoExecute(WowPlayer player)
         {
+            if (player.IsDead)
+            {
+                Finish(player);
+                return;
+            }
+
             Vector3D cur_loc = player.Location;
 
             if (player.Orientation != _angle)

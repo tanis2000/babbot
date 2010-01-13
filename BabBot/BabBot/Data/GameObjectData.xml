@@ -10,9 +10,11 @@
 The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
 
 Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young priest, and thin the boar and saber populations so that nature's harmony will be preserved.]]></text>
-          <objectives>
-            <objective d3p1:type="MonsterQuestObjective" type="monster" name="Young Nightsaber slain" qty="7" />
-            <objective d3p1:type="MonsterQuestObjective" type="monster" name="Young Thistle Boar slain" qty="4" />
+          <objectives name="456">
+            <obj_list>
+              <objective d3p1:type="MonsterQuestObjective" type="monster" name="Young Nightsaber slain" qty="7" />
+              <objective d3p1:type="MonsterQuestObjective" type="monster" name="Young Thistle Boar slain" qty="4" />
+            </obj_list>
           </objectives>
           <choice_items>
             <item name="Archery Training Gloves" qty="1" />
@@ -58,12 +60,15 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
     <game_object d3p1:type="NPC" name="Melithar Staghelm" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10389.8" y="763.48" z="1319.95" type="0" />
       <quests>
-        <quest name="The Woodland Protector" id="458" link="|cffffff00|Hquest:458:1|h[The Woodland Protector]|h|r" level="1" bonus_spell="" num="0" dest_name="Tarindrella">
+        <quest name="The Woodland Protector" id="458" link="|cffffff00|Hquest:458:1|h[The Woodland Protector]|h|r" level="1" bonus_spell="" num="0" dest_name="">
           <text><![CDATA[Thank goodness you are here, priest. Strange news has traveled to me through the whisperings of the forest spirits.
 
 The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
 
 Seek out Tarindrella and see what business she tends to in our grove. One of the Sentinels reported seeing her to the southwest of Aldrassil.]]></text>
+          <objectives name="458">
+            <obj_list />
+          </objectives>
           <objectives_text><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives_text>
         </quest>
       </quests>
@@ -72,12 +77,15 @@ Seek out Tarindrella and see what business she tends to in our grove. One of the
       <gossips />
     </game_object>
     <game_object d3p1:type="NPC" name="Porthannius" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
-      <base_position x="10214.3" y="700.55" z="1360.6" type="0" />
+      <base_position x="10214.3" y="700.55" z="1360.61" type="0" />
       <quests>
         <quest name="Dolanaar Delivery" id="2159" link="|cffff8040|Hquest:2159:5|h[Dolanaar Delivery]|h|r" level="5" bonus_spell="" num="0" dest_name="">
           <text><![CDATA[Greetings, young priest.  Can you offer me aid?  I have a package of herbs that I must deliver to the town of Dolanaar.  But I still have business with the druids of Shadowglen and cannot yet leave.
 
 Can you deliver this package for me?  It must be sent to Innkeeper Keldamyr, at the Dolanaar inn.  It lies along the road, to the south.]]></text>
+          <objectives name="2159">
+            <obj_list />
+          </objectives>
           <choice_items>
             <item name="Darnassian Bleu" qty="5" />
             <item name="Refreshing Spring Water" qty="5" />
@@ -96,13 +104,6 @@ Can you deliver this package for me?  It must be sent to Innkeeper Keldamyr, at 
       <services>
         <service d3p1:type="ClassTrainingService" name="class_trainer" class="PRIEST" />
       </services>
-      <gossips />
-    </game_object>
-    <game_object d3p1:type="NPC" name="Tarindrella" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
-      <base_position x="10296.9" y="870.23" z="1335.89" type="0" />
-      <quests />
-      <coordinates />
-      <services />
       <gossips />
     </game_object>
   </wow_version>

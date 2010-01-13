@@ -690,12 +690,12 @@ namespace BabBot.Manager
                     }
                 }
 
-                if (q.ObjList != null)
+                if (q.Objectives.ObjList != null)
                 {
                     // Add quest objectives
-                    for (int i = 0; i < q.ObjList.Count; i++)
+                    for (int i = 0; i < q.Objectives.ObjList.Count; i++)
                     {
-                        AbstractQuestObjective qobj = q.ObjList[i];
+                        AbstractQuestObjective qobj = q.Objectives.ObjList[i];
 
                         int qty = 0;
                         if (qobj.HasQty)

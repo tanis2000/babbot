@@ -623,7 +623,7 @@ namespace BabBot.Wow
         /// List of objectives
         /// </summary>
         [XmlElement("objectives")]
-        public QuestObjectives ObjList;
+        public QuestObjectives Objectives;
 
         /// <summary>
         /// Index in toon quest log if quest already accepted
@@ -664,6 +664,7 @@ namespace BabBot.Wow
             Link = link;
             Level = level;
             BonusSpell = bonus_spell;
+            Objectives = new QuestObjectives(id.ToString());
 
             XmlDocument doc = new XmlDocument();
             TextObjectives = doc.CreateCDataSection(objectives);
@@ -704,7 +705,7 @@ namespace BabBot.Wow
             }
 
             if (!string.IsNullOrEmpty(objs))
-                ObjList = new QuestObjectives(objs);
+                Objectives = new QuestObjectives(id.ToString(), objs);
 
             
         }
@@ -1159,9 +1160,11 @@ namespace BabBot.Wow
 
     #region Quest Objectives
 
-    public class QuestObjectives : CommonList<AbstractQuestObjective>
+    public class QuestObjectivesList : CommonList<AbstractQuestObjective>
     {
-
+        /// <summary>
+        /// List with quest objectives
+        /// </summary>
         [XmlElement("objective")]
         public AbstractQuestObjective[] ObjList
         {
@@ -1169,18 +1172,58 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
+        public QuestObjectivesList() : base() { }
+    }
+
+    public class QuestObjectives : CommonMergeListItem
+    {
+        /// <summary>
+        /// List with quest objectives
+        /// </summary>
+        [XmlElement("obj_list")]
+        public QuestObjectivesList ObjList;
+
+        /// <summary>
+        /// List of hotspots where objectives can be "found"
+        /// </summary>
+        [XmlElement("hot_spots")]
+        public WpZones Coordinates
+        {
+            get { return (WpZones)MergeList[0]; }
+            set { MergeList[0] = value; }
+        }
+
         /// <summary>
         /// Paremetless class constructor
         /// </summary>
-        public QuestObjectives()
-            : base() { }
+        public QuestObjectives() : base() 
+        { 
+            Init();
+        }
+
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="name">Quest Id</param>
+        public QuestObjectives(string id)
+            : base(id) 
+        {
+            Init();
+        }
+
+        private void Init()
+        {
+            MergeList = new IMergeable[1];
+            ObjList = new QuestObjectivesList();
+        }
 
         /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="objs">List of objectives in format obj::obj 
         /// where each obj is comma delited list of item, qty, is_finished</param>
-        public QuestObjectives(string objs)
+        public QuestObjectives(string id, string objs)
+            : this (id)
         {
             string[] obj = objs.Split(new string[] { "::" }, StringSplitOptions.None);
             foreach (string s in obj)
@@ -1221,7 +1264,7 @@ namespace BabBot.Wow
                             "Unknown type of quest objectives '" + stype + "'");
                 }
 
-                Add(qobj);
+                ObjList.Add(qobj);
             }
         }
     }

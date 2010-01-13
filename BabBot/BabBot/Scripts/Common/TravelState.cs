@@ -33,6 +33,12 @@ namespace BabBot.States.Common
         private object _dest;
 
         /// <summary>
+        /// Base coordinates for destination target
+        /// If dest has multiple coordinates see VList
+        /// </summary>
+        public Vector3D BaseCoord;
+
+        /// <summary>
         /// List of coordinates if more than 1 (for NPC)
         /// </summary>
         public List<Vector3D> Vlist = null;
@@ -47,6 +53,11 @@ namespace BabBot.States.Common
         /// Destination check class
         /// </summary>
         AbstractCheck _check;
+
+        /// <summary>
+        /// List of used routes
+        /// </summary>
+        protected List<Route> UsedRoute = new List<Route>();
 
         public WowPlayer Player;
 
@@ -112,6 +123,8 @@ namespace BabBot.States.Common
                 if (eps == null)
                     return;
 
+                // Only using atm based coord for game obj/quest item
+
                 if (CheckEndpoint(eps[1], r, player, cur_loc))
                     return;
 
@@ -121,13 +134,25 @@ namespace BabBot.States.Common
                 float ddist_a = eps[0].Waypoint.GetDistanceTo(cur_loc);
 
                 // Calc min lenght for best route
-                min_route_len = Math.Min(r.Length + ddist_b, min_route_len);
+                float cur_len = r.Length + ddist_b;
+                if (cur_len < min_route_len)
+                {
+                    min_route = r;
+                    min_route_len = cur_len;
+                }
             }
 
-            if (min_route == null)
+            if (min_route != null)
+            {
+                // Check if another route connected to given point
+                // This check is recursive
+
+            }
+            else
             {
                 // Go with navigation state
             }
+            
 
             // set calc flag if it direct path shorter than best route
             // calc_route = (dist_a < min_route_len);
@@ -178,6 +203,7 @@ namespace BabBot.States.Common
                 if (r.Reversible)
                     wp.List.Reverse();
 
+                UsedRoute.Add(r);
                 CallChangeStateEvent(player, new NavigationState(wp, 
                                 Lfs, "Traveling to " + _dest.ToString()));
             }
@@ -229,8 +255,8 @@ namespace BabBot.States.Common
                 return false;
 
             // Check if obj has coordinates
-            Vector3D v = NpcHelper.GetGameObjCoord(_obj, Parent.Lfs);
-            if (v == null)
+            Parent.BaseCoord = NpcHelper.GetGameObjCoord(_obj, Parent.Lfs);
+            if (Parent.BaseCoord == null)
                 throw new GameObjectCoordNotFound(_obj.Name);
 
             // Check for other coordinates

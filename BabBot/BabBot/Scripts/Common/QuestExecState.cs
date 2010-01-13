@@ -61,7 +61,7 @@ namespace BabBot.States.Common
             switch (_q.State)
             {
                 case QuestStates.ACCEPTED:
-                    if ((_q.ObjList == null) ||
+                    if ((_q.Objectives.ObjList == null) ||
                         _q.Completed) { }
 
                     // Go to each objective
