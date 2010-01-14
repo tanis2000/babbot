@@ -675,7 +675,8 @@ namespace BabBot.Manager
                 BotDataSet.QuestListRow qrow = GameData.QuestList.
                     AddQuestListRow(q.Id, obj_row, q.Title,
                     q.GreetingText, q.ObjectivesText, g.Name, 
-                    q.DestName, q.Level, q.Link, q.BonusSpell);
+                    q.DestName, q.Level, q.Link, q.BonusSpell, 
+                    q.Objectives.ObjList.Count);
 
                 // Add quest items
                 for (int i = 0; i < q.QuestItems.Length; i++)
@@ -1246,10 +1247,11 @@ namespace BabBot.Manager
                 ExportRoute(route, waypoints);
             
             // Check if Quest/Gameobjects needs to be updated
-            if (route.PointA.UpdateDependedObj() || 
-                route.PointB.UpdateDependedObj())
-                    // Index GameObject data as well
-                    DataManager.SaveGameObjData(lfs);
+            bool f1 = route.PointA.UpdateDependedObj();
+            bool f2 = route.PointB.UpdateDependedObj();
+            if (f1 || f2)
+                // Index GameObject data as well
+                DataManager.SaveGameObjData(lfs);
 
             return true;
         }

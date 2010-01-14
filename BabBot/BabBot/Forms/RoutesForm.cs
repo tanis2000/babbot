@@ -107,7 +107,16 @@ namespace BabBot.Forms
         private void OpenRoute()
         {
             Route r = GetSelectedRoute();
+
+            // Remember route id
+            string ridx = r.WaypointFileName;
+
             Program.mainForm.OpenRouteRecording(r);
+
+            // Update route after save
+            SetTreeNode(DataManager.CurWoWVersion.
+                        Routes[ridx], tvRoutes.SelectedNode);
+            tvRoutes_AfterSelect(this, null);
         }
 
 

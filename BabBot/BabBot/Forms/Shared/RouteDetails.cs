@@ -444,14 +444,10 @@ namespace BabBot.Forms.Shared
                 QuestObjEndpoint qi = (QuestObjEndpoint)ep;
                 Quest q = DataManager.FindQuestById(qi.QuestId);
                 
-                string s = null;
-                if (q.Objectives.ObjList != null)
-                    s = q.Objectives.ObjList[qi.ObjId].Name;
-
                 if (q != null)
                 {
                     cb_list[0].Text = q.Title;
-                    cb_list[1].Text = s;
+                    cb_list[1].Text = q.Objectives.ObjList[qi.ObjId].Name;
                 }
             }
         }

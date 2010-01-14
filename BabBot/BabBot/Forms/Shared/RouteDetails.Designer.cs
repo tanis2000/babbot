@@ -246,6 +246,7 @@
             // 
             // cbObjA1
             // 
+            this.cbObjA1.DisplayMember = "IDX";
             this.cbObjA1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjA1.FormattingEnabled = true;
             this.cbObjA1.Location = new System.Drawing.Point(50, 2);
@@ -368,6 +369,7 @@
             // 
             // cbObjB1
             // 
+            this.cbObjB1.DisplayMember = "IDX";
             this.cbObjB1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjB1.FormattingEnabled = true;
             this.cbObjB1.Location = new System.Drawing.Point(50, 2);
@@ -454,14 +456,14 @@
             // 
             this.bsQuestListA.DataMember = "QuestList";
             this.bsQuestListA.DataSource = this.botDataSet;
-            this.bsQuestListA.Filter = "ITEMS_CNT > 0";
+            this.bsQuestListA.Filter = "OBJ_CNT > 0";
             this.bsQuestListA.Sort = "TITLE";
             // 
             // bsQuestListB
             // 
             this.bsQuestListB.DataMember = "QuestList";
             this.bsQuestListB.DataSource = this.botDataSet;
-            this.bsQuestListB.Filter = "ITEMS_CNT > 0";
+            this.bsQuestListB.Filter = "OBJ_CNT > 0";
             this.bsQuestListB.Sort = "TITLE";
             // 
             // fkQuestItemsA
