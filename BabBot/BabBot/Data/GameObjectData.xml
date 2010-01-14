@@ -10,10 +10,24 @@
 The spring rains were particularly heavy this year, causing some of the forest's beasts to flourish while others suffered.
 
 Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young priest, and thin the boar and saber populations so that nature's harmony will be preserved.]]></text>
-          <objectives name="456">
+          <objectives>
             <obj_list>
-              <objective d3p1:type="MonsterQuestObjective" type="monster" name="Young Nightsaber slain" qty="7" />
-              <objective d3p1:type="MonsterQuestObjective" type="monster" name="Young Thistle Boar slain" qty="4" />
+              <objective d3p1:type="MonsterQuestObjective" name="Young Nightsaber slain" type="monster" qty="7">
+                <hot_spots>
+                  <zone name="Teldrassil">
+                    <waypoint x="10307.94" y="871.77" z="1333.94" type="0" />
+                    <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
+                  </zone>
+                </hot_spots>
+              </objective>
+              <objective d3p1:type="MonsterQuestObjective" name="Young Thistle Boar slain" type="monster" qty="4">
+                <hot_spots>
+                  <zone name="Teldrassil">
+                    <waypoint x="10293.55" y="861.35" z="1336.29" type="0" />
+                    <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
+                  </zone>
+                </hot_spots>
+              </objective>
             </obj_list>
           </objectives>
           <choice_items>
@@ -66,7 +80,7 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
 The mysterious woodland protector, Tarindrella, has returned to Shadowglen. The dryad's presence has not been felt in the forests of Kalimdor in years. Something is surely amiss if she has journeyed back to this land.
 
 Seek out Tarindrella and see what business she tends to in our grove. One of the Sentinels reported seeing her to the southwest of Aldrassil.]]></text>
-          <objectives name="458">
+          <objectives>
             <obj_list />
           </objectives>
           <objectives_text><![CDATA[Seek out the dryad known as Tarindrella.]]></objectives_text>
@@ -83,7 +97,7 @@ Seek out Tarindrella and see what business she tends to in our grove. One of the
           <text><![CDATA[Greetings, young priest.  Can you offer me aid?  I have a package of herbs that I must deliver to the town of Dolanaar.  But I still have business with the druids of Shadowglen and cannot yet leave.
 
 Can you deliver this package for me?  It must be sent to Innkeeper Keldamyr, at the Dolanaar inn.  It lies along the road, to the south.]]></text>
-          <objectives name="2159">
+          <objectives>
             <obj_list />
           </objectives>
           <choice_items>

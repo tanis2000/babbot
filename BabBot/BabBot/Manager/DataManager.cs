@@ -311,6 +311,8 @@ namespace BabBot.Manager
 
     #endregion
 
+    #region Game Data
+
     public class DataManager
     {
         /// <summary>
@@ -552,7 +554,7 @@ namespace BabBot.Manager
         
         internal static WoWVersion FindWoWVersionByName(string version)
         {
-            return wdata.FindVersion(version);
+            return wdata[version];
         }
 
         public static void SetWowVersion(string version)
@@ -952,7 +954,7 @@ namespace BabBot.Manager
                 {
                     // If null it produces exception
                     check = DataManager.CurWoWVersion.
-                        GameObjData.FindGameObjByName(obj.Name);
+                        GameObjData[obj.Name];
                 }
                 catch { }
 
@@ -1108,7 +1110,9 @@ namespace BabBot.Manager
         }
 
     }
-            
+
+    #endregion
+
     #region Routes
 
     public class WaypointsNotFoundException : Exception
@@ -1228,8 +1232,8 @@ namespace BabBot.Manager
         /// <param name="route">Route object</param>
         /// <param name="is_new">Is route new</param>
         /// <param name="export">Is export required</param>
-        private static bool SaveRoute(Route route, 
-                        Waypoints waypoints, bool is_new, bool export, string lfs)
+        private static bool SaveRoute(Route route, Waypoints waypoints, 
+                                    bool is_new, bool export, string lfs)
         {
              if (is_new)
                 DataManager.CurWoWVersion.Routes.Add(route);
@@ -1242,9 +1246,10 @@ namespace BabBot.Manager
                 ExportRoute(route, waypoints);
             
             // Check if Quest/Gameobjects needs to be updated
-            if (route.PointA.UpdateDependedObj())
-                // Index GameObject data as well
-                DataManager.SaveGameObjData(lfs);
+            if (route.PointA.UpdateDependedObj() || 
+                route.PointB.UpdateDependedObj())
+                    // Index GameObject data as well
+                    DataManager.SaveGameObjData(lfs);
 
             return true;
         }
@@ -1423,6 +1428,27 @@ namespace BabBot.Manager
                 foreach (char c in new char[] { 'a', 'b' })
                 {
                     Endpoint e = r[c];
+
+                    // Lookup endpoint object
+                    if (e.HasLinkedObj)
+                    {
+                        DefEndpoint de = (DefEndpoint) e;
+                        switch (e.PType)
+                        {
+                            case EndpointTypes.GAME_OBJ:
+                                de.Obj = DataManager.
+                                    CurWoWVersion.GameObjData[de.Name];
+                                break;
+
+                            case EndpointTypes.QUEST_OBJ:
+                                QuestObjEndpoint qoe = (QuestObjEndpoint) e;
+                                Quest q = DataManager.
+                                    QuestList[Convert.ToInt32(qoe.Name)]; 
+                                if (q.Objectives != null)
+                                    de.Obj = q.Objectives.ObjList[qoe.ObjId];
+                                break;
+                        }
+                    }
 
                     if (c.Equals('a') ||
                         c.Equals('b') && r.Reversible)

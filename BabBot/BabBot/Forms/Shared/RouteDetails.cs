@@ -305,8 +305,8 @@ namespace BabBot.Forms.Shared
 
         public AbstractDefListEndpoint(string bs_name) : base() { }
 
-        public AbstractDefListEndpoint(RouteDetails owner,
-                        Panel target, char a_b, EndpointTypes etype, string[] bs_list, string[] members)
+        public AbstractDefListEndpoint(RouteDetails owner, Panel target, 
+                char a_b, EndpointTypes etype, string[] bs_list, string[] members)
             : base(owner, target, a_b, etype)
         {
             _bs_cnt = bs_list.Length;
@@ -358,6 +358,7 @@ namespace BabBot.Forms.Shared
         {
             cb.DataSource = bs[idx];
             cb.DisplayMember = member;
+            // For now it's static
             ((Label)cb.Tag).Text = DisplayMembers[idx][0] +
                     DisplayMembers[idx].Substring(1).ToLower();
         }
@@ -428,9 +429,11 @@ namespace BabBot.Forms.Shared
 
         public override Endpoint GetEndpoint(string ZoneText, Vector3D waypoint)
         {
-            BotDataSet.QuestListRow row = (BotDataSet.QuestListRow)((DataRowView)
+            BotDataSet.QuestListRow q_row = (BotDataSet.QuestListRow)((DataRowView)
                 ((BindingSource)cb_list[0].DataSource).Current).Row;
-            return new QuestItemEndpoint(EType, row.ID, cb_list[1].Text, ZoneText, waypoint);
+            BotDataSet.QuestItemsRow obj_row = (BotDataSet.QuestItemsRow)((DataRowView)
+                ((BindingSource)cb_list[1].DataSource).Current).Row;
+            return new QuestObjEndpoint(EType, q_row.ID, obj_row.IDX, ZoneText, waypoint);
         }
 
         public override void OnSelection(Endpoint ep)
@@ -438,17 +441,20 @@ namespace BabBot.Forms.Shared
             base.OnSelection(ep);
             if (ep != null)
             {
-                QuestItemEndpoint qi = (QuestItemEndpoint)ep;
+                QuestObjEndpoint qi = (QuestObjEndpoint)ep;
                 Quest q = DataManager.FindQuestById(qi.QuestId);
+                
+                string s = null;
+                if (q.Objectives.ObjList != null)
+                    s = q.Objectives.ObjList[qi.ObjId].Name;
+
                 if (q != null)
                 {
                     cb_list[0].Text = q.Title;
-                    cb_list[1].Text = qi.ItemName;
+                    cb_list[1].Text = s;
                 }
             }
         }
-
-
     }
 
     public class HotSpotListEndpoint : DefListEndpoint

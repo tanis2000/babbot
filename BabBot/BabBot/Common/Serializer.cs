@@ -213,6 +213,31 @@ namespace BabBot.Common
     {
         protected IMergeable[] MergeList;
 
+        internal int Count
+        {
+            get
+            {
+                return (MergeList == null) ? -1 : MergeList.Length;
+            }
+        }
+
+        internal IMergeable this[int idx]
+        {
+            get
+            {
+                if ((MergeList == null) ||
+                    (idx < 0) || (idx >= MergeList.Length))
+                    return null;
+                else
+                    return MergeList[idx];
+            }
+            set
+            {
+                MergeList[idx] = value;
+            }
+        }
+
+
         [XmlIgnore]
         public override bool Changed
         {
@@ -689,11 +714,6 @@ namespace BabBot.Common
 
             // No differences found
             return true;
-        }
-
-        public T FindItemByName(string name)
-        {
-            return _stable[name];
         }
 
         public void Add(T item)

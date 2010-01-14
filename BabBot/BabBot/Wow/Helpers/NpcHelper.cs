@@ -247,7 +247,7 @@ namespace BabBot.Wow.Helpers
 
         public static GameObject FindGameObjByName(string name)
         {
-            GameObject obj = DataManager.CurWoWVersion.GameObjData.FindGameObjByName(name);
+            GameObject obj = DataManager.CurWoWVersion.GameObjData[name];
             if (obj == null)
                 throw new GameObjectNotFountException(name);
 
@@ -581,7 +581,7 @@ namespace BabBot.Wow.Helpers
                 Output.Instance.Log(lfs, "NPC '" + npc.Name +
                     "' successfully added to " + DataManager.GameObjDataFileName);
 
-                return DataManager.CurWoWVersion.GameObjData.FindGameObjByName(npc.Name);
+                return DataManager.CurWoWVersion.GameObjData[npc.Name];
             }
 
             return null;

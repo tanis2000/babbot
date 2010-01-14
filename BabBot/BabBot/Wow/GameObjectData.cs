@@ -46,10 +46,11 @@ namespace BabBot.Wow
             set { Items = value; }
         }
 
+        /*
         public GameObject FindGameObjByName(string name)
         {
             return FindItemByName(name);
-        }
+        }*/
 
         public Quest FindMaxQuestByTitle(string title)
         {
@@ -664,7 +665,7 @@ namespace BabBot.Wow
             Link = link;
             Level = level;
             BonusSpell = bonus_spell;
-            Objectives = new QuestObjectives(id.ToString());
+            Objectives = new QuestObjectives();
 
             XmlDocument doc = new XmlDocument();
             TextObjectives = doc.CreateCDataSection(objectives);
@@ -705,7 +706,7 @@ namespace BabBot.Wow
             }
 
             if (!string.IsNullOrEmpty(objs))
-                Objectives = new QuestObjectives(id.ToString(), objs);
+                Objectives = new QuestObjectives(objs);
 
             
         }
@@ -1184,7 +1185,7 @@ namespace BabBot.Wow
         public QuestObjectivesList() : base() { }
     }
 
-    public class QuestObjectives : CommonMergeListItem
+    public class QuestObjectives
     {
         /// <summary>
         /// List with quest objectives
@@ -1193,36 +1194,10 @@ namespace BabBot.Wow
         public QuestObjectivesList ObjList;
 
         /// <summary>
-        /// List of hotspots where objectives can be "found"
-        /// </summary>
-        [XmlElement("hot_spots")]
-        public WpZones Coordinates
-        {
-            get { return (WpZones)MergeList[0]; }
-            set { MergeList[0] = value; }
-        }
-
-        /// <summary>
         /// Paremetless class constructor
         /// </summary>
         public QuestObjectives() : base() 
-        { 
-            Init();
-        }
-
-        /// <summary>
-        /// Class constructor
-        /// </summary>
-        /// <param name="name">Quest Id</param>
-        public QuestObjectives(string id)
-            : base(id) 
         {
-            Init();
-        }
-
-        private void Init()
-        {
-            MergeList = new IMergeable[1];
             ObjList = new QuestObjectivesList();
         }
 
@@ -1231,8 +1206,8 @@ namespace BabBot.Wow
         /// </summary>
         /// <param name="objs">List of objectives in format obj::obj 
         /// where each obj is comma delited list of item, qty, is_finished</param>
-        public QuestObjectives(string id, string objs)
-            : this (id)
+        public QuestObjectives(string objs)
+            : base()
         {
             string[] obj = objs.Split(new string[] { "::" }, StringSplitOptions.None);
             foreach (string s in obj)
@@ -1286,16 +1261,23 @@ namespace BabBot.Wow
     [XmlInclude(typeof(MonsterQuestObjective))]
     [XmlInclude(typeof(ObjectQuestObjective))]
     [XmlInclude(typeof(ReputationQuestObjective))]
-    public abstract class AbstractQuestObjective
+    public abstract class AbstractQuestObjective : CommonMergeListItem
     {
+        /// <summary>
+        /// Quest objective Type
+        /// </summary>
         [XmlAttribute("type")]
         public string SType;
 
-        [XmlAttribute("name")]
-        public string Name;
-
-        [XmlElement("wp_list")]
-        public WpZones Waypoints;
+        /// <summary>
+        /// List of hotspots where objectives can be "found"
+        /// </summary>
+        [XmlElement("hot_spots")]
+        public WpZones Coordinates
+        {
+            get { return (WpZones)MergeList[0]; }
+            set { MergeList[0] = value; }
+        }
 
         internal virtual string FullName
         {
@@ -1312,6 +1294,7 @@ namespace BabBot.Wow
         public AbstractQuestObjective(string type)
         {
             SType = type;
+            MergeList = new IMergeable[1];
         }
 
         public AbstractQuestObjective(string type, string name, bool is_finished)
@@ -1473,7 +1456,7 @@ namespace BabBot.Wow
     /// Route Endpoint class
     /// </summary>
     [XmlInclude(typeof(GameObjEndpoint))]
-    [XmlInclude(typeof(QuestItemEndpoint))]
+    [XmlInclude(typeof(QuestObjEndpoint))]
     public class Endpoint
     {
         /// <summary>
@@ -1503,11 +1486,25 @@ namespace BabBot.Wow
         /// </summary>
         internal EndpointTypes PType;
 
+        /// <summary>
+        /// Is endpoint has linked object
+        /// </summary>
+        internal virtual bool HasLinkedObj
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Endpoint description. Generated from Endpoint type
+        /// </summary>
         internal virtual string Descr
         {
             get { return Enum.GetName(typeof(EndpointTypes), PType).ToLower(); }
         }
 
+        /// <summary>
+        /// Parameteless constructor
+        /// </summary>
         public Endpoint() { }
 
         /// <summary>
@@ -1522,6 +1519,10 @@ namespace BabBot.Wow
             Waypoint = waypoint;
         }
 
+        /// <summary>
+        /// Update linked object
+        /// </summary>
+        /// <returns>True if linked object was changed and false if not</returns>
         public virtual bool UpdateDependedObj()
         {
             // By default no dependecies
@@ -1550,18 +1551,65 @@ namespace BabBot.Wow
         }
     }
 
-    public class DefEndpoint : Endpoint
+    public abstract class DefEndpoint : Endpoint
     {
-        
+        private int _coord_idx;
+
+        /// <summary>
+        /// Name of the object this endpoint linked with
+        /// </summary>
+        abstract public string Name { get; }
+
+        internal override bool HasLinkedObj
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Linked object
+        /// </summary>
+        internal CommonMergeListItem Obj;
+
+        /// <summary>
+        /// Parameteless constructor
+        /// </summary>
         public DefEndpoint() : base() { }
 
-        public DefEndpoint(EndpointTypes type, string zone_text, Vector3D waypoint)
-            : base(type, zone_text, waypoint) { }
-        
-
-        protected bool CheckWpZones(WpZones wpz)
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="type">Endpoint type</param>
+        /// <param name="zone_text">Zone text where endpoint located</param>
+        /// <param name="waypoint">Waypoint</param>
+        /// <param name="coord_idx">Index of WpZones list in linked object</param>
+        public DefEndpoint(EndpointTypes type, string zone_text, 
+            Vector3D waypoint, int coord_idx)
+            : base(type, zone_text, waypoint) 
         {
-            // It's not the base coord. Check the rest
+            _coord_idx = coord_idx;
+        }
+        
+        /// <summary>
+        /// Check WpZones list in linked object.
+        /// </summary>
+        /// <returns>True if Waypoint wasn't found and Waypoint was added</returns>
+        protected bool CheckWpZones()
+        {
+            // Quick check on types
+            if (_coord_idx >= Obj.Count)
+                return false;
+
+            WpZones wpz = null;
+            IMergeable im = Obj[_coord_idx];
+            if (im == null)
+            {
+                wpz = new WpZones();
+                Obj[_coord_idx] = wpz;
+            }
+            else
+                wpz = (WpZones)im;
+
+            // Check all object coordinates
             foreach (ZoneWp zwp in wpz.Values)
                 if (zwp.Name.Equals(ZoneText))
                     foreach (Vector3D v in zwp.List)
@@ -1573,12 +1621,28 @@ namespace BabBot.Wow
             return true;
         }
 
+        public override bool UpdateDependedObj()
+        {
+            if (Obj == null)
+                return false;
+            else
+                return CheckWpZones();
+        }
     }
 
     public class GameObjEndpoint : DefEndpoint
     {
+        /// <summary>
+        /// Name of Game Object
+        /// </summary>
         [XmlAttribute("game_obj_name")]
         public string GameObjName;
+
+        [XmlIgnore]
+        public override string Name
+        {
+            get { return GameObjName; }
+        }
 
         internal override string Descr
         {
@@ -1588,12 +1652,10 @@ namespace BabBot.Wow
         public GameObjEndpoint() : base() { }
 
         public GameObjEndpoint(EndpointTypes type, string name, string zone_text, Vector3D waypoint)
-            : base(EndpointTypes.GAME_OBJ, zone_text, waypoint)
+            : base(EndpointTypes.GAME_OBJ, zone_text, waypoint, 1)
         {
             GameObjName = name;
         }
-
-        internal GameObject Obj;
 
         public override bool UpdateDependedObj()
         {
@@ -1602,18 +1664,11 @@ namespace BabBot.Wow
                 return false;
 
                 // Compare based coord coordinates
-            if (Obj.BasePosition.IsClose(Waypoint))
+            if (((GameObject)Obj).BasePosition.IsClose(Waypoint))
                     return false;
 
-            if (Obj.ObjType == DataManager.GameObjectTypes.NPC)
-            {
-                NPC npc = (NPC)Obj;
-
-                // It's not the base coord. Check the rest
-                return CheckWpZones(npc.Coordinates);
-            }
-
-            return base.UpdateDependedObj();
+            // It's not the base coord. Check the rest
+            return CheckWpZones();
         }
 
         public override bool Equals(object obj)
@@ -1630,43 +1685,42 @@ namespace BabBot.Wow
         }
     }
 
-    public class QuestItemEndpoint : Endpoint
+    public class QuestObjEndpoint : DefEndpoint
     {
+        /// <summary>
+        /// Quest id
+        /// </summary>
         [XmlAttribute("quest_id")]
         public int QuestId;
 
-        [XmlAttribute("item_name")]
-        public string ItemName;
+        /// <summary>
+        /// Objective name
+        /// </summary>
+        [XmlAttribute("obj_idx")]
+        public int ObjId;
+
+        [XmlIgnore]
+        public override string Name
+        {
+            get { return QuestId.ToString(); }
+        }
 
         internal override string Descr
         {
             get
             {
-                return QuestId + "#" + ItemName.ToString().ToLower().Replace(' ', '_'); ;
+                return QuestId + "#" + ObjId; ;
             }
         }
 
-        public QuestItemEndpoint() : base() { }
+        public QuestObjEndpoint() : base() { }
 
-        public QuestItemEndpoint(EndpointTypes type,
-                        int quest_id, string item_name, string zone_text, Vector3D waypoint)
-            : base(EndpointTypes.QUEST_OBJ, zone_text, waypoint)
+        public QuestObjEndpoint(EndpointTypes type,
+                        int quest_id, int obj_id, string zone_text, Vector3D waypoint)
+            : base(EndpointTypes.QUEST_OBJ, zone_text, waypoint, 0)
         {
             QuestId = quest_id;
-            ItemName = item_name;
-        }
-
-        internal QuestObjectives Obj;
-
-        public override bool UpdateDependedObj()
-        {
-            // Update related game object
-            if ((Obj == null) || (Obj.Coordinates == null))
-                return false;
-
-            // TODO
-
-            return base.UpdateDependedObj();
+            ObjId = obj_id;
         }
 
         public override bool Equals(object obj)
@@ -1674,9 +1728,9 @@ namespace BabBot.Wow
             if (!base.Equals(obj))
                 return false;
 
-            QuestItemEndpoint qie = (QuestItemEndpoint)obj;
+            QuestObjEndpoint qie = (QuestObjEndpoint)obj;
             return (QuestId == qie.QuestId) &&
-                ItemName.Equals(qie.ItemName);
+                ObjId.Equals(qie.ObjId);
         }
 
         public override int GetHashCode()

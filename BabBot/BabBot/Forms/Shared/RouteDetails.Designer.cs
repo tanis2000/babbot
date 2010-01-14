@@ -206,14 +206,12 @@
             // 
             // cbObjA0
             // 
-            this.cbObjA0.DisplayMember = "ID";
             this.cbObjA0.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjA0.FormattingEnabled = true;
             this.cbObjA0.Location = new System.Drawing.Point(50, 3);
             this.cbObjA0.Name = "cbObjA0";
             this.cbObjA0.Size = new System.Drawing.Size(142, 21);
             this.cbObjA0.TabIndex = 4;
-            this.cbObjA0.ValueMember = "ID";
             this.cbObjA0.DataSourceChanged += new System.EventHandler(this.cbObjA0_DataSourceChanged);
             this.cbObjA0.SelectedIndexChanged += new System.EventHandler(this.OnRegisterChanges);
             // 
@@ -248,14 +246,13 @@
             // 
             // cbObjA1
             // 
-            this.cbObjA1.DisplayMember = "ID";
             this.cbObjA1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjA1.FormattingEnabled = true;
             this.cbObjA1.Location = new System.Drawing.Point(50, 2);
             this.cbObjA1.Name = "cbObjA1";
             this.cbObjA1.Size = new System.Drawing.Size(142, 21);
             this.cbObjA1.TabIndex = 20;
-            this.cbObjA1.ValueMember = "ID";
+            this.cbObjA1.ValueMember = "IDX";
             this.cbObjA1.SelectedIndexChanged += new System.EventHandler(this.OnRegisterChanges);
             // 
             // pOptB
@@ -332,14 +329,12 @@
             // 
             // cbObjB0
             // 
-            this.cbObjB0.DisplayMember = "ID";
             this.cbObjB0.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjB0.FormattingEnabled = true;
             this.cbObjB0.Location = new System.Drawing.Point(50, 3);
             this.cbObjB0.Name = "cbObjB0";
             this.cbObjB0.Size = new System.Drawing.Size(142, 21);
             this.cbObjB0.TabIndex = 4;
-            this.cbObjB0.ValueMember = "ID";
             this.cbObjB0.SelectedIndexChanged += new System.EventHandler(this.OnRegisterChanges);
             // 
             // lblObjB0
@@ -373,14 +368,13 @@
             // 
             // cbObjB1
             // 
-            this.cbObjB1.DisplayMember = "ID";
             this.cbObjB1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbObjB1.FormattingEnabled = true;
             this.cbObjB1.Location = new System.Drawing.Point(50, 2);
             this.cbObjB1.Name = "cbObjB1";
             this.cbObjB1.Size = new System.Drawing.Size(142, 21);
             this.cbObjB1.TabIndex = 20;
-            this.cbObjB1.ValueMember = "ID";
+            this.cbObjB1.ValueMember = "IDX";
             this.cbObjB1.SelectedIndexChanged += new System.EventHandler(this.OnRegisterChanges);
             // 
             // pRouteDescr

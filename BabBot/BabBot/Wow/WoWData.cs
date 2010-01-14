@@ -43,10 +43,12 @@ namespace BabBot.Wow
         [XmlElement("app_config")]
         public AppConfig AppConfig;
 
+        /*
         public WoWVersion FindVersion(string version)
         {
             return (WoWVersion) FindItemByName(version);
         }
+         * */
     }
 
     public class WoWVersion : CommonMergeListItem
