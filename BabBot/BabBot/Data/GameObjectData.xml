@@ -12,22 +12,8 @@ The spring rains were particularly heavy this year, causing some of the forest's
 Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young priest, and thin the boar and saber populations so that nature's harmony will be preserved.]]></text>
           <objectives>
             <obj_list>
-              <objective d3p1:type="MonsterQuestObjective" name="Young Nightsaber slain" type="monster" qty="7">
-                <hot_spots>
-                  <zone name="Teldrassil">
-                    <waypoint x="10307.94" y="871.77" z="1333.94" type="0" />
-                    <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
-                  </zone>
-                </hot_spots>
-              </objective>
-              <objective d3p1:type="MonsterQuestObjective" name="Young Thistle Boar slain" type="monster" qty="4">
-                <hot_spots>
-                  <zone name="Teldrassil">
-                    <waypoint x="10293.55" y="861.35" z="1336.29" type="0" />
-                    <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
-                  </zone>
-                </hot_spots>
-              </objective>
+              <objective d3p1:type="MonsterQuestObjective" name="Young Nightsaber slain" qty="7" />
+              <objective d3p1:type="MonsterQuestObjective" name="Young Thistle Boar slain" qty="4" />
             </obj_list>
           </objectives>
           <choice_items>
@@ -107,7 +93,11 @@ Can you deliver this package for me?  It must be sent to Innkeeper Keldamyr, at 
           <objectives_text><![CDATA[Bring the Dolanaar Delivery to Innkeeper Keldamyr.]]></objectives_text>
         </quest>
       </quests>
-      <coordinates />
+      <coordinates>
+        <zone name="Teldrassil">
+          <waypoint x="10210.2" y="697.4" z="1360.66" type="0" />
+        </zone>
+      </coordinates>
       <services />
       <gossips />
     </game_object>

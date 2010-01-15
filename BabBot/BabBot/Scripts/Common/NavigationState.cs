@@ -158,7 +158,7 @@ namespace BabBot.States.Common
             float distance = _player.Location.GetDistanceTo(dest);
             string tooltip = _tooltip;
 
-            while ((distance > step) && (_retry <= _max_retry) && !_terminated)
+            while ((distance > 5F) && (_retry <= _max_retry) && !_terminated)
             {
                 if (_retry > 0)
                 {
@@ -168,10 +168,6 @@ namespace BabBot.States.Common
                     Output.Instance.Log(r);
                     tooltip = _tooltip + " " + r;
                 }
-
-                Output.Instance.Debug("Calculating path from player position " +
-                    _player.Location + " to dest " + dest + " ...");
-
 
                 Vector3D[] v_arr = new Vector3D[path.Count];
                 for (int i = 0; i < path.Count; i++)
@@ -203,15 +199,23 @@ namespace BabBot.States.Common
                     if (_terminated)
                         break;
 
+                    // Get next coordinate
                     vnext = WaypointVector3DHelper.LocationToVector3D(path.Get(i));
+
+                    // Remember cur bot loc
+                    Vector3D cur_loc = _player.Location;
 
                     // Calculate travel time
                     distance = vprev.GetDistanceTo(vnext);
+                    if (distance == 0)
+                        continue;
                     int t = (int)((distance / 7F) * 1000);
-                    float z = vnext.Z - _player.Location.Z;
+
+                    // Calc climb height
+                    float z = vnext.Z - cur_loc.Z;
 
                     _player.ClickToMove(vnext);
-                    if ((_retry == 0) && (z > 3)|| (_retry > 0))
+                    if ((_retry == 0) && (z > 3) || (_retry > 0))
                     {
                         // Add jump if going too high up or trying unstack
                         Thread.Sleep(150);
@@ -226,14 +230,19 @@ namespace BabBot.States.Common
                         Thread.Sleep((int) (0.98 * t));
 
                     // Check if we moved
-                    float dd = _player.Location.GetDistanceTo(vnext);
-                    if (dd > _step_dist)
+                    float dd = _player.Location.GetDistanceTo(cur_loc);
+                    float wdist = (distance - dd) / distance;
+
+                    if ((_retry == 0 && wdist >= 0.1) || 
+                            (_retry > 0 && ((dd < 0.5) || (dd < step))))
                     {
+                        // Bot pass less than 90% of step.
+                        // Something wrong
                         // Wait a bit we might still moving
-                        Thread.Sleep((int)((dd / 7F) * 1000));
+                        Thread.Sleep((int)(((distance - dd) / 7F) * 1000));
 
                         // Check again
-                        if (dd > _step_dist)
+                        if (((distance - _player.Location.GetDistanceTo(cur_loc)) / distance) >= 0.1)
                         {
                             // We stuck
                             if (_retry < _max_retry)
@@ -243,6 +252,8 @@ namespace BabBot.States.Common
 
                                 // Recalculate path to next waypoint but with smaller step
                                 float new_step = (float)(step * 0.618);
+                                Output.Instance.Debug("Calculating path from player position " +
+                                    _player.Location + " to dest " + vnext + " ...");
                                 Path new_path = ProcessManager.Caronte.CalculatePath(
                                     WaypointVector3DHelper.Vector3DToLocation(_player.Location),
                                     WaypointVector3DHelper.Vector3DToLocation(vnext), new_step);
@@ -286,6 +297,8 @@ namespace BabBot.States.Common
             else
             {
                 // Calculate path
+                Output.Instance.Debug("Calculating path from player position " +
+                    _player.Location + " to dest " + dest + " ...");
                 path = ProcessManager.Caronte.CalculatePath(
                     WaypointVector3DHelper.Vector3DToLocation(_player.Location),
                     WaypointVector3DHelper.Vector3DToLocation(_dest), _step_dist);

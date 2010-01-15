@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <route_list version="0">
   <wow_version name="3.2.2.10505">
-    <route name="433015755FB304C" reversible="true">
-      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
-        <waypoint x="10214.67" y="700.7" z="1360.57" type="0" />
+    <route name="4E95234C5695914A" reversible="true">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Innkeeper Keldamyr" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="9802.3" y="980.83" z="1313.9" type="0" />
       </point_a>
-      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Innkeeper Keldamyr" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
-        <waypoint x="9880.52" y="801.66" z="1309.88" type="0" />
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10210.2" y="697.4" z="1360.66" type="0" />
       </point_b>
       <descr>Path to Dalaran</descr>
       <length>0</length>

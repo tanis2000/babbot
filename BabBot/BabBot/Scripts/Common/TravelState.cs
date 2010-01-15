@@ -72,10 +72,11 @@ namespace BabBot.States.Common
             Init(obj, lfs, tooltip_text);
         }
 
-        public TravelState(Endpoint point, string lfs, string tooltip_text)
+        public TravelState(AbstractQuestObjective qobj, 
+                            string lfs, string tooltip_text)
         {
-            _check = new EndpointCheck(this, point);
-            Init(point, lfs, tooltip_text);
+            _check = new QuestObjectiveCheck(this, qobj);
+            Init(qobj, lfs, tooltip_text);
         }
 
         void Init(object dest, string lfs, string tooltip_text)
@@ -103,22 +104,67 @@ namespace BabBot.States.Common
             {
                 if (!_check.DoBeforeRouteCheck())
                 {
-                    // We already at dest or something wrong
+                    // We already at dest
                     Finish(player);
                     return;
                 }
             }
             catch
             {
+                // Something wrong with dest
                 Finish(player);
                 return;
             }
 
-            float calc_len = CheckRoute(name, 0);
-            if (calc_len > 0)
+            // Check for exact or nearest route to dest name
+            List<Route> lr = RouteListManager.Endpoints[name];
+            if (lr != null)
             {
-                // Check if total calc length exceed much direct length
-                // if (
+                // Best route with min total length
+                Route min_route = null;
+                float min_route_len = float.MaxValue;
+
+                foreach (Route r in lr)
+                {
+                    // It's either A or B
+                    Endpoint[] eps = r.GetEndpoints(name);
+                    if (eps == null)
+                        return;
+
+                    // Only using atm based coord for game obj/quest item
+
+                    if (eps[1].Waypoint.IsClose(Player.Location))
+                    {
+                        // Exact route found
+                        ActivateMoveState(r, player);
+                        return;
+                    }
+
+                    // Exact route not found
+                    // Check Direct Distance to both endpoint
+                    float ddist_b = eps[1].Waypoint.GetDistanceTo(Player.Location);
+                    float ddist_a = eps[0].Waypoint.GetDistanceTo(Player.Location) * 1.2F;
+
+                    // Calc lenght and update best route
+                    float cur_len = r.Length + ddist_b;
+                    if (cur_len < min_route_len &&
+                            cur_len <= ddist_a)
+                    {
+                        min_route = r;
+                        min_route_len = cur_len;
+                    }
+                }
+
+                if (min_route != null)
+                {
+                    // Found partial route and now look for the route connections
+                    float calc_len = CheckRoute(name, 0);
+                    if (calc_len > 0)
+                    {
+                        // Check if total calc length exceed much direct length
+                        // if (
+                    }
+                }
             }
             
 
@@ -242,7 +288,7 @@ namespace BabBot.States.Common
             Parent = parent;
         }
 
-        public virtual bool DoBeforeRouteCheck() { return true; }
+        public abstract bool DoBeforeRouteCheck();
     }
 
     class GameObjCheck : AbstractCheck
@@ -299,14 +345,22 @@ namespace BabBot.States.Common
         }
     }
 
-    class EndpointCheck : AbstractCheck
+    class QuestObjectiveCheck : AbstractCheck
     {
-        Endpoint _ep;
+        AbstractQuestObjective _qobj;
 
-        internal EndpointCheck(TravelState parent, Endpoint ep)
+        internal QuestObjectiveCheck(TravelState parent, AbstractQuestObjective qobj)
             : base(parent)
         {
-            _ep = ep;
+            _qobj = qobj;
+        }
+
+        public override bool DoBeforeRouteCheck()
+        {
+            /*
+            if (_qobj.Coordinates == null)
+                throw new QuestObjCoordNotFound(_qobj.*/
+            return true;
         }
     }
 }

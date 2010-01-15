@@ -1434,7 +1434,7 @@ namespace BabBot.Manager
                     // Lookup endpoint object
                     if (e.HasLinkedObj)
                     {
-                        DefEndpoint de = (DefEndpoint) e;
+                        AbstractDefEndpoint de = (AbstractDefEndpoint)e;
                         switch (e.PType)
                         {
                             case EndpointTypes.GAME_OBJ:
@@ -1444,9 +1444,10 @@ namespace BabBot.Manager
 
                             case EndpointTypes.QUEST_OBJ:
                                 QuestObjEndpoint qoe = (QuestObjEndpoint) e;
-                                Quest q = DataManager.
-                                    QuestList[Convert.ToInt32(qoe.Name)]; 
-                                if (q.Objectives != null)
+                                Quest q = null;
+                                DataManager.QuestList.
+                                    TryGetValue(Convert.ToInt32(qoe.Name), out q); 
+                                if (q != null && q.Objectives != null)
                                     de.Obj = q.Objectives.ObjList[qoe.ObjId];
                                 break;
                         }

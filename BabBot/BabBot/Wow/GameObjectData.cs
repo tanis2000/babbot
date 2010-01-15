@@ -706,7 +706,7 @@ namespace BabBot.Wow
             }
 
             if (!string.IsNullOrEmpty(objs))
-                Objectives = new QuestObjectives(objs);
+                Objectives = new QuestObjectives(this, objs);
 
             
         }
@@ -1206,49 +1206,36 @@ namespace BabBot.Wow
         /// </summary>
         /// <param name="objs">List of objectives in format obj::obj 
         /// where each obj is comma delited list of item, qty, is_finished</param>
-        public QuestObjectives(string objs)
-            : base()
+        public QuestObjectives(Quest q, string objs)
+            : this()
         {
             string[] obj = objs.Split(new string[] { "::" }, StringSplitOptions.None);
-            foreach (string s in obj)
+            for(int i = 0; i < obj.Length; i++)
             {
+                string s = obj[i];
                 string[] items = s.Split(',');
                 string text = items[0];
                 string stype = items[1];
                 bool is_finished = (!string.IsNullOrEmpty(items[2]) &&
                                                         items[2].Equals("1"));
 
-                AbstractQuestObjective qobj = null;
-
                 // TODO Add reflection here
-                switch (stype)
+                string class_name = Output.
+                        GetLogNameByLfs(stype, "") + "QuestObjective";
+
+                try
                 {
-                    case "event":
-                        qobj = new EventQuestObjective(text, is_finished);
-                        break;
-
-                    case "item":
-                        qobj = new ItemQuestObjective(text, is_finished);
-                        break;
-
-                    case "object":
-                        qobj = new ObjectQuestObjective(text, is_finished);
-                        break;
-
-                    case "monster":
-                        qobj = new MonsterQuestObjective(text, is_finished);
-                        break;
-
-                    case "reputation":
-                        qobj = new ReputationQuestObjective(text, is_finished);
-                        break;
-
-                    default:
-                        throw new QuestSkipException(
-                            "Unknown type of quest objectives '" + stype + "'");
+                    Type reflect_class = Type.GetType("BabBot.Wow." + class_name);
+                    AbstractQuestObjective qobj = (AbstractQuestObjective)
+                        Activator.CreateInstance(reflect_class, new object[] 
+                        {q, i, text, is_finished });
+                    ObjList.Add(qobj);
                 }
-
-                ObjList.Add(qobj);
+                catch (Exception e)
+                {
+                    throw new QuestSkipException("Unknown type of quest objectives '" + 
+                        stype + "'. " + e.Message);
+                }
             }
         }
     }
@@ -1266,8 +1253,7 @@ namespace BabBot.Wow
         /// <summary>
         /// Quest objective Type
         /// </summary>
-        [XmlAttribute("type")]
-        public string SType;
+        internal string SType;
 
         /// <summary>
         /// List of hotspots where objectives can be "found"
@@ -1278,6 +1264,10 @@ namespace BabBot.Wow
             get { return (WpZones)MergeList[0]; }
             set { MergeList[0] = value; }
         }
+
+        protected Quest Parent;
+
+        protected int Idx;
 
         internal virtual string FullName
         {
@@ -1291,14 +1281,26 @@ namespace BabBot.Wow
             get { return false; }
         }
 
-        public AbstractQuestObjective(string type)
+        /// <summary>
+        /// Parameterless constructor
+        /// </summary>
+        public AbstractQuestObjective(string stype)
+            : base()
         {
-            SType = type;
+            SType = stype;
             MergeList = new IMergeable[1];
         }
 
-        public AbstractQuestObjective(string type, string name, bool is_finished)
-            : this(type)
+        public AbstractQuestObjective(Quest parent, int idx, string stype)
+            : this(stype)
+        {
+            Idx = idx;
+            Parent = parent;
+        }
+
+        public AbstractQuestObjective(Quest parent, int idx,
+                        string type, string name, bool is_finished)
+            : this(parent, idx, type)
         {
             Name = name;
             Finished = is_finished;
@@ -1331,11 +1333,14 @@ namespace BabBot.Wow
             get { return ItemName + ": 0/" + ReqQty; }
         }
 
-        public AbstractQtyQuestObjective(string stype)
-            : base(stype) { }
+        public AbstractQtyQuestObjective(string stype) : base(stype) { }
 
-        public AbstractQtyQuestObjective(string type, string item_str, bool is_finished)
-            : base(type)
+        public AbstractQtyQuestObjective(Quest parent, int idx, string stype)
+            : base(parent, idx, stype) { }
+
+        public AbstractQtyQuestObjective(Quest parent, int idx,
+                        string type, string item_str, bool is_finished)
+            : base(parent, idx, type)
         {
             Regex r = DataManager.CurWoWVersion.QuestConfig.ObjectiveRx;
             Match m = r.Match(item_str);
@@ -1365,12 +1370,15 @@ namespace BabBot.Wow
     /// Class for quest objectives that requires completion of a scripted event
     /// </summary>
     public class EventQuestObjective : AbstractQuestObjective
-    {   
-        public EventQuestObjective()
-            : base("event") {}
+    {
+        public EventQuestObjective() : base("event") { }
 
-        public EventQuestObjective(string text, bool is_finished)
-            : base("event", text, is_finished) { }
+        public EventQuestObjective(Quest parent, int idx)
+            : base(parent, idx, "event") { }
+
+        public EventQuestObjective(Quest parent, int idx,
+                                    string text, bool is_finished)
+            : base(parent, idx, "event", text, is_finished) { }
     }
 
     /// <summary>
@@ -1378,11 +1386,14 @@ namespace BabBot.Wow
     /// </summary>
     public class ItemQuestObjective : AbstractQtyQuestObjective
     {
-        public ItemQuestObjective()
-            : base("item") {}
+        public ItemQuestObjective() : base("item") { }
 
-        public ItemQuestObjective(string text, bool is_finished)
-            : base("item", text, is_finished) { }
+        public ItemQuestObjective(Quest parent, int idx)
+            : base(parent, idx, "item") { }
+
+        public ItemQuestObjective(Quest parent, int idx,
+                                string text, bool is_finished)
+            : base(parent, idx, "item", text, is_finished) { }
     }
     
     /// <summary>
@@ -1390,11 +1401,14 @@ namespace BabBot.Wow
     /// </summary>
     public class MonsterQuestObjective : AbstractQtyQuestObjective
     {
-        public MonsterQuestObjective()
-            : base("monster") {}
+        public MonsterQuestObjective() : base("monster") { }
 
-        public MonsterQuestObjective(string text, bool is_finished)
-            : base("monster", text, is_finished) { }
+        public MonsterQuestObjective(Quest parent, int idx)
+            : base(parent, idx, "monster") { }
+
+        public MonsterQuestObjective(Quest parent, int idx,
+                                    string text, bool is_finished)
+            : base(parent, idx, "monster", text, is_finished) { }
     }
 
     /// <summary>
@@ -1402,11 +1416,14 @@ namespace BabBot.Wow
     /// </summary>
     public class ObjectQuestObjective : AbstractQuestObjective
     {
-        public ObjectQuestObjective()
-            : base("object") {}
+        public ObjectQuestObjective() : base("object") { }
 
-        public ObjectQuestObjective(string text, bool is_finished)
-            : base("object", text, is_finished) { }
+        public ObjectQuestObjective(Quest parent, int idx)
+            : base(parent, idx, "object") { }
+
+        public ObjectQuestObjective(Quest parent, int idx,
+                                    string text, bool is_finished)
+            : base(parent, idx, "object", text, is_finished) { }
     }
 
     /// <summary>
@@ -1415,11 +1432,14 @@ namespace BabBot.Wow
     /// </summary>
     public class ReputationQuestObjective : AbstractQuestObjective
     {
-        public ReputationQuestObjective()
-            : base("reputation") {}
+        public ReputationQuestObjective() : base("reputation") { }
 
-        public ReputationQuestObjective(string text, bool is_finished)
-            : base("reputation", text, is_finished) { }
+        public ReputationQuestObjective(Quest parent, int idx)
+            : base(parent, idx, "reputation") { }
+
+        public ReputationQuestObjective(Quest parent, int idx,
+                                    string text, bool is_finished)
+            : base(parent, idx, "reputation", text, is_finished) { }
     }
 
     #endregion
@@ -1551,7 +1571,7 @@ namespace BabBot.Wow
         }
     }
 
-    public abstract class DefEndpoint : Endpoint
+    public abstract class AbstractDefEndpoint : Endpoint
     {
         private int _coord_idx;
 
@@ -1570,10 +1590,22 @@ namespace BabBot.Wow
         /// </summary>
         internal CommonMergeListItem Obj;
 
+        internal WpZones ZoneList
+        {
+            get
+            {
+                // Quick check on types
+                if ((Obj == null) || (_coord_idx >= Obj.Count))
+                    return null;
+
+                return (WpZones)Obj[_coord_idx];
+            }
+        }
+
         /// <summary>
         /// Parameteless constructor
         /// </summary>
-        public DefEndpoint() : base() { }
+        public AbstractDefEndpoint() : base() { }
 
         /// <summary>
         /// Class constructor
@@ -1582,7 +1614,7 @@ namespace BabBot.Wow
         /// <param name="zone_text">Zone text where endpoint located</param>
         /// <param name="waypoint">Waypoint</param>
         /// <param name="coord_idx">Index of WpZones list in linked object</param>
-        public DefEndpoint(EndpointTypes type, string zone_text, 
+        public AbstractDefEndpoint(EndpointTypes type, string zone_text, 
             Vector3D waypoint, int coord_idx)
             : base(type, zone_text, waypoint) 
         {
@@ -1599,15 +1631,13 @@ namespace BabBot.Wow
             if (_coord_idx >= Obj.Count)
                 return false;
 
-            WpZones wpz = null;
-            IMergeable im = Obj[_coord_idx];
-            if (im == null)
+            WpZones wpz = ZoneList;
+            if (wpz == null)
             {
+                // Create new one if doesn't exists
                 wpz = new WpZones();
                 Obj[_coord_idx] = wpz;
             }
-            else
-                wpz = (WpZones)im;
 
             // Check all object coordinates
             foreach (ZoneWp zwp in wpz.Values)
@@ -1630,7 +1660,7 @@ namespace BabBot.Wow
         }
     }
 
-    public class GameObjEndpoint : DefEndpoint
+    public class GameObjEndpoint : AbstractDefEndpoint
     {
         /// <summary>
         /// Name of Game Object
@@ -1685,7 +1715,7 @@ namespace BabBot.Wow
         }
     }
 
-    public class QuestObjEndpoint : DefEndpoint
+    public class QuestObjEndpoint : AbstractDefEndpoint
     {
         /// <summary>
         /// Quest id

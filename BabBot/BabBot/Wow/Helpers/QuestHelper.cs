@@ -61,6 +61,13 @@ namespace BabBot.Wow.Helpers
             base(msg + ". Skipping the quest") { }
     }
 
+    public class QuestObjCoordNotFound : Exception
+    {
+        public QuestObjCoordNotFound(int q_id, int obj_id)
+            : base("HotSpot coordinates not found for quest objective " +
+                q_id + "#" + obj_id) { }
+    }
+
     #endregion
 
     public static class QuestHelper
