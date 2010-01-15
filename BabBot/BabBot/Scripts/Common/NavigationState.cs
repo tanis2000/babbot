@@ -21,6 +21,11 @@ namespace BabBot.States.Common
     public class NavigationState : State<WowPlayer>
     {
         /// <summary>
+        /// If % bot didn't pass till next position it considered as "stuck"
+        /// </summary>
+        private float _stack_dist = 0.2F;
+
+        /// <summary>
         /// Default distance to calculate each step
         /// As lower it as more precise bot moves but less smooth
         /// </summary>
@@ -233,16 +238,20 @@ namespace BabBot.States.Common
                     float dd = _player.Location.GetDistanceTo(cur_loc);
                     float wdist = (distance - dd) / distance;
 
-                    if ((_retry == 0 && wdist >= 0.1) || 
-                            (_retry > 0 && ((dd < 0.5) || (dd < step))))
+                    // Ignore small steps cause bot not going directly to click position
+                    if ((_retry == 0 && wdist > _stack_dist && distance > 2) ||
+                            (_retry > 0 && ((dd < 0.5) || (dd < distance))))
                     {
-                        // Bot pass less than 90% of step.
+                        // Bot pass less than 80% of step.
                         // Something wrong
                         // Wait a bit we might still moving
                         Thread.Sleep((int)(((distance - dd) / 7F) * 1000));
 
                         // Check again
-                        if (((distance - _player.Location.GetDistanceTo(cur_loc)) / distance) >= 0.1)
+                        dd = _player.Location.GetDistanceTo(cur_loc);
+                        wdist = ((distance - dd) / distance);
+                        if ((_retry == 0 && wdist > _stack_dist && distance > 2) ||
+                            (_retry > 0 && ((dd < 0.5) || (dd < step))))
                         {
                             // We stuck
                             if (_retry < _max_retry)
