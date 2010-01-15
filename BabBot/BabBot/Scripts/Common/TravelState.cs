@@ -158,7 +158,7 @@ namespace BabBot.States.Common
                 if (min_route != null)
                 {
                     // Found partial route and now look for the route connections
-                    float calc_len = CheckRoute(name, 0);
+                    float calc_len = CheckRoute(min_route.PointB, 0);
                     if (calc_len > 0)
                     {
                         // Check if total calc length exceed much direct length
@@ -175,10 +175,10 @@ namespace BabBot.States.Common
             // r = RouteListManager.FindRoute(
         }
 
-        public float CheckRoute(string name, float total_len)
+        public float CheckRoute(Endpoint ep, float total_len)
         {
             // Find all avail routes for dest
-            List<Route> lr = RouteListManager.Endpoints[name];
+            List<Route> lr = RouteListManager.Waypoints[ep.Waypoint.Length];
 
             // Best route with min total length
             Route min_route = null;
@@ -191,7 +191,7 @@ namespace BabBot.States.Common
                     continue;
 
                 // It's either A or B
-                Endpoint[] eps = r.GetEndpoints(name);
+                Endpoint[] eps = r.GetEndpoints(ep.Waypoint);
                 if (eps == null)
                     return 0;
 
@@ -222,7 +222,7 @@ namespace BabBot.States.Common
             {
                 // Check if another route connected to given point
                 // This check is recursive
-                return CheckRoute(name, total_len + min_route_len);
+                return CheckRoute(min_route.PointB, total_len + min_route_len);
 
             }
 
@@ -357,9 +357,24 @@ namespace BabBot.States.Common
 
         public override bool DoBeforeRouteCheck()
         {
-            /*
-            if (_qobj.Coordinates == null)
-                throw new QuestObjCoordNotFound(_qobj.*/
+            if ((_qobj.Coordinates == null) || (_qobj.Coordinates.Count == 0))
+                throw new QuestObjCoordNotFound(_qobj.Parent.Id, _qobj.Idx);
+
+            // Use current zone as a key
+            ZoneWp zwp = _qobj.Coordinates[Parent.Player.ZoneText];
+            if (zwp != null)
+            {
+                Parent.BaseCoord = zwp[0];
+                if (Parent.BaseCoord.IsClose(ProcessManager.Player.Location))
+                    // We already at destination
+                    return false;
+
+                for (int i = 1; i < zwp.Count; i++)
+                    Parent.Vlist.Add(zwp[i]);
+            }
+            else
+                throw new QuestObjCoordNotFound(_qobj.Parent.Id, _qobj.Idx);
+
             return true;
         }
     }

@@ -1072,6 +1072,9 @@ namespace BabBot.Wow
 
     public class WpZones : CommonTable<ZoneWp>
     {
+        [XmlAttribute("same_as")]
+        public string SameAs;
+
         [XmlElement("zone")]
         public ZoneWp[] ZoneList
         {
@@ -1256,18 +1259,25 @@ namespace BabBot.Wow
         internal string SType;
 
         /// <summary>
-        /// List of hotspots where objectives can be "found"
+        /// List of hotspots where objective can be found
         /// </summary>
         [XmlElement("hot_spots")]
         public WpZones Coordinates
         {
-            get { return (WpZones)MergeList[0]; }
+            get 
+            { 
+                WpZones res = (WpZones)MergeList[0];
+                if ( res != null && !string.IsNullOrEmpty(res.SameAs))
+                    res = Parent.Objectives.ObjList[Convert.
+                            ToInt32(res.SameAs)].Coordinates;
+                return res;
+            }
             set { MergeList[0] = value; }
         }
 
-        protected Quest Parent;
+        internal int Idx;
 
-        protected int Idx;
+        internal Quest Parent;
 
         internal virtual string FullName
         {
@@ -1927,6 +1937,15 @@ namespace BabBot.Wow
             if (PointA.Equals(name))
                 return new Endpoint[] { PointB, PointA };
             else if (PointB.Equals(name))
+                return new Endpoint[] { PointA, PointB };
+            else return null;
+        }
+
+        public Endpoint[] GetEndpoints(Vector3D v)
+        {
+            if (PointA.Waypoint.Equals(v))
+                return new Endpoint[] { PointB, PointA };
+            else if (PointB.Waypoint.Equals(v))
                 return new Endpoint[] { PointA, PointB };
             else return null;
         }

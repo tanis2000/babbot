@@ -12,8 +12,17 @@ The spring rains were particularly heavy this year, causing some of the forest's
 Unfortunately, the nightsaber and thistle boar populations grew too large.  Shadowglen can only produce so much food for the beasts.  Journey forth, young priest, and thin the boar and saber populations so that nature's harmony will be preserved.]]></text>
           <objectives>
             <obj_list>
-              <objective d3p1:type="MonsterQuestObjective" name="Young Nightsaber slain" qty="7" />
-              <objective d3p1:type="MonsterQuestObjective" name="Young Thistle Boar slain" qty="4" />
+              <objective d3p1:type="MonsterQuestObjective" name="Young Nightsaber slain" qty="7">
+                <hot_spots>
+                  <zone name="Teldrassil">
+                    <waypoint x="10293.55" y="861.35" z="1336.29" type="0" />
+                    <waypoint x="10282.16" y="742.78" z="1338.97" type="0" />
+                  </zone>
+                </hot_spots>
+              </objective>
+              <objective d3p1:type="MonsterQuestObjective" name="Young Thistle Boar slain" qty="4">
+                <hot_spots same_as="0" />
+              </objective>
             </obj_list>
           </objectives>
           <choice_items>
