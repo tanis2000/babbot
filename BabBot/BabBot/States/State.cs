@@ -67,6 +67,15 @@ namespace BabBot.States
             }
         }
 
+        public virtual string Name
+        {
+            get
+            {
+                string s = ToString();
+                return s.Substring(s.LastIndexOf(".") + 1).ToUpper();
+            }
+        }
+
         /// <summary>Event fires before Enter code runs</summary>
         public event EventHandler<StateEventArgs<T>> Entering;
 

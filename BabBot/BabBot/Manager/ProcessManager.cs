@@ -92,10 +92,17 @@ namespace BabBot.Manager
         public delegate void WoWProcessStartedEventHandler(int process);
 
         /// <summary>
-        /// Updates the status bar
+        /// Updates the status bar element
         /// </summary>
-        /// <param name="iStatus">what to write in the statusbar</param>
-        public delegate void UpdateStatusEventHandler(string iStatus);
+        /// <param name="iStatus">Information for status bar label</param>
+        public delegate void UpdateStatusEventHandler(string status);
+
+        /// <summary>
+        /// Delegate method to update status bar together with tooltip
+        /// </summary>
+        /// <param name="status">Information for status bar label</param>
+        /// <param name="tooltip">Tooltip for status bar label</param>
+        public delegate void UpdateStatusTooltipDelegate(string status, string tooltip);
 
         /// <summary>
         /// First time run event
@@ -174,6 +181,7 @@ namespace BabBot.Manager
 
         public static event UpdateStatusEventHandler UpdateGameStatus;
         public static event UpdateStatusEventHandler UpdateAppStatus;
+        public static event UpdateStatusTooltipDelegate UpdateBotStatus;
 
         public static event FirstTimeRunHandler FirstTimeRun;
         public static event ConfigFileChangedHandler ConfigFileChanged;
@@ -1255,6 +1263,12 @@ namespace BabBot.Manager
         {
             if (UpdateGameStatus != null)
                 UpdateGameStatus(new_status);
+        }
+
+        public static void OnUpdateBotStatus(string new_status, string queue)
+        {
+            if (UpdateBotStatus != null)
+                UpdateBotStatus(new_status, queue);
         }
 
         public static void OnBotProgressStart(int max, string tooltip)

@@ -102,17 +102,22 @@
             this.tabObjectsNear = new System.Windows.Forms.TabPage();
             this.tbPlayerNearObjects = new System.Windows.Forms.TextBox();
             this.tabRadar = new System.Windows.Forms.TabPage();
+            this.gbControls = new System.Windows.Forms.GroupBox();
+            this.btnJmpTrnRight = new System.Windows.Forms.Button();
+            this.btnJmpTurnLeft = new System.Windows.Forms.Button();
+            this.btnUp = new System.Windows.Forms.Button();
+            this.btnLeft = new System.Windows.Forms.Button();
+            this.btnRight = new System.Windows.Forms.Button();
             this.btnE = new System.Windows.Forms.Button();
+            this.btnDown = new System.Windows.Forms.Button();
             this.btnQ = new System.Windows.Forms.Button();
             this.btnSpace = new System.Windows.Forms.Button();
+            this.gbPathId = new System.Windows.Forms.GroupBox();
             this.cblPathList = new System.Windows.Forms.CheckedListBox();
-            this.label38 = new System.Windows.Forms.Label();
+            this.gbZoom = new System.Windows.Forms.GroupBox();
             this.tbZoom = new System.Windows.Forms.TrackBar();
             this.label37 = new System.Windows.Forms.Label();
-            this.btnDown = new System.Windows.Forms.Button();
-            this.btnRight = new System.Windows.Forms.Button();
-            this.btnLeft = new System.Windows.Forms.Button();
-            this.btnUp = new System.Windows.Forms.Button();
+            this.label38 = new System.Windows.Forms.Label();
             this.imgRadar = new System.Windows.Forms.PictureBox();
             this.label33 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
@@ -232,11 +237,6 @@
             this.slBotStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.pbBotProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.ttStateMachineInfo = new System.Windows.Forms.ToolTip(this.components);
-            this.gbZoom = new System.Windows.Forms.GroupBox();
-            this.gbPathId = new System.Windows.Forms.GroupBox();
-            this.gbControls = new System.Windows.Forms.GroupBox();
-            this.btnJmpTurnLeft = new System.Windows.Forms.Button();
-            this.btnJmpTrnRight = new System.Windows.Forms.Button();
             this.msMain.SuspendLayout();
             this.tabControlMain.SuspendLayout();
             this.tabPageMain.SuspendLayout();
@@ -254,6 +254,9 @@
             this.tabControlPlayer.SuspendLayout();
             this.tabObjectsNear.SuspendLayout();
             this.tabRadar.SuspendLayout();
+            this.gbControls.SuspendLayout();
+            this.gbPathId.SuspendLayout();
+            this.gbZoom.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgRadar)).BeginInit();
             this.tabPageEnemies.SuspendLayout();
@@ -267,9 +270,6 @@
             this.tabLua.SuspendLayout();
             this.tabPageF1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.gbZoom.SuspendLayout();
-            this.gbPathId.SuspendLayout();
-            this.gbControls.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -1026,6 +1026,77 @@
             this.tabRadar.Text = "Radar";
             this.tabRadar.UseVisualStyleBackColor = true;
             // 
+            // gbControls
+            // 
+            this.gbControls.Controls.Add(this.btnJmpTrnRight);
+            this.gbControls.Controls.Add(this.btnJmpTurnLeft);
+            this.gbControls.Controls.Add(this.btnUp);
+            this.gbControls.Controls.Add(this.btnLeft);
+            this.gbControls.Controls.Add(this.btnRight);
+            this.gbControls.Controls.Add(this.btnE);
+            this.gbControls.Controls.Add(this.btnDown);
+            this.gbControls.Controls.Add(this.btnQ);
+            this.gbControls.Controls.Add(this.btnSpace);
+            this.gbControls.Location = new System.Drawing.Point(273, 6);
+            this.gbControls.Name = "gbControls";
+            this.gbControls.Size = new System.Drawing.Size(285, 100);
+            this.gbControls.TabIndex = 250;
+            this.gbControls.TabStop = false;
+            this.gbControls.Text = "Controls";
+            // 
+            // btnJmpTrnRight
+            // 
+            this.btnJmpTrnRight.Location = new System.Drawing.Point(201, 15);
+            this.btnJmpTrnRight.Name = "btnJmpTrnRight";
+            this.btnJmpTrnRight.Size = new System.Drawing.Size(54, 50);
+            this.btnJmpTrnRight.TabIndex = 249;
+            this.btnJmpTrnRight.Text = "JMP\r\nTURN\r\nRIGHT";
+            this.btnJmpTrnRight.UseVisualStyleBackColor = true;
+            this.btnJmpTrnRight.Click += new System.EventHandler(this.btnJmpTrnRight_Click);
+            // 
+            // btnJmpTurnLeft
+            // 
+            this.btnJmpTurnLeft.Location = new System.Drawing.Point(30, 15);
+            this.btnJmpTurnLeft.Name = "btnJmpTurnLeft";
+            this.btnJmpTurnLeft.Size = new System.Drawing.Size(54, 50);
+            this.btnJmpTurnLeft.TabIndex = 248;
+            this.btnJmpTurnLeft.Text = "JMP\r\nTURN\r\nLEFT";
+            this.btnJmpTurnLeft.UseVisualStyleBackColor = true;
+            this.btnJmpTurnLeft.Click += new System.EventHandler(this.btnJmpTurnLeft_Click);
+            // 
+            // btnUp
+            // 
+            this.btnUp.Location = new System.Drawing.Point(127, 15);
+            this.btnUp.Name = "btnUp";
+            this.btnUp.Size = new System.Drawing.Size(31, 23);
+            this.btnUp.TabIndex = 65;
+            this.btnUp.Text = "UP";
+            this.btnUp.UseVisualStyleBackColor = true;
+            this.btnUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseDown);
+            this.btnUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseUp);
+            // 
+            // btnLeft
+            // 
+            this.btnLeft.Location = new System.Drawing.Point(90, 42);
+            this.btnLeft.Name = "btnLeft";
+            this.btnLeft.Size = new System.Drawing.Size(31, 23);
+            this.btnLeft.TabIndex = 66;
+            this.btnLeft.Text = "L";
+            this.btnLeft.UseVisualStyleBackColor = true;
+            this.btnLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnLeft_MouseDown);
+            this.btnLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnLeft_MouseUp);
+            // 
+            // btnRight
+            // 
+            this.btnRight.Location = new System.Drawing.Point(164, 42);
+            this.btnRight.Name = "btnRight";
+            this.btnRight.Size = new System.Drawing.Size(31, 23);
+            this.btnRight.TabIndex = 68;
+            this.btnRight.Text = "R";
+            this.btnRight.UseVisualStyleBackColor = true;
+            this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnRight_MouseDown);
+            this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnRight_MouseUp);
+            // 
             // btnE
             // 
             this.btnE.Location = new System.Drawing.Point(164, 15);
@@ -1036,6 +1107,17 @@
             this.btnE.UseVisualStyleBackColor = true;
             this.btnE.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnE_MouseDown);
             this.btnE.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnE_MouseUp);
+            // 
+            // btnDown
+            // 
+            this.btnDown.Location = new System.Drawing.Point(127, 42);
+            this.btnDown.Name = "btnDown";
+            this.btnDown.Size = new System.Drawing.Size(31, 23);
+            this.btnDown.TabIndex = 69;
+            this.btnDown.Text = "DN";
+            this.btnDown.UseVisualStyleBackColor = true;
+            this.btnDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnDown_MouseDown);
+            this.btnDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnDown_MouseUp);
             // 
             // btnQ
             // 
@@ -1058,6 +1140,16 @@
             this.btnSpace.UseVisualStyleBackColor = true;
             this.btnSpace.Click += new System.EventHandler(this.btnSpace_Click);
             // 
+            // gbPathId
+            // 
+            this.gbPathId.Controls.Add(this.cblPathList);
+            this.gbPathId.Location = new System.Drawing.Point(423, 112);
+            this.gbPathId.Name = "gbPathId";
+            this.gbPathId.Size = new System.Drawing.Size(135, 88);
+            this.gbPathId.TabIndex = 249;
+            this.gbPathId.TabStop = false;
+            this.gbPathId.Text = "Path Id";
+            // 
             // cblPathList
             // 
             this.cblPathList.CheckOnClick = true;
@@ -1070,14 +1162,17 @@
             this.cblPathList.Size = new System.Drawing.Size(129, 64);
             this.cblPathList.TabIndex = 243;
             // 
-            // label38
+            // gbZoom
             // 
-            this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(111, 67);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(24, 13);
-            this.label38.TabIndex = 242;
-            this.label38.Text = "10x";
+            this.gbZoom.Controls.Add(this.tbZoom);
+            this.gbZoom.Controls.Add(this.label37);
+            this.gbZoom.Controls.Add(this.label38);
+            this.gbZoom.Location = new System.Drawing.Point(273, 112);
+            this.gbZoom.Name = "gbZoom";
+            this.gbZoom.Size = new System.Drawing.Size(144, 88);
+            this.gbZoom.TabIndex = 248;
+            this.gbZoom.TabStop = false;
+            this.gbZoom.Text = "Zoom";
             // 
             // tbZoom
             // 
@@ -1099,49 +1194,14 @@
             this.label37.TabIndex = 240;
             this.label37.Text = "1x";
             // 
-            // btnDown
+            // label38
             // 
-            this.btnDown.Location = new System.Drawing.Point(127, 42);
-            this.btnDown.Name = "btnDown";
-            this.btnDown.Size = new System.Drawing.Size(31, 23);
-            this.btnDown.TabIndex = 69;
-            this.btnDown.Text = "DN";
-            this.btnDown.UseVisualStyleBackColor = true;
-            this.btnDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnDown_MouseDown);
-            this.btnDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnDown_MouseUp);
-            // 
-            // btnRight
-            // 
-            this.btnRight.Location = new System.Drawing.Point(164, 42);
-            this.btnRight.Name = "btnRight";
-            this.btnRight.Size = new System.Drawing.Size(31, 23);
-            this.btnRight.TabIndex = 68;
-            this.btnRight.Text = "R";
-            this.btnRight.UseVisualStyleBackColor = true;
-            this.btnRight.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnRight_MouseDown);
-            this.btnRight.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnRight_MouseUp);
-            // 
-            // btnLeft
-            // 
-            this.btnLeft.Location = new System.Drawing.Point(90, 42);
-            this.btnLeft.Name = "btnLeft";
-            this.btnLeft.Size = new System.Drawing.Size(31, 23);
-            this.btnLeft.TabIndex = 66;
-            this.btnLeft.Text = "L";
-            this.btnLeft.UseVisualStyleBackColor = true;
-            this.btnLeft.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnLeft_MouseDown);
-            this.btnLeft.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnLeft_MouseUp);
-            // 
-            // btnUp
-            // 
-            this.btnUp.Location = new System.Drawing.Point(127, 15);
-            this.btnUp.Name = "btnUp";
-            this.btnUp.Size = new System.Drawing.Size(31, 23);
-            this.btnUp.TabIndex = 65;
-            this.btnUp.Text = "UP";
-            this.btnUp.UseVisualStyleBackColor = true;
-            this.btnUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseDown);
-            this.btnUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnUp_MouseUp);
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(111, 67);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(24, 13);
+            this.label38.TabIndex = 242;
+            this.label38.Text = "10x";
             // 
             // imgRadar
             // 
@@ -2275,7 +2335,6 @@
             this.slBotStatus.Name = "slBotStatus";
             this.slBotStatus.Size = new System.Drawing.Size(59, 17);
             this.slBotStatus.Text = "UNKNOWN";
-            this.slBotStatus.ToolTipText = "TEST\r\nTEST\r\n";
             // 
             // pbBotProgress
             // 
@@ -2289,66 +2348,6 @@
             this.ttStateMachineInfo.IsBalloon = true;
             this.ttStateMachineInfo.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.ttStateMachineInfo.ToolTipTitle = "StateMachine Info:";
-            // 
-            // gbZoom
-            // 
-            this.gbZoom.Controls.Add(this.tbZoom);
-            this.gbZoom.Controls.Add(this.label37);
-            this.gbZoom.Controls.Add(this.label38);
-            this.gbZoom.Location = new System.Drawing.Point(273, 112);
-            this.gbZoom.Name = "gbZoom";
-            this.gbZoom.Size = new System.Drawing.Size(144, 88);
-            this.gbZoom.TabIndex = 248;
-            this.gbZoom.TabStop = false;
-            this.gbZoom.Text = "Zoom";
-            // 
-            // gbPathId
-            // 
-            this.gbPathId.Controls.Add(this.cblPathList);
-            this.gbPathId.Location = new System.Drawing.Point(423, 112);
-            this.gbPathId.Name = "gbPathId";
-            this.gbPathId.Size = new System.Drawing.Size(135, 88);
-            this.gbPathId.TabIndex = 249;
-            this.gbPathId.TabStop = false;
-            this.gbPathId.Text = "Path Id";
-            // 
-            // gbControls
-            // 
-            this.gbControls.Controls.Add(this.btnJmpTrnRight);
-            this.gbControls.Controls.Add(this.btnJmpTurnLeft);
-            this.gbControls.Controls.Add(this.btnUp);
-            this.gbControls.Controls.Add(this.btnLeft);
-            this.gbControls.Controls.Add(this.btnRight);
-            this.gbControls.Controls.Add(this.btnE);
-            this.gbControls.Controls.Add(this.btnDown);
-            this.gbControls.Controls.Add(this.btnQ);
-            this.gbControls.Controls.Add(this.btnSpace);
-            this.gbControls.Location = new System.Drawing.Point(273, 6);
-            this.gbControls.Name = "gbControls";
-            this.gbControls.Size = new System.Drawing.Size(285, 100);
-            this.gbControls.TabIndex = 250;
-            this.gbControls.TabStop = false;
-            this.gbControls.Text = "Controls";
-            // 
-            // btnJmpTurnLeft
-            // 
-            this.btnJmpTurnLeft.Location = new System.Drawing.Point(30, 15);
-            this.btnJmpTurnLeft.Name = "btnJmpTurnLeft";
-            this.btnJmpTurnLeft.Size = new System.Drawing.Size(54, 50);
-            this.btnJmpTurnLeft.TabIndex = 248;
-            this.btnJmpTurnLeft.Text = "JMP\r\nTURN\r\nLEFT";
-            this.btnJmpTurnLeft.UseVisualStyleBackColor = true;
-            this.btnJmpTurnLeft.Click += new System.EventHandler(this.btnJmpTurnLeft_Click);
-            // 
-            // btnJmpTrnRight
-            // 
-            this.btnJmpTrnRight.Location = new System.Drawing.Point(201, 15);
-            this.btnJmpTrnRight.Name = "btnJmpTrnRight";
-            this.btnJmpTrnRight.Size = new System.Drawing.Size(54, 50);
-            this.btnJmpTrnRight.TabIndex = 249;
-            this.btnJmpTrnRight.Text = "JMP\r\nTURN\r\nRIGHT";
-            this.btnJmpTrnRight.UseVisualStyleBackColor = true;
-            this.btnJmpTrnRight.Click += new System.EventHandler(this.btnJmpTrnRight_Click);
             // 
             // MainForm
             // 
@@ -2394,6 +2393,10 @@
             this.tabObjectsNear.ResumeLayout(false);
             this.tabObjectsNear.PerformLayout();
             this.tabRadar.ResumeLayout(false);
+            this.gbControls.ResumeLayout(false);
+            this.gbPathId.ResumeLayout(false);
+            this.gbZoom.ResumeLayout(false);
+            this.gbZoom.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbZoom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgRadar)).EndInit();
             this.tabPageEnemies.ResumeLayout(false);
@@ -2414,10 +2417,6 @@
             this.tabPageF1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.gbZoom.ResumeLayout(false);
-            this.gbZoom.PerformLayout();
-            this.gbPathId.ResumeLayout(false);
-            this.gbControls.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

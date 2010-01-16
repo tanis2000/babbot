@@ -97,6 +97,7 @@ namespace BabBot.Forms
             ProcessManager.PlayerWayPoint += PlayerWayPoint;
             ProcessManager.UpdateAppStatus += UpdateAppStatus;
             ProcessManager.UpdateGameStatus += UpdateGameStatus;
+            ProcessManager.UpdateBotStatus += UpdateBotStatus;
 
             // Initialize DataSet
             DataManager.Initialize();
@@ -122,6 +123,7 @@ namespace BabBot.Forms
 
         #endregion
 
+        /* Not used
         [System.Security.Permissions.PermissionSet(
             System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m)
@@ -135,7 +137,8 @@ namespace BabBot.Forms
 
             base.WndProc(ref m);
         }
-
+        */
+        
         private void Initialize()
         {
             // Set a default value for waypoint type combo
@@ -504,17 +507,20 @@ namespace BabBot.Forms
                 slGameStatus.Text = status;
         }
 
-        private void UpdateBotStatus(string status)
+        private void UpdateBotStatus(string status, string tooltip)
         {
             // Cross thread calls
             if (InvokeRequired)
             {
-                StatusUpdateDelegate del = UpdateBotStatus;
-                object[] parameters = { status };
-                Invoke(del, parameters);
+                ProcessManager.UpdateStatusTooltipDelegate del =
+                                                        UpdateBotStatus;
+                Invoke(del, new object[] { status, tooltip });
             }
             else
-                labelBotStatus.Text = status;
+            {
+                slBotStatus.Text = status;
+                slBotStatus.ToolTipText = tooltip;
+            }
         }
 
         private void ActivateDebugMode()
