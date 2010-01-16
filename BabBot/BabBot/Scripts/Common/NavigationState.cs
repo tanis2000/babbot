@@ -158,6 +158,26 @@ namespace BabBot.States.Common
             ProcessManager.OnTravelCompleted();
         }
 
+        /// <summary>
+        /// Check is bot stuck. For the regular movement it checks that bot pass
+        /// (1 - _stack_dist) * 100 % (percent) of path. 
+        /// For the small movement (less than 2 yards) this check doesn't work 
+        /// because bot doesn't move to click point directly
+        /// </summary>
+        /// <param name="cur_loc">Bot location before it start moving</param>
+        /// <param name="distance">The distance it should move</param>
+        /// <returns></returns>
+        private bool IsStuck(Vector3D cur_loc, float distance)
+        {
+            // Check if bot moved
+            float dd = _player.Location.GetDistanceTo(cur_loc);
+            float wdist = (distance - dd) / distance;
+
+            // Ignore small steps cause bot not going directly to click position
+            return ((_retry == 0 && wdist > _stack_dist && distance > 2) ||
+                (_retry > 0 && ((dd < 0.5) || (dd < distance * _stack_dist))));
+        }
+
         private float MoveToDest(Path path, Vector3D dest, float step)
         {
             float distance = _player.Location.GetDistanceTo(dest);
@@ -220,10 +240,10 @@ namespace BabBot.States.Common
                     float z = vnext.Z - cur_loc.Z;
 
                     _player.ClickToMove(vnext);
-                    if ((_retry == 0) && (z > 3) || (_retry > 0))
+                    if ((_retry == 0) && (z > 2) || (_retry > 0))
                     {
                         // Add jump if going too high up or trying unstack
-                        Thread.Sleep(150);
+                        Thread.Sleep(200);
                         ProcessManager.CommandManager.SendKeys(CommandManager.SK_SPACE);
 
                         // Need wait for jump
@@ -234,24 +254,17 @@ namespace BabBot.States.Common
                         // Click a bit earlier for smooth movement
                         Thread.Sleep((int) (0.98 * t));
 
-                    // Check if we moved
-                    float dd = _player.Location.GetDistanceTo(cur_loc);
-                    float wdist = (distance - dd) / distance;
-
-                    // Ignore small steps cause bot not going directly to click position
-                    if ((_retry == 0 && wdist > _stack_dist && distance > 2) ||
-                            (_retry > 0 && ((dd < 0.5) || (dd < distance))))
+                    // Check for stuck
+                    if (IsStuck(cur_loc, distance))
                     {
                         // Bot pass less than 80% of step.
                         // Something wrong
                         // Wait a bit we might still moving
+                        float dd = _player.Location.GetDistanceTo(cur_loc);
                         Thread.Sleep((int)(((distance - dd) / 7F) * 1000));
 
                         // Check again
-                        dd = _player.Location.GetDistanceTo(cur_loc);
-                        wdist = ((distance - dd) / distance);
-                        if ((_retry == 0 && wdist > _stack_dist && distance > 2) ||
-                            (_retry > 0 && ((dd < 0.5) || (dd < step))))
+                        if (IsStuck(cur_loc, distance))
                         {
                             // We stuck
                             if (_retry < _max_retry)
