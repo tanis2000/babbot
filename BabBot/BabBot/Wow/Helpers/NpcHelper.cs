@@ -108,7 +108,7 @@ namespace BabBot.Wow.Helpers
         /// <param name="player"></param>
         protected override void DoEnter(WowPlayer player)
         {
-            CallChangeStateEvent(player, _state);
+            CallChangeStateEvent(player, _state, false, true);
         }
 
         protected override void DoExecute(WowPlayer player) { }

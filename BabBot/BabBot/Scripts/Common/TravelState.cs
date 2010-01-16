@@ -8,11 +8,12 @@ using BabBot.Common;
 using BabBot.Manager;
 using BabBot.Wow.Helpers;
 using Pather.Graph;
-
+// TODO add support for multiple NPC coordinates
 namespace BabBot.States.Common
 {
     /// <summary>
     /// Class used to set travel destination for GameObject or Endpoint
+    /// Currently only supports single NPC coordinates
     /// Aggro ignored in this state
     /// </summary>
     class TravelState : State<WowPlayer>
@@ -64,14 +65,34 @@ namespace BabBot.States.Common
         /// </summary>
         protected List<Route> FoundRoutes = new List<Route>();
 
+        /// <summary>
+        /// True when arrived to destination and False if not yet
+        /// </summary>
+        public bool AtDest = false;
+
+        /// <summary>
+        /// Reference on current player
+        /// </summary>
         public WowPlayer Player;
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="obj">GameObject object</param>
+        /// <param name="lfs">Logging facility</param>
+        /// <param name="tooltip_text">Tooltip to show on BotStatus</param>
         public TravelState(GameObject obj, string lfs, string tooltip_text)
         {
             _check = new GameObjCheck(this,  obj);
             Init(obj, lfs, tooltip_text);
         }
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="obj">QuestObjective object</param>
+        /// <param name="lfs">Logging facility</param>
+        /// <param name="tooltip_text">Tooltip to show on BotStatus</param>
         public TravelState(AbstractQuestObjective qobj, 
                             string lfs, string tooltip_text)
         {
@@ -79,6 +100,12 @@ namespace BabBot.States.Common
             Init(qobj, lfs, tooltip_text);
         }
 
+        /// <summary>
+        /// Init Travel State
+        /// </summary>
+        /// <param name="dest">Destination object</param>
+        /// <param name="lfs">Logging facility</param>
+        /// <param name="tooltip_text">Tooltip to show on BotStatus</param>
         void Init(object dest, string lfs, string tooltip_text)
         {
             Lfs = lfs;
@@ -89,9 +116,9 @@ namespace BabBot.States.Common
         /// <summary>
         /// Enter state event handler
         /// Try locate route or locate destination waypoint and 
-        /// launch NavigationState
+        ///     launch NavigationState
         /// </summary>
-        /// <param name="player"></param>
+        /// <param name="player">Reference on current player</param>
         protected override void DoEnter(WowPlayer player)
         {
             Player = player;
@@ -136,7 +163,15 @@ namespace BabBot.States.Common
                     if (eps[1].Waypoint.IsClose(Player.Location))
                     {
                         // Exact route found
-                        ActivateMoveState(r, player);
+                        try
+                        {
+                            ActivateMoveState(r, player);
+                        }
+                        catch (Exception e)
+                        {
+                            Output.Instance.Log(Lfs, e.Message);
+                            Finish(player);
+                        }
                         return;
                     }
 
@@ -158,24 +193,68 @@ namespace BabBot.States.Common
                 if (min_route != null)
                 {
                     // Found partial route and now look for the route connections
+                    FoundRoutes.Add(min_route);
                     float calc_len = CheckRoute(min_route.PointB, 0);
                     if (calc_len > 0)
                     {
+                        float direct_len = BaseCoord.GetDistanceTo(Player.Location) * 1.2F;
                         // Check if total calc length exceed much direct length
-                        // if (
+                        if (calc_len <= direct_len)
+                        {
+                            // Join Routes and activate moving state
+                            Waypoints wp_list = new Waypoints();
+                            foreach (Route r in FoundRoutes)
+                            {
+                                Waypoints wp;
+
+                                try
+                                {
+                                    wp = GetWaypoints(r);
+                                    if (wp == null)
+                                        throw new WaypointsNotFoundException(r.WaypointFileName);
+
+                                    int start_idx = 0;
+
+                                    if (wp_list.Count > 0)
+                                    {
+                                        // skip first waypoint when joint wp list
+                                        start_idx = 1;
+                                    }
+
+                                    for (int i = start_idx; i < wp.Count; i++)
+                                        wp_list.Add(wp[i]);
+                                }
+                                catch (Exception e)
+                                {
+                                    Output.Instance.Log(Lfs, e.Message);
+                                    Finish(player);
+                                    return;
+                                }
+                            }
+
+                            // Switch to navigation state
+                            SwitchToNavigation(wp_list);
+                            return;
+                        }
                     }
                 }
+
+                // No routes
+                // Transfer best coord to Nav state
+                CallChangeStateEvent(player, new NavigationState(BaseCoord,
+                                        Lfs, "Traveling to point " + BaseCoord));
             }
             
-
-            // set calc flag if it direct path shorter than best route
-            // calc_route = (dist_a < min_route_len);
-
-            // Check among undef routes
-            // r = RouteListManager.FindRoute(
         }
 
-        public float CheckRoute(Endpoint ep, float total_len)
+        private void SwitchToNavigation(Waypoints wps)
+        {
+            _last_dest = wps[wps.Count - 1];
+            CallChangeStateEvent(Player, new NavigationState(wps,
+                                Lfs, "Traveling to " + _dest.ToString()));
+        }
+
+        private float CheckRoute(Endpoint ep, float total_len)
         {
             // Find all avail routes for dest
             List<Route> lr = RouteListManager.Waypoints[ep.Waypoint.Length];
@@ -195,8 +274,7 @@ namespace BabBot.States.Common
                 if (eps == null)
                     return 0;
 
-                // Only using atm based coord for game obj/quest item
-
+                // At the moment only using based coord for game obj/quest item
                 if (eps[1].Waypoint.IsClose(Player.Location))
                 {
                     // Exact route found
@@ -222,8 +300,12 @@ namespace BabBot.States.Common
             {
                 // Check if another route connected to given point
                 // This check is recursive
-                return CheckRoute(min_route.PointB, total_len + min_route_len);
-
+                float len= CheckRoute(min_route.PointB, total_len + min_route_len);
+                if (len > 0)
+                {
+                    FoundRoutes.Add(min_route);
+                    return len;
+                }
             }
 
             return 0;
@@ -244,37 +326,42 @@ namespace BabBot.States.Common
 
         protected override void DoExecute(WowPlayer player)
         {
-            // Check if we arrived
-            if (_dest.GetType().IsSubclassOf(typeof(GameObject)))
+            if ((_last_dest != null) && 
+                    !_last_dest.IsClose(player.Location))
             {
-                // Check for another NPC location
-                // if (_vlist != null)
-            
-
+                // Navigation state failed
+                Finish(player);
+                return;
+            }
+            else if (_dest.GetType().IsSubclassOf(typeof(GameObject)))
+            {
+                // Check if GameObject actually nearby
+                // TODO
             }
             else
+                Finish(player);
+
+        }
+
+        private Waypoints GetWaypoints(Route r)
+        {
+            Waypoints wp = RouteListManager.LoadWaypoints(r.WaypointFileName);
+            if (wp != null)
             {
-                if (_last_dest.IsClose(player.Location))
-                {
-                    Finish(player);
-                    return;
-                }
+                if (r.NeedReverse)
+                    wp.List.Reverse();
+
+                UsedRoutes.Add(r);
             }
+            return wp;
         }
 
         private void ActivateMoveState(Route r, WowPlayer player)
         {
             // Load waypoints and launch NavigationState
-            Waypoints wp = RouteListManager.LoadWaypoints(r.WaypointFileName);
+            Waypoints wp = GetWaypoints(r);
             if (wp != null)
-            {
-                if (r.Reversible)
-                    wp.List.Reverse();
-
-                UsedRoutes.Add(r);
-                CallChangeStateEvent(player, new NavigationState(wp, 
-                                Lfs, "Traveling to " + _dest.ToString()));
-            }
+                SwitchToNavigation(wp);
         }
        
     }

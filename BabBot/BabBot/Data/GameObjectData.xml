@@ -57,12 +57,30 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
         <gossip name="What can I do at an Inn?" teleport="false" />
       </gossips>
     </game_object>
+    <game_object d3p1:type="NPC" name="Janna Brightmoon" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="10438.1" y="787.29" z="1337.29" type="0" />
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
+      </services>
+      <gossips />
+    </game_object>
     <game_object d3p1:type="NPC" name="Keina" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10436.7" y="794.84" z="1322.7" type="0" />
       <quests />
       <coordinates />
       <services>
         <service d3p1:type="VendorService" name="vendor" can_repair="true" has_drink="false" has_food="false" />
+      </services>
+      <gossips />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Lyrai" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="10442.9" y="783.99" z="1337.29" type="0" />
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="false" has_drink="true" has_food="true" />
       </services>
       <gossips />
     </game_object>

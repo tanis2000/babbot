@@ -1078,8 +1078,6 @@ end)()]]>
         </text>
       </function>
 
-      StaticPopupDialogs
-
       <!-- FindVisibleStaticDialog -->
       <function name="FindVisibleStaticDialog">
         <parameters size="1">

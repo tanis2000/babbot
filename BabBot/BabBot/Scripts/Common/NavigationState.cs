@@ -247,7 +247,7 @@ namespace BabBot.States.Common
                         ProcessManager.CommandManager.SendKeys(CommandManager.SK_SPACE);
 
                         // Need wait for jump
-                        t += 1000;
+                        t += 500;
                     }
 
                     if (t > 0)

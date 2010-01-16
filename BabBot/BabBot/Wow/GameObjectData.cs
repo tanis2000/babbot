@@ -1267,7 +1267,8 @@ namespace BabBot.Wow
             get 
             { 
                 WpZones res = (WpZones)MergeList[0];
-                if ( res != null && !string.IsNullOrEmpty(res.SameAs))
+                if ( res != null && !string.IsNullOrEmpty(res.SameAs) &&
+                        res.SameAs.Equals("1"))
                     res = Parent.Objectives.ObjList[Convert.
                             ToInt32(res.SameAs)].Coordinates;
                 return res;
@@ -1872,6 +1873,11 @@ namespace BabBot.Wow
         }
 
         /// <summary>
+        /// Operational flag that set after GetEndpoints request
+        /// </summary>
+        internal bool NeedReverse;
+
+        /// <summary>
         /// Class contstructor
         /// </summary>
         public Route() : base() { }
@@ -1934,18 +1940,20 @@ namespace BabBot.Wow
 
         public Endpoint[] GetEndpoints(string name)
         {
-            if (PointA.Equals(name))
+            NeedReverse = !PointA.Equals(name);
+            if (NeedReverse)
                 return new Endpoint[] { PointB, PointA };
-            else if (PointB.Equals(name))
+            else if (PointA.Equals(name))
                 return new Endpoint[] { PointA, PointB };
             else return null;
         }
 
         public Endpoint[] GetEndpoints(Vector3D v)
         {
-            if (PointA.Waypoint.Equals(v))
+            NeedReverse = PointB.Waypoint.Equals(v);
+            if (NeedReverse)
                 return new Endpoint[] { PointB, PointA };
-            else if (PointB.Waypoint.Equals(v))
+            else if (PointA.Waypoint.Equals(v))
                 return new Endpoint[] { PointA, PointB };
             else return null;
         }
