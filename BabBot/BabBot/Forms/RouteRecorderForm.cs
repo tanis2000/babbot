@@ -107,7 +107,9 @@ namespace BabBot.Forms
                     ctrlRouteDetails.tbZoneA.Text = ProcessManager.Player.ZoneText;
 
                     // Load RouteRecordingState and start
-                    _route_rec_state = new RouteRecordingState(RecordWp, numRecDistance.Value);
+                    _route_rec_state = new RouteRecordingState(RecordWp,
+                        numRecDistance.Value, ((AbstractListEndpoint)ctrlRouteDetails.
+                                cbTypeA.SelectedItem).EType == EndpointTypes.GRAVEYARD);
                     ProcessManager.Player.StateMachine.
                             InitState = new TestGlobalState(_route_rec_state);
 

@@ -36,12 +36,18 @@ namespace BabBot.States.Common
         private float _min_dist = 1;
 
         /// <summary>
+        /// Is recording done for dead state
+        /// </summary>
+        bool _dead_state;
+
+        /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="WpRecordProc">Callback function on recording event</param>
         /// <param name="max_dist">Max distance between waypoints before fire recording event</param>
-        public RouteRecordingState(WaypointRecordingHandler WpRecordProc, decimal max_dist)
+        public RouteRecordingState(WaypointRecordingHandler WpRecordProc, decimal max_dist, bool dead_state)
         {
+            dead_state = _dead_state;
             _rec_dist = (float) max_dist;
             OnWaypointRecording = WpRecordProc;
         }
@@ -66,7 +72,8 @@ namespace BabBot.States.Common
         /// <param name="player"></param>
         protected override void DoExecute(WowPlayer player)
         {
-            if (player.IsDead)
+            // Ignore dead if in deadstate
+            if (!_dead_state && player.IsDead)
             {
                 Finish(player);
                 return;
@@ -90,26 +97,6 @@ namespace BabBot.States.Common
                 _coord = cur_loc;
                 OnWaypointRecording(_coord.CloneVector());
             }
-        }
-
-        /// <summary>
-        /// Exit event handler
-        /// </summary>
-        /// <param name="Entity"></param>
-        protected override void DoExit(WowPlayer Entity)
-        {
-            //on exit we will do nothing
-            return;
-        }
-
-        /// <summary>
-        /// Finish event handler
-        /// </summary>
-        /// <param name="Entity"></param>
-        protected override void DoFinish(WowPlayer Entity)
-        {
-            //on finish we will do nothing
-            return;
         }
     }
 }
