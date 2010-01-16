@@ -98,6 +98,7 @@ namespace BabBot.Wow
 
             //create toon's state machine
             StateMachine = new StateMachine<WowPlayer>(this);
+            StateMachine.StateChangedEvent += ProcessManager.OnUpdateBotStatus;
         }
 
         public override string Name
