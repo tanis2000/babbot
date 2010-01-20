@@ -45,6 +45,24 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
       </services>
       <gossips />
     </game_object>
+    <game_object d3p1:type="NPC" name="Garryeth" zone="Darnassus" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="9942.03" y="2519.24" z="1317.57" type="0" />
+      <quests />
+      <coordinates />
+      <services>
+        <service name="banker" />
+      </services>
+      <gossips />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Ilyenia Moonfire" zone="Darnassus" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="9908.52" y="2329.23" z="1330.79" type="0" />
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="ClassTrainingService" name="class_trainer" class="HUNTER" />
+      </services>
+      <gossips />
+    </game_object>
     <game_object d3p1:type="NPC" name="Innkeeper Keldamyr" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="9802.21" y="982.61" z="1313.9" type="0" />
       <quests />
@@ -56,6 +74,16 @@ Unfortunately, the nightsaber and thistle boar populations grew too large.  Shad
       <gossips>
         <gossip name="What can I do at an Inn?" teleport="false" />
       </gossips>
+    </game_object>
+    <game_object d3p1:type="NPC" name="Innkeeper Saelienne" zone="Darnassus" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="10127.9" y="2224.79" z="1328.74" type="0" />
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="VendorService" name="vendor" can_repair="false" has_drink="true" has_food="true" />
+        <service d3p1:type="ZoneNpcService" name="binder" sub_zone="Craftsmen's Terrace" />
+      </services>
+      <gossips />
     </game_object>
     <game_object d3p1:type="NPC" name="Janna Brightmoon" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
       <base_position x="10438.1" y="787.29" z="1337.29" type="0" />
@@ -134,6 +162,15 @@ Can you deliver this package for me?  It must be sent to Innkeeper Keldamyr, at 
       <coordinates />
       <services>
         <service d3p1:type="ClassTrainingService" name="class_trainer" class="PRIEST" />
+      </services>
+      <gossips />
+    </game_object>
+    <game_object d3p1:type="NPC" name="Vesprystus" zone="Teldrassil" faction="Alliance" xmlns:d3p1="http://www.w3.org/2001/XMLSchema-instance">
+      <base_position x="8640.58" y="841.12" z="23.26" type="0" />
+      <quests />
+      <coordinates />
+      <services>
+        <service d3p1:type="ZoneNpcService" name="taxi" sub_zone="Rut'theran Village" />
       </services>
       <gossips />
     </game_object>

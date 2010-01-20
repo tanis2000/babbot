@@ -59,7 +59,8 @@ Lots of credits to http://wowprogramming.com/
     <continents>
       <continent id="0" name="All" />
       <continent id="1" name="Kalimdor">
-        <zone name="Teldrassil" />  
+        <zone name="Teldrassil" />
+        <zone name="Darnassus" />
       </continent>
       <continent id="2" name="Azeroth">
         <zone name="Elwynn Forest" />
