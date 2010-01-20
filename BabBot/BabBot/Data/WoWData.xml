@@ -1111,8 +1111,56 @@ end)()]]>
   {0}:Hide()
 end)()]]></text>
       </function>
+
+      <!-- TakeTaxi -->
+      <function name="TakeTaxi">
+        <parameters size="2">
+          0 - Name of destination zone
+          1 - Name of destination subzone
+        </parameters>
+        <return size="2">
+          0 - index of destination or
+            0 if destination not found or
+            -1 if destination found but cannot be taken
+              (see description)
+          1 - description for ex.
+            if destination exists but not reachable then
+            it returns DISTANT
+
+        </return>
+        <text>
+          <![CDATA[(function()
+  local descr
+  local found = 0
+  local money = GetMoney()
+
+  local num = NumTaxiNodes()
+  for i = 1 , num do
+    node = TaxiNodeName(i)
+    if (node == "{0}, {1}") then
+      descr = TaxiNodeGetType(i)
+      if (descr ~= "REACHABLE") then
+        found = -1
+        break
+      end
       
+      cost = TaxiNodeCost(i)
+      if (cost > money) then
+        descr = "NOT_ENOUGH_MONEY"
+        found = -1;
+        break;
+      end
       
+      found = i;
+      TakeTaxiNode(i);
+      break;
+    end
+  end
+  return found, descr
+end)()]]>
+        </text>
+      </function>
+        
       <!-- Template for new function
       <!- - name - ->
       <function name="">
