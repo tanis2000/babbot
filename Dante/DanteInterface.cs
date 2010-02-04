@@ -179,5 +179,10 @@ namespace Dante
         {
             LuaInterface.RegisterLuaDelegate(lua_config);
         }
+
+        public void SetWowMainThread(int threadId)
+        {
+            LuaInterface.WowMainThreadId = threadId;
+        }
     }
 }

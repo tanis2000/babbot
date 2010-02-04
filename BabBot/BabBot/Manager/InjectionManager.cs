@@ -269,6 +269,9 @@ end)()",
                 SetPatchOffset(Convert.ToUInt32(
                     ProcessManager.Config.CustomParams.LuaCallback, 16));
 
+                // Pass wow's main thread id
+                SetWowMainThread();
+
                 Output.Instance.Log("Dante injected");
             }
             catch (Exception ExtInfo)
@@ -287,6 +290,12 @@ end)()",
         {
             if (RemoteObject != null)
                 RemoteObject.SetPatchOffset(poffset);
+        }
+
+        public void SetWowMainThread()
+        {
+            if (RemoteObject != null)
+                RemoteObject.SetWowMainThread(ProcessManager.GetWowMainThread());
         }
 
         public void Lua_RegisterInputHandler()

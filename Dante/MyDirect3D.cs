@@ -103,12 +103,14 @@ namespace Dante
         {
             lock (LuaInterface.dataLock)
             {
+                //Kernel32.SuspendThread(LuaInterface.WowMainThreadId);
 
                 if (EndSceneDebug)
                     LuaInterface.LoggingInterface.LogEndScene(true);
 
                 try
                 {
+
                     switch (LuaInterface.LuaState)
                     {
                         case 255:
@@ -192,6 +194,8 @@ namespace Dante
                     LuaInterface.LoggingInterface.LogEndScene(false);
 
                 //LuaInterface.LoggingInterface.Log(string.Format("Device:{0} RealEndScene:{1}", Device, RealEndScene));
+                //Kernel32.ResumeThread(LuaInterface.WowMainThreadId);
+
                 return RealEndScene(Device);
             }
         }

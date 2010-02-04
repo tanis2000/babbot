@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -54,13 +55,18 @@ namespace Dante
                                                  [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
                                                  uint dwProcessId);
 
-        /* not used
-        [DllImport("kernel32.dll")]
-        public static extern uint SuspendThread(IntPtr hThread);
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern uint ResumeThread(IntPtr hThread);
 
-        [DllImport("kernel32.dll")]
-        public static extern uint ResumeThread(IntPtr hThread);
-        */
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern uint SuspendThread(IntPtr hThread);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess,
+            bool bInheritHandle,
+            uint dwThreadId
+        );
+
 
         #endregion
 
@@ -101,6 +107,46 @@ namespace Dante
         }
 
         #endregion
+
+        [Flags]
+        public enum ThreadAccess : int
+        {
+            TERMINATE = (0x0001),
+            SUSPEND_RESUME = (0x0002),
+            GET_CONTEXT = (0x0008),
+            SET_CONTEXT = (0x0010),
+            SET_INFORMATION = (0x0020),
+            QUERY_INFORMATION = (0x0040),
+            SET_THREAD_TOKEN = (0x0080),
+            IMPERSONATE = (0x0100),
+            DIRECT_IMPERSONATION = (0x0200)
+        }
+        public static int ResumeThread(int threadId)
+        {
+            if (threadId == 0) return 0;
+            uint result = 0;
+            IntPtr ptrOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)threadId);
+            result = ResumeThread(ptrOpenThread);
+            if ((int)result == -1)
+            {
+                throw new Win32Exception();
+            }
+            return (int)result;
+        }
+
+        public static int SuspendThread(int threadId)
+        {
+            if (threadId == 0) return 0;
+            uint result = 0;
+            IntPtr ptrOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)threadId);
+            result = SuspendThread(ptrOpenThread);
+            if ((int)result == -1)
+            {
+                throw new Win32Exception();
+            }
+            return (int)result;
+        }
+
     }
 
     public unsafe class D3D9

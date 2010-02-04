@@ -1086,6 +1086,11 @@ namespace BabBot.Manager
             SThread.ResumeThread(hThread);
         }
 
+        public static int GetWowMainThread()
+        {
+            ProcessThread wowMainThread = SThread.GetMainThread(process.Id);
+            return wowMainThread.Id;
+        }
         /// <summary>
         /// Get AutoRun mode
         /// </summary>

@@ -56,6 +56,7 @@ namespace Dante
         private static uint state = 0;
 
         private static bool LogLuaCalls = true;
+        internal static int WowMainThreadId = 0;
 
         #endregion
 
