@@ -1278,8 +1278,8 @@ end)()]]></text>
   </version>
   <version name="3.3.2.11403" max_lvl="80">
     <globals
-        game_offset="0x00C93410"
-        name_store_pointer="0x0"
+        game_offset="0x00CF8C50"
+        name_store_pointer="0x00C93448"
         player_base_offset1="0x34"
         player_base_offset2="0x24"
         player_rotation_offset="0x7A8"
