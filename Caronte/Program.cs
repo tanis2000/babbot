@@ -17,19 +17,16 @@
     along with PPather.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-
-
-
 using System;
-
+using WowTriangles;
 
 namespace Caronte
 {
     public class Caronte
     {
         private string continent;
-        private WowTriangles.MPQTriangleSupplier mpq;
-        private WowTriangles.ChunkedTriangleCollection triangleWorld;
+        private MPQTriangleSupplier mpq;
+        private ChunkedTriangleCollection triangleWorld;
 
         private Pather.Graph.PathGraph world;
 
@@ -37,14 +34,13 @@ namespace Caronte
         {
             set { world.Cancel = value; }
         }
-
         public void Init(string iContinent)
         {
             continent = iContinent;
 
-            mpq = new WowTriangles.MPQTriangleSupplier();
+            mpq = new MPQTriangleSupplier();
             mpq.SetContinent(continent);
-            triangleWorld = new WowTriangles.ChunkedTriangleCollection(512);
+            triangleWorld = new ChunkedTriangleCollection(512);
             triangleWorld.SetMaxCached(9);
             triangleWorld.AddSupplier(mpq);
 
@@ -56,116 +52,118 @@ namespace Caronte
             world = new Pather.Graph.PathGraph(continent, triangleWorld, null);
 
         }
-
-        public Pather.Graph.Path CalculatePath(Pather.Graph.Location iOrigin, 
-                                                    Pather.Graph.Location iDestination)
+        public Pather.Graph.Path CalculatePath(Pather.Graph.Location iOrigin, Pather.Graph.Location iDestination)
         {
             return CalculatePath(iOrigin, iDestination, 5F);
         }
 
-        public Pather.Graph.Path CalculatePath(Pather.Graph.Location iOrigin, 
-                                    Pather.Graph.Location iDestination, float sDist)
+        public Pather.Graph.Path CalculatePath(Pather.Graph.Location iOrigin, Pather.Graph.Location iDestination, float sDist)
         {
-            // We try to find a path 
-
             Pather.Graph.Path mypath = world.CreatePath(iOrigin, iDestination, sDist);
-
             /* We save the PathGraph. Stores every chunk of the map we used in the 
                PPather\PathInfo\{map} folder */
-
             world.Save();
-
+            return mypath;
+        }
+        public Pather.Graph.Path CalculatePath(Pather.Graph.Location iOrigin, Pather.Graph.Location iDestination, float charHight, float charRadius)
+        {
+            return CalculatePath(iOrigin, iDestination, 5f, charHight, charRadius);
+        }
+        public Pather.Graph.Path CalculatePath(Pather.Graph.Location iOrigin, Pather.Graph.Location iDestination, float sDist, float charHight, float charRadius)
+        {
+            Pather.Graph.Path mypath = world.CreatePath(iOrigin, iDestination, sDist, charHight, charRadius);
+            world.Save();
             return mypath;
         }
     }
     
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
 
-            /* This init code is almost copy/pasted from PPather. Depending of where
-            yo are, you can replace Kalimdor with one of:
-            AhnQiraj
-            AhnQirajTemple
-            AlliancePVPBarracks
-            AuchindounDemon
-            AuchindounDraenei
-            AuchindounEthereal
-            AuchindounShadow
-            Azeroth
-            Blackfathom
-            BlackrockDepths
-            BlackRockSpire
-            BlackTemple
-            BlackwingLair
-            bladesedgearena
-            CavernsOfTime
-            CoilfangDraenei
-            CoilfangMarsh
-            CoilfangPumping
-            CoilfangRaid
-            Collin
-            CraigTest
-            DalaranArena
-            DeadminesInstance
-            DeeprunTram
-            development_nonweighted
-            DireMaul
-            EmeraldDream
-            Expansion01
-            GnomeragonInstance
-            GruulsLair
-            HellfireDemon
-            HellfireMilitary
-            HellfireRaid
-            HellfireRampart
-            HillsbradPast
-            HordePVPBarracks
-            HyjalPast
-            Kalimdor
-            Karazahn
-            Mauradon
-            MoltenCore
-            Monastery
-            MonasteryInstances
-            NetherstormBG
-            OnyxiaLairInstance
-            OrgrimmarArena
-            OrgrimmarInstance
-            PVPLordaeron
-            PVPZone01
-            PVPZone02
-            PVPZone03
-            PVPZone04
-            PVPZone05
-            RazorfenDowns
-            RazorfenKraulInstance
-            SchoolofNecromancy
-            ScottTest
-            Shadowfang
-            StormwindJail
-            StormwindPrison
-            Stratholme
-            SunkenTemple
-            Sunwell5Man
-            Sunwell5ManFix
-            SunwellPlateau
-            TanarisInstance
-            TempestKeepArcane
-            TempestKeepAtrium
-            TempestKeepFactory
-            TempestKeepRaid
-            test
-            Uldaman
-            WailingCaverns
-            Zul'gurub
-            ZulAman
-            */
+            //This init code is almost copy/pasted from PPather. Depending of where
+            //yo are, you can replace Kalimdor with one of:
+            //AhnQiraj
+            //AhnQirajTemple
+            //AlliancePVPBarracks
+            //AuchindounDemon
+            //AuchindounDraenei
+            //AuchindounEthereal
+            //AuchindounShadow
+            //Azeroth
+            //Blackfathom
+            //BlackrockDepths
+            //BlackRockSpire
+            //BlackTemple
+            //BlackwingLair
+            //bladesedgearena
+            //CavernsOfTime
+            //CoilfangDraenei
+            //CoilfangMarsh
+            //CoilfangPumping
+            //CoilfangRaid
+            //Collin
+            //CraigTest
+            //DalaranArena
+            //DeadminesInstance
+            //DeeprunTram
+            //development_nonweighted
+            //DireMaul
+            //EmeraldDream
+            //Expansion01
+            //GnomeragonInstance
+            //GruulsLair
+            //HellfireDemon
+            //HellfireMilitary
+            //HellfireRaid
+            //HellfireRampart
+            //HillsbradPast
+            //HordePVPBarracks
+            //HyjalPast
+            //Kalimdor
+            //Karazahn
+            //Mauradon
+            //MoltenCore
+            //Monastery
+            //MonasteryInstances
+            //NetherstormBG
+            //OnyxiaLairInstance
+            //OrgrimmarArena
+            //OrgrimmarInstance
+            //PVPLordaeron
+            //PVPZone01
+            //PVPZone02
+            //PVPZone03
+            //PVPZone04
+            //PVPZone05
+            //RazorfenDowns
+            //RazorfenKraulInstance
+            //SchoolofNecromancy
+            //ScottTest
+            //Shadowfang
+            //StormwindJail
+            //StormwindPrison
+            //Stratholme
+            //SunkenTemple
+            //Sunwell5Man
+            //Sunwell5ManFix
+            //SunwellPlateau
+            //TanarisInstance
+            //TempestKeepArcane
+            //TempestKeepAtrium
+            //TempestKeepFactory
+            //TempestKeepRaid
+            //test
+            //Uldaman
+            //WailingCaverns
+            //Zul'gurub
+            //ZulAman
+            
 
-            WowTriangles.MPQTriangleSupplier mpq = new WowTriangles.MPQTriangleSupplier();
+            var mpq = new MPQTriangleSupplier();
             mpq.SetContinent("Expansion01");
-            WowTriangles.ChunkedTriangleCollection triangleWorld = new WowTriangles.ChunkedTriangleCollection(512);
+            var triangleWorld = new ChunkedTriangleCollection(512);
             triangleWorld.SetMaxCached(9);
             triangleWorld.AddSupplier(mpq);
 
@@ -174,24 +172,24 @@ namespace Caronte
             /* After the init routines we create a PathGraph object (as before
                you can replace Kalimdor with whatever you need */
 
-            Pather.Graph.PathGraph world = new Pather.Graph.PathGraph("Expansion01", triangleWorld, null);
+            var world = new Pather.Graph.PathGraph("Expansion01", triangleWorld, null);
 
 
 
 
             // Here we define the starting point (somewhere in the orc noob village)
 
-            Pather.Graph.Location origin = new Pather.Graph.Location(240.94f, 2692.39f, 89.74f);
+            var origin = new Pather.Graph.Location(240.94f, 2692.39f, 89.74f);
 
 
 
             // Here we define our destination (somewhere in Razor Hill)
 
-            Pather.Graph.Location destination = new Pather.Graph.Location(189.63f, 2690.94f, 88.71f);
+            var destination = new Pather.Graph.Location(189.63f, 2690.94f, 88.71f);
 
             // We try to find a path 
 
-            Pather.Graph.Path mypath = world.CreatePath(origin, destination, 5f);
+            var mypath = world.CreatePath(origin, destination, 5f);
 
             /* We save the PathGraph. Stores every chunk of the map we used in the 
                PPather\PathInfo\{map} folder */

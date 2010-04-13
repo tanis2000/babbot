@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 using WowTriangles;
@@ -9,8 +8,8 @@ namespace Pather.Graph
 {
 	public class PathGraph
 	{
-		public const float toonHeight = 2.0f;
-		public const float toonSize = 0.5f;
+		public float toonHeight = 2.0f;
+		public float toonSize = 0.5f;
 
 		public const float MinStepLength = 2f;
 		public const float WantedStepLength = 3f;
@@ -35,9 +34,7 @@ namespace Pather.Graph
 		long LRU = 0;
 
 
-		public PathGraph(string continent,
-						 ChunkedTriangleCollection triangles,
-						 TriangleCollection paint)
+		public PathGraph(string continent, ChunkedTriangleCollection triangles, TriangleCollection paint)
 		{
 			this.Continent = continent;
 			this.triangleWorld = triangles;
@@ -46,14 +43,10 @@ namespace Pather.Graph
 		}
 
 		public void Close()
-		{
-			triangleWorld.Close();
-		}
+		{ triangleWorld.Close(); }
 
 		public void Clear()
-		{
-			chunks = new SparseMatrix2D<GraphChunk>(8);
-		}
+		{ chunks = new SparseMatrix2D<GraphChunk>(8); }
 
 		private void GetChunkCoord(float x, float y, out int ix, out int iy)
 		{
@@ -508,10 +501,7 @@ loop_end:
 		// return null if failed or the last spot in the path found
 
 		int searchID = 0;
-		private Spot search(Spot src, Spot dst,
-							Location realDst,
-							float minHowClose, bool AllowInvented,
-							ILocationHeuristics locationHeuristics)
+		private Spot search(Spot src, Spot dst, Location realDst, float minHowClose, bool AllowInvented, ILocationHeuristics locationHeuristics)
 		{
 			searchID++;
 			int count = 0;
@@ -868,5 +858,11 @@ loop_end:
 			//Console.WriteLine(s); 
 			Console.WriteLine(s);
 		}
+        public Path CreatePath(Location origin, Location destination, float dist, float hight, float radius)
+        {
+            this.toonHeight = hight;
+            this.toonSize = radius;
+            return CreatePath(origin, destination, dist);
+        }
 	}
 }
