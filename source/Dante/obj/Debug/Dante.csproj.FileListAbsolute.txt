@@ -1,0 +1,5 @@
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\BabBot\BabBot\bin\Debug\Dante.dll
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\BabBot\BabBot\bin\Debug\Dante.pdb
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\Dante\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\Dante\obj\Debug\Dante.dll
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\Dante\obj\Debug\Dante.pdb

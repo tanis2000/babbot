@@ -1,0 +1,53 @@
+Current (1.0.0.307)
+===================
+We have made way too many changes since the last release to list them all here.
+The main new features are:
+- Updated for 3.2.2a
+- Finite State Machine engine that manages all of the scripts functionalities
+- Complete in-game LUA support
+- Example script for end users to tweak and start working from
+
+
+1.0.0.140
+===================
+- Fixed bug #3: Player information now correctly updates in the main form.
+- Basic bindings (actionbar/slot stuff only for now) and test combat code for
+  a low level paladin which is our starting testbed.
+- Added the UI to select a mob and add it to our enemy list
+- Added a script to support zf style bindings
+- Better state management (scripting)
+- Added Caronte, a derivative pathing library forked from the modified
+  version of PPather by benthor
+- StateManager now stores the LastState correctly when starting and 
+  stopping the bot
+- Changed the way movement works when chasing a mob.  But it's still not 
+  taking into account the time spent calculating a new path and the fact 
+  that the mob might have moved in the meanwhile
+- Added Looting (yeah! BabBot can now loot the mobs it kills)
+
+
+1.0.0.113
+===================
+- Updated offsets to 3.1.2
+- Basic movement through waypoints
+- UI changes
+- Added DebugMode to config
+- Load/Save of WayPoints
+- Recording of WayPoints
+- Added support for the new configuration file
+- Added an Options form
+- Added mouse support to interact with wow's window
+- Added a generic exception handler for unhandled exceptions (and bug reporting)
+
+
+1.0.0.99
+========
+- Fixed some offsets for compatibility with v3.1.1 of the client
+- Optimized player related functions
+- Can load/save profiles (but they're not yet of any use atm)
+- Added all the required GPL license & copyright notes
+
+
+1.0.0.94
+========
+- First public **ALPHA** release

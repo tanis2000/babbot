@@ -1,0 +1,1382 @@
+<!--
+This file is part of BabBot.
+
+BabBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+BabBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BabBot.  If not, see <http://www.gnu.org/licenses/>.
+
+Copyright 2009 BabBot Team
+
+Lots of credits to http://wowprogramming.com/
+-->
+<wow_data>
+  <version name="3.2.2.10505" max_lvl="80">
+    <!-- List of unit classes -->
+    <classes>
+        <class armory_id="1" name="WARRIOR" long_name="Warrior" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="2" name="PALADIN" long_name="Paladin" tab_1_max="26" tab_2_max="26" tab_3_max="26" />
+        <class armory_id="3" name="HUNTER" long_name="Hunter" tab_1_max="26" tab_2_max="27" tab_3_max="28" />
+        <class armory_id="4" name="ROGUE" long_name="Rogue" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="5" name="PRIEST" long_name="Priest" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="6" name="DEATHKNIGHT" long_name="Death Knight" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="7" name="SHAMAN" long_name="Shaman" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="8" name="MAGE" long_name="Mage" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="9" name="WARLOCK" long_name="Warlock" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+        <class armory_id="11" name="DRUID" long_name="Druid" tab_1_max="0" tab_2_max="0" tab_3_max="0" />
+    </classes>
+    
+    <!-- List of major toon's factions -->
+    <factions>
+      <faction name="Alliance" />
+      <faction name="Horde" />
+    </factions>
+    
+    <!-- List of toon's (not NPC) races -->
+    <races>
+      <race name="NONE" long_name="" id="0" />
+      <race name="BLOODELF" faction="Horde" long_name="Blood Elf" id="10" />
+      <race name="DRAENEI" faction="Alliance" long_name="Dranei" id="11" />
+      <race name="DWARF" faction="Alliance" long_name="Dwarf" id="3" />
+      <race name="GNOME" faction="Alliance" long_name="Gnome" id="7" />
+      <race name="HUMAN" faction="Alliance" long_name="Human" id="1" />
+      <race name="NIGHTELF" long_name="Night Elf" id="4" />
+      <race name="ORC" faction="Horde" long_name="Orc" id="2" />
+      <race name="SCOURGE" faction="Horde" long_name="Scourge" id="5" />
+      <race name="TAUREN" faction="Horde" long_name="Tauren" id="6" />
+      <race name="TROLL" faction="Horde" long_name="Trol" id="8" />
+    </races>
+    
+    <!-- List of World Continents -->
+    <continents>
+      <continent id="0" name="All" />
+      <continent id="1" name="Kalimdor">
+        <zone name="Teldrassil" />
+        <zone name="Darnassus" />
+      </continent>
+      <continent id="2" name="Azeroth">
+        <zone name="Elwynn Forest" />
+      </continent>
+      <continent id="3" name="Expansion01">
+      </continent>
+      <continent id="4" name="Northrend">
+      </continent>
+    </continents>
+
+    <!-- Lua Functions -->
+    <lua fnew_pattern="(function()\r\n  \r\nend)()">
+      
+      <!-- 
+           *****************************
+           **       Auto Login        **
+           *****************************
+       -->
+      
+      <!-- SetGlueState -->
+      <function name="SetGlueState">
+        <parameters size="4">
+          0 - realm
+          1 - location (US, EU)
+          2 - realm type (NORMAL_PVE or others
+          3 - Sleeping time if some process pending
+        </parameters>
+        <return size="6">
+          0 - Current Glue Screen
+          1 - Pending Glue Screen
+          2 - Current Glue Dialog
+          3 - Text for Glue Dialog (if any)
+          4 - Glue Dialog Parameters (depends of dialog type)
+          5 - Is Connected to server
+        </return>
+        <text>
+          <![CDATA[(function()
+  local d1, d2, d3
+  local found = false
+
+  if (GlueDialog:IsShown()) then
+
+    -----------------
+    -- Glue Dialog --
+    -----------------
+
+    d1 = GlueDialog.which
+    d2 = GlueDialogText:GetText()
+    if (GlueDialogHTML:IsShown()) then
+      d3 = 'html'
+    end
+    
+  elseif (TOSFrame:IsShown()) then
+  
+    --------------
+    -- TOS/EULA --
+    --------------
+
+    d1 = string.lower(TOSFrame.noticeType)
+    local scrollbar = _G[TOSFrame.noticeType .. 'ScrollFrameScrollBar'];
+    if (scrollbar:IsShown()) then
+      local min, max = scrollbar:GetMinMaxValues()
+      scrollbar:SetValue(max)
+    end
+    
+  elseif (RealmList:IsShown()) then
+
+    ---------------------
+    -- Realm Selection --
+    ---------------------
+
+    d1 = 'realmselect'
+    d3 = 'not_found'
+    for i=1, MAX_REALMS_DISPLAYED, 1 do
+      realmIndex = RealmList.offset + i
+      name, numCharacters, invalidRealm, realmDown = GetRealmInfo(1, realmIndex);
+
+      if (name == '{0}') then
+        if (realmDown) then
+          d3 = 'down'
+        else 
+          if (RealmList.currentRealm ~= realmIndex) then
+            RealmList.refreshTime = {3}
+
+            prealm = _G['RealmListRealmButton'..RealmList.currentRealm]
+            prealm:UnlockHighlight();
+
+            realm = _G['RealmListRealmButton'..realmIndex]
+            RealmList.currentRealm = realm:GetID()
+            RealmList.selectedName = realm.name
+
+            realm:LockHighlight()
+            RealmListHighlight:SetPoint('TOPLEFT', realm, 'TOPLEFT', 0, 0)
+            RealmListHighlight:Show()
+          end
+                        
+          d3 = 'ok'
+        end
+
+        break;
+      end
+    end
+    
+  elseif (RealmWizard:IsShown()) then
+
+    ------------------
+    -- Realm Wizard --
+    ------------------
+  
+    found = false
+    for i = 1, 8 do
+      chkLocationBox = _G['RealmWizardLocationButton' .. i]
+      chkLocationLabel = _G['RealmWizardLocationButton' .. i .. 'Text']
+      chkLocationText = chkLocationLabel:GetText()
+      if (chkLocationText == '{1}') then
+        chkLocationBox:SetChecked(1)
+      
+        RealmWizardLocationButton_OnClick(chkLocationBox.categoryIndex)
+
+        found = true
+        break
+      end
+    end
+
+    if (found) then
+      found = false
+
+      for i = 1, 4 do
+        checkBox = _G['RealmWizardGameTypeButton'..i]
+        checkLabel = _G['RealmWizardGameTypeButton' .. i .. 'Text']
+        checkText = checkLabel:GetText()
+
+        if (checkText ~= {2}) then
+          checkBox:SetChecked(0);
+        else
+          checkBox:SetChecked(1);
+          RealmWizardGametypeLabel:SetText(checkText);
+          d3 = 'ok'
+
+          found = true
+          break
+        end
+      end
+      
+      if (not found) then
+        d3 = 'type_not_found'
+      end
+    else
+      d3 = 'location_not_found'
+    end 
+  elseif (PatchDownloadUI:IsShown()) then
+    --------------------
+    -- Patch download --
+    --------------------
+    
+    d3 = PatchProgressText:GetText()
+  end
+
+  return CURRENT_GLUE_SCREEN, CURRENT_GLUE_PENDING, d1, d2, d3, IsConnectedToServer()
+end)()]]>
+        </text>
+      </function>
+
+      <!-- SelectCharacter -->
+      <function name="SelectCharacter">
+        <parameters size="1">
+          0 - Character Name
+        </parameters>
+        <return size="1">
+          0 - Character ID in list or null if not found
+        </return>
+        <text>
+          <![CDATA[(function()
+  local found = nill
+  local numChars = GetNumCharacters();
+  for i=1, numChars, 1 do
+    local name = GetCharacterInfo(i);
+    if (name == '{0}') then
+      found = i
+      break
+    end
+  end
+  
+  if (found) then
+    CharacterSelect_SelectCharacter(found)
+  end
+  return found
+end)()]]>
+        </text>
+      </function>
+      
+      <!-- SendLogin -->
+      <function name="SendLogin">
+        <parameters size="3">
+          0 - realm
+          1 - user
+          2 - password
+        </parameters>
+        <text>
+          <![CDATA[(function()
+  local realm = AccountLoginRealmName:GetText(serverName);
+  if (realm ~= '{0}') then
+    AccountLoginRealmName:SetText('{0}')
+  end
+  
+  AccountLoginAccountEdit:SetText('{1}')
+  AccountLoginPasswordEdit:SetText('{2}')
+  DefaultServerLogin(AccountLoginAccountEdit:GetText(), AccountLoginPasswordEdit:GetText())
+end)()]]></text>
+      </function>
+
+      <!-- endregion Auto Login -->
+
+      <!-- 
+           **************************
+           **       Talents        **
+           **************************
+       -->
+      
+      <!-- GetAvailTalentPoints -->
+      <function name="GetAvailTalentPoints">
+        <return size="2">
+          0 - Number of available talent points
+          1 - Number of proffessions slot available
+        </return>
+        <text><![CDATA[(function()
+  return UnitCharacterPoints("player")
+end)()]]></text>
+      </function>
+      
+      <!-- LearnTalent -->
+      <function name="LearnTalent" size="">
+        <parameters size="2">
+          0 - Tab ID
+          1 - Talent ID
+        </parameters>
+        <return />
+        <text><![CDATA[(function()
+    LearnTalent({0}, {1}, false)
+end)()]]></text>
+      </function>
+
+      <!-- GetTalentInfo -->
+      <function name="GetTalentInfo">
+        <parameters size="2">
+          0 - Tab ID
+          1 - Talent ID
+        </parameters>
+        <return size="10">
+          0 - name String - The name of the talent in that tab, 
+              or nil if there is no talent with this tab/index combination.
+          1 - iconPath String - The path to the icon of the talent, 
+            or nil if there is no talent with this tab/index combination.
+          2 - tier Integer - The vertical grid position of the talent icon 
+              in its talent pane tab, or 1 if there is no talent with this tab/index combination.
+          3 - column Integer - The horizontal grid position of the talent 
+            icon in its talent pane tab, or 1 if there is no talent with this tab/index combination.
+          4 - currentRank Integer - The current rank (currently assigned talent points) 
+            of the talent, or 0 (zero) if there is no talent with this tab/index combination.
+          5 - maxRank - Integer - The maximum rank (maximum number of talent points) 
+            of the talent, or 0 (zero) if there is no talent with this tab/index combination.
+          6 - isExceptional 
+          7 - meetsPrereq
+            Whether the talent's prerequisites are met.
+          8 - previewRank
+            The rank of this talent in preview mode. If it is not previewed, previewRank == currentRank.
+          9 - meetsPreviewPrereq
+            Whether the talent's prerequisites in preview mode are met.
+        </return>
+        <text><![CDATA[(function()
+    return GetTalentInfo({0}, {1}, false, false)
+end)()]]></text>
+      </function>
+
+      <!-- endregion Talents -->
+      
+      <!-- 
+           ***********************
+           **       Gossip      **
+           ***********************
+       -->
+      
+      <!-- GetGossipOptions -->
+      <function name="GetGossipOptions">
+        <return size="-1">
+          * text - Text to be displayed for the gossip option (string)
+          * gossipType - Non-localized string indicating the type of gossip option (string)
+            o Banker - Begin a Bank interaction
+            o BattleMaster - Queue for a battleground instance
+            o Binder - Set the player's Hearthstone location
+            o Gossip - Talk to the NPC
+            o Tabard - Begin a Tabard design interaction
+            o Taxi - Begin a Taxi (flight master) interaction
+            o Trainer - Begin a Trainer interaction
+            o Vendor - Begin a Merchant interaction
+          *
+          ... - Additional text, gossipType values for each gossip option available (list)
+
+        </return>
+        <text>
+          <![CDATA[(function()
+  return GetGossipOptions()
+end)()]]>
+        </text>
+    </function>
+
+    <!-- SelectGossipOption -->
+    <function name="SelectGossipOption">
+        <parameters size="1">
+          0 - "gossip" index (see FindGossipIndex)
+        </parameters>
+        <text><![CDATA[SelectGossipOption({0})]]></text>
+      </function>
+
+      <!-- FindGossipIndex -->
+      <function name="FindGossipIndex">
+        <parameters size="1">
+          0 - gossipType - Non-localized string indicating the type of gossip option (string)
+            * banker - Begin a Bank interaction
+            * battleMaster - Queue for a battleground instance
+            * binder - Set the player's Hearthstone location
+            * gossip - Talk to the NPC
+            * tabard - Begin a Tabard design interaction
+            * taxi - Begin a Taxi (flight master) interaction
+            * trainer - Begin a Trainer interaction
+            * vendor - Begin a Merchant interaction
+            * gossip
+            - Custom gossip types
+        </parameters>
+        <return size="1">
+            0 - index if gossip type found in NPC gossip dialog or null if not found
+        </return>
+        <text><![CDATA[(function()
+    local idx, txt
+    local arg = GetGossipOptions()
+    for i = 1, table.getn(arg), 2 do
+        local title, type = arg[i], arg[i+1]
+        if (type == "{0}") then
+            idx = i
+            txt = title
+            break
+        end
+    end
+    return idx, txt
+end)()]]></text>
+      </function>
+      
+      <!-- IsGossipFrameOpen -->
+      <function name="IsGossipFrameOpen">
+        <return size="1">
+        0 - 1 if GossipFrame is shown and null if not (yet)
+        </return>
+        <text><![CDATA[(function()
+  return GossipFrame:IsShown()
+end)()]]></text>
+      </function>
+
+      <function name="GetGossipQuests">
+        <parameters size="1">
+          0 - type of quests i.e "Active" or "Available"
+        </parameters>
+        <return size="-1">
+          *  name - Name of the quest (string)
+          * level - Suggested character level for attempting the quest (number)
+          * isTrivial - 1 if the quest is considered "trivial" at the player's level (rewards no XP); otherwise nil (1nil)
+          * ... - Additional name, level, isTrivial values if more than one quest is active (list)
+
+        </return>
+        <text>
+          <![CDATA[(function()
+      return GetGossip{0}Quests()
+      end)()]]>
+        </text>
+      </function>
+
+      <function name="GetActiveGossipQuests">
+        <return size="-1">
+          *  name - Name of the quest (string)
+          * level - Suggested character level for attempting the quest (number)
+          * isTrivial - 1 if the quest is considered "trivial" at the player's level (rewards no XP); otherwise nil (1nil)
+          * ... - Additional name, level, isTrivial values if more than one quest is active (list)
+
+        </return>
+        <text>
+          <![CDATA[(function()
+      return GetGossipAvailableQuests()
+      end)()]]>
+        </text>
+      </function>
+
+      <!-- IsGossipFrameOpen -->
+      <function name="GetNpcDialogInfo">
+        <parameters size="1">
+          0 - If true (default) than Auto Close current frame is closing 
+            after toon retrieve parameters. If false it stays.
+        </parameters>
+        <return size="4">
+          0 - type of chosen gossip service as:
+            * "wep_skill_trainer" - SkillFrame (weapon skills)
+            * "class_trainer" - ClassTrainerFrame
+            * "trade_skill_trainer" - TradeSkillFrame
+            * "taxi" - TaxiFrame
+            * "vendor" - MerchantFrame
+            * "banker" - BankFrame
+            * "battlemaster" - BattlefieldFrame ??
+
+          or null if it not shown (yet)
+          1..3 - Optional service information:
+            * vendor -
+              1 - can vendor repair
+              2 - Is vendor has water
+              3 - Is vendor has food
+
+              At the moment it doesn't distinguish food and drink 
+              since it's the same subcategory
+              
+            * quest -
+              1 - quest header in format according "quests.header_pattern" below:
+                quest title::quest text::quest objectives
+              2 - general quest info in format according "quests.info_pattern" below:
+                Learned Spell,isTradeskillSpell,isSpellLearned,
+                  NumQuestItems,NumQuestRewards,NumQuestChoices
+              3 - details about each quest type ("required", "reward", "choice")
+                in format according "quests.details_pattern" below:
+              qty::name::qty::name||..||..
+
+        </return>
+        <text>
+              <![CDATA[(function()
+  local auto_close = {0}
+  local service, d1, d2, d3
+  if (GossipFrame and GossipFrame:IsShown()) then
+    service = "gossip"
+  elseif (MerchantFrame and MerchantFrame:IsShown()) then
+    service = "vendor"
+    -- check for repair
+    d1 = CanMerchantRepair()
+    -- check for water/food
+    max_num = GetMerchantNumItems()
+    for i = 1, max_num do
+      name, link, quality, iLevel, reqLevel, class, subclass, 
+        maxStack, equipSlot, texture, vendorPrice = GetItemInfo(GetMerchantItemLink(i));
+      if (subclass == "Food & Drink") then
+        d2 = 1
+        d3 = 1
+
+        break
+      end
+    end
+
+    -- done with merchant
+    if (auto_close) then
+      CloseMerchant()
+    end
+    
+  elseif (QuestFrame and QuestFrame:IsShown()) then
+    service = "quest"
+
+    d1 = GetTitleText()
+
+    if (QuestFrameRewardPanel:IsShown()) then
+      qt = "_end"
+    elseif (QuestFrameProgressPanel:IsShown()) then
+      qt = "_progress"
+    elseif (QuestFrameDetailPanel:IsShown()) then
+      qt = "_start"
+    else
+      return null, null, null, null
+    end
+
+        
+    service = service .. qt
+    if (service ~= "quest_start") then
+      if (auto_close) then
+        CloseQuest()
+      end
+      
+      return service, d1, d2, d3
+    end
+
+    -- Returning quest level as char level
+    d1 = d1 .. "::" .. GetQuestText() .. "::" .. GetObjectiveText()
+
+    q = {{"required", "reward", "choice"}}
+
+    -- Get quest details
+    qr = {{}}
+    qr[1] = GetNumQuestItems()
+    qr[2] = GetNumQuestRewards()
+    qr[3] = GetNumQuestChoices()
+                    
+    texture, name, isTradeskillSpell, isSpellLearned = GetRewardSpell()
+    if (name) then
+      d2 = name .. "," .. isTradeskillSpell .. "," .. isSpellLearned
+    else
+      d2 = ",,";
+    end
+                    
+    d3 = ""
+    for i = 1, 3 do
+      d2 = d2 .. "," .. qr[i]
+      if (i > 1) then
+        d3 = d3 .. "||"
+      end
+                    
+      s = ""
+      for j = 1, qr[i] do
+        if (s ~= "") then
+          s = s.."::"
+       end
+                      
+        name, texture, qty = GetQuestItemInfo(q[i], j)
+        s = s .. qty .. "," .. name
+      end
+                    
+      d3 = d3 .. s
+     end
+        
+    -- Done with quest
+  elseif (BankFrame and BankFrame:IsShown()) then
+    service = "banker"
+    if (auto_close) then
+      CloseBankFrame()
+    end
+  elseif (SkillFrame and SkillFrame:IsShown()) then
+    service = "wep_skill_trainer"
+  elseif (ClassTrainerFrame and ClassTrainerFrame:IsShown()) then
+    service = "class_trainer"
+    if (auto_close) then
+      CloseTrainer()
+    end
+  elseif (TradeSkillFrame and TradeSkillFrame:IsShown()) then
+    service = "trade_skill_trainer"
+    if (auto_close) then
+      CloseTradeSkill()
+    end
+  elseif (BattlefieldFrame and BattlefieldFrame:IsShown()) then
+    service = "battlemaster"
+    if (auto_close) then
+      CloseBattlefield()
+    end
+  elseif (TaxiFrame and TaxiFrame:IsShown()) then
+    service = "taxi"
+    if (auto_close) then
+      CloseTaxiMap()
+    end
+  end
+
+  return service, d1, d2, d3
+end)()]]></text>
+      </function>
+      
+      <!-- GetNpcInfo -->
+      <function name="GetNpcGossipInfo">
+        <return size="3">
+        0 - number of available quests
+        1 - number of active quests
+        2 - number of services
+        
+        If no gossip/service available NPC window closed
+        </return>
+        <text>
+          <![CDATA[(function()
+  avail_quest = GetNumGossipAvailableQuests()
+  active_quest = GetNumGossipActiveQuests()
+  options = GetNumGossipOptions()
+  
+  if ((avail_quest == 0) and (active_quest == 0) and (options == 0)) then
+    CloseGossip()
+  end
+  return avail_quest, active_quest, options
+end)()]]></text>
+      </function>
+
+      <!-- name -->
+      <function name="SelectGossipAvailableQuest">
+        <parameters size="1">
+          0 - index 
+            Index of a quest available from the current 
+            Gossip NPC (between 1 and GetNumGossipAvailableQuests()) (number)
+        </parameters>
+        <text>
+          <![CDATA[SelectGossipAvailableQuest({0})]]>
+        </text>
+      </function>
+
+      <!-- SelectGossipActiveQuest -->
+      <function name="SelectGossipActiveQuest">
+        <parameters size="1">
+          0 - index
+          Index of a quest available from the current
+          Gossip NPC (between 1 and GetNumGossipAvailableQuests()) (number)
+        </parameters>
+        <text>
+          <![CDATA[SelectGossipActiveQuest({0})]]>
+        </text>
+      </function>
+
+      <!-- IsNpcFrameOpen -->
+      <function name="IsNpcFrameOpen">
+        <parameters size="1">
+          0 - Frame Name as "Quest" of "Gossip"
+        </parameters>
+        <return size="1">
+          0 - 1 if open and 0 if not
+        </return>
+        <text>
+          <![CDATA[(function()
+  if ({0}Frame and {0}Frame:IsShown()) then
+    return 1
+  else
+    return 0
+  end
+end)()]]>
+        </text>
+      </function>
+
+      <!-- 
+           ***********************
+           **       Quest       **
+           ***********************
+       -->
+
+      <!-- AcceptQuest -->
+        <function name="AcceptQuest">
+        <text>
+          <![CDATA[AcceptQuest()]]>
+        </text>
+      </function>
+
+      <!-- GetQuestReward -->
+        <function name="GetQuestReward">
+        <parameters size="1">
+          0 - Quest choice
+        </parameters>
+        <text>
+          <![CDATA[(function()
+   GetQuestReward({0})
+end)()]]>
+        </text>
+      </function>
+
+      <!-- FindLogQuest -->
+      <function name="FindLogQuest">
+        <parameters size="1">
+          0 - Quest Title
+        </parameters>
+        <return size="3">
+          0 - Index of the quest in Quest Log or null if quest not found
+          1 - Quest Id
+          2 - Is quest completed
+        </return>
+        <text>
+    <![CDATA[(function()
+  local idx = 0
+  local id, completed
+  num_entries = GetNumQuestLogEntries()
+  for i = 1, num_entries do
+    title, _, _, _, _, _, completed, _, id = GetQuestLogTitle(i)
+    if ((header == nil) and (title == "{0}")) then
+      idx = i
+      break
+    end
+  end
+  return idx, id, completed
+end)()]]></text>
+      </function>
+
+      <!-- FindLogQuest -->
+      <function name="IsLogQuestCompleted">
+        <parameters size="1">
+          0 - Quest Idx
+        </parameters>
+        <return size="1">
+          0 - 1 if quest completed and null if not
+        </return>
+        <text>
+          <![CDATA[(function()
+  _, _, _, _, _, _, completed = GetQuestLogTitle({0})
+  
+  if (not completed) then
+    num = GetNumQuestLeaderBoards({0})
+    if (num == 0) then
+        completed = 1
+    end
+  end
+
+  
+  return completed
+end)()]]>
+        </text>
+      </function>
+
+      <!-- GetQuestObjectives -->
+        <function name="GetQuestObjectives">
+        <parameters size="1">
+          0 - Quest index in toon log
+        </parameters>
+        <return size="1">
+        </return>
+          0 - Line in format objective::objective ...
+            where each objective represent by comma delimited line constists of
+            0 - text - Text of the objective (e.g. "Gingerbread Cookie: 0/5") (string)
+            1 - type - Type of objective (string)
+                * event - Requires completion of a scripted event
+                * item - Requires collecting a number of items
+                * monster - Requires slaying a number of NPCs
+                * object - Requires interacting with a world object
+                * reputation - Requires attaining a certain level of reputation with a faction
+            2 - finished - 1 if the objective is complete; otherwise nil
+        <text>
+    <![CDATA[(function()
+  local res = ""
+  num_obj = GetNumQuestLeaderBoards({0})
+  
+  for i = 1, num_obj do
+    text, type, finished = GetQuestLogLeaderBoard(i, {0})
+    if (i > 1) then
+      res = res .. "::"
+    end
+      
+    fres = 0
+    if (finished) then
+      fres = 1
+    end
+      
+     res = res .. text .. "," .. type .. "," .. fres
+   end
+  
+  return res
+end)()]]></text>
+      </function>
+
+      <!-- AbandonQuest -->
+      <function name="AbandonQuest">
+        <text>
+          <![CDATA[(function()
+  AbandonQuest()
+  QuestLogFrame:Hide()
+end)()]]>
+        </text>
+      </function>
+
+      <!-- SelectAbandonQuest -->
+      <function name="SelectAbandonQuest">
+        <parameters size="1">
+          0 - Current quest index in toon's quest log.
+        </parameters>
+        <return size="2">
+          0 - name - Name of the quest being abandoned (string)
+          1 - items - A string listing any items that would be destroyed (string)
+        </return>
+        <text>
+          <![CDATA[(function()
+  SelectQuestLogEntry({0})
+  SetAbandonQuest({0})
+  
+  name = GetAbandonQuestName()
+  items = GetAbandonQuestItems()
+  
+  return name, items
+end)()]]>
+        </text>
+      </function>
+
+      <!-- DeliverQuest -->
+        <function name="DeliverQuest">
+          <parameters size="1">
+            1 - Reward index (0 by default)
+          </parameters>
+        <text>
+          <![CDATA[GetQuestReward({0})]]>
+        </text>
+      </function>
+
+      <!-- GetLogQuestInfo -->
+      <function name="GetLogQuestInfo">
+        <parameters size="1">
+          0 - Quest Title
+        </parameters>
+        <return size="5">
+           0 - quest index in toon's log
+           1 - quest id
+           2 - quest recomended level
+           3 - quest link
+           4 - list of objectives
+           
+        </return>
+        <text>
+          <![CDATA[(function()
+  -- Search for the quest
+  local idx = 0
+  local quest_id = 0
+  local level, link, objs
+  
+  num_entries = GetNumQuestLogEntries()
+  for i = 1, num_entries do
+    title, level, _, _, is_header, _, _, _, quest_id  = GetQuestLogTitle(i)
+    if ((is_header == nil) and (title == "{0}")) then
+      idx = i
+      objs = ""
+      link = GetQuestLink(idx)
+      num_obj = GetNumQuestLeaderBoards(idx)
+  
+      for i = 1, num_obj do
+        text, type, finished = GetQuestLogLeaderBoard(i, idx)
+        if (i > 1) then
+          objs = objs .. "::"
+        end
+      
+        fres = 0
+        if (finished) then
+          fres = 1
+        end
+      
+        objs = objs .. text .. "," .. type .. "," .. fres
+      end
+      
+      break
+    end
+  end
+  return idx, quest_id, level, link, objs
+end)()]]>
+        </text>
+      </function>
+
+      <!-- CompleteQuest -->
+      <function name="CompleteQuest">
+        <text>
+          <![CDATA[CompleteQuest()]]>
+        </text>
+      </function>
+
+      <!-- 
+           *********************
+           **       Misc      **
+           *********************
+       -->
+      
+      <!-- InteractUnit-->
+      <function name="InteractWithTarget">
+        <text>
+          <!-- Unit should be targeted before call this function -->
+          <![CDATA[InteractUnit("target")]]>
+        </text>
+      </function>
+
+      <!-- GetVendorInfo -->
+      <function name="GetVendorInfo">
+        <!-- Player should be interacting with vendor before call this function -->
+        <return size="3">
+          0 - Is Vendor can repear
+          1 - Does Vendor has water
+          2 - Does Vendor has food
+        </return>
+        <text>
+          <![CDATA[(function()
+  local hasWater, hasFood
+  local canRepair = CanMerchantRepair()
+  
+  ; TODO Check for water & food
+  return canRepair, hasWater, hasFood
+end)()]]>
+        </text>
+      </function>
+
+      <!-- UnitClass -->
+      <function name="GetUnitInfo">
+        <parameters size="1">
+          0 - unit String - the unitId to query, e.g. "player"
+        </parameters>
+        <return size="5">
+        </return>
+        0 - localized class
+        The localized class of the specified unit as a string. e.g. "Mage", "Warrior", "Guerrier", etc.
+
+        1 - english class
+        The fully capitalized english class name with no spaces, e.g. "MAGE", "WARRIOR", "DEATHKNIGHT", etc.
+
+        2 - english faction (Alliance/Horde)
+          Note that for NPCs, the function will only return Alliance/Horde for factions 
+          closely allied with either side. Goblins, for instance, return nil,nil.
+
+        3 - english race (TROLL, HUMAN)
+
+        4 - gender - The unit's gender (number)
+        * 1 - Neuter / Unknown
+        * 2 - Male
+        * 3 - Female
+
+        <text>
+          <![CDATA[(function()
+  class1, class2 = UnitClass("{0}")
+  race1, race2 = UnitRace("{0}")
+  faction = UnitFactionGroup("{0}")
+
+  if (race2) then
+    race2 = string.upper(race2)
+  end
+  
+  return class1, class2, faction, race2,  UnitSex("{0}")
+end)()]]>
+        </text>
+      </function>
+
+      <!-- Open Toon Local Frame -->
+      <function name="ToggleFrame">
+        <parameters size="1">
+          0 - Toon frame name as "QuestLog", "Achivements" etc
+        </parameters>
+        <text>
+          <![CDATA[ToggleFrame({0}Frame)]]>
+        </text>
+      </function>
+
+      <!-- GetCurrentMapInfo -->
+      <function name="GetCurrentMapInfo">
+        <parameters />
+        <return size="3">
+          0 - Continent ID
+          1 - zoneName - String - zone name (localized).
+          2 - subzone name (might be empty
+        </return>
+        <text>
+          <![CDATA[(function()
+	SetMapToCurrentZone()
+	local continent = GetCurrentMapContinent()
+  local zone = GetZoneText()
+  local subzone = GetSubZoneText();
+	return continent, zone, subzone
+end)()]]>
+        </text>
+      </function>
+
+      <!-- TargetUnit -->
+      <function name="TargetUnit">
+        <parameters size="1">
+          0 - Exact Unit Name
+        </parameters>
+        <text>
+          <![CDATA[(function()
+  TargetUnit("{0}" , true)   
+end)()]]>
+        </text>
+      </function>
+
+      
+      <!-- EquipItemByName -->
+        <function name="EquipItemByName">
+        <parameters size="1">
+          0 - Item Name
+        </parameters>
+        <text>
+          <![CDATA[EquipItemByName("{0}")]]>
+        </text>
+      </function>
+      
+      <!-- 
+           **************************
+           **       Trainer        **
+           **************************
+       -->
+      
+      <!-- SetTrainerAvailableFilter -->
+      <function name="SetTrainerAvailableFilter">
+        <text><![CDATA[SetTrainerServiceTypeFilter("available" , 1, 1)]]></text>
+      </function>
+
+      <!-- BuyTrainerService -->
+      <function name="BuyTrainerService">
+        <parameters size="1">
+          0 - Index of the trainer service
+        </parameters>
+        <text>
+          <![CDATA[BuyTrainerService({0})]]>
+        </text>
+      </function>
+
+      <!-- name -->
+      <function name="GetServiceIdxList">
+        <return size="1">
+          0 - line in format idx,service::idx,service:: ... of 
+          of each available skill player can afford to buy
+          
+          for ex 2:Charge,5:100:Thunder Strike and so on
+        </return>
+        <text>
+          <![CDATA[(function()
+  local list = ""
+  
+  num = GetNumTrainerServices()
+  total_money = GetMoney()
+  
+  for i = 1, num do
+    name, rank, type = GetTrainerServiceInfo(i)
+    if (type == "available") then
+      if (list ~= "") then
+        list = list .. "::"
+      end
+      
+      -- Check if we can afford it
+      money = GetTrainerServiceCost(i)
+      if (money > total_money) then
+        break;
+      else
+        total_money = total_money - money
+      end
+      
+      -- Yes, you can :)
+      list = list .. i .. "," .. name .. "," .. rank
+    end
+  end
+  
+  return list
+end)()]]>
+        </text>
+      </function>
+
+      <!-- FindVisibleStaticDialog -->
+      <function name="FindVisibleStaticDialog">
+        <parameters size="1">
+          0 - Dialog name to check
+        </parameters>
+        <return size="1">
+          0 - Name of shown dialog (for ex StaticPopup1)
+            or null if not found
+        </return>
+        <text>
+          <![CDATA[(function()
+  local fname
+  local dialog = StaticPopup_FindVisible("{0}")
+  if (dialog ~= nil) then
+    fname = dialog:GetName()
+  end
+  return fname
+end)()]]>
+        </text>
+      </function>
+
+      <!-- ConfirmBinder -->
+      <function name="ConfirmBinder">
+        <parameters size="1">
+          0 - Name StaticPopup with binding confirmation
+        </parameters>
+        <text>
+          <![CDATA[(function()
+  ConfirmBinder()
+  {0}:Hide()
+end)()]]></text>
+      </function>
+
+      <!-- TakeTaxi -->
+      <function name="TakeTaxi">
+        <parameters size="2">
+          0 - Name of destination zone
+          1 - Name of destination subzone
+        </parameters>
+        <return size="2">
+          0 - index of destination or
+            0 if destination not found or
+            -1 if destination found but cannot be taken
+              (see description)
+          1 - description for ex.
+            if destination exists but not reachable then
+            it returns DISTANT
+
+        </return>
+        <text>
+          <![CDATA[(function()
+  local descr
+  local found = 0
+  local money = GetMoney()
+
+  local num = NumTaxiNodes()
+  for i = 1 , num do
+    node = TaxiNodeName(i)
+    if (node == "{0}, {1}") then
+      descr = TaxiNodeGetType(i)
+      if (descr ~= "REACHABLE") then
+        found = -1
+        break
+      end
+      
+      cost = TaxiNodeCost(i)
+      if (cost > money) then
+        descr = "NOT_ENOUGH_MONEY"
+        found = -1;
+        break;
+      end
+      
+      found = i;
+      TakeTaxiNode(i);
+      break;
+    end
+  end
+  return found, descr
+end)()]]>
+        </text>
+      </function>
+        
+      <!-- Template for new function
+      <!- - name - ->
+      <function name="">
+        <parameters size="">
+        </parameters>
+        <return size="">
+        </return>
+        <text><![CDATA[(function()
+  
+end)()]]></text>
+      </function>
+      -->
+
+    </lua>
+    
+    <!-- Set of configuration for talent processing
+      "delay" parameter define delay between learning each talent from list
+       "retry" parameters control how many retries need if learning too fast
+    -->
+    <npc_config port_opt_pattern="Teleport" />
+    <talent_config lvl_start="10" delay="1000" retry="5"
+      armory_pattern="^http://www.wowarmory.com/talent-calc.xml\?cid=(\d)\&amp;tal=(\d+)$" />
+    <!-- Set of configuration for quest processing -->
+    <quest_config header_pattern="^.*::.*::.*$" info_pattern="^.*,1?,1?,\d+,\d+,\d+$" 
+            detail_pattern="^.*||.*||.*$" objective_pattern="^(.*): (\d+)/(\d+)$"/>
+    <!-- global WoW version related offset and variables -->
+    <globals 
+        game_offset="0x12D4EA8"
+        name_store_pointer="0x12541C8"
+        player_base_offset1="0x34"
+        player_base_offset2="0x24"
+        player_rotation_offset="0x7A8"
+        player_x_offset="0x798"
+        player_y_offset="0x79C"
+        player_z_offset="0x7A0"
+        local_player_corpse_offset="0x113DA34"
+        camera_offset="0x00007da0"
+        camera_pointer="0x10e1824"
+        descriptor_offset="0x08"
+        first_object="0xAC"
+        guid_offset="0x30"
+        local_guid_offset="0xC0"
+        next_object="0x3C"
+        type_offset="0x14"
+        first_buff="0xEBC"
+        next_buff="0x4"
+        obj_name_base_offset1="0x1A4"
+        obj_name_base_offset2="0x90"
+        obj_name_len ="40"
+        unit_name_base_offset1="0x968"
+        unit_name_base_offset2="0x5C"
+        unit_name_len="40"
+        click_to_move_base="0x01297920"
+        click_to_move_unknown="0x0"
+        click_to_move_turn_scale="0x4"
+        click_to_move_unknown_2="0x8"
+        click_to_move_interact_distance="0xc"
+        click_to_move_action_type="0x1c"
+        click_to_move_target="0x20"
+        click_to_move_dest_x="0x8c"
+        click_to_move_dest_y="0x90"
+        click_to_move_dest_z="0x94"
+
+        lua_dostring="0x007CF6B0"
+        lua_getstate="0x007CE280"
+        lua_gettop = "0x00803340"
+        lua_register = "0x007CE460"
+        lua_tostring = "0x00803850"
+     />
+  </version>
+  <version name="3.3.0.11159" max_lvl="80">
+    <globals
+        game_offset="0x00CF7C00"
+        name_store_pointer="0x00C76020"
+        player_base_offset1="0x34"
+        player_base_offset2="0x24"
+        player_rotation_offset="0x7A8"
+        player_x_offset="0x798"
+        player_y_offset="0x79C"
+        player_z_offset="0x7A0"
+        local_player_corpse_offset="0x00B68810"
+        camera_offset="0x7E20"
+        camera_pointer="0x00B0C544"
+        descriptor_offset="0x08"
+        first_object="0xAC"
+        guid_offset="0x30"
+        local_guid_offset="0xC0"
+        next_object="0x3C"
+        type_offset="0x14"
+        first_buff="0xEBC"
+        next_buff="0x4"
+        obj_name_base_offset1="0x1A4"
+        obj_name_base_offset2="0x90"
+        obj_name_len ="40"
+        unit_name_base_offset1="0x964"
+        unit_name_base_offset2="0x5C"
+        unit_name_len="40"
+        click_to_move_base="0x00CB9788"
+        click_to_move_unknown="0x0"
+        click_to_move_turn_scale="0x4"
+        click_to_move_unknown_2="0x8"
+        click_to_move_interact_distance="0xc"
+        click_to_move_action_type="0x1c"
+        click_to_move_target="0x20"
+        click_to_move_dest_x="0x8c"
+        click_to_move_dest_y="0x90"
+        click_to_move_dest_z="0x94"
+
+        lua_dostring="0x007F1F40"
+        lua_getstate="0x007F0AE0"
+        lua_gettop = "0x00826680"
+        lua_register = "0x007F0CC0"
+        lua_tostring = "0x00826B90"
+     />
+  </version>
+  <version name="3.3.2.11403" max_lvl="80">
+    <globals
+        game_offset="0x00CF8C50"
+        name_store_pointer="0x00C93448"
+        player_base_offset1="0x34"
+        player_base_offset2="0x24"
+        player_rotation_offset="0x7A8"
+        player_x_offset="0x798"
+        player_y_offset="0x79C"
+        player_z_offset="0x7A0"
+        local_player_corpse_offset="0x00B69858"
+        camera_offset="0x7E20"
+        camera_pointer="0x0"
+        descriptor_offset="0x08"
+        first_object="0xAC"
+        guid_offset="0x30"
+        local_guid_offset="0xC0"
+        next_object="0x3C"
+        type_offset="0x14"
+        first_buff="0xEBC"
+        next_buff="0x4"
+        obj_name_base_offset1="0x1A4"
+        obj_name_base_offset2="0x90"
+        obj_name_len ="40"
+        unit_name_base_offset1="0x964"
+        unit_name_base_offset2="0x5C"
+        unit_name_len="40"
+        click_to_move_base="0x00CBA7D8"
+        click_to_move_unknown="0x0"
+        click_to_move_turn_scale="0x4"
+        click_to_move_unknown_2="0x8"
+        click_to_move_interact_distance="0xc"
+        click_to_move_action_type="0x1c"
+        click_to_move_target="0x20"
+        click_to_move_dest_x="0x8c"
+        click_to_move_dest_y="0x90"
+        click_to_move_dest_z="0x94"
+
+        lua_dostring="0x007F25C0"
+        lua_getstate="0x007F1160"
+        lua_gettop = "0x00826D80"
+        lua_register = "0x007F1340"
+        lua_tostring = "0x00827290"
+     />
+  </version>
+  <version name="3.3.5.12340" max_lvl="80">
+    <globals
+        game_offset="0x00CD87A8"
+        name_store_pointer="0x00C5D938"
+        player_base_offset1="0x34"
+        player_base_offset2="0x24"
+        player_rotation_offset="0x7A8"
+        player_x_offset="0x798"
+        player_y_offset="0x79C"
+        player_z_offset="0x7A0"
+        local_player_corpse_offset="0x00B69858"
+        camera_offset="0x7E20"
+        camera_pointer="0x0"
+        descriptor_offset="0x08"
+        first_object="0xAC"
+        guid_offset="0x30"
+        local_guid_offset="0xC0"
+        next_object="0x3C"
+        type_offset="0x14"
+        first_buff="0xEBC"
+        next_buff="0x4"
+        obj_name_base_offset1="0x1A4"
+        obj_name_base_offset2="0x90"
+        obj_name_len ="40"
+        unit_name_base_offset1="0x964"
+        unit_name_base_offset2="0x5C"
+        unit_name_len="40"
+        click_to_move_base="0x00CA11D8"
+        click_to_move_unknown="0x0"
+        click_to_move_turn_scale="0x4"
+        click_to_move_unknown_2="0x8"
+        click_to_move_interact_distance="0xc"
+        click_to_move_action_type="0x1c"
+        click_to_move_target="0x20"
+        click_to_move_dest_x="0x8c"
+        click_to_move_dest_y="0x90"
+        click_to_move_dest_z="0x94"
+
+        lua_dostring="0x00819210"
+        lua_getstate="0x00817DB0"
+        lua_gettop = "0x0084DBD0"
+        lua_register = "0x00817F90"
+        lua_tostring = "0x0084E0E0"
+     />
+  </version>
+  <!-- Global application configuration parameters that not included into config.xml 
+    max_get_target_retries - number of retries (plus first try) bot can have to reach target
+      if it's value exceeded than target for some reason unreachable and should be removed from the list
+    max_npc_interact_time - Max time bot waits after interact with NPC 
+      before some dialog (gossip or any) pops up
+    min_refresh_time - minimum time between each bot check cycle. 
+      This is set as minimum value in AppConfig dialog Refresh Time parameter     
+  -->
+  <app_config 
+      min_refresh_time="100" 
+      max_get_target_retries="3" 
+      max_npc_interact_time="30000"
+   />
+</wow_data>

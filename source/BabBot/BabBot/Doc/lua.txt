@@ -1,0 +1,187 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Onyx.WoW.Native;
+
+namespace Onyx.WoW
+{
+    internal enum Luas
+    {
+        Lua_DoString = 0x0049AAB0,
+        Lua_Register = 0x004998E0,
+        Lua_GetTop = 0x0091A8B0,
+        Lua_ToString = 0x0091ADC0,
+        Lua_InvalidPtrCheck = 0x0046ED80,
+    }
+
+    public static class Lua
+    {
+        #region Delegates
+
+        public delegate int ConsoleCommandCallback();
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate uint LuaRegisterCommand(string szName, IntPtr pFunc);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int RegisteredLuaCommandHandler(IntPtr pLuaState);
+
+        #endregion
+
+        private static readonly RegisteredLuaCommandHandler CommandParser = OnyxInputHandler;
+        private static readonly LuaDoString DoStringHandler;
+        private static readonly LuaGetTop GetTopHandler;
+        private static readonly List<string> LuaValues = new List<string>();
+        public static readonly LuaRegisterCommand RegisterCommandHandler;
+        private static readonly LuaToString ToStringHandler;
+
+        static Lua()
+        {
+            Process.EnterDebugMode();
+            Win32.MemoryOpen();
+            RegisterCommandHandler = Utilities.RegisterDelegate<LuaRegisterCommand>((uint) Luas.Lua_Register);
+            DoStringHandler = Utilities.RegisterDelegate<LuaDoString>((uint) Luas.Lua_DoString);
+            GetTopHandler = Utilities.RegisterDelegate<LuaGetTop>((uint) Luas.Lua_GetTop);
+            ToStringHandler = Utilities.RegisterDelegate<LuaToString>((uint) Luas.Lua_ToString);
+            RegisterCommand("OnyxInput", CommandParser);
+        }
+
+        private static int OnyxInputHandler(IntPtr pLuaState)
+        {
+            LuaValues.Clear();
+            int num = GetTop(pLuaState);
+            for (int i = 0; i < num; i++)
+            {
+                string tmp = ToString(pLuaState, i);
+                LuaValues.Add(tmp);
+            }
+            return 0;
+        }
+
+        public static void DoString(string lua)
+        {
+            DoStringHandler(lua, "Onyx.lua", 0);
+        }
+
+        public static string[] GetReturnValues(string lua)
+        {
+            DoString(string.Format("OnyxInput({0})", lua));
+            return LuaValues.ToArray();
+        }
+
+        public static T GetReturnVal<T>(string lua, uint retVal)
+        {
+            DoString(string.Format("OnyxInput({0})", lua));
+            object tmp;
+            if (typeof(T) == typeof(bool))
+            {
+                tmp = LuaValues[(int) retVal] == "1";
+            }
+            else
+            {
+                tmp = (T) Convert.ChangeType(LuaValues[(int) retVal], typeof(T));
+            }
+            return (T) tmp;
+        }
+
+        public static void RegisterCommand(string commandName, RegisteredLuaCommandHandler handler)
+        {
+            RegisterCommandHandler(commandName, WriteLuaCallback(Marshal.GetFunctionPointerForDelegate(handler)));
+            return;
+        }
+
+        private static IntPtr WriteLuaCallback(IntPtr callbackPtr)
+        {
+            // You need to either patch the InvalidPtrCheck, or do something else to avoid the EndOfText scan
+            // and check. Sorry, no code here.
+            return callbackPtr;
+        }
+
+        private static int GetTop(IntPtr pLuaState)
+        {
+            return GetTopHandler(pLuaState);
+        }
+
+        private static string ToString(IntPtr pLuaState, int index)
+        {
+            return ToStringHandler(pLuaState, index + 1, 0);
+        }
+
+        #region Nested type: LuaDoString
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void LuaDoString(string lua, string fileName, uint pState);
+
+        #endregion
+
+        #region Nested type: LuaGetTop
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int LuaGetTop(IntPtr pLuaState);
+
+        #endregion
+
+        #region Nested type: LuaToString
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate string LuaToString(IntPtr pLuaState, int idx, int length);
+
+        #endregion
+    }
+}
+
+
+
+
+
+================
+
+
+
+That's it. Yes, GetReturnVal<int>("GetTime()", 0); will return whatever GetTime() usually would return.
+
+The RegisterDelegate code (overloads removed for brevity)
+
+Code:
+
+        public static T RegisterDelegate<T>(IntPtr address) where T : class
+        {
+            return Marshal.GetDelegateForFunctionPointer(address, typeof(T)) as T;
+        }
+
+Yes, I'm lazy.
+
+
+
+
+
+====================
+
+ 	 Fixt
+
+Code:
+
+        public static T GetReturnVal<T>(string lua, uint retVal)
+        {
+            DoString(string.Format("OnyxInput({0})", lua));
+            object tmp;
+
+            if (LuaValues[(int)retVal] == "nil")
+                return default(T);
+
+            if (typeof(T) == typeof(bool))
+            {
+                tmp = LuaValues[(int) retVal] == "1" || LuaValues[(int)retVal].ToLower() == "true";
+            }
+            else
+            {
+                tmp = (T) Convert.ChangeType(LuaValues[(int) retVal], typeof(T));
+            }
+            return (T) tmp;
+        }
+
+
+
+======================
+

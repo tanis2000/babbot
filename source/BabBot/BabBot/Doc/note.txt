@@ -1,0 +1,1045 @@
+Various notes and snippets of code that will be handy later on..
+
+
+you can use "/script RepopMe()" to click the release button, then do "/script RetrieveCorpse()" 
+when you're within 30 yards. these are functions built into the game so you dont have to 
+worry about calculating where the buttons to click are based on the current resolution.
+
+
+Player dead if health value == 0
+After that player is ghost if health value == 1
+
+
+
+When your health == 0, save your current x,y,z to variables, then waypoint to those points 
+until distance to that point <= 30 yards and no enemy is within 20 yards (randomly walk around until #2 is true).
+
+
+
+public static CorpseObject[] GetCorpseObjects(IntPtr hProcess)
+        {
+            Object[] Objects = GetObjects(hProcess);
+
+            List<CorpseObject> Corpses = new List<CorpseObject>();
+            for (int i = 0; i < Objects.Length; i++)
+            {
+
+                if (Objects[i].OBJECT_FIELD_TYPE == (int)eObjectType.CORPSE)
+                {
+                        float x = MemoryLib.Memory.ReadFloat(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_POS_X));
+
+                        float y = MemoryLib.Memory.ReadFloat(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_POS_Y));
+
+                        float z = MemoryLib.Memory.ReadFloat(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_POS_Z));
+
+                        float facing = MemoryLib.Memory.ReadFloat(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_FACING));
+
+                        UInt64 owner = MemoryLib.Memory.ReadUInt64(hProcess,
+                           (MemoryLib.Memory.ReadUInt(hProcess, Objects[i].OBJECT_FIELD_BASEADRESS + 0x08) + (int)eCorpseFields.CORPSE_FIELD_OWNER));
+
+                        CorpseObject tempCorpse = new CorpseObject();
+                        tempCorpse.CORPSE_FIELD_POS_X = x;
+                        tempCorpse.CORPSE_FIELD_POS_Y = y;
+                        tempCorpse.CORPSE_FIELD_POS_Z = z;
+                        tempCorpse.CORPSE_FIELD_FACING = facing;
+                        tempCorpse.CORPSE_FIELD_OWNER = owner;
+
+                        Corpses.Add(tempCorpse);
+                }
+            }
+            CorpseObject[] retVector = new CorpseObject[Corpses.Count];
+            Corpses.CopyTo(retVector);
+
+            return retVector;
+        }
+
+
+
+
+Lista completa dei descrittori mancanti in quello attuale (anche se questi sono vecchi):
+http://www.nomorepasting.com/getpaste.php?pasteid=17404
+
+
+
+[[objectaddress+0x8]+0x17*4]
+Explanation: read object base + 8 for a pointer to UNIT_FIELDS. 
+If you check the post unit fields health is 0x17, you read from unit fields + 0x17 multiplied by 4 because 
+each array slot* is 4 bytes.
+
+
+
+
+http://www.mmowned.com/forums/wow-memory-editing/208754-guide-kind-how-i-handle-objects.html
+Spiegazione dettagliata di come funziona l'ObjectMAnager di WoW
+
+
+http://www.wowwiki.com/API_TargetUnit
+http://www.wowwiki.com/API_ClearTarget
+
+
+To attack with the melee attack by script:
+Slightly longer, but more complete method to just find attack anywhere on your bar.
+
+/script if not ma then for i = 1,72 do if IsAttackAction(i) then ma = i; end; end; end; if ma then if not IsCurrentAction(ma) then UseAction(ma); end; else AttackTarget("target");end; 
+
+
+Modified version of Pather which could be used to calculate paths only:
+http://www.mmowned.com/forums/bots-programs/180772-source-ppather-pathfinder-your-own-programs.html
+
+
+To loot, let's have the end user set the "Interact with Target" hotkey in WoW and use that one. We first have to 
+select the corpse of course. That can be used for vendoring and repairing. Having auto-loot on will get rid of having to
+click with the mouse on the stuff we are looting
+
+More stuff about pathing from MPQ files: http://www.mpqnav.com
+
+
+Stuff on Finite State Machines
+http://www.mmowned.com/forums/c/232703-bot-developers-simple-but-effective-fsm-your-bots.html
+
+
+UNIT_NPC_FLAGS
+0x1: conversation
+0x2: involved in a quest
+0x10: trainer
+0x20: ...for your class (not always set :-( )
+0x40: ...for your professions (all professions if you have not yet chosen your 2) 
+0x80: vendor
+0x100: general goods, bowyer (unsure)
+0x200: food, drink (unsure)
+0x800: reagents (unsure)
+0x1000: repair
+0x2000: gryphon master etc.
+0x10000: innkeeper
+0x20000: banker
+0x80000: tabard vendor
+0xC0000: guild master
+0x100000: battle master
+0x200000: auctioneer
+0x400000: stable master
+
+
+Movement Types:
+(8byte) Thanks to testout
+
+0x1 = Moving Forward
+0x2 = Moving Backward
+0x4 = Strafing Left
+0x8 = Strafing Right
+0x10 = Turning Left
+0x20 = Turning Right
+0x100 = Walking
+0x1000 = Dead
+0x4000 = Fall Forwards
+0x8000 = Fall Backwards
+0x2000 = Freefall/Jumping
+0x10000 = Strafing while jumping
+0x200000 = Swimming
+0x10000000 = Spirit Form
+0x80000000 = Unknown
+
+
+Mouse Types:
+(4 bytes) Thanks to lunitune
+
+
+Decimal value = description
+1 = normal
+
+3 = banker/auctioneer in range (money bag)
+4 = attack in range
+5 = use (fishing bobber) in range
+6 = talk (cartoon chat bubble)
+
+8 = money bags in range (merchant)
+
+10 = trainer book in range
+11 = mining in range
+12 = skin in range
+13 = herbalism in range
+15 = mail in range
+16 = loot in range
+18 = repair in range
+
+23 = quest giver ! in range
+24 = repeatable quest giver in range (blue ?)
+
+28 = banker/auctioneer/guild bank out of range (money bags)
+29 = attack out of range
+30 = use - out of range
+31 = talk (cartoon chat bubble) - out of range
+
+33 = money bags out of range (merchant)
+
+35 = trainer book out of range
+36 = mining out of range
+37 = skin out of range
+38 = herbalism out of range
+40 = mail out of range
+41 = loot out of range
+43 = repair out of range
+
+48 = Quest giver ! out of range
+49 = repeatable quest giver out of range (blue ?)
+
+51 = ask for directions out of range AND in range (scroll over guards)
+
+
+PLAYER_TRACK_CREATURES:
+None = 0
+Beasts = 1
+Dragonkin = 2
+Demon = 4
+Elemental = 8
+Giant = 16
+Undead = 32
+Humanoid = 64
+Critter = 128
+Machines = 256
+Not Specified(Slime, Those Green Eye Things, Random Invisible Crap) = 512 
+
+PLAYER_TRACK_RESOURCES 
+None = 0
+??? = 1
+Herbs = 2
+Minerals = 4
+??? = 8
+Treasure = 16
+Crate/Chest(Food Crate/Water Barol/Battered Chest) = 32
+??? = 64
+??? = 128
+??? = 256
+??? = 512
+??? = 1024
+??? = 2048
+Crate/Chest2(Stolen Supply Crate/Gnomish Toolbox) =  4096
+
+
+enum eTrack
+{
+    TRACK_BEASTS        = 0x01,
+    TRACK_DRAGONS        = 0x02,
+    TRACK_DEMONS        = 0x04,
+    TRACK_ELEMENTALS    = 0x08,
+    TRACK_GIANTS        = 0x10,
+    TRACK_HUMANOIDS        = 0x40,
+    TRACK_UNDEAD        = 0x20,
+    TRACK_MACHINES        = 0x100,
+    TRACK_SLIMES        = 0x200,
+    TRACK_CRITTERS        = 0x80,
+    TRACK_ALL            = -1,
+
+    TRACK_OBJECT_HERBS            = 0x02,
+    TRACK_OBJECT_MINERALS        = 0x04,
+    TRACK_OBJECT_TREASURE        = 0x20,
+    TRACK_OBJECT_ALL            = -1
+};
+Here's a cleaned up version of the above post, remembering that the tracking flags are bitmasks, to apply a tracking flag you simple do: Flags &= TRACK_WHATEVER;
+
+To remove a tracking flag, use Flags &= ~TRACK_WHATEVER;
+To check for a flag, use Flags & TRACK_WHATEVER;
+
+
+       public Mover(LocalPlayer Me)
+        {
+            const uint GetContinentName = 0x010A51F8;
+            string contintentName = Game.wow.ReadUTF8String(GetContinentName, 40);
+            ppather.Init(contintentName);
+            this.Me = Me;
+            mySpot.Update(Me.Location);
+            Logger.logToFile("PPather started on " + contintentName + ".");
+        }
+
+
+
+
+
+3.1.2
+DoString:
+
+Code:
+
+ public void DoString(string strScript)
+        {
+            uint pScript = m_OM.WoW.AllocateMemory(0x3000);
+            m_OM.WoW.WriteASCIIString(pScript, strScript);
+
+            uint codeCave = m_OM.WoW.AllocateMemory(0x1024);
+
+            m_OM.UpdateCurMgr();
+
+            m_OM.WoW.Asm.AddLine("mov ecx, {0}", pScript + strScript.Length - 1);
+            m_OM.WoW.Asm.AddLine("mov eax, " + pScript);
+
+            m_OM.WoW.Asm.AddLine("push 0");
+            m_OM.WoW.Asm.AddLine("push eax");
+            m_OM.WoW.Asm.AddLine("push eax");
+
+            m_OM.WoW.Asm.AddLine("mov eax, {0}", 0x0049AB60);
+            m_OM.WoW.Asm.AddLine("call eax");
+            m_OM.WoW.Asm.AddLine("add esp, 0xC");
+            m_OM.WoW.Asm.AddLine("retn");
+
+            m_OM.WoW.SuspendThread();
+            m_OM.WoW.Asm.InjectAndExecute(codeCave);
+            m_OM.WoW.FreeMemory(codeCave);
+            m_OM.WoW.FreeMemory(pScript);
+            m_OM.WoW.ResumeThread();
+        }
+
+GetLocalizedText:
+
+Code:
+
+public String GetLocalizedText(string variable)
+        {
+            uint codecave = m_OM.WoW.AllocateMemory(0x200);
+
+            m_OM.WoW.WriteASCIIString(codecave + 0x100, variable);
+
+            m_OM.WoW.Asm.Clear();
+
+            m_OM.UpdateCurMgr();
+
+            m_OM.Start(2500);
+
+            m_OM.WoW.Asm.AddLine("mov ecx, {0}", m_OM.LocalPlayer.BaseAddress);
+            m_OM.WoW.Asm.AddLine("push {0}", -1);
+            m_OM.WoW.Asm.AddLine("push {0}", codecave + 0x100);
+            m_OM.WoW.Asm.AddLine("call {0}", 0x005A8500);
+            m_OM.WoW.Asm.AddLine("retn");
+
+            m_OM.WoW.SuspendThread();
+
+            uint result = m_OM.WoW.Asm.InjectAndExecute(codecave);
+
+            String sResult = "null";
+            if (result != 0)
+            {
+                sResult = m_OM.ReadString(result);
+            }
+
+            m_OM.WoW.FreeMemory(codecave);
+
+            m_OM.WoW.ResumeThread();
+
+            return sResult;
+        }
+
+
+
+To patch the function that checks for protected LUA functions:
+The lua protection check function is located at 0x4A4480.
+
+Code:
+
+004A4480        /$  55               PUSH EBP
+004A4481        |.  8BEC             MOV EBP,ESP
+004A4483        |.  833D 40B42E01 00 CMP DWORD PTR DS:[12EB440],0
+004A448A        |.  8B4D 08          MOV ECX,[ARG.1]                           ;  Wow.<ModuleEntryPoint>
+004A448D        |.  A1 C0680A01      MOV EAX,DWORD PTR DS:[10A68C0]
+
+To make this function always return true, you can just patch the very first opcodes to
+
+mov eax,1
+retn
+
+
+
+
+
+
+3.1.3 functions
+===============
+object descriptors have not changed
+
+Code:
+
+[08:06:58]: Logging started at 2009-06-02
+[08:06:58]: CFindPattern initialized: dwStart( 401000 ) dwLen( 57DFFE )
+[08:06:59]: 0x005A82F0 -> GetLocalizedText
+[08:06:59]: 0x007E9250 -> RenderScreen
+[08:06:59]: 0x0046FE75 -> GlueXML_AdditionalScan
+[08:06:59]: 0x0054AF80 -> UpdateGameTime2
+[08:06:59]: 0x011D3F10 -> CursorItemInfo
+[08:06:59]: 0x00567690 -> EquipCursorItem
+[08:06:59]: 0x0046F990 -> AdditionalCheck2
+[08:06:59]: 0x00499700 -> GetLuaState
+[08:06:59]: 0x004052E0 -> AdditionalCheck1
+[08:06:59]: 0x01140B04 -> RepairMode
+[08:06:59]: 0x0070CC60 -> RepairItem
+[08:06:59]: 0x006D60A0 -> DefaultServerLogin
+[08:06:59]: 0x005D3CD0 -> BroadcastCombatLogEvent
+[08:06:59]: 0x00505730 -> TraceLine
+[08:06:59]: 0x00916B30 -> LoadWardenModule
+[08:06:59]: 0x006EDF30 -> CloseLoot
+[08:06:59]: 0x00688660 -> GetNetStats
+[08:06:59]: 0x01139F94 -> NetClass
+[08:06:59]: 0x007C0740 -> CreateCurMgr
+[08:06:59]: 0x011D8438 -> ContainerGUIDBase
+[08:06:59]: 0x0055ACB0 -> SellItem
+[08:06:59]: 0x004B9150 -> GetSpellManaCostByID
+[08:06:59]: 0x006FF8C0 -> IsValidSpell
+[08:06:59]: 0x007305A0 -> LootSlot
+[08:06:59]: 0x0072F620 -> GetNumLootItems
+[08:06:59]: 0x006EF810 -> SelectUnit
+[08:06:59]: 0x011D3F34 -> RealZoneText
+[08:06:59]: 0x0113F8E4 -> CInputControl
+[08:06:59]: 0x00691BB0 -> CInputControl::SetFlags
+[08:06:59]: 0x0053D42B -> ModelEdit
+[08:06:59]: 0x005AF526 -> NameplatePatch
+[08:06:59]: 0xFFFFFFDB -> CanAttack
+[08:06:59]: 0x005AA670 -> GetUnitRelation
+[08:06:59]: 0x0054B070 -> UpdateGameTime
+[08:06:59]: 0x0054B1CA -> TimeSetPatch
+[08:06:59]: 0x00549D37 -> TimeSetPatch2
+[08:06:59]: 0x0079DE60 -> SetFacing
+[08:06:59]: 0x005A53B0 -> GetUnitType
+[08:06:59]: 0x006F52C4 -> GlueXML_SignaturePatch
+[08:06:59]: 0x007B269D -> FrameXML_SignaturePatch
+[08:06:59]: 0x006FF4A0 -> GetSpellIdByName
+[08:06:59]: 0x007BE110 -> GetObjectByGUID
+[08:06:59]: 0x0069FC40 -> GetGUIDByKeyword
+[08:06:59]: 0x0040CE6D -> TranslatePatch
+[08:06:59]: 0x0068AB7F -> GlueXML_RenamePatch
+[08:06:59]: 0x00590030 -> GetItemIDByName
+[08:06:59]: 0x0058EE10 -> UseItem
+[08:06:59]: 0x00948ED0 -> Checksum
+[08:06:59]: 0x004C0580 -> GetSpellCooldown
+[08:06:59]: 0x0113EA58 -> Base_DBCache
+[08:06:59]: 0x00683910 -> DBCache::GetInfoBlockByID
+[08:06:59]: 0x004C05B0 -> GetItemCooldown
+[08:06:59]: 0x0049C010 -> BroadcastEvent
+[08:06:59]: 0x0107363C -> EventBase
+[08:06:59]: 0x00998E73 -> MountainClimbPatch
+[08:06:59]: 0x005646E0 -> ObjectTracking
+[08:06:59]: 0x00564650 -> UnitTracking
+[08:06:59]: 0x004C4DB0 -> CastSpellById
+[08:06:59]: 0x0107FFE8 -> TimePtr
+[08:06:59]: 0x0055A8D0 -> Repop
+[08:06:59]: 0x0063D9F0 -> RegisterBase_ClientDB
+[08:06:59]: 0x0054463C -> GetRow_ClientDB
+[08:06:59]: 0x006D9C37 -> Language_Restriction
+[08:06:59]: 0xFFFFFFFA -> BuyItem
+[08:06:59]: 0x011DAA68 -> MerchantItemBase
+[08:06:59]: 0x011DBD28 -> InteractMerchantInfo
+[08:06:59]: 0x004B73B1 -> AFK jump
+[08:06:59]: 0x0046C520 -> InputEvent
+[08:06:59]: 0x006C37D0 -> GetCamera
+[08:07:00]: 0x0049AAB0 -> Lua_Dostring
+[08:07:00]: 0x004998E0 -> Lua_Register
+[08:07:00]: 0x00401A30 -> Lua_Reload
+[08:07:00]: 0x0091A8B0 -> lua_gettop
+[08:07:00]: 0x0091AD10 -> lua_tonumber
+[08:07:00]: 0x0091AD50 -> lua_tointeger
+[08:07:00]: 0x0091ADC0 -> lua_tostring
+[08:07:00]: 0x0091AEF0 -> lua_touserdata
+[08:07:00]: 0x0091AD90 -> lua_toboolean
+[08:07:00]: 0x0091AF80 -> lua_pushnumber
+[08:07:00]: 0x0091AFB0 -> lua_pushinteger
+[08:07:00]: 0x0091AFE0 -> lua_pushstring
+[08:07:00]: 0x0091B1B0 -> lua_pushboolean
+[08:07:00]: 0x0091B0E0 -> lua_pushcclosure
+[08:07:00]: 0x0091AF60 -> lua_pushnil
+[08:07:00]: 0x0091B5E0 -> lua_setfield
+[08:07:00]: 0x00919C60 -> lua_getfield
+[08:07:00]: 0x0091AA50 -> lua_replace
+[08:07:00]: Adding a detour at 0x4998E0(0x3E1EA5C) called Lua_Register
+[08:07:00]: DB( EB ) -> A36B1C
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> EE68
+[08:07:00]: DB( A36B88B9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( F168D6 ) -> 6BF4B900
+[08:07:00]: DB( 68000000 ) -> FF00A36C
+[08:07:00]: DB( 9AEF2C68 ) -> F468D6FF
+[08:07:00]: DB( 60B9009A ) -> F5
+[08:07:00]: DB( A36C84 ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( F868 ) -> A36CF0B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> FB68D6
+[08:07:00]: DB( 6D5CB900 ) -> 68000000
+[08:07:00]: DB( FF00A36D ) -> 9AEF2C68
+[08:07:00]: DB( FE68D6FF ) -> C8B9009A
+[08:07:00]: DB( FF ) -> A36DEC
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 10268
+[08:07:00]: DB( A36E58B9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 10568D6 ) -> 6EC4B900
+[08:07:00]: DB( 68000001 ) -> FF00A36E
+[08:07:00]: DB( 9AEF2C68 ) -> 868D6FF
+[08:07:00]: DB( 30B9009A ) -> 109
+[08:07:00]: DB( A36F78 ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 10C68 ) -> A36FC0B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 10F68D6
+[08:07:00]: DB( 702CB900 ) -> 68000001
+[08:07:00]: DB( FF00A370 ) -> 9AEF2C68
+[08:07:00]: DB( 1268D6FF ) -> 98B9009A
+[08:07:00]: DB( 113 ) -> A370BC
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 11668
+[08:07:00]: DB( A37170B9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 11968D6 ) -> 71DCB900
+[08:07:00]: DB( 68000001 ) -> FF00A372
+[08:07:00]: DB( 9AEF2C68 ) -> 1C68D6FF
+[08:07:00]: DB( 24B9009A ) -> 11D
+[08:07:00]: DB( A37248 ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 12068 ) -> A372FCB9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 12368D6
+[08:07:00]: DB( 7344B900 ) -> 68000001
+[08:07:00]: DB( FF00A373 ) -> 9AEF2C68
+[08:07:00]: DB( 2668D6FF ) -> B0B9009A
+[08:07:00]: DB( 127 ) -> A373D4
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 12A68
+[08:07:00]: DB( A37440B9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 12D68D6 ) -> 74ACB900
+[08:07:00]: DB( 68000001 ) -> FF00A374
+[08:07:00]: DB( 9AEF2C68 ) -> 3068D6FF
+[08:07:00]: DB( 18B9009A ) -> 131
+[08:07:00]: DB( A3753C ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 13468 ) -> A375A8B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 13768D6
+[08:07:00]: DB( 7614B900 ) -> 68000001
+[08:07:00]: DB( FF00A376 ) -> 9AEF2C68
+[08:07:00]: DB( 3A68D6FF ) -> 80B9009A
+[08:07:00]: DB( 13B ) -> A376A4
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 13E68
+[08:07:00]: DB( A37710B9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 14168D6 ) -> 777CB900
+[08:07:00]: DB( 68000001 ) -> FF00A377
+[08:07:00]: DB( 9AEF2C68 ) -> 4468D6FF
+[08:07:00]: DB( E8B9009A ) -> 145
+[08:07:00]: DB( A3780C ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 14868 ) -> A37878B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 14B68D6
+[08:07:00]: DB( 78E4B900 ) -> 68000001
+[08:07:00]: DB( FF00A379 ) -> 9AEF2C68
+[08:07:00]: DB( 4E68D6FF ) -> 50B9009A
+[08:07:00]: DB( 14F ) -> A37974
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 15268
+[08:07:00]: DB( A379BCB9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 15568D6 ) -> 7A4CB900
+[08:07:00]: DB( 68000001 ) -> FF00A37A
+[08:07:00]: DB( 9AEF2C68 ) -> 5868D6FF
+[08:07:00]: DB( 38B9009A ) -> 159
+[08:07:00]: DB( A1DDF0 ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 15C68 ) -> A1DDA8B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 15F68D6
+[08:07:00]: DB( 7B00B900 ) -> 68000001
+[08:07:00]: DB( FF00A37B ) -> 9AEF2C68
+[08:07:00]: DB( 6268D6FF ) -> 6CB9009A
+[08:07:00]: DB( 163 ) -> A37B90
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 16668
+[08:07:00]: DB( A37BFCB9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 16968D6 ) -> 7C68B900
+[08:07:00]: DB( 68000001 ) -> FF00A37C
+[08:07:00]: DB( 9AEF2C68 ) -> 6C68D6FF
+[08:07:00]: DB( D4B9009A ) -> 16D
+[08:07:00]: DB( A37CF8 ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 17068 ) -> A37D64B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 17368D6
+[08:07:00]: DB( 7DD0B900 ) -> 68000001
+[08:07:00]: DB( FF00A37D ) -> 9AEF2C68
+[08:07:00]: DB( 7668D6FF ) -> 3CB9009A
+[08:07:00]: DB( 177 ) -> A37E60
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 17A68
+[08:07:00]: DB( A37ECCB9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 17D68D6 ) -> 7F38B900
+[08:07:00]: DB( 68000001 ) -> FF00A37F
+[08:07:00]: DB( 9AEF2C68 ) -> 8068D6FF
+[08:07:00]: DB( A4B9009A ) -> 181
+[08:07:00]: DB( A37FC8 ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 18468 ) -> A38058B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 18768D6
+[08:07:00]: DB( 80A0B900 ) -> 68000001
+[08:07:00]: DB( FF00A380 ) -> 9AEF2C68
+[08:07:00]: DB( 8A68D6FF ) -> CB9009A
+[08:07:00]: DB( 18B ) -> A38130
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 18E68
+[08:07:00]: DB( A38178B9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 19168D6 ) -> 81E4B900
+[08:07:00]: DB( 68000001 ) -> FF00A382
+[08:07:00]: DB( 9AEF2C68 ) -> 9468D6FF
+[08:07:00]: DB( 50B9009A ) -> 195
+[08:07:00]: DB( A38274 ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 19868 ) -> A382E0B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 19B68D6
+[08:07:00]: DB( 8370B900 ) -> 68000001
+[08:07:00]: DB( FF00A384 ) -> 9AEF2C68
+[08:07:00]: DB( 9E68D6FF ) -> B8B9009A
+[08:07:00]: DB( 19F ) -> A383DC
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 1A268
+[08:07:00]: DB( A3846CB9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 1A568D6 ) -> 84D8B900
+[08:07:00]: DB( 68000001 ) -> FF00A384
+[08:07:00]: DB( 9AEF2C68 ) -> A868D6FF
+[08:07:00]: DB( 20B9009A ) -> 1A9
+[08:07:00]: DB( A38568 ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 1AC68 ) -> A385D4B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 1AF68D6
+[08:07:00]: DB( 8640B900 ) -> 68000001
+[08:07:00]: DB( FF00A386 ) -> 9AEF2C68
+[08:07:00]: DB( B268D6FF ) -> ACB9009A
+[08:07:00]: DB( 1B3 ) -> A386D0
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 1B668
+[08:07:00]: DB( A3873CB9 ) -> 2C680000
+[08:07:00]: DB( D6FF00A3 ) -> 9AEF2C
+[08:07:00]: DB( 1B968D6 ) -> 87A8B900
+[08:07:00]: DB( 68000001 ) -> FF00A388
+[08:07:00]: DB( 9AEF2C68 ) -> BC68D6FF
+[08:07:00]: DB( F0B9009A ) -> 1BD
+[08:07:00]: DB( A38838 ) -> EF2C6800
+[08:07:00]: DB( 68D6FF00 ) -> B9009AEF
+[08:07:00]: DB( 1C068 ) -> A388A4B9
+[08:07:00]: DB( 2C680000 ) -> D6FF00A3
+[08:07:00]: DB( 9AEF2C ) -> 1C368D6
+[08:07:00]: DB( 8910B900 ) -> 68000001
+[08:07:00]: DB( FF00A389 ) -> 9AEF2C68
+[08:07:00]: DB( C668D6FF ) -> 7CB9009A
+[08:07:00]: DB( 1C7 ) -> A389A0
+[08:07:00]: DB( EF2C6800 ) -> 68D6FF00
+[08:07:00]: DB( B9009AEF ) -> 1CA68
+[08:07:00]: DB( A38A0CB9 ) -> CCCCCCCC
+[08:07:00]: DB( 55CCCCCC ) -> 106A5756
+[08:07:00]: DB( 6A646808 ) -> 57000000
+[08:07:00]: DB( C085FFEF ) -> 6468FE6A
+[08:07:00]: DB( 85FFEFBB ) -> 8B04468B
+[08:07:00]: DB( D233F88B ) -> 24A48D
+[08:07:00]: DB( C8D0846 ) -> 8B0574C1
+[08:07:00]: DB( 72D73B01 ) -> A36A64
+[08:07:00]: DB( 5D5B5E5F ) -> 5308458B
+[08:07:00]: DB( 5E8BF18B ) -> 853C8D
+[08:07:00]: DB( BB39E806 ) -> 505B7508
+[08:07:00]: DB( 84E85700 ) -> 46740846
+[08:07:00]: DB( 272F83B ) -> 9EB2576
+[08:07:00]: DB( 8BFF8B00 ) -> 3000000
+[08:07:00]: DB( C2830889 ) -> 68FE6A00
+[08:07:00]: DB( FFEFBA97 ) -> FF018B00
+[08:07:00]: DB( CCCCCCCC ) -> A37838
+[08:07:00]: DB( 113EA30 ) -> 784C158B
+[08:07:00]: DB( E8838A14 ) -> C63B087C
+[08:07:00]: DB( 41F6C933 ) -> 113EA30
+[08:07:00]: CWoWX initialized.
+[08:07:00]: Adding a detour at 0x7C0740(0x688DB8C0) called CreateCurMgr
+[08:07:00]: Adding a detour at 0x916B30(0x688DB8F0) called LoadWarden
+[08:07:00]: Adding a detour at 0x948ED0(0x688DB8F4) called ChecksumClient
+[08:07:00]: Adding a detour at 0x4052E0(0x688DB8F8) called AdditionalCheck1
+[08:07:00]: Adding a detour at 0x46F990(0x688DB8FC) called AdditionalCheck2
+[08:07:00]: Adding a detour at 0x49C010(0x688DB8DC) called BroadcastEvent
+[08:07:00]: Adding a detour at 0x5D3CD0(0x688DB8E0) called CCombatLogEntry::BroadcastEvent
+[08:07:00]: Adding a detour at 0x688CA95A(0x688DB23C) called Direct3DCreate9
+[08:07:00]: Adding a detour at 0x75913149(0x688DB970) called RegisterClassExA
+[08:07:00]: Adding a detour at 0x756A1117(0x688DB980) called GetTickCount
+[08:07:00]: Adding a detour at 0x756A2B8D(0x688DB984) called QueryPerformanceCounter
+[08:07:00]: Adding a detour at 0x5646E0(0x688DB8B0) called Minimap_CheckObject
+[08:07:00]: Adding a detour at 0x564650(0x688DB8B4) called Minimap_CheckUnit
+[08:07:01]: Direct3DCreate9( 32 ) got called. returned: 3A307E0
+[08:07:01]: Adding a detour at 0x64AEAF69(0x688DB8D4) called CreateDevice
+[08:07:01]: Adding a detour at 0x628480(0x688DB8D8) called WndProc
+[08:07:01]: InitGui() called.
+[08:07:01]: 
+[08:07:01]: InitGui() finished.
+[08:07:01]: 
+[08:07:01]: Adding a detour at 0x64AA47AF(0x688DB8CC) called EndScene
+[08:07:01]: Adding a detour at 0x64B67345(0x688DB8D0) called Reset
+[08:07:04]: 69D840 -> GetTime
+[08:07:04]: 69D880 -> GetGameTime
+[08:07:04]: 69D8C0 -> ConsoleExec
+[08:07:04]: 69D910 -> ReadFile
+[08:07:04]: 69D910 -> DeleteFile
+[08:07:04]: 69D910 -> AppendToFile
+[08:07:04]: 69D930 -> GetAccountExpansionLevel
+[08:07:04]: 93DC10 -> GetText
+[08:07:04]: 93DF80 -> GetNumFrames
+[08:07:04]: 93DE90 -> EnumerateFrames
+[08:07:04]: 93DCA0 -> CreateFont
+[08:07:04]: 93DFF0 -> CreateFrame
+[08:07:04]: 93E2E0 -> GetFramesRegisteredForEvent
+[08:07:04]: 93DD10 -> GetCurrentKeyBoardFocus
+[08:07:04]: 7B3B60 -> IsShiftKeyDown
+[08:07:04]: 7B3BB0 -> GetBuildInfo
+[08:07:04]: 7B3CB0 -> GetLocale
+[08:07:04]: 7B50D0 -> GetSavedAccountName
+[08:07:04]: 7B3C10 -> SetSavedAccountName
+[08:07:04]: 7B50F0 -> GetSavedAccountList
+[08:07:04]: 7B3C60 -> SetSavedAccountList
+[08:07:04]: 7B3CE0 -> SetCurrentScreen
+[08:07:04]: 7B3D30 -> QuitGame
+[08:07:04]: 7B3D40 -> QuitGameAndRunLauncher
+[08:07:04]: 7B3D50 -> PlayGlueMusic
+[08:07:04]: 7B3E30 -> PlayCreditsMusic
+[08:07:04]: 7B3E80 -> StopGlueMusic
+[08:07:04]: 7B5110 -> GetMovieResolution
+[08:07:04]: 7B48B0 -> GetScreenWidth
+[08:07:04]: 7B4900 -> GetScreenHeight
+[08:07:04]: 7B3EA0 -> LaunchURL
+[08:07:04]: 7B5160 -> ShowTOSNotice
+[08:07:04]: 7B51A0 -> TOSAccepted
+[08:07:04]: 7B3EF0 -> AcceptTOS
+[08:07:04]: 7B51E0 -> ShowEULANotice
+[08:07:04]: 7B5220 -> EULAAccepted
+[08:07:04]: 7B3F00 -> AcceptEULA
+[08:07:04]: 7B5260 -> ShowTerminationWithoutNoticeNotice
+[08:07:04]: 7B52A0 -> TerminationWithoutNoticeAccepted
+[08:07:04]: 7B3F10 -> AcceptTerminationWithoutNotice
+[08:07:04]: 7B52E0 -> ShowScanningNotice
+[08:07:04]: 7B5320 -> ScanningAccepted
+[08:07:04]: 7B3F20 -> AcceptScanning
+[08:07:04]: 7B5360 -> ShowContestNotice
+[08:07:04]: 7B53A0 -> ContestAccepted
+[08:07:04]: 7B3F30 -> AcceptContest
+[08:07:04]: 7B3F40 -> DefaultServerLogin
+[08:07:04]: 7B41E0 -> StatusDialogClick
+[08:07:04]: 7B53E0 -> GetServerName
+[08:07:04]: 7B54F0 -> DisconnectFromServer
+[08:07:04]: 7B5530 -> IsConnectedToServer
+[08:07:04]: 7B41F0 -> EnterWorld
+[08:07:04]: Adding a detour at 0x7B41F0(0x688DB8C8) called EnterWorld
+[08:07:04]: 7B4200 -> Screenshot
+[08:07:04]: 7B5570 -> PatchDownloadProgress
+[08:07:04]: 7B4220 -> PatchDownloadCancel
+[08:07:04]: 7B4230 -> PatchDownloadApply
+[08:07:04]: 6DD4C0 -> GetNumAddOns
+[08:07:04]: 7B4240 -> GetAddOnInfo
+[08:07:04]: 7B4400 -> LaunchAddOnURL
+[08:07:04]: 7B55A0 -> GetAddOnDependencies
+[08:07:04]: 7B44A0 -> GetAddOnEnableState
+[08:07:04]: 7B4580 -> EnableAddOn
+[08:07:04]: 7B4640 -> EnableAllAddOns
+[08:07:04]: 7B4690 -> DisableAddOn
+[08:07:04]: 7B4750 -> DisableAllAddOns
+[08:07:04]: 7B47A0 -> SaveAddOns
+[08:07:04]: 7B47B0 -> ResetAddOns
+[08:07:04]: 7B47C0 -> IsAddonVersionCheckEnabled
+[08:07:04]: 7B4800 -> SetAddonVersionCheck
+[08:07:04]: 6DCD10 -> GetCursorPosition
+[08:07:04]: 7B5670 -> ShowCursor
+[08:07:04]: 7B5690 -> HideCursor
+[08:07:04]: 6DE0F0 -> SetMovieSubtitles
+[08:07:04]: 7B4840 -> GetMovieSubtitles
+[08:07:04]: 7B56B0 -> GetBillingTimeRemaining
+[08:07:04]: 7B5700 -> GetBillingPlan
+[08:07:04]: 6E28B0 -> GetBillingTimeRested
+[08:07:04]: 7B4950 -> SurveyNotificationDone
+[08:07:04]: 7B3FB0 -> PINEntered
+[08:07:04]: 7B3DA0 -> PlayGlueAmbience
+[08:07:04]: 7B3E10 -> StopGlueAmbience
+[08:07:04]: 7B49F0 -> GetCreditsText
+[08:07:04]: 69D930 -> GetAccountExpansionLevel
+[08:07:04]: 7B4880 -> GetClientExpansionLevel
+[08:07:04]: 7B4080 -> MatrixEntered
+[08:07:04]: 7B4100 -> MatrixRevert
+[08:07:04]: 7B4110 -> MatrixCommit
+[08:07:04]: 7B4120 -> GetMatrixCoordinates
+[08:07:04]: 7B4980 -> ScanDLLStart
+[08:07:04]: 7B4A80 -> ScanDLLContinueAnyway
+[08:07:04]: 7B4A90 -> IsScanDLLFinished
+[08:07:04]: 6FB930 -> IsWindowsClient
+[08:07:04]: 6DCE70 -> IsMacClient
+[08:07:04]: 6DCE70 -> IsLinuxClient
+[08:07:04]: 7B5AA0 -> SetRealmSplitState
+[08:07:04]: 7B5B30 -> RequestRealmSplitInfo
+[08:07:04]: 7B4AD0 -> CancelLogin
+[08:07:04]: 7B57B0 -> GetCVar
+[08:07:04]: 7B4AE0 -> SetCVar
+[08:07:04]: 7B5830 -> GetCVarDefault
+[08:07:04]: 7B58C0 -> GetCVarMin
+[08:07:04]: 6E0590 -> GetCVarMax
+[08:07:04]: 7B59A0 -> GetCVarAbsoluteMin
+[08:07:04]: 6E06A0 -> GetCVarAbsoluteMax
+[08:07:04]: 7B5A40 -> GetChangedOptionWarnings
+[08:07:04]: 7B4B90 -> AcceptChangedOptionWarnings
+[08:07:04]: 7B4BA0 -> ShowChangedOptionWarnings
+[08:07:04]: 7B41B0 -> TokenEntered
+[08:07:04]: 6DE030 -> GetNumDeclensionSets
+[08:07:04]: 7B4BE0 -> DeclineName
+[08:07:04]: 7B4CE0 -> GetNumGameAccounts
+[08:07:04]: 7B4D70 -> GetGameAccountInfo
+[08:07:04]: 7B4E60 -> SetGameAccount
+[08:07:04]: 7B4F30 -> StopAllSFX
+[08:07:04]: 7B4F60 -> SetClearConfigData
+[08:07:04]: 7B4FB0 -> RestartGx
+[08:07:04]: 7B4FD0 -> RestoreVideoResolutionDefaults
+[08:07:04]: 6DD080 -> RestoreVideoEffectsDefaults
+[08:07:04]: 6DD090 -> RestoreVideoStereoDefaults
+[08:07:04]: 7B4FE0 -> IsStreamingMode
+[08:07:04]: 7B4FF0 -> IsStreamingTrial
+[08:07:04]: 7B5000 -> IsConsoleActive
+[08:07:04]: 7B5040 -> RunScript
+[08:07:04]: 7B9590 -> SetCharSelectModelFrame
+[08:07:04]: 7BA730 -> SetCharSelectBackground
+[08:07:04]: 7BA780 -> GetCharacterListUpdate
+[08:07:04]: 7B9730 -> GetNumCharacters
+[08:07:04]: 7B9760 -> GetCharacterInfo
+[08:07:04]: 7BA7D0 -> SelectCharacter
+[08:07:04]: 7B99A0 -> DeleteCharacter
+[08:07:04]: 7B9A10 -> RenameCharacter
+[08:07:04]: 7B9B30 -> DeclineCharacter
+[08:07:04]: 7B9600 -> UpdateSelectionCustomizationScene
+[08:07:04]: 7B9630 -> GetCharacterSelectFacing
+[08:07:04]: 7B9660 -> SetCharacterSelectFacing
+[08:07:04]: 7B7680 -> SetCharCustomizeFrame
+[08:07:04]: 7B76F0 -> SetCharCustomizeBackground
+[08:07:04]: 7B8BC0 -> ResetCharCustomize
+[08:07:04]: 7B7740 -> GetNameForRace
+[08:07:04]: 7B77C0 -> GetFactionForRace
+[08:07:04]: 7B8310 -> GetAvailableRaces
+[08:07:04]: 7B8430 -> GetClassesForRace
+[08:07:04]: 7B7890 -> GetHairCustomization
+[08:07:04]: 7B7900 -> GetFacialHairCustomization
+[08:07:04]: 7B7980 -> GetSelectedRace
+[08:07:04]: 7B79C0 -> GetSelectedSex
+[08:07:04]: 7B7A00 -> GetSelectedClass
+[08:07:04]: 7B8BD0 -> SetSelectedRace
+[08:07:04]: 7B84F0 -> SetSelectedSex
+[08:07:04]: 7B8560 -> SetSelectedClass
+[08:07:04]: 7B8C40 -> UpdateCustomizationBackground
+[08:07:04]: 7B7A90 -> UpdateCustomizationScene
+[08:07:04]: 7B7AC0 -> CycleCharCustomization
+[08:07:04]: 7B85D0 -> RandomizeCharCustomization
+[08:07:04]: 7B7B50 -> GetCharacterCreateFacing
+[08:07:04]: 7B7B80 -> SetCharacterCreateFacing
+[08:07:04]: 7B71D0 -> GetRandomName
+[08:07:04]: 7B7BD0 -> CreateCharacter
+[08:07:04]: 7B8C60 -> CustomizeExistingCharacter
+[08:07:04]: 7B5BE0 -> RequestRealmList
+[08:07:04]: 7B5C00 -> RealmListUpdateRate
+[08:07:04]: 7B5C60 -> CancelRealmListQuery
+[08:07:04]: 7B62A0 -> GetNumRealms
+[08:07:04]: 7B6370 -> GetRealmInfo
+[08:07:04]: 7B6760 -> ChangeRealm
+[08:07:04]: 7B68C0 -> GetRealmCategories
+[08:07:04]: 7B6B50 -> SetPreferredInfo
+[08:07:04]: 7B6BD0 -> SortRealms
+[08:07:04]: 7B6CA0 -> GetSelectedCategory
+[08:07:04]: 7B5C70 -> RealmListDialogCancelled
+[08:07:04]: 7B6970 -> IsInvalidTournamentRealmCategory
+[08:07:04]: 7B6A20 -> IsTournamentRealmCategory
+[08:07:04]: 7B6AA0 -> IsInvalidLocale
+[08:07:04]: 7CC760 -> PlaySound
+[08:07:04]: 7CC7E0 -> PlayMusic
+[08:07:04]: 7CC840 -> PlaySoundFile
+[08:07:04]: 7CC8A0 -> StopMusic
+[08:07:04]: 7CCA40 -> Sound_GameSystem_GetNumInputDrivers
+[08:07:04]: 7CCA70 -> Sound_GameSystem_GetInputDriverNameByIndex
+[08:07:04]: 7CCB00 -> Sound_GameSystem_GetNumOutputDrivers
+[08:07:04]: 7CCB30 -> Sound_GameSystem_GetOutputDriverNameByIndex
+[08:07:04]: 7CCBC0 -> Sound_GameSystem_RestartSoundSystem
+[08:07:04]: 7CC8B0 -> Sound_ChatSystem_GetNumInputDrivers
+[08:07:04]: 7CC8E0 -> Sound_ChatSystem_GetInputDriverNameByIndex
+[08:07:04]: 7CC970 -> Sound_ChatSystem_GetNumOutputDrivers
+[08:07:04]: 7CC9A0 -> Sound_ChatSystem_GetOutputDriverNameByIndex
+[08:07:04]: 7CCD80 -> VoiceChat_StartCapture
+[08:07:04]: 7CCBE0 -> VoiceChat_StopCapture
+[08:07:04]: 7CCBF0 -> VoiceChat_RecordLoopbackSound
+[08:07:04]: 7CCC60 -> VoiceChat_StopRecordingLoopbackSound
+[08:07:04]: 7CCC70 -> VoiceChat_PlayLoopbackSound
+[08:07:04]: 7CCC80 -> VoiceChat_StopPlayingLoopbackSound
+[08:07:04]: 7CCC90 -> VoiceChat_IsRecordingLoopbackSound
+[08:07:04]: 7CCCC0 -> VoiceChat_IsPlayingLoopbackSound
+[08:07:04]: 7CCCF0 -> VoiceChat_GetCurrentMicrophoneSignalLevel
+[08:07:04]: 7CCD20 -> VoiceChat_ActivatePrimaryCaptureCallback
+[08:07:04]: 950220 -> AccountMsg_LoadHeaders
+[08:07:04]: 94F6F0 -> AccountMsg_GetNumTotalMsgs
+[08:07:04]: 94FC70 -> AccountMsg_GetNumUnreadMsgs
+[08:07:04]: 94FCF0 -> AccountMsg_GetNumUnreadUrgentMsgs
+[08:07:04]: 94FD40 -> AccountMsg_GetIndexHighestPriorityUnreadMsg
+[08:07:04]: 94FDF0 -> AccountMsg_GetIndexNextUnreadMsg
+[08:07:04]: 94F730 -> AccountMsg_GetHeaderSubject
+[08:07:04]: 94F7D0 -> AccountMsg_GetHeaderPriority
+[08:07:04]: 94F880 -> AccountMsg_LoadBody
+[08:07:04]: 94F930 -> AccountMsg_GetBody
+[08:07:04]: 94FEC0 -> AccountMsg_SetMsgRead
+[08:07:04]: 792A40 -> GetScreenResolutions
+[08:07:04]: 792AB0 -> GetCurrentResolution
+[08:07:04]: 792B80 -> SetScreenResolution
+[08:07:04]: 792CB0 -> GetRefreshRates
+[08:07:04]: 792470 -> SetupFullscreenScale
+[08:07:04]: 792E40 -> GetMultisampleFormats
+[08:07:04]: 792ED0 -> GetCurrentMultisampleFormat
+[08:07:04]: 792FA0 -> SetMultisampleFormat
+[08:07:04]: 792550 -> GetVideoCaps
+[08:07:04]: 7921F0 -> GetGamma
+[08:07:04]: 792220 -> SetGamma
+[08:07:04]: 7922A0 -> GetTerrainMip
+[08:07:04]: 7922D0 -> SetTerrainMip
+[08:07:04]: 792680 -> IsStereoVideoAvailable
+[08:07:04]: 792350 -> IsPlayerResolutionAvailable
+
+Some of my patterns may still be out of date.
+Reply With Quote
+
+
+
+
+======================
+
+
+
+Code:
+
+public bool IsInGame
+{
+get
+{
+ return ClntObjMgrGetActivePlayer() != 0;
+}
+}
+
+ClntObjMgrGetActivePlayer function address is 0x007BC8D0.
+
+Pattern: \x64\x8B\x0D\x2C\x00\x00\x00\xA1\xFC\xD9\x35\x01\x8B\x14\x81\x8B\x8A\x10\x00\x00 \x00\x85\xC9\x75\x05
+Mask: xxxxxxxx????xxxxxxxxxxxxx
+
+
+
+
+======================
+
+
+
+
+Code:
+
+        public static void Pulse()
+        {
+            // Logging.Write("Start of objmgr traversal!");
+            ObjList.Clear();
+            ulong localGuid = Marshal.ReadIntPtr(ManagerAddress, (int) ObjectManager.localGuid).ToUInt64();
+
+            IntPtr curObj = Marshal.ReadIntPtr(ManagerAddress, (int) ObjectManager.firstObj);
+            //_me = GetMe();
+            while (curObj.ToInt64() != 0 && (curObj.ToInt64() & 1) == 0)
+            {
+                var obj = new WoWObject(curObj);
+                switch (obj.Type)
+                {
+                    case WoWObjectType.Unit:
+                        ObjList.Add(new WoWUnit(obj));
+                        break;
+                    case WoWObjectType.GameObject:
+                        ObjList.Add(new WoWGameObject(obj));
+                        break;
+                    case WoWObjectType.Player:
+                        if (obj.Guid == localGuid)
+                        {
+                            Me = new WoWActivePlayer(obj);
+                            ObjList.Add(Me);
+                            break;
+                        }
+                        ObjList.Add(new WoWPlayer(obj));
+                        break;
+                    default:
+                        ObjList.Add(obj);
+                        break;
+                }
+                IntPtr nextObj = Marshal.ReadIntPtr(curObj, (int) ObjectManager.nextObj);
+                if (nextObj == curObj)
+                {
+                    //Logging.Write("End of objmgr traversal!");
+                    break;
+                }
+
+                curObj = nextObj;
+            }
+            //Logging.Write("End of objmgr traversal!");
+        }
+
+That should help
+
+Reply With Quote
+
+
+
+
+======================
+
+
+
+Updating the TLS makes it less likely to crash(it still will).
+
+As for the fix, why in the hell are you casting it as an Object()? Cast the address to call as a uint.
+
+Here:
+Code:
+
+...("mov eax, {0}", (uint)(dwAlloc + 0x512));
+...("push 0");
+...("push eax");
+...("push eax");
+...("call {0}", (uint)(0x49AAB0));
+
+The ultimate way to do this is to inject a stub to write to the beginning of endscene and hook it. Have the detour check a bool to see if you have a string to do(pun intended). Run dostring on that string if so, and write 0 to the bool then continue with the actual endscene.
+
+Here's my endscene hook that I use:
+
+Code:
+
+HRESULT __stdcall mEndScene(LPDIRECT3DDEVICE9 pDevice)
+{
+    __asm {
+        pushad;
+        pushfd;
+    }
+    
+    while(!stringstodo.empty())
+    {
+        std::string * s = stringstodo.back();
+        stringstodo.pop_back();
+        DoString(const_cast<char*>(s->c_str()), const_cast<char*>(s->c_str()), 0);
+        delete s;
+    }
+
+    __asm {
+        popfd;
+        popad;
+    }
+    return oEndScene(pDevice);
+}
+
+Obviously it's in C++, but you get the idea. Stringstodo is a global vector that I push_back() a string onto through a P/Invoke.
+
+=============================
+
+
+
