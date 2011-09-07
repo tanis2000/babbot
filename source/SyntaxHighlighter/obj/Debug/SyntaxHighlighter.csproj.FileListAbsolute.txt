@@ -3,3 +3,8 @@ C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-
 C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\SyntaxHighlighter\obj\Debug\ResolveAssemblyReference.cache
 C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\SyntaxHighlighter\obj\Debug\SyntaxHighlighter.dll
 C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\SyntaxHighlighter\obj\Debug\SyntaxHighlighter.pdb
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\source\SyntaxHighlighter\bin\Debug\SyntaxHighlighter.dll
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\source\SyntaxHighlighter\bin\Debug\SyntaxHighlighter.pdb
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\source\SyntaxHighlighter\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\source\SyntaxHighlighter\obj\Debug\SyntaxHighlighter.dll
+C:\Documents and Settings\Dirk\Pulpit\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\tanis2000-babbot-a0333e8\source\SyntaxHighlighter\obj\Debug\SyntaxHighlighter.pdb
