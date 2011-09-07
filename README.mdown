@@ -1,7 +1,11 @@
 BabBot - WoW Automa
 ===================
 
-Welcome to BabBot. This is a World of Warcraft bot. 
+Welcome to BabBot. This is a World of Warcraft bot. Support for WoW versions:
+- 3.3.5a (3.3.5.12340) 
+- 3.3.0.11159
+- 3.3.2.11403 
+- 3.2.2.10505 
 
 ** At the current stage of development this should be considered an early ALPHA release.**
 
