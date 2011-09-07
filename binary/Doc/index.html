@@ -1,0 +1,149 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>BabBot WoW Automa</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" lang="en">
+<div class="titlepage">
+<div>
+<div><h1 class="title">
+<a name="id299120"></a>BabBot WoW Automa</h1></div>
+<div><div class="author">
+<h3 class="author">
+<span class="firstname">ivp4</span> <span class="surname"></span>
+</h3>
+<div class="affiliation"><span class="orgname"><br></span></div>
+</div></div>
+<div><div class="author"><h3 class="author"><span class="surname">tanis</span></h3></div></div>
+<div><p class="pubdate">November 29, 2009</p></div>
+</div>
+<hr>
+</div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="chapter"><a href="#id301758">1. Configure &amp; Run bot</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="#id301764">System Requirements</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="#id301782">OS</a></span></dt>
+<dt><span class="section"><a href="#id301906">Privileges</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="#id301933">Basic usage </a></span></dt>
+</dl></dd>
+<dt><span class="chapter"><a href="#id301862">2. Configure Talent Template</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="#id301868">Import from WoW Armory site</a></span></dt>
+<dt><span class="section"><a href="#id369674">Manual adjustment</a></span></dt>
+</dl></dd>
+</dl>
+</div>
+<div class="chapter" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="id301758"></a>Chapter 1. Configure &amp; Run bot</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="section"><a href="#id301764">System Requirements</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="#id301782">OS</a></span></dt>
+<dt><span class="section"><a href="#id301906">Privileges</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="#id301933">Basic usage </a></span></dt>
+</dl>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id301764"></a>System Requirements</h2></div></div></div>
+<p>Some parameters are still hardcoded and will be editable during a
+      later release. Right now you're required to run on a 32bit OS (XP or
+      Vista). Development releases for x64 processors are under testing. You
+      can still compile it in 64bit mode from the sources though. </p>
+<p>In order to run, BabBot requires to be run from a user with
+      administrator privileges so that it can run the WoW client as a guest
+      user (currently the username is "guest" and it's got to be enabled in
+      your OS). </p>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id301782"></a>OS</h3></div></div></div>
+<p>BabBot has been tested on the following platforms:
+
+    </p>
+<p>* Windows XP 32-bit
+    </p>
+<p>* Windows Vista 32-bit
+    </p>
+<p>* Windows XP 64-bit
+    </p>
+<p>* Windows Vista 64-bit 
+
+</p>
+<p>The current development version is under testing for:
+
+    </p>
+<p>* Windows 7 32-bit
+    </p>
+<p>* Windows 7 64-bit </p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id301906"></a>Privileges</h3></div></div></div>
+<p>In order to run BabBot it's necessary to have administrator privileges for the account running BabBot itself. This is because the bot will instantiate WoW's client as the guest user.
+
+</p>
+<p><span class="italic">Guest user has to be enabled in your OS. </span></p>
+</div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id301933"></a>Basic usage </h2></div></div></div>
+<p>Run BabBot and launch WoW through the "Run WoW" button. If your copy of WoW has been installed properly, BabBot will detect its path and use it. Otherwise you'll have to set it in the Options menu.</p>
+<p>If you've enabled autologin in the Options, BabBot will use your credentials to log into the game directly, otherwise you will have to log in by hand.
+
+</p>
+<p><span class="italic">Make sure that you have enabled "Click to move" and "Auto-loot" in WoW or some features might not work as expected. </span></p>
+<p>If it's the first time you're running BabBot, you will want to make a new profile to start with. Enter a name and a description in the fields you see on the Main tab and then select the WayPoints? tab. Make sure that "Normal" is selected in the dropdown list and check "Auto add waypoints". Now start moving to record the path your bot will walk through during its farming cycle. When you are done, uncheck "Auto add waypoints".
+
+</p>
+<p>Now it's time to choose which mobs we will attack. So select the "Enemies" tab. Run around the path you made before and target the mobs you want to kill by selecting them and clicking on the "Add to list" button. You don't need to add each mob as BabBot will attack any mob that has the same name as those you have put into the list.
+
+</p>
+<p>Once you are done, it's time to save your work so that you don't have to do it again when you shutdown the bot. Just click on the "Main" tab and click "Save" and choose a filename for your profile. When you run the bot again you will be able to load your profile with the "Load" button.
+
+</p>
+<p>The next step is to load a script. A script is a collection of commands that your bot will execute in order to perform things like farming, grinding, walking around, sell stuff, repairs, etc..
+
+</p>
+<p>BabBot comes with a sample script that has been written based on the Paladin class. Anyone can take that script and modify it and customize it for any other class.
+
+</p>
+<p>So, for the time being, just load the example script by clicking on "Load" on the Main tab under the "Script" group, browse to the scripts folder, enter the Paladin folder and select Core.cs
+
+</p>
+<p>BabBot will load the script and be ready to start. It's time to click on the "Start" button and enjoy watching your bot doing its duties. </p>
+</div>
+</div>
+<div class="chapter" lang="en">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="id301862"></a>Chapter 2. Configure Talent Template</h2></div></div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="section"><a href="#id301868">Import from WoW Armory site</a></span></dt>
+<dt><span class="section"><a href="#id369674">Manual adjustment</a></span></dt>
+</dl>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id301868"></a>Import from WoW Armory site</h2></div></div></div>
+<p></p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id369674"></a>Manual adjustment</h2></div></div></div>
+<p></p>
+</div>
+</div>
+</div></body>
+</html>

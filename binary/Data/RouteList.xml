@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route_list version="0">
+  <wow_version name="3.2.2.10505">
+    <route name="4E95234C5695914A" reversible="true">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Innkeeper Keldamyr" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="9802.3" y="980.83" z="1313.9" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10210.2" y="697.4" z="1360.66" type="0" />
+      </point_b>
+      <descr>Path to Dalaran</descr>
+      <length>0</length>
+    </route>
+    <route name="9D753283EA107840" reversible="true">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10330.11" y="823.67" z="1326.41" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10225.92" y="700.62" z="1356.97" type="0" />
+      </point_b>
+      <descr />
+      <length>0</length>
+    </route>
+    <route name="B223A2FEF93A964A" reversible="true">
+      <point_a zone="Durotar" type="hot_spot">
+        <waypoint x="-597.69" y="-4211.14" z="38.41" type="0" />
+      </point_a>
+      <point_b zone="Durotar" type="hot_spot">
+        <waypoint x="-614.74" y="-4270.76" z="37.81" type="0" />
+      </point_b>
+      <descr />
+      <length>0</length>
+    </route>
+    <route name="BDCDBBF638B9F74C" reversible="true">
+      <point_a d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10293.55" y="861.35" z="1336.29" type="0" />
+      </point_a>
+      <point_b d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10282.16" y="742.78" z="1338.97" type="0" />
+      </point_b>
+      <descr>Same for Boars</descr>
+      <length>0</length>
+    </route>
+    <route name="E22C72F11FC2E41" reversible="true">
+      <point_a d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10382.55" y="757.25" z="1319.91" type="0" />
+      </point_b>
+      <descr>Turn in quest</descr>
+      <length>0</length>
+    </route>
+  </wow_version>
+  <wow_version name="3.3.0.11159">
+    <route name="4E95234C5695914A" reversible="true">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Innkeeper Keldamyr" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="9802.3" y="980.83" z="1313.9" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10210.2" y="697.4" z="1360.66" type="0" />
+      </point_b>
+      <descr>Path to Dalaran</descr>
+      <length>0</length>
+    </route>
+    <route name="9D753283EA107840" reversible="true">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10330.11" y="823.67" z="1326.41" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10225.92" y="700.62" z="1356.97" type="0" />
+      </point_b>
+      <descr />
+      <length>0</length>
+    </route>
+    <route name="B223A2FEF93A964A" reversible="true">
+      <point_a zone="Durotar" type="hot_spot">
+        <waypoint x="-597.69" y="-4211.14" z="38.41" type="0" />
+      </point_a>
+      <point_b zone="Durotar" type="hot_spot">
+        <waypoint x="-614.74" y="-4270.76" z="37.81" type="0" />
+      </point_b>
+      <descr />
+      <length>0</length>
+    </route>
+    <route name="BDCDBBF638B9F74C" reversible="true">
+      <point_a d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10293.55" y="861.35" z="1336.29" type="0" />
+      </point_a>
+      <point_b d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10282.16" y="742.78" z="1338.97" type="0" />
+      </point_b>
+      <descr>Same for Boars</descr>
+      <length>0</length>
+    </route>
+    <route name="E22C72F11FC2E41" reversible="true">
+      <point_a d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10382.55" y="757.25" z="1319.91" type="0" />
+      </point_b>
+      <descr>Turn in quest</descr>
+      <length>0</length>
+    </route>
+  </wow_version>
+  <wow_version name="3.3.2.11403">
+    <route name="4E95234C5695914A" reversible="true">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Innkeeper Keldamyr" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="9802.3" y="980.83" z="1313.9" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10210.2" y="697.4" z="1360.66" type="0" />
+      </point_b>
+      <descr>Path to Dalaran</descr>
+      <length>0</length>
+    </route>
+    <route name="9D753283EA107840" reversible="true">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10330.11" y="823.67" z="1326.41" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10225.92" y="700.62" z="1356.97" type="0" />
+      </point_b>
+      <descr />
+      <length>0</length>
+    </route>
+    <route name="B223A2FEF93A964A" reversible="true">
+      <point_a zone="Durotar" type="hot_spot">
+        <waypoint x="-597.69" y="-4211.14" z="38.41" type="0" />
+      </point_a>
+      <point_b zone="Durotar" type="hot_spot">
+        <waypoint x="-614.74" y="-4270.76" z="37.81" type="0" />
+      </point_b>
+      <descr />
+      <length>0</length>
+    </route>
+    <route name="BDCDBBF638B9F74C" reversible="true">
+      <point_a d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10293.55" y="861.35" z="1336.29" type="0" />
+      </point_a>
+      <point_b d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10282.16" y="742.78" z="1338.97" type="0" />
+      </point_b>
+      <descr>Same for Boars</descr>
+      <length>0</length>
+    </route>
+    <route name="E22C72F11FC2E41" reversible="true">
+      <point_a d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10382.55" y="757.25" z="1319.91" type="0" />
+      </point_b>
+      <descr>Turn in quest</descr>
+      <length>0</length>
+    </route>
+  </wow_version>
+  <wow_version name="3.3.5.12340">
+    <route name="4E95234C5695914A" reversible="true">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Innkeeper Keldamyr" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="9802.3" y="980.83" z="1313.9" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10210.2" y="697.4" z="1360.66" type="0" />
+      </point_b>
+      <descr>Path to Dalaran</descr>
+      <length>0</length>
+    </route>
+    <route name="9D753283EA107840" reversible="true">
+      <point_a d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10330.11" y="823.67" z="1326.41" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Porthannius" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10225.92" y="700.62" z="1356.97" type="0" />
+      </point_b>
+      <descr />
+      <length>0</length>
+    </route>
+    <route name="B223A2FEF93A964A" reversible="true">
+      <point_a zone="Durotar" type="hot_spot">
+        <waypoint x="-597.69" y="-4211.14" z="38.41" type="0" />
+      </point_a>
+      <point_b zone="Durotar" type="hot_spot">
+        <waypoint x="-614.74" y="-4270.76" z="37.81" type="0" />
+      </point_b>
+      <descr />
+      <length>0</length>
+    </route>
+    <route name="BDCDBBF638B9F74C" reversible="true">
+      <point_a d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10293.55" y="861.35" z="1336.29" type="0" />
+      </point_a>
+      <point_b d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10282.16" y="742.78" z="1338.97" type="0" />
+      </point_b>
+      <descr>Same for Boars</descr>
+      <length>0</length>
+    </route>
+    <route name="E22C72F11FC2E41" reversible="true">
+      <point_a d4p1:type="QuestObjEndpoint" zone="Teldrassil" type="quest_obj" quest_id="456" obj_idx="0" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10284.48" y="733.76" z="1338.48" type="0" />
+      </point_a>
+      <point_b d4p1:type="GameObjEndpoint" zone="Teldrassil" type="game_obj" game_obj_name="Conservator Ilthalaine" xmlns:d4p1="http://www.w3.org/2001/XMLSchema-instance">
+        <waypoint x="10382.55" y="757.25" z="1319.91" type="0" />
+      </point_b>
+      <descr>Turn in quest</descr>
+      <length>0</length>
+    </route>
+  </wow_version>
+</route_list>
